@@ -1,2 +1,12 @@
 # TTime
-Convenient translation software
+
+TTime 是一款翻译软件，主要功能为输入翻译、截图翻译、划词翻译
+
+## 支持平台
+
+| Linux | macOS | Windows |
+| :---: | :---: | :-----: |
+|   X   |   ✔️   |    ✔️    |
+
+Linux理论上支持，但由于暂时精力有限，没时间测试，所以暂不发布，之后的版本可能会同步发布
+
