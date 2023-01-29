@@ -28,11 +28,11 @@ Linux理论上支持，但由于暂时精力有限，没时间测试，所以暂
 
 ### 输入翻译 （默认快捷键：Alt + Q）
 
-![img](../gitee/TTime/README.assets/input.gif)
+![img](./README.assets/input.gif)
 
 ### 截图翻译 （默认快捷键：Alt + W）
 
-![img](../gitee/TTime/README.assets/screenshot.gif)
+![img](./README.assets/screenshot.gif)
 
 ### 划词翻译 （默认快捷键：Alt + E）
 
