@@ -28,28 +28,28 @@ Linux理论上支持，但由于暂时精力有限，没时间测试，所以暂
 
 ### 输入翻译 （默认快捷键：Alt + Q）
 
-![](../gitee/TTime/README.assets/input.gif)
+![](./README.assets/input.gif)
 
 ### 截图翻译 （默认快捷键：Alt + W）
 
-![](../gitee/TTime/README.assets/screenshot.gif)
+![](./README.assets/screenshot.gif)
 
 ### 划词翻译 （默认快捷键：Alt + E）
 
-![](../gitee/TTime/README.assets/choice.gif)
+![](./README.assets/choice.gif)
 
 ## 翻译界面
 
 **界面功能介绍**
 
-![](../gitee/TTime/README.assets/translate-fun.png)
+![](./README.assets/translate-fun.png)
 
 ## 主题模式
 
 ### 暗黑模式
 
-![](../gitee/TTime/README.assets/input-dark.gif)
+![](./README.assets/input-dark.gif)
 
-![](../gitee/TTime/README.assets/screenshot-dark.gif)
+![](./README.assets/screenshot-dark.gif)
 
 ![230216 175620](README.assets/choice-dark.gif)
