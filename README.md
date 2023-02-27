@@ -2,7 +2,7 @@
 
 🚀 一款简洁、高效、高颜值的输入、截图、划词翻译软件
 
-
+更多功能详见官网：[TTime官网](https://ttime.timerecord.cn/)
 
 ## 简介
 
@@ -28,12 +28,28 @@ Linux理论上支持，但由于暂时精力有限，没时间测试，所以暂
 
 ### 输入翻译 （默认快捷键：Alt + Q）
 
-![img](./README.assets/input.gif)
+![](../gitee/TTime/README.assets/input.gif)
 
 ### 截图翻译 （默认快捷键：Alt + W）
 
-![img](./README.assets/screenshot.gif)
+![](../gitee/TTime/README.assets/screenshot.gif)
 
 ### 划词翻译 （默认快捷键：Alt + E）
 
-![img](./README.assets/choice.gif)
+![](../gitee/TTime/README.assets/choice.gif)
+
+## 翻译界面
+
+**界面功能介绍**
+
+![](../gitee/TTime/README.assets/translate-fun.png)
+
+## 主题模式
+
+### 暗黑模式
+
+![](../gitee/TTime/README.assets/input-dark.gif)
+
+![](../gitee/TTime/README.assets/screenshot-dark.gif)
+
+![230216 175620](README.assets/choice-dark.gif)

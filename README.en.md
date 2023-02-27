@@ -28,12 +28,28 @@ Linux is theoretically supported, but due to limited energy and lack of time for
 
 ### Input translation（Default shortcut key：Alt + Q）
 
-![img](./README.en.assets/input.gif)
+![img](../gitee/TTime/README.en.assets/input.gif)
 
 ### Screenshot translation（Default shortcut key：Alt + W）
 
-![img](./README.en.assets/screenshot.gif)
+![img](../gitee/TTime/README.en.assets/screenshot.gif)
 
 ### Selected translation （Default shortcut key：Alt + E）
 
-![img](./README.en.assets/choice.gif)
+![img](../gitee/TTime/README.en.assets/choice.gif)
+
+## Translation interface
+
+**Introduction to interface functions**
+
+![](../gitee/TTime/README.assets/translate-fun.png)
+
+## Theme mode
+
+### Dark mode
+
+![](../gitee/TTime/README.assets/input-dark.gif)
+
+![](../gitee/TTime/README.assets/screenshot-dark.gif)
+
+![230216 175620](README.assets/choice-dark.gif)
