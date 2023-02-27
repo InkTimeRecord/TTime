@@ -2,7 +2,7 @@
 
 🚀 A concise, efficient, good-looking input, screenshot, and word translation software
 
-
+For more functions, see the official website.：[TTime Official website](https://ttime.timerecord.cn/)
 
 ## brief introduction
 
