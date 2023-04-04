@@ -28,28 +28,34 @@ Linux is theoretically supported, but due to limited energy and lack of time for
 
 ### Input translation（Default shortcut key：Alt + Q）
 
-![img](./README.en.assets/input.gif)
+![img](./README.en.assets/input.gif?v=0.0.5)
 
 ### Screenshot translation（Default shortcut key：Alt + W）
 
-![img](./README.en.assets/screenshot.gif)
+![img](./README.en.assets/screenshot.gif?v=0.0.5)
 
 ### Selected translation （Default shortcut key：Alt + E）
 
-![img](./README.en.assets/choice.gif)
+![img](./README.en.assets/choice.gif?v=0.0.5)
 
 ## Translation interface
 
 **Introduction to interface functions**
 
-![](./README.assets/translate-fun.png)
+![](./README.assets/translate-fun.png?v=0.0.5)
+
+## Translation source settings
+
+**Translation service can be turned on or off at your own discretion**
+
+![translateService](README.en.assets/translateService.png?v=0.0.5)
 
 ## Theme mode
 
 ### Dark mode
 
-![](./README.assets/input-dark.gif)
+![](./README.assets/input-dark.gif?v=0.0.5)
 
-![](./README.assets/screenshot-dark.gif)
+![](./README.assets/screenshot-dark.gif?v=0.0.5)
 
-![230216 175620](README.assets/choice-dark.gif)
+![230216 175620](README.assets/choice-dark.gif?v=0.0.5)

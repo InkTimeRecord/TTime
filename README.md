@@ -28,28 +28,34 @@ Linux理论上支持，但由于暂时精力有限，没时间测试，所以暂
 
 ### 输入翻译 （默认快捷键：Alt + Q）
 
-![](./README.assets/input.gif)
+![](./README.assets/input.gif?v=0.0.5)
 
 ### 截图翻译 （默认快捷键：Alt + W）
 
-![](./README.assets/screenshot.gif)
+![](./README.assets/screenshot.gif?v=0.0.5)
 
 ### 划词翻译 （默认快捷键：Alt + E）
 
-![](./README.assets/choice.gif)
+![](./README.assets/choice.gif?v=0.0.5)
 
 ## 翻译界面
 
 **界面功能介绍**
 
-![](./README.assets/translate-fun.png)
+![](./README.assets/translate-fun.png?v=0.0.5)
+
+## 翻译源设置
+
+翻译服务可以自行选择打开或关闭
+
+![translateService](README.assets/translateService.png?v=0.0.5)
 
 ## 主题模式
 
 ### 暗黑模式
 
-![](./README.assets/input-dark.gif)
+![](./README.assets/input-dark.gif?v=0.0.5)
 
-![](./README.assets/screenshot-dark.gif)
+![](./README.assets/screenshot-dark.gif?v=0.0.5)
 
-![230216 175620](README.assets/choice-dark.gif)
+![230216 175620](README.assets/choice-dark.gif?v=0.0.5)
