@@ -1,15 +1,19 @@
-<img align="left" width="150px" src="https://ttime.timerecord.cn/img/logo.png"/>
+<div align='center'>
 
-# TTime
+  <img width="150px" src="https://ttime.timerecord.cn/img/logo.png"/>
 
-🚀 A concise, efficient, good-looking input, screenshot, and word translation software
+  # TTime
 
-<a href="https://ttime.timerecord.cn"><img src="https://img.shields.io/badge/%E5%AE%98%E6%96%B9%E7%BD%91%E7%AB%99-ttime.timerecord.cn-brightgreen?logo=Safari"/></a>
-<a href="https://ttime.timerecord.cn"><img src="https://img.shields.io/badge/-Windows-blue?logo=windows&logoColor=white" /></a>
-<a href="https://ttime.timerecord.cn"><img src="https://img.shields.io/badge/-macOS-black?&logo=apple&logoColor=white" /></a>
-<a href="JavaScript:;"><img src="https://img.shields.io/github/license/InkTimeRecord/TTime"/></a>
+  🚀 A concise, efficient, good-looking input, screenshot, and word translation software
 
-(English | [中文](README.md))
+  <a href="https://ttime.timerecord.cn"><img src="https://img.shields.io/badge/%E5%AE%98%E6%96%B9%E7%BD%91%E7%AB%99-ttime.timerecord.cn-brightgreen?logo=Safari"/></a>
+  <a href="https://ttime.timerecord.cn"><img src="https://img.shields.io/badge/-Windows-blue?logo=windows&logoColor=white" /></a>
+  <a href="https://ttime.timerecord.cn"><img src="https://img.shields.io/badge/-macOS-black?&logo=apple&logoColor=white" /></a>
+  <a href="JavaScript:;"><img src="https://img.shields.io/github/license/InkTimeRecord/TTime"/></a>
+
+  (English | [中文](README.md))
+
+</div>
 
 ## brief introduction
 
