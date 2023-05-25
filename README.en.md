@@ -20,9 +20,9 @@
 The main functions are `input translation`, `screenshot translation`, `selected translation`
 
 ## Interface
-<div>
-  <table width='100%'>
-    <tr align='center'>
+<div align='center'>
+  <table>
+    <tr>
         <td>
         <p>Bright Mode</p>
         <img width="350px" src="https://raw.githubusercontent.com/InkTimeRecord/TTime/dev/README.assets/translate.png"/>
