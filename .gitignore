@@ -1,0 +1,5 @@
+node_modules
+dist
+out
+*.log*
+!/node_modules_update/**/dist

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='UTF-8'>
+  <title>截屏</title>
+</head>
+<style>
+  html, body, div {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    overflow: hidden
+  }
+
+  .bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /*opacity: 0;*/
+  }
+
+  .rect {
+    position: absolute;
+    z-index: 1;
+  }
+
+  .size-info {
+    position: absolute;
+    color: #ffffff;
+    font-size: 12px;
+    background: rgba(40, 40, 40, 0.8);
+    padding: 5px 10px;
+    border-radius: 2px;
+    font-family: Arial Consolas sans-serif;
+    display: none;
+    z-index: 2;
+  }
+
+  #magnifierDiv {
+    position: absolute;
+    border: 2px solid grey;
+    overflow: hidden;
+    cursor: none;
+  }
+
+  #magnifierDiv:before {
+    content: "";
+    background-color: grey;
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    z-index: 1;
+  }
+
+  #magnifierDiv:after {
+    content: "";
+    background-color: grey;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 1px;
+    height: 100%;
+    z-index: 1;
+  }
+
+</style>
+<body>
+<input type='hidden' id='screenId'>
+<div id='bgBlock'>
+  <img class='bg' />
+</div>
+<canvas class='rect'></canvas>
+<div class='size-info'></div>
+<script>
+  // 放大镜尺寸
+  const magnifierDivSize = 120
+  // 放大镜放大倍数
+  const magnifierZoom = 3
+  const bgBlock = document.getElementById('bgBlock')
+  // 复制背景块内所有元素
+  let copy = bgBlock.cloneNode(true)
+  // 获取背景块内的背景图作为放大镜图
+  let magnifierImg = copy.getElementsByTagName('img')[0]
+  copy.style.zoom = magnifierZoom
+  copy.style.width = (bgBlock.offsetWidth * magnifierZoom) + 'px'
+  copy.style.heigth = (bgBlock.offsetHeight * magnifierZoom) + 'px'
+  copy.style.position = 'absolute'
+  // 放大镜清空class 主要清除从背景图复制过来的样式
+  magnifierImg.removeAttribute('class')
+  // 设置放大镜ID
+  magnifierImg.setAttribute('id', 'magnifierImg')
+
+  // 构建放大镜外围Div
+  const magnifierDiv = document.createElement('div')
+  magnifierDiv.setAttribute('id', 'magnifierDiv')
+  magnifierDiv.style.width = magnifierDivSize + 'px'
+  magnifierDiv.style.height = magnifierDivSize + 'px'
+  // 默认放大器隐藏 否则刚开始加载 没有鼠标定位 默认会出现在最左上角
+  // 并且多屏下 会出现多个
+  magnifierDiv.style.visibility = 'hidden'
+  // 把复制的背景块元素存入放大镜外围Div
+  magnifierDiv.appendChild(copy)
+
+  // 放大镜外围Div存入背景块中
+  bgBlock.appendChild(magnifierDiv)
+  bgBlock.getBoundingClientRect()
+
+  // 显示器缩放比例 用于计算显示器如果设置了缩放时 放大镜同步计算
+  let screenScaleFactor = 1
+  // 获取显示器缩放比例事件
+  window.api.screenScaleFactorNoticeEvent(value => {
+    screenScaleFactor = value
+  })
+
+  // 是否截图完毕
+  let isScreenshotEnd = false
+  // 当截图完毕后触发
+  window.api.screenshotEndEvent(() => {
+    isScreenshotEnd = true
+  })
+
+  /**
+   * 鼠标进入截图窗口后触发一次
+   *
+   * 多屏的情况下，可能会出现设置的各显示器缩放比例不一样
+   * 所以这里每当移入窗口时重新获取一下缩放比例值
+   */
+  document.addEventListener('mouseenter', (_ev) => {
+    // 获取当前鼠标所在的显示器缩放比例 调用后回调到 screenScaleFactorNoticeEvent 方法
+    window.api.screenScaleFactorEvent(document.getElementById('screenId').value)
+  })
+
+  /**
+   * 鼠标在截图窗口内移动时触发
+   */
+  document.addEventListener('mousemove', (ev) => {
+    ev.preventDefault()
+    ev.stopPropagation()
+    const x = ev.pageX
+    const y = ev.pageY
+    // 放大镜距离鼠标的坐标信息
+    magnifierDiv.style.left = -(magnifierDivSize / 2) + x + 90 + 'px'
+    magnifierDiv.style.top = -(magnifierDivSize / 2) + y + 90 + 'px'
+    // 放大器内的图像坐标信息
+    copy.style.left = -(x * screenScaleFactor - bgBlock.offsetLeft) + (magnifierDivSize / magnifierZoom) * 0.5 + 'px'
+    copy.style.top = -(y * screenScaleFactor - bgBlock.offsetTop) + (magnifierDivSize / magnifierZoom) * 0.5 + 'px'
+    // 截图完毕后才能显示放大镜
+    // 因为有时加载过快 还没截图完成 放大镜就显示出来了
+    // 最后导致截图时把放大镜一起截进去了
+    if(isScreenshotEnd) {
+      // 显示放大镜
+      magnifierDiv.style.visibility = 'visible'
+    }
+  })
+
+  /**
+   * 鼠标在截图窗口移出后触发
+   *
+   * 多显示器时使用
+   */
+  document.addEventListener('mouseleave', e => {
+    // 隐藏放大镜
+    magnifierDiv.style.visibility = 'hidden'
+  })
+
+</script>
+</body>
+</html>

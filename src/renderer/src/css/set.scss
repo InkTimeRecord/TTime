@@ -1,0 +1,16 @@
+@import 'global';
+
+:deep(.el-main) {
+  --el-main-padding: 0px;
+  margin: 0 20px 20px 20px;
+}
+
+.form-switch-span {
+  font-size: 12px;
+  color: var(--ttime-tips-text-color);
+}
+
+.set-page-icon {
+  margin-right: 5px;
+  color: var(--ttime-set-icon-color);
+}

@@ -1,0 +1,37 @@
+@import 'global';
+
+:deep(.el-textarea__inner) {
+  background-color: var(--ttime-translate-input-color-background);
+  box-shadow: 0 0 0 0;
+  border: 0;
+  resize: none;
+  padding: 5px;
+  width: 98%;
+}
+
+:deep(.el-textarea__inner:focus) {
+  outline: 0;
+  box-shadow: 0 0 0 0;
+  background-color: var(--ttime-translate-input-color-background);
+}
+
+:deep(.el-textarea__inner:hover) {
+  box-shadow: 0 0 0 0;
+}
+
+// 修改textarea滚动条样式
+:deep(.el-textarea__inner::-webkit-scrollbar) {
+  width: 6px;
+  height: 6px;
+}
+
+:deep(.el-textarea__inner::-webkit-scrollbar-thumb) {
+  border-radius: 3px;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  background-color: #c3c3c3;
+}
+
+:deep(.el-textarea__inner::-webkit-scrollbar-track) {
+  background-color: transparent;
+}
