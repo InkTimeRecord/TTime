@@ -1,0 +1,21 @@
+{
+  "extends": "@electron-toolkit/tsconfig/tsconfig.node.json",
+  "include": [
+    "electron.vite.config.*",
+    "src/preload/*",
+    "src/main/*",
+    "src/main/service/*",
+    "src/main/service/channel/*",
+    "src/main/service/channel/factory/*",
+    "src/main/service/channel/interfaces/*",
+    "src/main/service/channel/product/*",
+    "src/main/service/channel/product/translate/*",
+    "src/main/service/channel/product/ocr/*",
+    "src/main/enums/*",
+    "src/main/utils/*",
+    "src/main/class/*",
+  ],
+  "compilerOptions": {
+    "composite": true,
+  }
+}

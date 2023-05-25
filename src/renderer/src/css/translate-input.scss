@@ -1,0 +1,24 @@
+@import 'global';
+
+.content {
+  padding-bottom: 1px;
+
+  .content-input-block {
+    margin: 0 12px 12px 12px;
+    border-radius: 7px;
+    background: var(--ttime-translate-input-color-background);
+
+    .content-input {
+      border: 0;
+      outline: none;
+      resize: none;
+      width: 98%;
+      font-size: 14px;
+      padding: 10px 10px 1px 10px;
+    }
+
+    .content-input-zero-padding-top {
+      padding-top: 0;
+    }
+  }
+}

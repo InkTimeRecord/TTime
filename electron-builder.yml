@@ -1,0 +1,60 @@
+appId: com.ttime.app
+productName: TTime
+directories:
+  buildResources: build
+files:
+  - '!**/.vscode/*'
+  - '!src/*'
+  - '!electron.vite.config.{js,ts,mjs,cjs}'
+  - '!{.eslintignore,.eslintrc.cjs,.prettierignore,.prettierrc.yaml,dev-app-update.yml,CHANGELOG.md,README.md}'
+  - '!{tsconfig.json,tsconfig.node.json,tsconfig.web.json}'
+asarUnpack:
+  - '**/*.{node,dll}'
+  - '**/ocr/*.{onnx,txt}'
+#asar:
+#  false
+afterSign: build/notarize.js
+beforePack: build/builder-installer-before.js
+win:
+  executableName: TTime
+nsis:
+  artifactName: ${productName}-${version}-setup.${ext}
+  shortcutName: ${productName}
+  uninstallDisplayName: ${productName}
+  include: build/builder-installer.nsh
+  # 创建桌面快捷方式
+  createDesktopShortcut: true
+  # 创建开始菜单快捷方式
+  createStartMenuShortcut: true
+  # 是否创建一键安装程序或辅助
+  oneClick: false
+  # 是否允许用户更改安装目录
+  allowToChangeInstallationDirectory: true
+  # 不显示安装模式页面 默认为使用这台电脑的任何人安装（所有用户）
+  perMachine: true
+mac:
+  entitlementsInherit: build/entitlements.mac.plist
+  extendInfo:
+    NSCameraUsageDescription: Application requests access to the device's camera.
+    NSMicrophoneUsageDescription: Application requests access to the device's microphone.
+    NSDocumentsFolderUsageDescription: Application requests access to the user's Documents folder.
+    NSDownloadsFolderUsageDescription: Application requests access to the user's Downloads folder.
+    # 配置不显示在 Dock(程序坞) 内
+    LSUIElement: 1
+dmg:
+  artifactName: ${productName}-${version}-${arch}.${ext}
+linux:
+  target:
+    - AppImage
+    - snap
+    - deb
+  maintainer: electronjs.org
+  category: Utility
+appImage:
+  artifactName: ${productName}-${version}.${ext}
+npmRebuild: false
+publish:
+  provider: generic
+  url: https://update.timerecord.cn/pc/TTime/
+releaseInfo:
+  releaseNotes: 1.终极优化划词小部分人群失败问题，并修复与ctrl+shift+p快捷键占用问题||2.新增TTime在线OCR识别(试行版)||3.优化OpenAI(ChatGPT)为流式输出方式响应||3.修复当窗口置顶时触发截图后，显示窗口时置顶会单次失效问题||4.修复翻译源当出现+等特殊字符时会替换掉的问题||5.新增火山翻译源

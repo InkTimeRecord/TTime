@@ -1,0 +1,63 @@
+$input-tools-activity-color: var(--ttime-input-tools-activity-color);
+$input-tools-activity-active-color: var(--ttime-input-tools-activity-active-color);
+$input-loading-text-color: #7c7c7c;
+
+// 禁止选择
+.none-select {
+  user-select: none;
+}
+
+// 光标指针
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.function-tools-block {
+  padding: 3px 15px 3px 10px;
+  line-height: 1em;
+  display: inline-flex;
+  justify-content: center;
+
+  @mixin select-active {
+    background: $input-tools-activity-color;
+    border-radius: 5px;
+  }
+
+  @mixin function-tools-template {
+    padding: 3px 5px 3px 5px;
+    line-height: 1em;
+    display: inline-flex;
+    justify-content: center;
+    cursor: pointer;
+
+    &.active {
+      @include select-active;
+    }
+
+    &:hover {
+      @include select-active;
+    }
+
+    &:active {
+      @include select-active;
+      background: $input-tools-activity-active-color;
+    }
+
+    .function-tools-icon {
+      -webkit-app-region: no-drag;
+      cursor: pointer;
+      font-size: 18px;
+      font-weight: 600;
+    }
+  }
+
+  .function-tools-category {
+    .function-tools {
+      @include function-tools-template;
+    }
+  }
+
+  .function-tools {
+    @include function-tools-template;
+  }
+}
