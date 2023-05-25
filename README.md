@@ -1,24 +1,28 @@
-<img align="left" width="150px" src="https://ttime.timerecord.cn/img/logo.png"/>
+<div align='center'>
 
-# TTime
+  <img width="150px" src="https://ttime.timerecord.cn/img/logo.png"/>
 
-🚀 一款简洁高效的输入、截图、划词翻译软件
+  # TTime
 
-<a href="https://ttime.timerecord.cn"><img src="https://img.shields.io/badge/%E5%AE%98%E6%96%B9%E7%BD%91%E7%AB%99-ttime.timerecord.cn-brightgreen?logo=Safari"/></a>
-<a href="https://ttime.timerecord.cn"><img src="https://img.shields.io/badge/-Windows-blue?logo=windows&logoColor=white" /></a>
-<a href="https://ttime.timerecord.cn"><img src="https://img.shields.io/badge/-macOS-black?&logo=apple&logoColor=white" /></a>
-<a href="JavaScript:;"><img src="https://img.shields.io/github/license/InkTimeRecord/TTime"/></a>
+  🚀 一款简洁高效的输入、截图、划词翻译软件
 
-(中文 | [English](README.en.md))
+  <a href="https://ttime.timerecord.cn"><img src="https://img.shields.io/badge/%E5%AE%98%E6%96%B9%E7%BD%91%E7%AB%99-ttime.timerecord.cn-brightgreen?logo=Safari"/></a>
+  <a href="https://ttime.timerecord.cn"><img src="https://img.shields.io/badge/-Windows-blue?logo=windows&logoColor=white" /></a>
+  <a href="https://ttime.timerecord.cn"><img src="https://img.shields.io/badge/-macOS-black?&logo=apple&logoColor=white" /></a>
+  <a href="JavaScript:;"><img src="https://img.shields.io/github/license/InkTimeRecord/TTime"/></a>
+
+  (中文 | [English](README.en.md))
+
+</div>
 
 ## 简介
 
 主要功能：`输入翻译`、`截图翻译`、`划词翻译`
 
 ## 界面
-<div>
-  <table width='100%'>
-    <tr align='center'>
+<div align='center'>
+  <table>
+    <tr>
         <td>
         <p>明亮模式</p>
         <img width="350px" src="https://raw.githubusercontent.com/InkTimeRecord/TTime/dev/README.assets/translate.png"/>
