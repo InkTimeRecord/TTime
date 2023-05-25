@@ -1,4 +1,4 @@
-[<img align="left" width="150px" src="https://ttime.timerecord.cn/img/logo.png"/>
+<img align="left" width="150px" src="https://ttime.timerecord.cn/img/logo.png"/>
 
 # TTime
 
