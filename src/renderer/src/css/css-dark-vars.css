@@ -135,9 +135,9 @@ html.light .el-menu {
 
 .el-divider__text {
   position: absolute;
-  background-color: var(--ttime-translate-service-color-background);
+  background-color: var(--ttime-color-background);
   padding: 0 20px;
   font-weight: 500;
-  color: var(--el-text-color-primary);
+  color: var(--el-text-color-regular);
   font-size: 14px;
 }

@@ -9,6 +9,12 @@
         <span class='form-switch-span none-select'> 开启后，当翻译窗口置顶时，按ESC键依旧可隐藏窗口 </span>
       </div>
     </el-form-item>
+
+    <el-form-item class='none-select' label='文本处理'>
+      <el-switch v-model='advancedSettingInfo.wrapReplaceSpaceStatus' @change='wrapReplaceSpaceStatusEvent' />
+      <span class='form-switch-span none-select'> 将翻译结果的 [ 换行符 ] 替换为 [ 空格 ] </span>
+    </el-form-item>
+
   </el-form>
 </template>
 <script setup lang='ts'>
@@ -19,7 +25,8 @@ import { YesNoEnum } from '../../../enums/YesNoEnum'
 import { cacheGetStr, cacheSetStr } from '../../../utils/cacheUtil'
 
 const advancedSettingInfo = ref({
-  alwaysOnTopAllowEscStatus: cacheGetStr('alwaysOnTopAllowEscStatus')
+  alwaysOnTopAllowEscStatus: cacheGetStr('alwaysOnTopAllowEscStatus'),
+  wrapReplaceSpaceStatus: cacheGetStr('wrapReplaceSpaceStatus') === YesNoEnum.Y,
 })
 
 /**
@@ -34,10 +41,24 @@ const alwaysOnTopAllowEscStatusEvent = (val): void => {
   window.api.alwaysOnTopAllowEscStatusNotify()
 }
 
+/**
+ * 换行符替换为空格事件
+ *
+ * @param val 换行符替换为空格状态
+ */
+const wrapReplaceSpaceStatusEvent = (val): void => {
+  cacheSetStr('wrapReplaceSpaceStatus', val ? YesNoEnum.Y : YesNoEnum.N)
+  advancedSettingInfo.value.wrapReplaceSpaceStatus = val
+}
+
 </script>
 
 <style lang='scss' scoped>
 @import '../../../css/set.scss';
+
+.form-switch-span {
+  margin-left: 5px;
+}
 
 .play-speech-service-block {
   display: flex;

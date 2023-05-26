@@ -137,6 +137,10 @@ if (undefined === cacheGetStr('playSpeechService')) {
 if (undefined === cacheGetStr('alwaysOnTopAllowEscStatus')) {
   cacheSetStr('alwaysOnTopAllowEscStatus', YesNoEnum.N)
 }
+// 初始化换行符替换为空格状态
+if (undefined === cacheGetStr('wrapReplaceSpaceStatus')) {
+  cacheSetStr('wrapReplaceSpaceStatus', YesNoEnum.N)
+}
 window.api.updateCacheEvent((key, value) => {
   window.api.logInfoEvent('[updateCacheEvent] - 触发了', key , value)
   cacheSetStr(key, value)
