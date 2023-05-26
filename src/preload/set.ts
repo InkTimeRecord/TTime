@@ -114,6 +114,13 @@ const agentUpdateEvent = (agentConfig): void => {
   ipcRenderer.invoke('agent-update-event', agentConfig)
 }
 
+/**
+ * 更新置顶时允许隐藏窗口选择事件通知
+ */
+const alwaysOnTopAllowEscStatusNotify = (): void => {
+  ipcRenderer.invoke('always-onTop-allow-esc-status-notify')
+}
+
 const api = {
   updateTranslateShortcutKeyEvent,
   getSystemTypeEvent,
@@ -128,8 +135,8 @@ const api = {
   apiUniteOcrCheck,
   apiCheckOcrCallbackEvent,
   getVersionEvent,
-  agentUpdateEvent
-
+  agentUpdateEvent,
+  alwaysOnTopAllowEscStatusNotify
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

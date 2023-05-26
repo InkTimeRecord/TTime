@@ -6,7 +6,7 @@
           <el-radio :label='YesNoEnum.Y'>开启</el-radio>
           <el-radio :label='YesNoEnum.N'>关闭</el-radio>
         </el-radio-group>
-        <span class='form-switch-span none-select'> 开启后当翻译窗口置顶时，按下ESC键可退出 </span>
+        <span class='form-switch-span none-select'> 开启后，当翻译窗口置顶时，按ESC键依旧可隐藏窗口 </span>
       </div>
     </el-form-item>
   </el-form>
@@ -17,7 +17,6 @@
 import { ref } from 'vue'
 import { YesNoEnum } from '../../../enums/YesNoEnum'
 import { cacheGetStr, cacheSetStr } from '../../../utils/cacheUtil'
-
 
 const advancedSettingInfo = ref({
   alwaysOnTopAllowEscStatus: cacheGetStr('alwaysOnTopAllowEscStatus')
@@ -31,16 +30,14 @@ const advancedSettingInfo = ref({
 const alwaysOnTopAllowEscStatusEvent = (val): void => {
   cacheSetStr('alwaysOnTopAllowEscStatus', val)
   advancedSettingInfo.value.alwaysOnTopAllowEscStatus = val
+  // 更新置顶时允许隐藏窗口选择事件通知
+  window.api.alwaysOnTopAllowEscStatusNotify()
 }
 
 </script>
 
 <style lang='scss' scoped>
 @import '../../../css/set.scss';
-
-//.form-switch-span {
-//  margin-left: 5px;
-//}
 
 .play-speech-service-block {
   display: flex;
