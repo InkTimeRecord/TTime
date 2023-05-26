@@ -81,6 +81,13 @@ ipcMain.handle('screen-scale-factor-event', (_event, screenId) => {
 })
 
 /**
+ * 关闭截图窗口事件
+ */
+ipcMain.handle('close-screenshots-win-event', (_event) => {
+  ScreenshotsMain.closeScreenshotsWin()
+})
+
+/**
  * 创建文字识别窗口
  */
 function createTextOcrWin(): void {
