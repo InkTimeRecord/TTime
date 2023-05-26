@@ -13,6 +13,9 @@
             <el-menu-item index='basiInfo'>
               <span class='none-select'>偏好设置</span>
             </el-menu-item>
+            <el-menu-item index='advancedSetting'>
+              <span class='none-select'>高级设置</span>
+            </el-menu-item>
             <el-menu-item index='shortcutKey'>
               <span class='none-select'>全局快捷键设置</span>
             </el-menu-item>
@@ -22,7 +25,6 @@
             <el-menu-item index='networkSet'>
               <span class='none-select'>网络设置</span>
             </el-menu-item>
-
             <el-menu-item index='about'>
               <span class='none-select'>关于</span>
             </el-menu-item>
@@ -34,6 +36,7 @@
         <el-main class='main'>
           <el-scrollbar>
             <basi-info v-show="menuIndex === 'basiInfo'" />
+            <advanced-setting v-show="menuIndex === 'advancedSetting'" />
             <shortcut-key v-show="menuIndex === 'shortcutKey'" />
             <translate-service-config v-show="menuIndex === 'translateServiceConfig'" />
             <network-set v-show="menuIndex === 'networkSet'" />
@@ -48,6 +51,7 @@
 <script lang='ts' setup>
 import Header from './components/Header.vue'
 import BasiInfo from './components/fun/BasiInfo.vue'
+import AdvancedSetting from './components/fun/AdvancedSetting.vue'
 import ShortcutKey from './components/fun/ShortcutKey.vue'
 import TranslateServiceConfig from './components/fun/TranslateServiceConfig.vue'
 import NetworkSet from './components/fun/NetworkSet.vue'

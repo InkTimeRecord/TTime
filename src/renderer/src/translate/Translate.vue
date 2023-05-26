@@ -133,7 +133,10 @@ if (cacheGetStr('autoUpdater') === YesNoEnum.Y) {
 if (undefined === cacheGetStr('playSpeechService')) {
   cacheSetStr('playSpeechService', PlaySpeechServiceEnum.TTIME)
 }
-
+// 初始化置顶时允许隐藏窗口状态
+if (undefined === cacheGetStr('alwaysOnTopAllowEscStatus')) {
+  cacheSetStr('alwaysOnTopAllowEscStatus', YesNoEnum.N)
+}
 window.api.updateCacheEvent((key, value) => {
   window.api.logInfoEvent('[updateCacheEvent] - 触发了', key , value)
   cacheSetStr(key, value)

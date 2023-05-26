@@ -3,6 +3,7 @@ import { GlobalShortcutEvent } from './GlobalShortcutEvent'
 import { app } from 'electron'
 import { TrayEvent } from './TrayEvent'
 import { WinEvent } from './Win'
+import { injectWinAgent } from '../utils/RequestUtil'
 
 /**
  * 全局窗口
@@ -44,11 +45,14 @@ class GlobalWin {
   /**
    * 显示主窗口
    */
-  static mainWinShow(): void {
+  static async mainWinShow(): Promise<void> {
     if (isNull(GlobalWin.mainWin)) {
       return
     }
     GlobalWin.mainWin.show()
+    await GlobalWin.mainWin.webContents.executeJavaScript('localStorage.alwaysOnTopAllowEscStatus').then((alwaysOnTopAllowEscStatus) => {
+
+    })
     // 当窗口置顶时不注册Esc快捷键
     if (!WinEvent.isAlwaysOnTop) {
       // 当显示窗口时注册快捷键
