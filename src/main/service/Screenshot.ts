@@ -81,6 +81,13 @@ ipcMain.handle('screen-scale-factor-event', (_event, screenId) => {
 })
 
 /**
+ * 关闭截图窗口事件
+ */
+ipcMain.handle('close-screenshots-win-event', (_event) => {
+  ScreenshotsMain.closeScreenshotsWin()
+})
+
+/**
  * 创建文字识别窗口
  */
 function createTextOcrWin(): void {
@@ -254,10 +261,16 @@ class ScreenshotsMain {
     allScreenshots.forEach((screenshots) => {
       ScreenshotsMain.screenshotsWinList.push(new ScreenshotsSon(screenshots))
     })
-    // 注册 关闭截图窗口 快捷键
-    GlobalShortcutEvent.register('Esc', () => {
-      ScreenshotsMain.closeScreenshotsWin()
-    })
+    // 延迟执行快捷键注册 否则如果上层方法有执行注销此快捷键时 这里注册的快捷键会无效 并且不会提示
+    // 猜测：当快捷键注销代码执行后，实际内部还没有注销完毕，但此时快捷键状态已经变更为未注册
+    // 这个过程执行速度是很快的 而这里这时又注册了 会导致新的状态变更及事件刚注册进去
+    // 上一步的注销操作开始执行注销事件 导致最终的结果为：注册状态已变更为已注册而事件被注销
+    setTimeout(() => {
+      // 注册 关闭截图窗口 快捷键
+      GlobalShortcutEvent.register('Esc', () => {
+        ScreenshotsMain.closeScreenshotsWin()
+      })
+    }, 500)
   }
 
   /**

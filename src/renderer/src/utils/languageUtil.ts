@@ -18,7 +18,7 @@ const only = [
 export const getLanguageTypeByOpenAI = (translateContent) => {
   let language = franc(translateContent, {
     // 检测最短字符
-    minLength: 2,
+    minLength: 1,
     // 识别的语种范围
     only: only
   })
@@ -31,7 +31,7 @@ export const getLanguageTypeByOpenAI = (translateContent) => {
 export const getLanguageTypeByVolcano = (translateContent) => {
   let language = franc(translateContent, {
     // 检测最短字符
-    minLength: 2,
+    minLength: 1,
     // 识别的语种范围
     only: only
   })
@@ -52,7 +52,7 @@ export const getLanguageResultType = (translateContent) => {
 export const getLanguageResultTypeByMap = (languageMap, translateContent) => {
   const language = franc(translateContent, {
     // 检测最短字符
-    minLength: 2,
+    minLength: 1,
     // 识别的语种范围
     only: only
   })

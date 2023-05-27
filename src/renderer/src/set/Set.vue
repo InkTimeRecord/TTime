@@ -22,7 +22,6 @@
             <el-menu-item index='networkSet'>
               <span class='none-select'>网络设置</span>
             </el-menu-item>
-
             <el-menu-item index='about'>
               <span class='none-select'>关于</span>
             </el-menu-item>

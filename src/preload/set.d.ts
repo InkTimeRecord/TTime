@@ -19,6 +19,7 @@ declare global {
     apiCheckOcrCallbackEvent
     getVersionEvent
     agentUpdateEvent
+    alwaysOnTopAllowEscStatusNotify
   }
 
   interface Window {

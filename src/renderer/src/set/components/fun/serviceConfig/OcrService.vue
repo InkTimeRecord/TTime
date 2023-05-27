@@ -299,10 +299,6 @@ const saveOcrService = (ocrService) => {
         margin-right: 10px;
       }
 
-      .to-page-translate-service-apply {
-        font-size: 16px;
-      }
-
     }
 
     .translate-service-list-block {

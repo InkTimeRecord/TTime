@@ -75,11 +75,6 @@ function createWindow(): void {
   // 禁用按下F11全屏事件
   mainWin.setFullScreenable(false)
 
-  mainWin.on('ready-to-show', () => {
-    // 加载完毕后显示
-    // GlobalShortcutEvent.translateInput()
-  })
-
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
     mainWin.loadURL(process.env['ELECTRON_RENDERER_URL'])
   } else {

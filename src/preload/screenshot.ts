@@ -3,6 +3,14 @@ import { electronAPI } from '@electron-toolkit/preload'
 
 const ipcRenderer = electronAPI.ipcRenderer
 
+/**
+ * 页面鼠标右键监听
+ */
+document.oncontextmenu = () => {
+  // 关闭截图窗口事件
+  ipcRenderer.invoke('close-screenshots-win-event')
+}
+
 ipcRenderer.on('win-multiple-draw-screenshot-style', async (_event, screenImgInfo) => {
   const toCanvas = (canvas, img, w, h): void => {
     canvas.width = w

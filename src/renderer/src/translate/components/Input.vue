@@ -52,7 +52,7 @@ import loadingImage from '../../assets/loading.gif'
 import translate from '../../utils/translate'
 import { getTranslateServiceMapByUse } from '../../utils/translateServiceUtil'
 import { TranslateServiceEnum } from '../../enums/TranslateServiceEnum'
-import { cacheGet } from '../../utils/cacheUtil'
+import { cacheGet, cacheGetStr } from '../../utils/cacheUtil'
 import ElMessageExtend from '../../utils/messageExtend'
 import {
   getLanguageTypeByOpenAI,
@@ -60,6 +60,7 @@ import {
   getLanguageResultType,
   getLanguageTypeByVolcano
 } from '../../utils/languageUtil'
+import { YesNoEnum } from '../../enums/YesNoEnum'
 
 // 加载loading
 const loadingImageSrc = ref(loadingImage)
@@ -161,9 +162,11 @@ const translateChange = (event): void => {
  */
 const translateFun = (): void => {
   emit('show-result-event', false)
-  window.api.logInfoEvent('[翻译事件] - 翻译内容 : ', translateContent.value)
+  // 翻译内容
+  let translateContentDealWith = translateContent.value
+  window.api.logInfoEvent('[翻译事件] - 翻译内容 : ', translateContentDealWith)
   // 替换所有换行符、回车符后如果发送的消息还是为空则默认不继续进行操作
-  if (isContentNull(translateContent.value)
+  if (isContentNull(translateContentDealWith)
   ) {
     window.api.logInfoEvent('[翻译事件] - 翻译内容过滤后为空')
     translateContent.value = ''
@@ -171,6 +174,10 @@ const translateFun = (): void => {
     screenshotRestore()
     ElMessageExtend.warning('识别内容为空')
     return
+  }
+  // 换行符替换为空格状态
+  if(cacheGetStr('wrapReplaceSpaceStatus') === YesNoEnum.Y) {
+    translateContentDealWith = translateContentDealWith.replaceAll('\n', ' ')
   }
   // 获取当前默认输入文字语言
   const inputLanguage = cacheGet('inputLanguage')
@@ -192,14 +199,12 @@ const translateFun = (): void => {
     // 自动检测翻译结果文字语言
     isResultAuto = true
     // 根据输入的语言类型获取翻译结果的语言
-    languageResultType = getLanguageResultType(translateContent.value)
+    languageResultType = getLanguageResultType(translateContentDealWith)
   }
   // 设置显示翻译加载中状态
   emit('is-result-loading-event', true)
   // 应用翻译使用
   window.api.ttimeApiTranslateUse()
-  // 处理过后的内容 过滤掉翻译器无法识别的字符
-  const translateContentDealWith = translateContent.value
   // 获取当前正在使用的翻译源
   const translateServiceMapData = getTranslateServiceMapByUse()
   // 遍历当前正在使用的翻译源
@@ -226,10 +231,10 @@ const translateFun = (): void => {
       // 当 输入文字语言类型 为 自动识别 时 由于部分翻译源不支持 自动识别 所以此处做特殊处理 内部自己识别一下
       // 之后可以考虑都使用本地识别 不使用翻译源对应的自动识别类型
       if(TranslateServiceEnum.OPEN_AI === type) {
-        languageInputTypeRequest = getLanguageTypeByOpenAI(translateContent.value)
+        languageInputTypeRequest = getLanguageTypeByOpenAI(translateContentDealWith)
       }
       if(TranslateServiceEnum.VOLCANO === type) {
-        languageInputTypeRequest = getLanguageTypeByVolcano(translateContent.value)
+        languageInputTypeRequest = getLanguageTypeByVolcano(translateContentDealWith)
       }
     }
     if (!isResultAuto) {
@@ -243,7 +248,7 @@ const translateFun = (): void => {
       languageResultTypeRequest = language.languageType
     } else {
       if(TranslateServiceEnum.OPEN_AI === type) {
-        languageResultTypeRequest = getLanguageResultTypeByOpenAI(translateContent.value)
+        languageResultTypeRequest = getLanguageResultTypeByOpenAI(translateContentDealWith)
       }
     }
     let info = buildTranslateRequestInfo(translateContentDealWith, languageInputTypeRequest, languageResultTypeRequest)
@@ -267,8 +272,6 @@ const isContentNull = (content) => {
       .replaceAll('\n', '')
       .replaceAll('\r', '')
       .replaceAll(' ', '')
-      .replaceAll('+', '')
-      .replaceAll('&', '')
   );
 
 }

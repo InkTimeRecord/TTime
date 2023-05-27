@@ -3,6 +3,7 @@ import { GlobalShortcutEvent } from './GlobalShortcutEvent'
 import { app } from 'electron'
 import { TrayEvent } from './TrayEvent'
 import { WinEvent } from './Win'
+import { YesNoEnum } from '../enums/YesNoEnum'
 
 /**
  * 全局窗口
@@ -49,12 +50,23 @@ class GlobalWin {
       return
     }
     GlobalWin.mainWin.show()
-    // 当窗口置顶时不注册Esc快捷键
-    if (!WinEvent.isAlwaysOnTop) {
-      // 当显示窗口时注册快捷键
-      // 按下 Esc 隐藏窗口
-      WinEvent.translateWinRegisterEsc()
-    }
+    this.mainWinShowCallback()
+  }
+
+  /**
+   * 窗口显示后需要触发的回调
+   */
+  static mainWinShowCallback(): void {
+    // TODO 这里暂时这么写 之后数据存储需要重构 不能继续放在 localStorage 中
+    // alwaysOnTopAllowEscStatus 开启后，当翻译窗口置顶时，按ESC键依旧可隐藏窗口
+    GlobalWin.mainWin.webContents.executeJavaScript('localStorage.alwaysOnTopAllowEscStatus').then((alwaysOnTopAllowEscStatus) => {
+      // 当窗口置顶时不注册Esc快捷键
+      if (!WinEvent.isAlwaysOnTop || YesNoEnum.Y === alwaysOnTopAllowEscStatus) {
+        // 当显示窗口时注册快捷键
+        // 按下 Esc 隐藏窗口
+        WinEvent.translateWinRegisterEsc()
+      }
+    })
   }
 
   /**

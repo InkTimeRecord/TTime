@@ -2,4 +2,4 @@ provider: generic
 url: https://update.timerecord.cn/pc/TTime/
 updaterCacheDirName: TTime-updater
 releaseInfo:
-  releaseNotes: 1.终极优化划词小部分人群失败问题，并修复与ctrl+shift+p快捷键占用问题||2.新增TTime在线OCR识别(试行版)||3.优化OpenAI(ChatGPT)为流式输出方式响应||3.修复当窗口置顶时触发截图后，显示窗口时置顶会单次失效问题||4.修复翻译源当出现+等特殊字符时会替换掉的问题||5.新增火山翻译源
+  releaseNotes: 1.修复当显示输入窗口时触发截图，导致ESC快捷键注册失败，无法退出问题||2.修复化单个词翻译时无法识别语言问题||3.优化OpenAI翻译、润色、总结、分析、解释代码提示词以增强效果，并解决翻译部分词时错误问题||4.新增配置开启后当翻译窗口置顶时，按下ESC键可退出||5.新增截图翻译下鼠标右键可退出截图||6.新增配置换行符替换为空格||7.优化部分样式体验问题
