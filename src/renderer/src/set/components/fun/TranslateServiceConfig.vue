@@ -5,13 +5,14 @@
         <el-radio-button :label='0'>文本翻译</el-radio-button>
         <el-radio-button :label='1'>文字识别</el-radio-button>
       </el-radio-group>
-        <el-tooltip
-          effect="dark"
-          content='点击查看翻译源申请教程'
-          placement="bottom-start"
-        >
-          <el-icon class='set-page-icon cursor-pointer to-page-translate-service-apply' @click='toPageTranslateServiceApply'><QuestionFilled /></el-icon>
-        </el-tooltip>
+
+      <el-tooltip
+        effect='dark'
+        content='点击查看 翻译源/文本识别 申请教程'
+        placement='bottom-start'
+      >
+        <el-button size='small' @click='toPageTranslateServiceApply'>使用教程</el-button>
+      </el-tooltip>
     </div>
 
     <translate-service v-show='menuIndex === 0' />

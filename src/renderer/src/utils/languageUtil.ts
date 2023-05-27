@@ -35,7 +35,6 @@ export const getLanguageTypeByVolcano = (translateContent) => {
     // 识别的语种范围
     only: only
   })
-  console.log('language = ', language);
   if(LanguageEnum.NO === language) {
     language = LanguageEnum.ENGLISH
   }
