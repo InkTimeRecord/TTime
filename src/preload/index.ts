@@ -282,6 +282,17 @@ const googleApiTranslateCallbackEvent = (callback): void => {
 }
 
 /**
+ * 谷歌翻译 - 接口回调
+ *
+ * @param callback 回调方法 用于主进程内部触发时推送到Vue页面执行
+ */
+const googlebuiltinApiTranslateCallbackEvent = (callback): void => {
+  ipcRenderer.on('googlebuiltin-api-translate-callback-event', (_event, obj) => {
+    callback(obj)
+  })
+}
+
+/**
  * OpenAI - 翻译接口回调
  *
  * @param callback 回调方法 用于主进程内部触发时推送到Vue页面执行
@@ -321,6 +332,28 @@ const deeplApiTranslateCallbackEvent = (callback): void => {
  */
 const volcanoApiTranslateCallbackEvent = (callback): void => {
   ipcRenderer.on('volcano-api-translate-callback-event', (_event, obj) => {
+    callback(obj)
+  })
+}
+
+/**
+ * bing - 翻译接口回调
+ *
+ * @param callback 回调方法 用于主进程内部触发时推送到Vue页面执行
+ */
+const bingApiTranslateCallbackEvent = (callback): void => {
+  ipcRenderer.on('bing-api-translate-callback-event', (_event, obj) => {
+    callback(obj)
+  })
+}
+
+/**
+ * bing - 翻译接口回调
+ *
+ * @param callback 回调方法 用于主进程内部触发时推送到Vue页面执行
+ */
+const bingdictApiTranslateCallbackEvent = (callback): void => {
+  ipcRenderer.on('bingdict-api-translate-callback-event', (_event, obj) => {
     callback(obj)
   })
 }
@@ -434,10 +467,13 @@ const api = {
   baiduApiTranslateCallbackEvent,
   aliyunApiTranslateCallbackEvent,
   googleApiTranslateCallbackEvent,
+  googlebuiltinApiTranslateCallbackEvent,
   openaiApiTranslateCallbackEvent,
   youdaoApiTranslateCallbackEvent,
   deeplApiTranslateCallbackEvent,
   volcanoApiTranslateCallbackEvent,
+  bingApiTranslateCallbackEvent,
+  bingdictApiTranslateCallbackEvent,
   ttimeApiAppStart,
   showMsgEvent,
   updateTranslateServiceEvent,

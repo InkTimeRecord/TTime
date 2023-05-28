@@ -28,7 +28,7 @@ class TranslateServiceEnum {
   static GOOGLE = 'Google'
 
   /**
-   * Google内置翻译
+   * Google翻译-内置
    */
   static GOOGLE_BUILT_IN = 'GoogleBuiltIn'
 
@@ -56,6 +56,11 @@ class TranslateServiceEnum {
    * Bing翻译
    */
   static BING = 'Bing'
+
+  /**
+   * Bing词典翻译
+   */
+  static BING_DICT = 'BingDict'
 }
 
 export default TranslateServiceEnum

@@ -104,15 +104,7 @@ import { ref } from 'vue'
 import { Minus, Plus } from '@element-plus/icons-vue'
 
 import {
-  buildAliyunService,
-  buildBaiduService,
-  buildDeepLService,
-  buildGoogleService,
-  buildOpenAIService,
-  buildTencentCloudService,
-  buildTTimeService,
-  buildVolcanoService,
-  buildYouDaoService,
+  buildService,
   getTranslateServiceMap,
   setTranslateServiceMap
 } from '../../../../utils/translateServiceUtil'
@@ -125,17 +117,8 @@ import { OpenAIModelEnum } from '../../../../enums/OpenAIModelEnum'
 // 翻译服务验证状态
 const checkIngStatus = ref(false)
 // 获取缓存中的翻译服务list
-const translateServiceSelectMenuList = ref([
-  { type: TranslateServiceEnum.TTIME, name: 'TTime翻译' },
-  { type: TranslateServiceEnum.TENCENT_CLOUD, name: '腾讯翻译君' },
-  { type: TranslateServiceEnum.BAIDU, name: '百度翻译' },
-  { type: TranslateServiceEnum.ALIYUN, name: '阿里翻译' },
-  { type: TranslateServiceEnum.GOOGLE, name: 'Google翻译' },
-  { type: TranslateServiceEnum.OPEN_AI, name: 'OpenAI翻译' },
-  { type: TranslateServiceEnum.YOU_DAO, name: '有道翻译' },
-  { type: TranslateServiceEnum.DEEP_L, name: 'DeepL翻译' },
-  { type: TranslateServiceEnum.VOLCANO, name: '火山翻译' }
-])
+const translateServiceSelectMenuList = ref(TranslateServiceEnum.getServiceList().values())
+
 const openAIModelList = OpenAIModelEnum.MODEL_LIST
 
 /**
@@ -177,26 +160,7 @@ const addTranslateService = (type) => {
       return
     }
   }
-  let service = null
-  if (TranslateServiceEnum.TTIME === type) {
-    service = buildTTimeService()
-  } else if (TranslateServiceEnum.TENCENT_CLOUD === type) {
-    service = buildTencentCloudService()
-  } else if (TranslateServiceEnum.BAIDU === type) {
-    service = buildBaiduService()
-  } else if (TranslateServiceEnum.ALIYUN === type) {
-    service = buildAliyunService()
-  } else if (TranslateServiceEnum.GOOGLE === type) {
-    service = buildGoogleService()
-  } else if (TranslateServiceEnum.OPEN_AI === type) {
-    service = buildOpenAIService()
-  } else if (TranslateServiceEnum.YOU_DAO === type) {
-    service = buildYouDaoService()
-  } else if (TranslateServiceEnum.DEEP_L === type) {
-    service = buildDeepLService()
-  } else if (TranslateServiceEnum.VOLCANO === type) {
-    service = buildVolcanoService()
-  }
+  let service = buildService(type)
   if (null !== service) {
     saveTranslateService(service)
     translateServiceThis.value = service

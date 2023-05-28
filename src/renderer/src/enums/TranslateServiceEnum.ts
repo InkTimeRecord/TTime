@@ -7,6 +7,7 @@ import openAILogo from '../assets/openAILogo.png'
 import youdaoLogo from '../assets/youdaoLogo.png'
 import deepLLogo from '../assets/deepLLogo.png'
 import volcanoLogo from '../assets/volcanoLogo.png'
+import bingLogo from '../assets/bingLogo.png'
 
 /**
  * 翻译服务枚举
@@ -38,7 +39,7 @@ class TranslateServiceEnum {
   static GOOGLE = 'Google'
 
   /**
-   * Google内置翻译
+   * Google翻译-内置
    */
   static GOOGLE_BUILT_IN = 'GoogleBuiltIn'
 
@@ -68,35 +69,45 @@ class TranslateServiceEnum {
   static BING = 'Bing'
 
   /**
+   * Bing词典翻译
+   */
+  static BING_DICT = 'BingDict'
+
+  /**
+   * 翻译服务信息Map
+   */
+  static translateServiceMap = new Map()
+
+  /**
+   * 获取服务信息
+   */
+  static getServiceList(): Map<string, { name, type, logo }> {
+    if(TranslateServiceEnum.translateServiceMap.size > 1) {
+      return TranslateServiceEnum.translateServiceMap
+    }
+    TranslateServiceEnum.translateServiceMap.set(TranslateServiceEnum.TTIME, TranslateServiceEnum.buildServiceInfo('TTime翻译', TranslateServiceEnum.TTIME, logo))
+    TranslateServiceEnum.translateServiceMap.set(TranslateServiceEnum.TENCENT_CLOUD, TranslateServiceEnum.buildServiceInfo('腾讯翻译君', TranslateServiceEnum.TENCENT_CLOUD, tencentCloudLogo))
+    TranslateServiceEnum.translateServiceMap.set(TranslateServiceEnum.BAIDU, TranslateServiceEnum.buildServiceInfo('百度翻译', TranslateServiceEnum.BAIDU, baiduLogo))
+    TranslateServiceEnum.translateServiceMap.set(TranslateServiceEnum.ALIYUN, TranslateServiceEnum.buildServiceInfo('阿里云翻译', TranslateServiceEnum.ALIYUN, aliyunLogo))
+    TranslateServiceEnum.translateServiceMap.set(TranslateServiceEnum.GOOGLE, TranslateServiceEnum.buildServiceInfo('Google翻译', TranslateServiceEnum.GOOGLE, googleLogo))
+    TranslateServiceEnum.translateServiceMap.set(TranslateServiceEnum.GOOGLE_BUILT_IN, TranslateServiceEnum.buildServiceInfo('Google翻译-内置', TranslateServiceEnum.GOOGLE_BUILT_IN, googleLogo))
+    TranslateServiceEnum.translateServiceMap.set(TranslateServiceEnum.OPEN_AI, TranslateServiceEnum.buildServiceInfo('OpenAI翻译', TranslateServiceEnum.OPEN_AI, openAILogo))
+    TranslateServiceEnum.translateServiceMap.set(TranslateServiceEnum.YOU_DAO, TranslateServiceEnum.buildServiceInfo('有道翻译', TranslateServiceEnum.YOU_DAO, youdaoLogo))
+    TranslateServiceEnum.translateServiceMap.set(TranslateServiceEnum.DEEP_L, TranslateServiceEnum.buildServiceInfo('DeepL翻译', TranslateServiceEnum.DEEP_L, deepLLogo))
+    TranslateServiceEnum.translateServiceMap.set(TranslateServiceEnum.VOLCANO, TranslateServiceEnum.buildServiceInfo('火山翻译', TranslateServiceEnum.VOLCANO, volcanoLogo))
+    TranslateServiceEnum.translateServiceMap.set(TranslateServiceEnum.BING, TranslateServiceEnum.buildServiceInfo('Bing翻译', TranslateServiceEnum.BING, bingLogo))
+    TranslateServiceEnum.translateServiceMap.set(TranslateServiceEnum.BING_DICT, TranslateServiceEnum.buildServiceInfo('Bing词典翻译', TranslateServiceEnum.BING_DICT, bingLogo))
+    return TranslateServiceEnum.translateServiceMap
+  }
+
+
+  /**
    * 获取服务信息
    *
    * @param serviceEnum 服务枚举
    */
   static getInfoByService(serviceEnum): { name, type, logo } {
-    if (TranslateServiceEnum.TTIME === serviceEnum) {
-      return TranslateServiceEnum.buildServiceInfo('TTime翻译', serviceEnum, logo)
-    } else if (TranslateServiceEnum.TENCENT_CLOUD === serviceEnum) {
-      return TranslateServiceEnum.buildServiceInfo('腾讯翻译君', serviceEnum, tencentCloudLogo)
-    } else if (TranslateServiceEnum.BAIDU === serviceEnum) {
-      return TranslateServiceEnum.buildServiceInfo('百度翻译', serviceEnum, baiduLogo)
-    } else if (TranslateServiceEnum.ALIYUN === serviceEnum) {
-      return TranslateServiceEnum.buildServiceInfo('阿里云翻译', serviceEnum, aliyunLogo)
-    } else if (TranslateServiceEnum.GOOGLE === serviceEnum) {
-      return TranslateServiceEnum.buildServiceInfo('Google翻译', serviceEnum, googleLogo)
-    } else if (TranslateServiceEnum.GOOGLE_BUILT_IN === serviceEnum) {
-      return TranslateServiceEnum.buildServiceInfo('Google内置翻译', serviceEnum, googleLogo)
-    } else if (TranslateServiceEnum.OPEN_AI === serviceEnum) {
-      return TranslateServiceEnum.buildServiceInfo('OpenAI翻译', serviceEnum, openAILogo)
-    } else if (TranslateServiceEnum.YOU_DAO === serviceEnum) {
-      return TranslateServiceEnum.buildServiceInfo('有道翻译', serviceEnum, youdaoLogo)
-    } else if (TranslateServiceEnum.DEEP_L === serviceEnum) {
-      return TranslateServiceEnum.buildServiceInfo('DeepL翻译', serviceEnum, deepLLogo)
-    } else if (TranslateServiceEnum.VOLCANO === serviceEnum) {
-      return TranslateServiceEnum.buildServiceInfo('火山翻译', serviceEnum, volcanoLogo)
-    } else if (TranslateServiceEnum.BING === serviceEnum) {
-      return TranslateServiceEnum.buildServiceInfo('Bing翻译', serviceEnum, volcanoLogo)
-    }
-    return TranslateServiceEnum.buildServiceInfo('', '', '')
+    return TranslateServiceEnum.translateServiceMap.get(serviceEnum)
   }
 
   /**
@@ -111,5 +122,8 @@ class TranslateServiceEnum {
   }
 
 }
+
+// 首次加载获取一下 用作数据初始化预加载
+TranslateServiceEnum.getServiceList();
 
 export { TranslateServiceEnum }

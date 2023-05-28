@@ -23,7 +23,7 @@ class YouDaoChannel implements ITranslateInterface {
           const vo = new TranslateVo(res['translation'])
           const basic = res['basic']
           if(null != basic) {
-            vo.youDaoBuild(
+            vo.dictBuild(
               basic['us-phonetic'],
               basic['uk-phonetic'],
               basic['us-speech'],

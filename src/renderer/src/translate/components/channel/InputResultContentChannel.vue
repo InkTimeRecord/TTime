@@ -27,35 +27,38 @@
             :autosize="{ minRows: 1, maxRows: 10 }"
           />
 
-          <tpmplate v-if="TranslateServiceEnum.YOU_DAO === props.translateService.type">
+          <tpmplate v-if="
+          TranslateServiceEnum.YOU_DAO === props.translateService.type ||
+          TranslateServiceEnum.BING_DICT === props.translateService.type
+          ">
             <div class="phonetic-layer">
-              <div class="phonetic-block" v-show="youdaoTranslatedResultExpand.isUs">
+              <div class="phonetic-block" v-show="dictTranslatedResultExpand.isUs">
                 <span class="phonetic-type">美 </span>
-                <span class="phonetic">[{{ youdaoTranslatedResultExpand.usPhonetic }}]</span>
+                <span class="phonetic">[{{ dictTranslatedResultExpand.usPhonetic }}]</span>
                 <a
                   class="phonetic-function-play cursor-pointer"
-                  @click="playSpeechByUrl(youdaoTranslatedResultExpand.usSpeech)"
+                  @click="playSpeechByUrl(dictTranslatedResultExpand.usSpeech)"
                 >
                   <svg-icon icon-class="play" class="phonetic-function-tools-icon" />
                 </a>
               </div>
-              <div class="phonetic-block" v-show="youdaoTranslatedResultExpand.isUk">
+              <div class="phonetic-block" v-show="dictTranslatedResultExpand.isUk">
                 <span class="phonetic-type">英 </span>
-                <span class="phonetic">[{{ youdaoTranslatedResultExpand.ukPhonetic }}]</span>
+                <span class="phonetic">[{{ dictTranslatedResultExpand.ukPhonetic }}]</span>
                 <a
                   class="phonetic-function-play cursor-pointer"
-                  @click="playSpeechByUrl(youdaoTranslatedResultExpand.ukSpeech)"
+                  @click="playSpeechByUrl(dictTranslatedResultExpand.ukSpeech)"
                 >
                   <svg-icon icon-class="play" class="phonetic-function-tools-icon" />
                 </a>
               </div>
             </div>
 
-            <div class="explain-layer" v-show="youdaoTranslatedResultExpand.isExplainList">
+            <div class="explain-layer" v-show="dictTranslatedResultExpand.isExplainList">
               <span class="explain-title">其他释义</span>
               <div
                 class="explain-block"
-                v-for="(explain, key) in youdaoTranslatedResultExpand.explainList"
+                v-for="(explain, key) in dictTranslatedResultExpand.explainList"
                 :key="key"
               >
                 <span class="explain-type">{{ explain.type }}</span>
@@ -63,10 +66,10 @@
               </div>
             </div>
 
-            <div class="explain-layer" v-show="youdaoTranslatedResultExpand.isWfs">
+            <div class="explain-layer" v-show="dictTranslatedResultExpand.isWfs">
               <div
                 class="explain-block"
-                v-for="(wfs, key) in youdaoTranslatedResultExpand.wfsList"
+                v-for="(wfs, key) in dictTranslatedResultExpand.wfsList"
                 :key="key"
               >
                 <span class="explain-type">{{ wfs.wf.name + ' ' }}</span>
@@ -91,16 +94,6 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import logo from '../../../assets/logo.png'
-import tencentCloudLogo from '../../../assets/tencentCloudLogo.png'
-import baiduLogo from '../../../assets/baiduLogo.png'
-import aliyunLogo from '../../../assets/aliyunLogo.png'
-import googleLogo from '../../../assets/googleLogo.png'
-import openAILogo from '../../../assets/openAILogo.png'
-import youdaoLogo from '../../../assets/youdaoLogo.png'
-import deepLLogo from '../../../assets/deepLLogo.png'
-import volcanoLogo from '../../../assets/volcanoLogo.png'
-
 import loadingImage from '../../../assets/loading.gif'
 import translate from '../../../utils/translate'
 import { TranslateServiceEnum } from '../../../enums/TranslateServiceEnum'
@@ -121,42 +114,14 @@ const getTranslateServiceBackEventName = (translateService) => {
   return translateService.type.toLowerCase() + 'ApiTranslateCallbackEvent'
 }
 
-/**
- * 获取翻译服务logo
- *
- * @param translateService 翻译服务信息
- * @return logo
- */
-const getTranslateServiceLogo = (translateService) => {
-  if (TranslateServiceEnum.TTIME === translateService.type) {
-    return logo
-  } else if (TranslateServiceEnum.TENCENT_CLOUD === translateService.type) {
-    return tencentCloudLogo
-  } else if (TranslateServiceEnum.BAIDU === translateService.type) {
-    return baiduLogo
-  } else if (TranslateServiceEnum.ALIYUN === translateService.type) {
-    return aliyunLogo
-  } else if (TranslateServiceEnum.GOOGLE === translateService.type) {
-    return googleLogo
-  } else if (TranslateServiceEnum.OPEN_AI === translateService.type) {
-    return openAILogo
-  } else if (TranslateServiceEnum.YOU_DAO === translateService.type) {
-    return youdaoLogo
-  } else if (TranslateServiceEnum.DEEP_L === translateService.type) {
-    return deepLLogo
-  } else if (TranslateServiceEnum.VOLCANO === translateService.type) {
-    return volcanoLogo
-  }
-}
-
 // 加载loading
 const loadingImageSrc = ref(loadingImage)
-const translateLogoSrc = ref(getTranslateServiceLogo(props.translateService))
+const translateLogoSrc = ref(TranslateServiceEnum.getInfoByService(props.translateService.type).logo)
 const translateName = ref(props.translateService.name)
 
 // 翻译结果
 const translatedResultContent = ref('')
-const youdaoTranslatedResultExpand = ref({})
+const dictTranslatedResultExpand = ref({})
 // 是否正在加载翻译结果
 const isResultLoading = ref(false)
 // 显示翻译结果
@@ -231,7 +196,10 @@ window.api[getTranslateServiceBackEventName(props.translateService)]((res) => {
   isResultLoading.value = false
   showResult.value = true
 
-  if (TranslateServiceEnum.YOU_DAO === props.translateService['type']) {
+  if (
+    TranslateServiceEnum.YOU_DAO === props.translateService['type'] ||
+    TranslateServiceEnum.BING_DICT === props.translateService['type']
+  ) {
     let explainListDeal = []
     if (!isNull(data.explains)) {
       explainListDeal = data.explains.map((explain) => {
@@ -254,7 +222,7 @@ window.api[getTranslateServiceBackEventName(props.translateService)]((res) => {
     const isUk = !isNull(data['ukPhonetic'])
     const isExplainList = explainListDeal.length > 0
     const isWfs = !isNull(data['wfs']) && data['wfs'].length > 0
-    youdaoTranslatedResultExpand.value = {
+    dictTranslatedResultExpand.value = {
       isUs,
       isUk,
       isExplainList,

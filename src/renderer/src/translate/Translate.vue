@@ -27,12 +27,13 @@ import ElMessageExtend from '../utils/messageExtend'
 import { ShortcutKeyEnum } from '../enums/ShortcutKeyEnum'
 import { YesNoEnum } from '../enums/YesNoEnum'
 import { isNull } from '../utils/validate'
-import { buildTTimeService, setTranslateServiceMap }  from '../utils/translateServiceUtil'
+import { buildService, setTranslateServiceMap }  from '../utils/translateServiceUtil'
 import { buildOcrTTimeService, setOcrServiceMap }  from '../utils/ocrServiceUtil'
 import { initTheme } from '../utils/themeUtil'
 import { cacheGetStr, cacheSet, cacheSetStr } from '../utils/cacheUtil'
 import { PlaySpeechServiceEnum } from '../enums/PlaySpeechServiceEnum'
 import '../channel/ChannelRequest'
+import { TranslateServiceEnum } from '../enums/TranslateServiceEnum'
 
 initTheme()
 
@@ -67,7 +68,7 @@ window.api.winShowByInputEvent(() => {
  */
 if (isNull(cacheGetStr('translateServiceMap'))) {
   const map = new Map()
-  let ttimeService = buildTTimeService()
+  let ttimeService = buildService(TranslateServiceEnum.TTIME)
   map.set(ttimeService.id, ttimeService)
   setTranslateServiceMap(map)
 }
