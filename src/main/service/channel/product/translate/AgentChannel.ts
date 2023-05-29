@@ -3,6 +3,8 @@ import TranslateServiceEnum from '../../../../enums/TranslateServiceEnum'
 import DeepLChannel from './DeepLChannel'
 import GoogleChannel from './GoogleChannel'
 import OpenAIChannel from './OpenAIChannel'
+import BingChannel from './BingChannel'
+import BingDictChannel from './BingDictChannel'
 
 /**
  * 代理翻译 - 调用翻译结果回调
@@ -14,5 +16,9 @@ ipcMain.handle('agent-api-translate-callback', (_event, type, status, data, info
     info == null ? GoogleChannel.apiTranslateCallback(status, data) : GoogleChannel.apiTranslateCheckCallback(status, data, info)
   } else if (TranslateServiceEnum.OPEN_AI === type) {
     info == null ? OpenAIChannel.apiTranslateCallback(status, data) : OpenAIChannel.apiTranslateCheckCallback(status, data, info)
+  } else if (TranslateServiceEnum.BING === type) {
+    BingChannel.apiTranslateCallback(status, data)
+  } else if (TranslateServiceEnum.BING_DICT === type) {
+    BingDictChannel.apiTranslateCallback(status, data)
   }
 })

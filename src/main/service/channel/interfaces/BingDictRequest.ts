@@ -9,10 +9,11 @@ import request from '../../../utils/request'
 const apiTranslate = (info): Promise<string> => {
   const content = info.translateContent
   const params = {
-    q: content
+    q: content,
+    mkt: info.languageResultType,
   }
   return request({
-    baseURL: 'https://cn.bing.com/',
+    baseURL: 'https://www.bing.com/',
     url: 'dict/search',
     method: HttpMethodType.GET,
     params: params

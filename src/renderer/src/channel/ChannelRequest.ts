@@ -4,6 +4,7 @@ import request from '../utils/requestNotHandle'
 import { TranslateServiceEnum } from '../enums/TranslateServiceEnum'
 import { commonError } from '../utils/RequestUtil'
 import { OpenAIChannelRequest } from './OpenAIChannelRequest'
+import { BingChannelRequest } from './BingChannelRequest'
 
 class ChannelRequest {
 
@@ -67,11 +68,29 @@ class ChannelRequest {
    * @param isCheckRequest  是否校验翻译请求状态
    */
   static openaiTranslate = (info, isCheckRequest): void => {
-    if(isCheckRequest) {
+    if (isCheckRequest) {
       OpenAIChannelRequest.openaiCheck(info)
     } else {
       OpenAIChannelRequest.openaiTranslate(info)
     }
+  }
+
+  /**
+   * bing - 翻译
+   *
+   * @param info 翻译信息
+   */
+  static bingTranslate = (info, _isCheckRequest): void => {
+    BingChannelRequest.apiTranslateByBing(info)
+  }
+
+  /**
+   * bing - 翻译
+   *
+   * @param info 翻译信息
+   */
+  static bingdictTranslate = (info, _isCheckRequest): void => {
+    BingChannelRequest.apiTranslateByBingDict(info)
   }
 
 }
