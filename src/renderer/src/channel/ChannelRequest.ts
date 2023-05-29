@@ -85,7 +85,7 @@ class ChannelRequest {
   }
 
   /**
-   * bing - 翻译
+   * bing字典 - 翻译
    *
    * @param info 翻译信息
    */

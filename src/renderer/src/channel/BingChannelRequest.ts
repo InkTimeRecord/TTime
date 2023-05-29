@@ -6,6 +6,7 @@ import { commonError } from '../utils/RequestUtil'
 import { AxiosPromise } from 'axios'
 
 class BingChannelRequest {
+
   static BING_TOKEN = ''
 
   /**
@@ -33,9 +34,8 @@ class BingChannelRequest {
       })
       return
     }
-    console.log('BingChannelRequest.BING_TOKEN = ' , BingChannelRequest.BING_TOKEN)
     // token存在则进行校验当前token有效期是否小于或等于一分钟 如果满足这个条件则刷新Token
-    const tokenInfo = Buffer.from(BingChannelRequest.BING_TOKEN.split('.')[1], 'base64').toString()
+    const tokenInfo = window.atob(BingChannelRequest.BING_TOKEN.split('.')[1])
     // 待校验的时间戳，秒级别
     const timestamp = tokenInfo['exp']
     // 当前时间的时间戳，转换为秒级别
@@ -63,9 +63,7 @@ class BingChannelRequest {
     if (info.languageType === 'auto') {
       info.languageType = ''
     }
-    console.log('refreshToken = ')
     await BingChannelRequest.refreshToken()
-    console.log('apiTranslateByBingRequest = ' , info)
     return request({
       baseURL: 'https://api-edge.cognitive.microsofttranslator.com/',
       url: 'translate',
@@ -96,14 +94,16 @@ class BingChannelRequest {
     })
   }
 
-  static dictRegex = (res: string): {
-    usPhonetic: string,
-    ukPhonetic: string,
-    usSpeech: string,
-    ukSpeech: string,
-    explains: Array<string>,
-    wfs: Array<{ wf: { name: string, value: string } }>
-  } => {
+  /**
+   * 字典数据处理
+   *
+   * @param res 数据信息
+   */
+  static dictRegex = (res: string): { usPhonetic: string; ukPhonetic: string; usSpeech: string; ukSpeech: string; explains: Array<string>; wfs: Array<{ wf: { name: string; value: string } }> } => {
+    // 出现此关键词则表示数据中没有查询到字典相关数据
+    if (res.indexOf('没有找到与') != -1) {
+      return { explains: [], ukPhonetic: '', ukSpeech: '', usPhonetic: '', usSpeech: '', wfs: [] }
+    }
     let match
     const explains: Array<string> = []
     // 匹配 其他释义字段信息 其他释义分化为了两段 下面一起匹配合并
@@ -155,24 +155,29 @@ class BingChannelRequest {
       mkt: info.languageResultType
     }
     request({
-      baseURL: 'https://www.bing.com/',
+      baseURL: 'https://cn.bing.com/',
       url: 'dict/search',
       method: HttpMethodType.GET,
-      params: params
+      params: params,
+      headers: {
+          'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8'
+      }
     }).then((res) => {
-      BingChannelRequest.apiTranslateByBingRequest(info)
-        .then((bingRes) => {
-          window.api.logInfoEvent('[Bing翻译事件] - 响应报文：', JSON.stringify(bingRes))
-          window.api['agentApiTranslateCallback'](TranslateServiceEnum.BING_DICT, true, {
-            text: bingRes[0]['translations'][0]['text'],
-            ...BingChannelRequest.dictRegex(res)
-          }, info)
-        }).catch((err) => {
+      // 这里调用bing的翻译接口进行查询结果 因为bing字典有些词或句子查不出
+      BingChannelRequest.apiTranslateByBingRequest(info).then((bingRes) => {
+        window.api.logInfoEvent('[Bing翻译事件] - 响应报文：', JSON.stringify(bingRes))
+        window.api['agentApiTranslateCallback'](TranslateServiceEnum.BING_DICT, true, {
+          text: bingRes[0]['translations'][0]['text'],
+          // @ts-ignore
+          ...BingChannelRequest.dictRegex(res)
+        }, info)
+      }).catch((err) => {
         window.api.logInfoEvent('[Bing翻译事件] - 异常：', err)
         window.api['agentApiTranslateCallback'](TranslateServiceEnum.BING_DICT, true, commonError('Bing翻译事件', err), info)
       })
     }, (err) => {
-      window.api['agentApiTranslateCallback'](TranslateServiceEnum.BING_DICT, false, commonError('BingDict翻译事件', err), info)
+      window.api.logInfoEvent('[Bing字典翻译事件] - 异常：', err)
+      window.api['agentApiTranslateCallback'](TranslateServiceEnum.BING_DICT, false, commonError('Bing字典翻译事件', err), info)
     })
   }
 }

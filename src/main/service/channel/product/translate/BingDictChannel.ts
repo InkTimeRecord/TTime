@@ -85,7 +85,7 @@ class BingDictChannel implements ITranslateInterface {
       GlobalWin.mainWin.webContents.send('openai-api-translate-callback-event', R.okT(data))
       return
     }
-    const vo = new TranslateVo(data['text'])
+    const vo = new TranslateVo([data['text']])
     vo.dictBuild(
       data.usPhonetic,
       data.ukPhonetic,
