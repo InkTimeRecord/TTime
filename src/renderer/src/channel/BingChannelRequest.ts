@@ -82,7 +82,7 @@ class BingChannelRequest {
   }
 
   /**
-   * 翻译
+   * Bing翻译
    *
    * @param info 翻译信息
    */
@@ -95,91 +95,25 @@ class BingChannelRequest {
   }
 
   /**
-   * 字典数据处理
-   *
-   * @param res 数据信息
-   */
-  static dictRegex = (res: string): { usPhonetic: string; ukPhonetic: string; usSpeech: string; ukSpeech: string; explains: Array<string>; wfs: Array<{ wf: { name: string; value: string } }> } => {
-    // 出现此关键词则表示数据中没有查询到字典相关数据
-    if (res.indexOf('没有找到与') != -1) {
-      return { explains: [], ukPhonetic: '', ukSpeech: '', usPhonetic: '', usSpeech: '', wfs: [] }
-    }
-    let match
-    const explains: Array<string> = []
-    // 匹配 其他释义字段信息 其他释义分化为了两段 下面一起匹配合并
-    const explainOtherRegex = /<span class="pos">(.*?)<\/span><span class="def b_regtxt"><span>(.*?)<\/span><\/span>/g
-    const explainNetworkRegex = /<span class="pos web">(.*?)<\/span><span class="def b_regtxt"><span>(.*?)<\/span><\/span>/g
-    while ((match = explainOtherRegex.exec(res)) !== null) {
-      explains.push(match[1] + ' ' + match[2])
-    }
-    while ((match = explainNetworkRegex.exec(res)) !== null) {
-      explains.push(match[1] + '. ' + match[2])
-    }
-    // 匹配音标及语音
-    const phoneticAndSpeechRegex = /<div class="hd_prUS b_primtxt">(.*?)&#160;\[(.*?)\] <\/div><div class="hd_tf"><a class="bigaud" onmouseover="this.className='bigaud_f';javascript:BilingualDict.Click\(this,'(.*?)','akicon.png',false,'dictionaryvoiceid'\)" onmouseout="this.className='bigaud'" title="点击朗读" onClick="javascript:BilingualDict.Click\(this,'(.*?)','akicon.png',false,'dictionaryvoiceid'\)" href="javascript:void\(0\);" h="ID=Dictionary,(.*?)"><\/a><\/div><div class="hd_pr b_primtxt">(.*?)&#160;\[(.*?)\] <\/div><div class="hd_tf"><a class="bigaud" onmouseover="this.className='bigaud_f';javascript:BilingualDict.Click\(this,'(.*?)','akicon.png',false,'dictionaryvoiceid'\)" onmouseout="this.className='bigaud'" title="点击朗读" onClick="javascript:BilingualDict.Click\(this,'(.*?)','akicon.png',false,'dictionaryvoiceid'\)"/g
-    let usPhonetic = ''
-    let ukPhonetic = ''
-    let usSpeech = ''
-    let ukSpeech = ''
-    while ((match = phoneticAndSpeechRegex.exec(res)) !== null) {
-      usPhonetic = match[2]
-      ukPhonetic = match[7]
-      usSpeech = match[3]
-      ukSpeech = match[8]
-    }
-    // 匹配语法类别
-    const wfs: Array<{ wf: { name: string, value: string } }> = []
-    const wfsRegex = /<span class="b_primtxt">(.*?)<\/span><a class="p1-5" title="" href="(.*?)" h="ID=Dictionary,(.*?)">(.*?)<\/a>/g
-    while ((match = wfsRegex.exec(res)) !== null) {
-      wfs.push({ wf: { name: match[1], value: match[4] } })
-    }
-    return {
-      usPhonetic,
-      ukPhonetic,
-      usSpeech,
-      ukSpeech,
-      explains,
-      wfs
-    }
-  }
-
-  /**
-   * 翻译
+   * 字典翻译
    *
    * @param info 翻译信息
    */
   static apiTranslateByBingDict = async (info): Promise<void> => {
-    const content = info.translateContent
-    const params = {
-      q: content,
-      mkt: info.languageResultType
-    }
-    request({
-      baseURL: 'https://cn.bing.com/',
-      url: 'dict/search',
-      method: HttpMethodType.GET,
-      params: params,
-      headers: {
-          'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8'
-      }
-    }).then((res) => {
-      // 这里调用bing的翻译接口进行查询结果 因为bing字典有些词或句子查不出
-      BingChannelRequest.apiTranslateByBingRequest(info).then((bingRes) => {
-        window.api.logInfoEvent('[Bing翻译事件] - 响应报文：', JSON.stringify(bingRes))
-        window.api['agentApiTranslateCallback'](TranslateServiceEnum.BING_DICT, true, {
-          text: bingRes[0]['translations'][0]['text'],
-          // @ts-ignore
-          ...BingChannelRequest.dictRegex(res)
-        }, info)
-      }).catch((err) => {
-        window.api.logInfoEvent('[Bing翻译事件] - 异常：', err)
-        window.api['agentApiTranslateCallback'](TranslateServiceEnum.BING_DICT, true, commonError('Bing翻译事件', err), info)
-      })
-    }, (err) => {
-      window.api.logInfoEvent('[Bing字典翻译事件] - 异常：', err)
-      window.api['agentApiTranslateCallback'](TranslateServiceEnum.BING_DICT, false, commonError('Bing字典翻译事件', err), info)
+    // 这里调用bing的翻译接口进行查询结果 因为bing字典有些词或句子查不出
+    // 这里作补充作用
+    BingChannelRequest.apiTranslateByBingRequest(info).then((bingRes) => {
+      window.api.logInfoEvent('[Bing翻译事件] - 响应报文：', JSON.stringify(bingRes))
+      window.api['agentApiTranslateCallback'](TranslateServiceEnum.BING_DICT, true, {
+        text: bingRes[0]['translations'][0]['text'],
+            ...info.dictResponse
+      }, info)
+    }).catch((err) => {
+      window.api.logInfoEvent('[Bing翻译事件] - 异常：', err)
+      window.api['agentApiTranslateCallback'](TranslateServiceEnum.BING_DICT, true, commonError('Bing翻译事件', err), info)
     })
   }
 }
+
 
 export { BingChannelRequest }
