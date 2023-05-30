@@ -6,7 +6,6 @@ import { commonError } from '../utils/RequestUtil'
 import { AxiosPromise } from 'axios'
 
 class BingChannelRequest {
-
   static BING_TOKEN = ''
 
   /**
@@ -45,12 +44,14 @@ class BingChannelRequest {
     if (timeDifference <= 60) {
       window.api.logInfoEvent('[Bing获取Token事件] - Token已失效，开始重新获取 ')
       // 剩余时间小于或等于一分钟 重新更新Token
-      await BingChannelRequest.getToken().then((token) => {
-        window.api.logInfoEvent('[Bing获取Token事件] - Token获取成功：', token)
-        BingChannelRequest.BING_TOKEN = token
-      }).catch((err) => {
-        window.api.logInfoEvent('[Bing获取Token事件] - 异常：', err)
-      })
+      await BingChannelRequest.getToken()
+        .then((token) => {
+          window.api.logInfoEvent('[Bing获取Token事件] - Token获取成功：', token)
+          BingChannelRequest.BING_TOKEN = token
+        })
+        .catch((err) => {
+          window.api.logInfoEvent('[Bing获取Token事件] - 异常：', err)
+        })
     }
   }
 
@@ -86,12 +87,20 @@ class BingChannelRequest {
    *
    * @param info 翻译信息
    */
-  static apiTranslateByBing = async (info): Promise<void> => {
-    BingChannelRequest.apiTranslateByBingRequest(info).then((data) => {
-      window.api['agentApiTranslateCallback'](TranslateServiceEnum.BING, true, data, info)
-    }, (err) => {
-      window.api['agentApiTranslateCallback'](TranslateServiceEnum.BING, false, commonError(TranslateServiceEnum.BING, err), info)
-    })
+  static apiTranslateByBing = (info): void => {
+    BingChannelRequest.apiTranslateByBingRequest(info).then(
+      (data) => {
+        window.api['agentApiTranslateCallback'](TranslateServiceEnum.BING, true, data, info)
+      },
+      (err) => {
+        window.api['agentApiTranslateCallback'](
+          TranslateServiceEnum.BING,
+          false,
+          commonError(TranslateServiceEnum.BING, err),
+          info
+        )
+      }
+    )
   }
 
   /**
@@ -99,21 +108,32 @@ class BingChannelRequest {
    *
    * @param info 翻译信息
    */
-  static apiTranslateByBingDict = async (info): Promise<void> => {
+  static apiTranslateByBingDict = (info): void => {
     // 这里调用bing的翻译接口进行查询结果 因为bing字典有些词或句子查不出
     // 这里作补充作用
-    BingChannelRequest.apiTranslateByBingRequest(info).then((bingRes) => {
-      window.api.logInfoEvent('[Bing翻译事件] - 响应报文：', JSON.stringify(bingRes))
-      window.api['agentApiTranslateCallback'](TranslateServiceEnum.BING_DICT, true, {
-        text: bingRes[0]['translations'][0]['text'],
+    BingChannelRequest.apiTranslateByBingRequest(info)
+      .then((bingRes) => {
+        window.api.logInfoEvent('[Bing翻译事件] - 响应报文：', JSON.stringify(bingRes))
+        window.api['agentApiTranslateCallback'](
+          TranslateServiceEnum.BING_DICT,
+          true,
+          {
+            text: bingRes[0]['translations'][0]['text'],
             ...info.dictResponse
-      }, info)
-    }).catch((err) => {
-      window.api.logInfoEvent('[Bing翻译事件] - 异常：', err)
-      window.api['agentApiTranslateCallback'](TranslateServiceEnum.BING_DICT, true, commonError('Bing翻译事件', err), info)
-    })
+          },
+          info
+        )
+      })
+      .catch((err) => {
+        window.api.logInfoEvent('[Bing翻译事件] - 异常：', err)
+        window.api['agentApiTranslateCallback'](
+          TranslateServiceEnum.BING_DICT,
+          true,
+          commonError('Bing翻译事件', err),
+          info
+        )
+      })
   }
 }
-
 
 export { BingChannelRequest }

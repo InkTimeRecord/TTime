@@ -5,9 +5,9 @@ import { TranslateServiceEnum } from '../enums/TranslateServiceEnum'
 import { commonError } from '../utils/RequestUtil'
 import { OpenAIChannelRequest } from './OpenAIChannelRequest'
 import { BingChannelRequest } from './BingChannelRequest'
+import { GoogleChannelRequest } from './GoogleChannelRequest'
 
 class ChannelRequest {
-
   /**
    * DeepL - 翻译
    *
@@ -27,15 +27,28 @@ class ChannelRequest {
       baseURL: 'https://api-free.deepl.com/v2/translate',
       method: HttpMethodType.POST,
       headers: {
-        'Authorization': 'DeepL-Auth-Key ' + info.appKey
+        Authorization: 'DeepL-Auth-Key ' + info.appKey
       },
       data
     }
-    request(requestInfo).then((data) => {
-      window.api['agentApiTranslateCallback'](TranslateServiceEnum.DEEP_L, true, data, isCheckRequest ? info : null)
-    }, (err) => {
-      window.api['agentApiTranslateCallback'](TranslateServiceEnum.DEEP_L, false, commonError(TranslateServiceEnum.DEEP_L, err), isCheckRequest ? info : null)
-    })
+    request(requestInfo).then(
+      (data) => {
+        window.api['agentApiTranslateCallback'](
+          TranslateServiceEnum.DEEP_L,
+          true,
+          data,
+          isCheckRequest ? info : null
+        )
+      },
+      (err) => {
+        window.api['agentApiTranslateCallback'](
+          TranslateServiceEnum.DEEP_L,
+          false,
+          commonError(TranslateServiceEnum.DEEP_L, err),
+          isCheckRequest ? info : null
+        )
+      }
+    )
   }
 
   /**
@@ -45,20 +58,17 @@ class ChannelRequest {
    * @param isCheckRequest  是否校验翻译请求状态
    */
   static googleTranslate = (info, isCheckRequest): void => {
-    const requestInfo = {
-      baseURL: 'https://translation.googleapis.com',
-      url: '/language/translate/v2?key=' + info.appKey,
-      method: HttpMethodType.POST,
-      data: {
-        q: info.translateContent.split('\n'),
-        target: info.languageResultType
-      }
-    }
-    request(requestInfo).then((data) => {
-      window.api['agentApiTranslateCallback'](TranslateServiceEnum.GOOGLE, true, data, isCheckRequest ? info : null)
-    }, (err) => {
-      window.api['agentApiTranslateCallback'](TranslateServiceEnum.GOOGLE, false, commonError(TranslateServiceEnum.GOOGLE, err), isCheckRequest ? info : null)
-    })
+    GoogleChannelRequest.apiTranslateByGoogle(info, isCheckRequest)
+  }
+
+  /**
+   * Google - 翻译
+   *
+   * @param info 翻译信息
+   * @param isCheckRequest  是否校验翻译请求状态
+   */
+  static googlebuiltinTranslate = (info, isCheckRequest): void => {
+    GoogleChannelRequest.apiTranslateByGoogleBuiltIn(info, isCheckRequest)
   }
 
   /**
@@ -92,7 +102,6 @@ class ChannelRequest {
   static bingdictTranslate = (info, _isCheckRequest): void => {
     BingChannelRequest.apiTranslateByBingDict(info)
   }
-
 }
 
 /**

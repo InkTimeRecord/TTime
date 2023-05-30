@@ -7,9 +7,7 @@ import { paramsFilter } from '../../../../utils/logExtend'
 import { isNotNull, isNull } from '../../../../utils/validate'
 import { OpenAIStatusEnum } from '../../../../enums/OpenAIStatusEnum'
 
-
 class OpenAIChannel implements ITranslateInterface {
-
   /**
    * 翻译
    *
@@ -17,7 +15,12 @@ class OpenAIChannel implements ITranslateInterface {
    */
   apiTranslate(info): void {
     log.info('[OpenAI翻译事件] - 请求报文 : ', paramsFilter(info))
-    GlobalWin.mainWin.webContents.send('agent-api-translate', TranslateServiceEnum.OPEN_AI, info, false)
+    GlobalWin.mainWin.webContents.send(
+      'agent-api-translate',
+      TranslateServiceEnum.OPEN_AI,
+      info,
+      false
+    )
   }
 
   /**
@@ -27,7 +30,12 @@ class OpenAIChannel implements ITranslateInterface {
    */
   apiTranslateCheck(info): void {
     log.info('[OpenAI翻译校验密钥事件] - 请求报文 : ', paramsFilter(info))
-    GlobalWin.mainWin.webContents.send('agent-api-translate', TranslateServiceEnum.OPEN_AI, info, true)
+    GlobalWin.mainWin.webContents.send(
+      'agent-api-translate',
+      TranslateServiceEnum.OPEN_AI,
+      info,
+      true
+    )
   }
 
   /**
@@ -66,7 +74,10 @@ class OpenAIChannel implements ITranslateInterface {
         OpenAIChannel.callbackEvent(OpenAIStatusEnum.END, error)
         return
       }
-      OpenAIChannel.callbackEvent(OpenAIStatusEnum.END, '发生未知错误，如重复出现请查看日志或联系作者解决')
+      OpenAIChannel.callbackEvent(
+        OpenAIStatusEnum.END,
+        '发生未知错误，如重复出现请查看日志或联系作者解决'
+      )
       return
     }
     // 开始或结束状态
@@ -103,9 +114,17 @@ class OpenAIChannel implements ITranslateInterface {
     }
     if (status) {
       log.info('[OpenAI翻译校验密钥事件] - 响应报文 : ', JSON.stringify(data))
-      GlobalWin.setWin.webContents.send('api-check-translate-callback-event', TranslateServiceEnum.OPEN_AI, R.okD(responseData))
+      GlobalWin.setWin.webContents.send(
+        'api-check-translate-callback-event',
+        TranslateServiceEnum.OPEN_AI,
+        R.okD(responseData)
+      )
     } else {
-      GlobalWin.setWin.webContents.send('api-check-translate-callback-event', TranslateServiceEnum.OPEN_AI, R.errorMD(this.commonErrorExpand(data), responseData))
+      GlobalWin.setWin.webContents.send(
+        'api-check-translate-callback-event',
+        TranslateServiceEnum.OPEN_AI,
+        R.errorMD(this.commonErrorExpand(data), responseData)
+      )
     }
   }
 
@@ -121,7 +140,6 @@ class OpenAIChannel implements ITranslateInterface {
     }
     return msg
   }
-
 }
 
 export default OpenAIChannel

@@ -9,9 +9,9 @@ import { injectAgentBySetAgentFieldName } from '../../../utils/RequestUtil'
  * @param info 翻译信息
  */
 const apiTranslate = async (info) => {
-  let configInfo = {}
+  const configInfo = {}
   await injectAgentBySetAgentFieldName(configInfo, 'httpsProxy')
-  let config = new $OpenApi.Config({
+  const config = new $OpenApi.Config({
     ...configInfo,
     accessKeyId: info.appId,
     accessKeySecret: info.appKey,
@@ -19,8 +19,8 @@ const apiTranslate = async (info) => {
   })
   // 访问的域名
   config.endpoint = 'mt.cn-hangzhou.aliyuncs.com'
-  let client = new alimt20181012(config)
-  let translateGeneralRequest = new $alimt20181012.TranslateGeneralRequest({
+  const client = new alimt20181012(config)
+  const translateGeneralRequest = new $alimt20181012.TranslateGeneralRequest({
     sourceLanguage: info.languageType,
     // 翻译文本的格式
     // html ( 网页格式 : 设置此参数将对待翻译文本以及翻译后文本按照html格式进行处理 )
@@ -31,7 +31,10 @@ const apiTranslate = async (info) => {
     scene: 'general'
   })
   // 创建 RuntimeObject 实例并设置运行参数
-  return await client.translateGeneralWithOptions(translateGeneralRequest, new $Util.RuntimeOptions({}))
+  return await client.translateGeneralWithOptions(
+    translateGeneralRequest,
+    new $Util.RuntimeOptions({})
+  )
 }
 
 export default {

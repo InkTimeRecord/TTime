@@ -113,8 +113,7 @@ class BingDictChannel implements ITranslateInterface {
     GlobalWin.mainWin.webContents.send('bingdict-api-translate-callback-event', R.okD(vo))
   }
 
-  apiTranslateCheck(_info): void {
-  }
+  apiTranslateCheck(_info): void {}
 }
 
 export default BingDictChannel

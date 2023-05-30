@@ -2,7 +2,6 @@
  * 页面提示消息类型
  */
 class WebShowMsgEnum {
-
   /**
    * 成功
    */
@@ -15,7 +14,6 @@ class WebShowMsgEnum {
    * 错误
    */
   static ERROR = '2'
-
 }
 
 export default WebShowMsgEnum

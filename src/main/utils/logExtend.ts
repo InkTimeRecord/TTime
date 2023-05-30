@@ -22,7 +22,7 @@ export const responseFilter = (obj, appId, appKey) => {
 
 export const responseFilterByCustomField = (obj, ...fields) => {
   const newObj = JSON.parse(JSON.stringify(obj))
-  fields.map(field => {
+  fields.map((field) => {
     if (isNotNull(field) && isNotNull(newObj[field])) {
       newObj[field] = '***'
     }

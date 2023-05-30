@@ -49,7 +49,9 @@ class OcrChannelFactory {
    */
   static buildOcrCheckRequestInfo = () => {
     return {
-      img: Buffer.from(fs.readFileSync(path.join(__dirname, '../../ocr/ocrCheck.png'))).toString('base64')
+      img: Buffer.from(fs.readFileSync(path.join(__dirname, '../../ocr/ocrCheck.png'))).toString(
+        'base64'
+      )
     }
   }
 }

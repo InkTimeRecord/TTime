@@ -64,7 +64,9 @@ function createWindow(): void {
     show: false,
     // 自动隐藏菜单栏
     autoHideMenuBar: true,
-    ...('linux' === process.platform ? { icon: path.join(__dirname, '../../public/icon-1024x1024.png') } : {}),
+    ...('linux' === process.platform
+      ? { icon: path.join(__dirname, '../../public/icon-1024x1024.png') }
+      : {}),
     webPreferences: {
       preload: path.join(__dirname, '../preload/index.js'),
       sandbox: false,
@@ -81,9 +83,11 @@ function createWindow(): void {
     mainWin.loadFile(path.join(__dirname, '../renderer/index.html'))
   }
 
-  mainWin.webContents.executeJavaScript('JSON.parse(localStorage.agentConfig)').then((agentConfig) => {
-    injectWinAgent(agentConfig, mainWin.webContents.session)
-  })
+  mainWin.webContents
+    .executeJavaScript('JSON.parse(localStorage.agentConfig)')
+    .then((agentConfig) => {
+      injectWinAgent(agentConfig, mainWin.webContents.session)
+    })
 
   // mainWin.webContents.openDevTools({ mode: 'detach' })
   GlobalWin.setMainWin(mainWin)

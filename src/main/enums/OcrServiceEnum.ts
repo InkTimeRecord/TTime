@@ -16,7 +16,6 @@ class OcrServiceEnum {
    * 百度
    */
   static BAIDU = 'Baidu'
-
 }
 
 export default OcrServiceEnum

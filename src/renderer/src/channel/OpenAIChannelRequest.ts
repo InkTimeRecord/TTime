@@ -133,19 +133,24 @@ export class QuoteProcessor {
 }
 
 class OpenAIChannelRequest {
-
-  static buildOpenAIRequest(info, isCheckRequest): { data: object, quoteProcessor: QuoteProcessor } {
+  static buildOpenAIRequest(
+    info,
+    isCheckRequest
+  ): { data: object; quoteProcessor: QuoteProcessor } {
     const languageType = info.languageType
     const languageResultType = info.languageResultType
-    let quoteProcessor = new QuoteProcessor()
-    let rolePrompt = 'You are a professional translation engine, please translate the text into a colloquial, professional, elegant and fluent content, without the style of machine translation. You must only translate the text content, never interpret it.'
+    const quoteProcessor = new QuoteProcessor()
+    let rolePrompt =
+      'You are a professional translation engine, please translate the text into a colloquial, professional, elegant and fluent content, without the style of machine translation. You must only translate the text content, never interpret it.'
     let commandPrompt = `Translate from ${languageType} to ${languageResultType}. Return translated text only. Only translate the text between ${quoteProcessor.quoteStart} and ${quoteProcessor.quoteEnd}.`
     let contentPrompt = `${quoteProcessor.quoteStart}${info.translateContent}${quoteProcessor.quoteEnd}`
     if (languageResultType === '文字润色') {
-      rolePrompt = "You are a professional text summarizer, you can only summarize the text, don't interpret it."
+      rolePrompt =
+        "You are a professional text summarizer, you can only summarize the text, don't interpret it."
       commandPrompt = `Please polish this text in ${languageType}. Only polish the text between ${quoteProcessor.quoteStart} and ${quoteProcessor.quoteEnd}.`
     } else if (languageResultType === '总结') {
-      rolePrompt = 'You are a professional text summarizer, you can only summarize the text, don\'t interpret it.'
+      rolePrompt =
+        "You are a professional text summarizer, you can only summarize the text, don't interpret it."
       commandPrompt = `Please summarize this text in the most concise language and must use ${languageType} language! Only summarize the text between ${quoteProcessor.quoteStart} and ${quoteProcessor.quoteEnd}.`
       contentPrompt = `${quoteProcessor.quoteStart}${info.translateContent}${quoteProcessor.quoteEnd}`
     } else if (languageResultType === '分析') {
@@ -153,7 +158,8 @@ class OpenAIChannelRequest {
       commandPrompt = `Please translate this text to ${languageType} and explain the grammar in the original text using ${languageType}. Only analyze the text between ${quoteProcessor.quoteStart} and ${quoteProcessor.quoteEnd}.`
       contentPrompt = `${quoteProcessor.quoteStart}${info.translateContent}${quoteProcessor.quoteEnd}`
     } else if (languageResultType === '解释代码') {
-      rolePrompt = 'You are a code explanation engine that can only explain code but not interpret or translate it. Also, please report bugs and errors (if any).'
+      rolePrompt =
+        'You are a code explanation engine that can only explain code but not interpret or translate it. Also, please report bugs and errors (if any).'
       commandPrompt = `explain the provided code, regex or script in the most concise language and must use ${languageType} language! You may use Markdown. If the content is not code, return an error message. If the code has obvious errors, point them out.`
       contentPrompt = '```\n' + info.translateContent + '\n```'
     }
@@ -188,7 +194,12 @@ class OpenAIChannelRequest {
   static openaiTranslate = (info): void => {
     const isCheckRequest = false
     const { data, quoteProcessor } = OpenAIChannelRequest.buildOpenAIRequest(info, isCheckRequest)
-    window.api['agentApiTranslateCallback'](TranslateServiceEnum.OPEN_AI, true, { code: OpenAIStatusEnum.START }, isCheckRequest ? info : null)
+    window.api['agentApiTranslateCallback'](
+      TranslateServiceEnum.OPEN_AI,
+      true,
+      { code: OpenAIStatusEnum.START },
+      isCheckRequest ? info : null
+    )
     let text = ''
     fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -197,52 +208,74 @@ class OpenAIChannelRequest {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${info.appKey}`
       }
-    }).then(async (response) => {
-      const reader = response.body.pipeThrough(new TextDecoderStream()).getReader()
-      try {
-        while (true) {
-          const { value, done } = await reader.read()
-          if (done) {
-            break
-          }
-          const dataArray = value.split('data: ')
-          dataArray.forEach((data) => {
-            data = data.trim()
-            if (isNull(data) || data === '[DONE]') {
-              return
-            }
-            data = JSON.parse(data)
-            if (isNotNull(data['error'])) {
-              window.api['agentApiTranslateCallback'](TranslateServiceEnum.OPEN_AI, true, {
-                code: OpenAIStatusEnum.ERROR,
-                error: data
-              }, isCheckRequest ? info : null)
-              return
-            }
-            let content = data['choices'][0]['delta']['content']
-            if (isNull(content)) {
-              return
-            }
-            content = quoteProcessor.processText(content)
-            text += content
-            window.api['agentApiTranslateCallback'](TranslateServiceEnum.OPEN_AI, true, {
-              code: OpenAIStatusEnum.ING,
-              content: content
-            }, isCheckRequest ? info : null)
-          })
-        }
-      } finally {
-        reader.releaseLock()
-      }
-      window.api['agentApiTranslateCallback'](TranslateServiceEnum.OPEN_AI, true, { code: OpenAIStatusEnum.END }, isCheckRequest ? info : null)
-      window.api.logInfoEvent('[OpenAI翻译事件] - 响应报文 : ', text)
-    }).catch(error => {
-      window.api.logInfoEvent('[OpenAI翻译事件] - error : ', error)
-      window.api['agentApiTranslateCallback'](TranslateServiceEnum.OPEN_AI, true, {
-        code: OpenAIStatusEnum.ERROR,
-        error: error
-      }, isCheckRequest ? info : null)
     })
+      .then(async (response) => {
+        const reader = response.body.pipeThrough(new TextDecoderStream()).getReader()
+        try {
+          while (true) {
+            const { value, done } = await reader.read()
+            if (done) {
+              break
+            }
+            const dataArray = value.split('data: ')
+            dataArray.forEach((data) => {
+              data = data.trim()
+              if (isNull(data) || data === '[DONE]') {
+                return
+              }
+              data = JSON.parse(data)
+              if (isNotNull(data['error'])) {
+                window.api['agentApiTranslateCallback'](
+                  TranslateServiceEnum.OPEN_AI,
+                  true,
+                  {
+                    code: OpenAIStatusEnum.ERROR,
+                    error: data
+                  },
+                  isCheckRequest ? info : null
+                )
+                return
+              }
+              let content = data['choices'][0]['delta']['content']
+              if (isNull(content)) {
+                return
+              }
+              content = quoteProcessor.processText(content)
+              text += content
+              window.api['agentApiTranslateCallback'](
+                TranslateServiceEnum.OPEN_AI,
+                true,
+                {
+                  code: OpenAIStatusEnum.ING,
+                  content: content
+                },
+                isCheckRequest ? info : null
+              )
+            })
+          }
+        } finally {
+          reader.releaseLock()
+        }
+        window.api['agentApiTranslateCallback'](
+          TranslateServiceEnum.OPEN_AI,
+          true,
+          { code: OpenAIStatusEnum.END },
+          isCheckRequest ? info : null
+        )
+        window.api.logInfoEvent('[OpenAI翻译事件] - 响应报文 : ', text)
+      })
+      .catch((error) => {
+        window.api.logInfoEvent('[OpenAI翻译事件] - error : ', error)
+        window.api['agentApiTranslateCallback'](
+          TranslateServiceEnum.OPEN_AI,
+          true,
+          {
+            code: OpenAIStatusEnum.ERROR,
+            error: error
+          },
+          isCheckRequest ? info : null
+        )
+      })
   }
 
   /**
@@ -263,13 +296,25 @@ class OpenAIChannelRequest {
         Authorization: 'Bearer ' + info.appKey
       }
     }
-    request(requestInfo).then((data) => {
-      window.api['agentApiTranslateCallback'](TranslateServiceEnum.OPEN_AI, true, data, isCheckRequest ? info : null)
-    }, (err) => {
-      window.api['agentApiTranslateCallback'](TranslateServiceEnum.OPEN_AI, false, commonError(TranslateServiceEnum.OPEN_AI, err), isCheckRequest ? info : null)
-    })
+    request(requestInfo).then(
+      (data) => {
+        window.api['agentApiTranslateCallback'](
+          TranslateServiceEnum.OPEN_AI,
+          true,
+          data,
+          isCheckRequest ? info : null
+        )
+      },
+      (err) => {
+        window.api['agentApiTranslateCallback'](
+          TranslateServiceEnum.OPEN_AI,
+          false,
+          commonError(TranslateServiceEnum.OPEN_AI, err),
+          isCheckRequest ? info : null
+        )
+      }
+    )
   }
-
 }
 
 export { OpenAIChannelRequest }

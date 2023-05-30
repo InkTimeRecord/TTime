@@ -27,12 +27,14 @@
             :autosize="{ minRows: 1, maxRows: 10 }"
           />
 
-          <tpmplate v-if="
-          TranslateServiceEnum.YOU_DAO === props.translateService.type ||
-          TranslateServiceEnum.BING_DICT === props.translateService.type
-          ">
+          <tpmplate
+            v-if="
+              TranslateServiceEnum.YOU_DAO === props.translateService.type ||
+              TranslateServiceEnum.BING_DICT === props.translateService.type
+            "
+          >
             <div class="phonetic-layer">
-              <div class="phonetic-block" v-show="dictTranslatedResultExpand.isUs">
+              <div v-show="dictTranslatedResultExpand.isUs" class="phonetic-block">
                 <span class="phonetic-type">美 </span>
                 <span class="phonetic">[{{ dictTranslatedResultExpand.usPhonetic }}]</span>
                 <a
@@ -42,7 +44,7 @@
                   <svg-icon icon-class="play" class="phonetic-function-tools-icon" />
                 </a>
               </div>
-              <div class="phonetic-block" v-show="dictTranslatedResultExpand.isUk">
+              <div v-show="dictTranslatedResultExpand.isUk" class="phonetic-block">
                 <span class="phonetic-type">英 </span>
                 <span class="phonetic">[{{ dictTranslatedResultExpand.ukPhonetic }}]</span>
                 <a
@@ -54,23 +56,23 @@
               </div>
             </div>
 
-            <div class="explain-layer" v-show="dictTranslatedResultExpand.isExplainList">
+            <div v-show="dictTranslatedResultExpand.isExplainList" class="explain-layer">
               <span class="explain-title">其他释义</span>
               <div
-                class="explain-block"
                 v-for="(explain, key) in dictTranslatedResultExpand.explainList"
                 :key="key"
+                class="explain-block"
               >
                 <span class="explain-type">{{ explain.type }}</span>
                 <span class="explain-content">{{ explain.content }}</span>
               </div>
             </div>
 
-            <div class="explain-layer" v-show="dictTranslatedResultExpand.isWfs">
+            <div v-show="dictTranslatedResultExpand.isWfs" class="explain-layer">
               <div
-                class="explain-block"
                 v-for="(wfs, key) in dictTranslatedResultExpand.wfsList"
                 :key="key"
+                class="explain-block"
               >
                 <span class="explain-type">{{ wfs.wf.name + ' ' }}</span>
                 <span class="explain-content">{{ wfs.wf.value }}</span>
@@ -116,7 +118,9 @@ const getTranslateServiceBackEventName = (translateService) => {
 
 // 加载loading
 const loadingImageSrc = ref(loadingImage)
-const translateLogoSrc = ref(TranslateServiceEnum.getInfoByService(props.translateService.type).logo)
+const translateLogoSrc = ref(
+  TranslateServiceEnum.getInfoByService(props.translateService.type).logo
+)
 const translateName = ref(props.translateService.name)
 
 // 翻译结果

@@ -14,7 +14,8 @@ class AliyunChannel implements ITranslateInterface {
    */
   apiTranslate(info): void {
     log.info('[阿里云翻译事件] - 请求报文 : ', paramsFilter(info))
-    AliyunRequest.apiTranslate(info).then((response) => {
+    AliyunRequest.apiTranslate(info).then(
+      (response) => {
         const body = response.body
         log.info('[阿里云翻译事件] - 响应报文 : ', body)
         const code = body.code
@@ -30,7 +31,7 @@ class AliyunChannel implements ITranslateInterface {
       (err) => {
         log.error('[阿里云翻译事件] - 异常响应报文 : ', err)
         let msg = ''
-        let errMessage = err.message
+        const errMessage = err.message
         if (errMessage.indexOf('which exceeds the frequency limit') !== -1) {
           msg = '查询过于频繁 , 请重试'
         } else if (errMessage.indexOf('Specified access key is disabled') !== -1) {
@@ -51,7 +52,7 @@ class AliyunChannel implements ITranslateInterface {
   apiTranslateCheck(info): void {
     log.info('[阿里云翻译校验密钥事件] - 请求报文 : ', paramsFilter(info))
     // 响应信息
-    let responseData = {
+    const responseData = {
       id: info.id,
       appId: info.appId,
       appKey: info.appKey
@@ -62,21 +63,33 @@ class AliyunChannel implements ITranslateInterface {
         log.info('[阿里云翻译校验密钥事件] - 响应报文 : ', response)
         const code = body.code
         if (code === 200) {
-          GlobalWin.setWin.webContents.send('api-check-translate-callback-event', TranslateServiceEnum.ALIYUN, R.okD(responseData))
+          GlobalWin.setWin.webContents.send(
+            'api-check-translate-callback-event',
+            TranslateServiceEnum.ALIYUN,
+            R.okD(responseData)
+          )
         } else {
-          GlobalWin.setWin.webContents.send('api-check-translate-callback-event', TranslateServiceEnum.ALIYUN, R.errorMD(this.getMsgByErrorCode(code, body.message), responseData))
+          GlobalWin.setWin.webContents.send(
+            'api-check-translate-callback-event',
+            TranslateServiceEnum.ALIYUN,
+            R.errorMD(this.getMsgByErrorCode(code, body.message), responseData)
+          )
         }
       },
       (err) => {
         log.error('[阿里云翻译校验密钥事件] - 异常响应报文 : ', err)
         let msg = ''
-        let errMessage = err.message
+        const errMessage = err.message
         if (errMessage.indexOf('Specified access key is not found') !== -1) {
           msg = '请输入正确的 KeyId 后再试'
         } else if (errMessage.indexOf('Specified signature is not matched') !== -1) {
           msg = '输入的密钥信息不匹配，请检查后再试'
         }
-        GlobalWin.setWin.webContents.send('api-check-translate-callback-event', TranslateServiceEnum.ALIYUN, R.errorMD(msg, responseData))
+        GlobalWin.setWin.webContents.send(
+          'api-check-translate-callback-event',
+          TranslateServiceEnum.ALIYUN,
+          R.errorMD(msg, responseData)
+        )
       }
     )
   }
@@ -118,7 +131,6 @@ class AliyunChannel implements ITranslateInterface {
     }
     return msg
   }
-
 }
 
 export default AliyunChannel

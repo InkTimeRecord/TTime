@@ -10,7 +10,7 @@ const apiTranslate = (info): Promise<string> => {
   const content = info.translateContent
   const params = {
     q: content,
-    mkt: info.languageResultType,
+    mkt: info.languageResultType
   }
   return request({
     baseURL: 'https://www.bing.com/',

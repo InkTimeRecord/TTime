@@ -21,7 +21,6 @@ class OpenAIStatusEnum {
    * 获取中
    */
   static ING = 2
-
 }
 
 export { OpenAIStatusEnum }

@@ -30,7 +30,6 @@ class TTimeChannel implements ITranslateInterface {
   }
 
   apiTranslateCheck(_info): void {}
-
 }
 
 export default TTimeChannel

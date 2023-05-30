@@ -1740,7 +1740,8 @@ const TencentCloudLanguageListOld = [
   {
     languageName: '印地语',
     languageType: 'hi'
-  }]
+  }
+]
 const GoogleLanguageListOld = [
   {
     languageName: '南非荷兰语',
@@ -3262,7 +3263,6 @@ const OpenAILanguageListOld = [
     languageName: '祖鲁语',
     languageType: 'Isi-Zulu'
   }
-
 ]
 const DeepLLanguageListOld = [
   {
@@ -4017,19 +4017,54 @@ const BingLanguageListOld = [
   }
 ]
 
-languageMap.set(TranslateServiceEnum.TTIME, injectService(TTimeLanguageListOld, TranslateServiceEnum.TTIME))
-languageMap.set(TranslateServiceEnum.BAIDU, injectService(BaiduLanguageListOld, TranslateServiceEnum.BAIDU))
-languageMap.set(TranslateServiceEnum.ALIYUN, injectService(AliyunLanguageListOld, TranslateServiceEnum.ALIYUN))
-languageMap.set(TranslateServiceEnum.TENCENT_CLOUD, injectService(TencentCloudLanguageListOld, TranslateServiceEnum.TENCENT_CLOUD))
-languageMap.set(TranslateServiceEnum.GOOGLE, injectService(GoogleLanguageListOld, TranslateServiceEnum.GOOGLE))
-languageMap.set(TranslateServiceEnum.GOOGLE_BUILT_IN, injectService(GoogleLanguageListOld, TranslateServiceEnum.GOOGLE_BUILT_IN))
-languageMap.set(TranslateServiceEnum.YOU_DAO, injectService(YouDaoLanguageListOld, TranslateServiceEnum.YOU_DAO))
-languageMap.set(TranslateServiceEnum.OPEN_AI, injectService(OpenAILanguageListOld, TranslateServiceEnum.OPEN_AI))
-languageMap.set(TranslateServiceEnum.DEEP_L, injectService(DeepLLanguageListOld, TranslateServiceEnum.DEEP_L))
-languageMap.set(TranslateServiceEnum.VOLCANO, injectService(VolcanoLanguageListOld, TranslateServiceEnum.VOLCANO))
-languageMap.set(TranslateServiceEnum.BING, injectService(BingLanguageListOld, TranslateServiceEnum.BING))
-languageMap.set(TranslateServiceEnum.BING_DICT, injectService(BingLanguageListOld, TranslateServiceEnum.BING_DICT))
-
+languageMap.set(
+  TranslateServiceEnum.TTIME,
+  injectService(TTimeLanguageListOld, TranslateServiceEnum.TTIME)
+)
+languageMap.set(
+  TranslateServiceEnum.BAIDU,
+  injectService(BaiduLanguageListOld, TranslateServiceEnum.BAIDU)
+)
+languageMap.set(
+  TranslateServiceEnum.ALIYUN,
+  injectService(AliyunLanguageListOld, TranslateServiceEnum.ALIYUN)
+)
+languageMap.set(
+  TranslateServiceEnum.TENCENT_CLOUD,
+  injectService(TencentCloudLanguageListOld, TranslateServiceEnum.TENCENT_CLOUD)
+)
+languageMap.set(
+  TranslateServiceEnum.GOOGLE,
+  injectService(GoogleLanguageListOld, TranslateServiceEnum.GOOGLE)
+)
+languageMap.set(
+  TranslateServiceEnum.GOOGLE_BUILT_IN,
+  injectService(GoogleLanguageListOld, TranslateServiceEnum.GOOGLE_BUILT_IN)
+)
+languageMap.set(
+  TranslateServiceEnum.YOU_DAO,
+  injectService(YouDaoLanguageListOld, TranslateServiceEnum.YOU_DAO)
+)
+languageMap.set(
+  TranslateServiceEnum.OPEN_AI,
+  injectService(OpenAILanguageListOld, TranslateServiceEnum.OPEN_AI)
+)
+languageMap.set(
+  TranslateServiceEnum.DEEP_L,
+  injectService(DeepLLanguageListOld, TranslateServiceEnum.DEEP_L)
+)
+languageMap.set(
+  TranslateServiceEnum.VOLCANO,
+  injectService(VolcanoLanguageListOld, TranslateServiceEnum.VOLCANO)
+)
+languageMap.set(
+  TranslateServiceEnum.BING,
+  injectService(BingLanguageListOld, TranslateServiceEnum.BING)
+)
+languageMap.set(
+  TranslateServiceEnum.BING_DICT,
+  injectService(BingLanguageListOld, TranslateServiceEnum.BING_DICT)
+)
 
 /**
  * 注入服务名称
@@ -4037,8 +4072,11 @@ languageMap.set(TranslateServiceEnum.BING_DICT, injectService(BingLanguageListOl
  * @param list 列表
  * @param serviceEnum 服务类型
  */
-function injectService(list, serviceEnum): [{ languageName, languageType, serviceList: { name, type, logo } }] {
-  return list.map(value => {
+function injectService(
+  list,
+  serviceEnum
+): [{ languageName; languageType; serviceList: { name; type; logo } }] {
+  return list.map((value) => {
     return {
       ...value,
       serviceList: [TranslateServiceEnum.getInfoByService(serviceEnum)]
@@ -4100,6 +4138,4 @@ const initLanguageList = () => {
   return mergeLanguageList(languageArray)
 }
 
-export {
-  initLanguageList
-}
+export { initLanguageList }

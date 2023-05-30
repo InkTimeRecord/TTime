@@ -21,7 +21,6 @@ class AutoUpdaterEnum {
    * 版本检测结束, 没有新版本时触发
    */
   static UPDATE_NOT_AVAILABLE = 'update-not-available'
-
 }
 
 export { AutoUpdaterEnum }

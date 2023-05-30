@@ -26,7 +26,7 @@ class TencentCloudChannel implements ITranslateInterface {
       (err) => {
         log.error('[腾讯云翻译事件] - 异常响应报文 : ', err)
         let msg = ''
-        let errMessage = err.message
+        const errMessage = err.message
         if (errMessage.indexOf('which exceeds the frequency limit') !== -1) {
           msg = '查询过于频繁 , 请重试'
         } else {
@@ -45,7 +45,7 @@ class TencentCloudChannel implements ITranslateInterface {
   apiTranslateCheck(info): void {
     log.info('[腾讯云翻译校验密钥事件] - 请求报文 : ', paramsFilter(info))
     // 响应信息
-    let responseData = {
+    const responseData = {
       id: info.id,
       appId: info.appId,
       appKey: info.appKey
@@ -53,12 +53,16 @@ class TencentCloudChannel implements ITranslateInterface {
     TencentCloudRequest.apiTranslate(info).then(
       (data) => {
         log.info('[腾讯云翻译校验密钥事件] - 响应报文 : ', data)
-        GlobalWin.setWin.webContents.send('api-check-translate-callback-event', TranslateServiceEnum.TENCENT_CLOUD, R.okD(responseData))
+        GlobalWin.setWin.webContents.send(
+          'api-check-translate-callback-event',
+          TranslateServiceEnum.TENCENT_CLOUD,
+          R.okD(responseData)
+        )
       },
       (err) => {
         log.error('[腾讯云翻译校验密钥事件] - 异常响应报文 : ', err)
         let msg = ''
-        let errMessage = err.message
+        const errMessage = err.message
         if (errMessage.indexOf('reason: read ECONNRESET') !== -1) {
           msg = '验证超时，如重复出现，请检查网络后再试'
         } else if (errMessage.indexOf('The SecretId is not found') !== -1) {
@@ -68,11 +72,14 @@ class TencentCloudChannel implements ITranslateInterface {
         } else {
           msg = '未知错误 , 如重复出现 , 请联系开发者'
         }
-        GlobalWin.setWin.webContents.send('api-check-translate-callback-event', TranslateServiceEnum.TENCENT_CLOUD, R.errorMD(msg, responseData))
+        GlobalWin.setWin.webContents.send(
+          'api-check-translate-callback-event',
+          TranslateServiceEnum.TENCENT_CLOUD,
+          R.errorMD(msg, responseData)
+        )
       }
     )
   }
-
 }
 
 export default TencentCloudChannel

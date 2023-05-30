@@ -10,7 +10,6 @@ import WebShowMsgEnum from '../../../../enums/WebShowMsgEnum'
 import { commonError } from '../../../../utils/RequestUtil'
 
 class BaiduOcrChannel implements IOcrInterface {
-
   /**
    * 授权token
    */
@@ -33,19 +32,30 @@ class BaiduOcrChannel implements IOcrInterface {
       // 获取前先置空token
       BaiduOcrChannel.token = ''
       log.info('[百度Ocr获取Token事件] - 请求报文 : ', paramsFilter(info))
-      await BaiduRequest.apiOcrGetToken(info).then((res) => {
-        log.info('[百度Ocr获取Token事件] - 响应报文 : ', responseFilterByCustomField(res, 'refresh_token', 'session_key', 'access_token', 'session_secret'))
-        BaiduOcrChannel.token = res['access_token']
-      }).catch((error) => {
-        const res = commonError('百度Ocr获取Token', error)
-        log.info('[百度Ocr获取Token事件] - 响应异常 : ', res)
-        const errorMsg = res['error_description']
-        if ('unknown client id'.indexOf(errorMsg) != -1) {
-          BaiduOcrChannel.tokenErrMsg = 'API Key不存在，请检查后再试'
-        } else if ('Client authentication failed'.indexOf(errorMsg) != -1) {
-          BaiduOcrChannel.tokenErrMsg = '身份验证失败，请检查密钥填写是否正确'
-        }
-      })
+      await BaiduRequest.apiOcrGetToken(info)
+        .then((res) => {
+          log.info(
+            '[百度Ocr获取Token事件] - 响应报文 : ',
+            responseFilterByCustomField(
+              res,
+              'refresh_token',
+              'session_key',
+              'access_token',
+              'session_secret'
+            )
+          )
+          BaiduOcrChannel.token = res['access_token']
+        })
+        .catch((error) => {
+          const res = commonError('百度Ocr获取Token', error)
+          log.info('[百度Ocr获取Token事件] - 响应异常 : ', res)
+          const errorMsg = res['error_description']
+          if ('unknown client id'.indexOf(errorMsg) != -1) {
+            BaiduOcrChannel.tokenErrMsg = 'API Key不存在，请检查后再试'
+          } else if ('Client authentication failed'.indexOf(errorMsg) != -1) {
+            BaiduOcrChannel.tokenErrMsg = '身份验证失败，请检查密钥填写是否正确'
+          }
+        })
     }
   }
 
@@ -58,28 +68,33 @@ class BaiduOcrChannel implements IOcrInterface {
     await this.injectionToken(info, false)
     if (isNull(BaiduOcrChannel.token)) {
       log.info('[百度Ocr事件] - 获取Token失败 :', BaiduOcrChannel.tokenErrMsg)
-      GlobalWin.mainWin.webContents.send('show-msg-event', WebShowMsgEnum.ERROR, BaiduOcrChannel.tokenErrMsg)
+      GlobalWin.mainWin.webContents.send(
+        'show-msg-event',
+        WebShowMsgEnum.ERROR,
+        BaiduOcrChannel.tokenErrMsg
+      )
       return
     }
     info.token = BaiduOcrChannel.token
     log.info('[百度Ocr事件] - 请求报文 : ', paramsFilter(info))
-    BaiduRequest.apiOcr(info).then((res) => {
-      log.info('[百度Ocr事件] - 响应报文 : ', res)
-      const errorCode = res['error_code']
-      if (isNotNull(errorCode)) {
-        let errorMsg = this.getMsgByErrorCode(errorCode)
-        errorMsg = isNull(errorMsg) ? res['error_msg'] : errorMsg
-        GlobalWin.mainWin.webContents.send('show-msg-event', WebShowMsgEnum.ERROR, errorMsg)
-        return
-      }
-      let data = ''
-      const textList = res['words_result']
-      textList.forEach((text) => {
-        data += text['words'] + '\n'
+    BaiduRequest.apiOcr(info)
+      .then((res) => {
+        log.info('[百度Ocr事件] - 响应报文 : ', res)
+        const errorCode = res['error_code']
+        if (isNotNull(errorCode)) {
+          let errorMsg = this.getMsgByErrorCode(errorCode)
+          errorMsg = isNull(errorMsg) ? res['error_msg'] : errorMsg
+          GlobalWin.mainWin.webContents.send('show-msg-event', WebShowMsgEnum.ERROR, errorMsg)
+          return
+        }
+        let data = ''
+        const textList = res['words_result']
+        textList.forEach((text) => {
+          data += text['words'] + '\n'
+        })
+        GlobalWin.mainWin.webContents.send('update-translated-content', data)
       })
-      GlobalWin.mainWin.webContents.send('update-translated-content', data)
-    }).catch((_err) => {
-    })
+      .catch((_err) => {})
   }
 
   /**
@@ -90,14 +105,18 @@ class BaiduOcrChannel implements IOcrInterface {
   async apiOcrCheck(info): Promise<void> {
     await this.injectionToken(info, true)
     // 响应信息
-    let responseData = {
+    const responseData = {
       id: info.id,
       appId: info.appId,
       appKey: info.appKey
     }
     if (isNull(BaiduOcrChannel.token)) {
       log.info('[百度Ocr校验密钥事件] - 获取Token失败 :', BaiduOcrChannel.tokenErrMsg)
-      GlobalWin.setWin.webContents.send('api-check-ocr-callback-event', TranslateServiceEnum.BAIDU, R.errorMD(BaiduOcrChannel.tokenErrMsg, responseData))
+      GlobalWin.setWin.webContents.send(
+        'api-check-ocr-callback-event',
+        TranslateServiceEnum.BAIDU,
+        R.errorMD(BaiduOcrChannel.tokenErrMsg, responseData)
+      )
       return
     }
     info.token = BaiduOcrChannel.token
@@ -109,12 +128,20 @@ class BaiduOcrChannel implements IOcrInterface {
         if (isNotNull(errorCode)) {
           let errorMsg = this.getMsgByErrorCode(errorCode)
           errorMsg = isNull(errorMsg) ? res['error_msg'] : errorMsg
-          GlobalWin.setWin.webContents.send('api-check-ocr-callback-event', TranslateServiceEnum.BAIDU, R.errorMD(errorMsg, responseData))
+          GlobalWin.setWin.webContents.send(
+            'api-check-ocr-callback-event',
+            TranslateServiceEnum.BAIDU,
+            R.errorMD(errorMsg, responseData)
+          )
           return
         }
-        GlobalWin.setWin.webContents.send('api-check-ocr-callback-event', TranslateServiceEnum.BAIDU, R.okD(responseData))
-      }, (_err) => {
-      }
+        GlobalWin.setWin.webContents.send(
+          'api-check-ocr-callback-event',
+          TranslateServiceEnum.BAIDU,
+          R.okD(responseData)
+        )
+      },
+      (_err) => {}
     )
   }
 
@@ -151,7 +178,6 @@ class BaiduOcrChannel implements IOcrInterface {
     }
     return msg
   }
-
 }
 
 export default BaiduOcrChannel

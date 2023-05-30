@@ -6,7 +6,6 @@ import TranslateServiceEnum from '../../../../enums/TranslateServiceEnum'
 import R from '../../../../class/R'
 
 class BingChannel implements ITranslateInterface {
-
   static BING_TOKEN = ''
 
   /**
@@ -16,7 +15,12 @@ class BingChannel implements ITranslateInterface {
    */
   apiTranslate(info): void {
     log.info('[Bing翻译事件] - 请求报文 : ', paramsFilter(info))
-    GlobalWin.mainWin.webContents.send('agent-api-translate', TranslateServiceEnum.BING, info, false)
+    GlobalWin.mainWin.webContents.send(
+      'agent-api-translate',
+      TranslateServiceEnum.BING,
+      info,
+      false
+    )
   }
 
   /**
@@ -31,12 +35,13 @@ class BingChannel implements ITranslateInterface {
       GlobalWin.mainWin.webContents.send('bing-api-translate-callback-event', R.okT(data))
       return
     }
-    GlobalWin.mainWin.webContents.send('bing-api-translate-callback-event', R.okT(data[0]['translations'][0]['text']))
+    GlobalWin.mainWin.webContents.send(
+      'bing-api-translate-callback-event',
+      R.okT(data[0]['translations'][0]['text'])
+    )
   }
 
-  apiTranslateCheck(_info): void {
-  }
-
+  apiTranslateCheck(_info): void {}
 }
 
 export default BingChannel

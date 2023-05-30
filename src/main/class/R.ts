@@ -40,14 +40,14 @@ class R {
   }
 
   static okCT(code, data: string[] | string): R {
-    if(typeof(data) === 'string') {
+    if (typeof data === 'string') {
       data = [data]
     }
     return new R(code, '', data)
   }
 
   static okT(data: string[] | string): R {
-    if(typeof(data) === 'string') {
+    if (typeof data === 'string') {
       data = [data]
     }
     return new R(R.SUCCESS, '', new TranslateVo(data))
@@ -80,7 +80,6 @@ class R {
   static errorMD(mes, data): R {
     return new R(R.ERROR, mes, data)
   }
-
 }
 
 export default R

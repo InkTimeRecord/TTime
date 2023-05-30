@@ -15,22 +15,30 @@ class VolcanoChannel implements ITranslateInterface {
    */
   apiTranslate(info): void {
     log.info('[火山翻译事件] - 请求报文 : ', paramsFilter(info))
-    VolcanoRequest.apiTranslate(info).then((res) => {
-      log.info('[火山翻译事件] - 响应报文 : ', res)
-      // 火山接口报错时，接口参数时而为 ResponseMetadata 时而为 ResponseMetaData
-      // 很奇怪的操作 这里兼容处理
-      const resCheck = res['ResponseMetadata'] || res['ResponseMetaData']
-      const errorInfo = resCheck.Error
-      if (isNotNull(errorInfo)) {
-        // @ts-ignore isNotNull Checked
-        GlobalWin.mainWin.webContents.send('volcano-api-translate-callback-event', R.okT(this.getMsgByErrorCode(errorInfo)))
-        return
-      }
-      let translationList = res['TranslationList'][0]['Translation']
-      GlobalWin.mainWin.webContents.send('volcano-api-translate-callback-event', R.okT(translationList))
-    }).catch((error) => {
-      GlobalWin.mainWin.webContents.send('volcano-api-translate-callback-event', R.okT(error))
-    })
+    VolcanoRequest.apiTranslate(info)
+      .then((res) => {
+        log.info('[火山翻译事件] - 响应报文 : ', res)
+        // 火山接口报错时，接口参数时而为 ResponseMetadata 时而为 ResponseMetaData
+        // 很奇怪的操作 这里兼容处理
+        const resCheck = res['ResponseMetadata'] || res['ResponseMetaData']
+        const errorInfo = resCheck.Error
+        if (isNotNull(errorInfo)) {
+          // @ts-ignore isNotNull Checked
+          GlobalWin.mainWin.webContents.send(
+            'volcano-api-translate-callback-event',
+            R.okT(this.getMsgByErrorCode(errorInfo))
+          )
+          return
+        }
+        const translationList = res['TranslationList'][0]['Translation']
+        GlobalWin.mainWin.webContents.send(
+          'volcano-api-translate-callback-event',
+          R.okT(translationList)
+        )
+      })
+      .catch((error) => {
+        GlobalWin.mainWin.webContents.send('volcano-api-translate-callback-event', R.okT(error))
+      })
   }
 
   /**
@@ -48,7 +56,8 @@ class VolcanoChannel implements ITranslateInterface {
     }
     // 火山翻译不支持输入文字自动识别语言 这里默认识别中文
     info.languageType = 'zh'
-    VolcanoRequest.apiTranslate(info).then((res) => {
+    VolcanoRequest.apiTranslate(info).then(
+      (res) => {
         log.info('[火山翻译校验密钥事件] - 响应报文 : ', res)
         // 火山接口报错时，接口参数时而为 ResponseMetadata 时而为 ResponseMetaData
         // 很奇怪的操作 这里兼容处理
@@ -56,14 +65,26 @@ class VolcanoChannel implements ITranslateInterface {
         const errorInfo = resCheck.Error
         if (isNotNull(errorInfo)) {
           // @ts-ignore isNotNull Checked
-          GlobalWin.setWin.webContents.send('api-check-translate-callback-event', TranslateServiceEnum.VOLCANO, R.errorMD(this.getMsgByErrorCode(errorInfo), responseData))
+          GlobalWin.setWin.webContents.send(
+            'api-check-translate-callback-event',
+            TranslateServiceEnum.VOLCANO,
+            R.errorMD(this.getMsgByErrorCode(errorInfo), responseData)
+          )
           return
         }
-        GlobalWin.setWin.webContents.send('api-check-translate-callback-event', TranslateServiceEnum.VOLCANO, R.okD(responseData))
+        GlobalWin.setWin.webContents.send(
+          'api-check-translate-callback-event',
+          TranslateServiceEnum.VOLCANO,
+          R.okD(responseData)
+        )
       },
       (err) => {
         log.error('[火山翻译校验密钥事件] - 异常响应报文 : ', err)
-        GlobalWin.setWin.webContents.send('api-check-translate-callback-event', TranslateServiceEnum.VOLCANO, R.errorD(responseData))
+        GlobalWin.setWin.webContents.send(
+          'api-check-translate-callback-event',
+          TranslateServiceEnum.VOLCANO,
+          R.errorD(responseData)
+        )
       }
     )
   }
@@ -89,7 +110,6 @@ class VolcanoChannel implements ITranslateInterface {
     }
     return msg
   }
-
 }
 
 export default VolcanoChannel

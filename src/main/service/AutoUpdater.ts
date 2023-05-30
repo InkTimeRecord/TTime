@@ -42,8 +42,7 @@ class AutoUpdater {
   /**
    * 初始化配置
    */
-  constructor() {
-  }
+  constructor() {}
 
   /**
    * 创建窗口
@@ -55,8 +54,8 @@ class AutoUpdater {
     if (isNotNull(updateWin)) {
       // 这里循环等待的原因是因为有可能窗口已经实例化了 但是还没有创建完毕
       // 所以这里循环等待创建完毕 每 0.5 秒检测一次 一共等待 3 秒
-      let i = 0
-      let intervalIndex = setInterval(() => {
+      const i = 0
+      const intervalIndex = setInterval(() => {
         if (!isWinCreate && i >= 6) {
           // 如果循环了6次之后窗口还没有实例化完毕则停止等待
           log.info('等待更新窗口创建完毕超时，停止事件发送')
@@ -144,43 +143,57 @@ class AutoUpdater {
       AutoUpdater.message.checking
     )
     log.info('[获取版本信息接口调用] - 开始 ')
-    TTimeRequest.getVersionInfo().then((res) => {
-      log.info('[获取版本信息接口调用] - 响应报文 : ', JSON.stringify(res))
-      const data = res.data
-      let updateStatus = data['updateStatus']
-      let newVersion = data['newVersion']
-      let newStatus = data['newStatus']
-      let updateContent = data['updateContent']
-      // updateStatus = 0
-      // newVersion = '0.0.5'
-      // newStatus = true
-      // updateContent = '测试更新内容'
-      if (!newStatus || updateStatus === UpdateStatusEnum.UNWANTED) {
-        log.info('版本检测结束 , 当前版本 : ', thisVersion, ' , 无需更新')
-        AutoUpdater.autoUpdaterSendEventByMsg(
-          AutoUpdaterEnum.UPDATE_NOT_AVAILABLE,
-          AutoUpdater.message.updateNotAva
+    TTimeRequest.getVersionInfo()
+      .then((res) => {
+        log.info('[获取版本信息接口调用] - 响应报文 : ', JSON.stringify(res))
+        const data = res.data
+        const updateStatus = data['updateStatus']
+        const newVersion = data['newVersion']
+        const newStatus = data['newStatus']
+        const updateContent = data['updateContent']
+        // updateStatus = 0
+        // newVersion = '0.0.5'
+        // newStatus = true
+        // updateContent = '测试更新内容'
+        if (!newStatus || updateStatus === UpdateStatusEnum.UNWANTED) {
+          log.info('版本检测结束 , 当前版本 : ', thisVersion, ' , 无需更新')
+          AutoUpdater.autoUpdaterSendEventByMsg(
+            AutoUpdaterEnum.UPDATE_NOT_AVAILABLE,
+            AutoUpdater.message.updateNotAva
+          )
+          return
+        }
+        log.info(
+          '版本检测结束 , 新版本状态 : ',
+          newStatus,
+          ' , 当前版本 : ',
+          thisVersion,
+          ' , 最新版本 : ',
+          newVersion
         )
-        return
-      }
-      log.info('版本检测结束 , 新版本状态 : ', newStatus, ' , 当前版本 : ', thisVersion, ' , 最新版本 : ', newVersion)
-      if (updateStatus === UpdateStatusEnum.TIPS) {
-        // 当有新版本时 关闭静默检测
-        AutoUpdater.isSilence = false
-        AutoUpdater.checkUpdate(newVersion, updateContent)
-      } else if (updateStatus === UpdateStatusEnum.FORCED) {
-        // 当有新版本时 关闭静默检测
-        AutoUpdater.isSilence = false
-        AutoUpdater.forcedUpdate(newVersion + ' - 此版本须必更', updateContent)
-        // 设置主窗口为可关闭状态
-        TrayEvent.isMainWinClose = true
-        // 销毁托盘菜单
-        TrayEvent.mainTray.destroy()
-        // 销毁主窗口
-        GlobalWin.mainWin.close()
-      }
-    }).catch((error) => {
-        log.error('[获取版本信息接口调用] - 调用异常 , 当前版本 : ', thisVersion, ' , 错误信息 : ', error)
+        if (updateStatus === UpdateStatusEnum.TIPS) {
+          // 当有新版本时 关闭静默检测
+          AutoUpdater.isSilence = false
+          AutoUpdater.checkUpdate(newVersion, updateContent)
+        } else if (updateStatus === UpdateStatusEnum.FORCED) {
+          // 当有新版本时 关闭静默检测
+          AutoUpdater.isSilence = false
+          AutoUpdater.forcedUpdate(newVersion + ' - 此版本须必更', updateContent)
+          // 设置主窗口为可关闭状态
+          TrayEvent.isMainWinClose = true
+          // 销毁托盘菜单
+          TrayEvent.mainTray.destroy()
+          // 销毁主窗口
+          GlobalWin.mainWin.close()
+        }
+      })
+      .catch((error) => {
+        log.error(
+          '[获取版本信息接口调用] - 调用异常 , 当前版本 : ',
+          thisVersion,
+          ' , 错误信息 : ',
+          error
+        )
         let msg = AutoUpdater.message.error
         const message = error.message
         if (message.indexOf('502 Bad Gateway') !== -1) {
@@ -211,11 +224,9 @@ class AutoUpdater {
    */
   static autoUpdaterSendEventByMsg(autoUpdaterEnum, msg) {
     this.autoUpdaterSendEvent(autoUpdaterEnum, {
-        message: msg
-      }
-    )
+      message: msg
+    })
   }
-
 }
 
 /**

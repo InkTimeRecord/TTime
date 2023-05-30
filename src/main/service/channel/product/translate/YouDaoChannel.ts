@@ -15,28 +15,33 @@ class YouDaoChannel implements ITranslateInterface {
    */
   apiTranslate(info): void {
     log.info('[有道翻译事件] - 请求报文 : ', paramsFilter(info))
-    YouDaoRequest.apiTranslate(info).then((res) => {
-      // log.info('[有道翻译事件] - 响应报文 : ', JSON.stringify(res))
-      log.info('[有道翻译事件] - 响应报文 : ', res)
+    YouDaoRequest.apiTranslate(info)
+      .then((res) => {
+        // log.info('[有道翻译事件] - 响应报文 : ', JSON.stringify(res))
+        log.info('[有道翻译事件] - 响应报文 : ', res)
         const errorCode = res['errorCode']
         if (errorCode === '0') {
           const vo = new TranslateVo(res['translation'])
           const basic = res['basic']
-          if(null != basic) {
+          if (null != basic) {
             vo.dictBuild(
               basic['us-phonetic'],
               basic['uk-phonetic'],
               basic['us-speech'],
               basic['uk-speech'],
               basic['explains'],
-              basic['wfs'],
-            );
+              basic['wfs']
+            )
           }
           GlobalWin.mainWin.webContents.send('youdao-api-translate-callback-event', R.okD(vo))
         } else {
-          GlobalWin.mainWin.webContents.send('youdao-api-translate-callback-event', R.okT(this.getMsgByErrorCode(errorCode)))
+          GlobalWin.mainWin.webContents.send(
+            'youdao-api-translate-callback-event',
+            R.okT(this.getMsgByErrorCode(errorCode))
+          )
         }
-      }).catch((error) => {
+      })
+      .catch((error) => {
         GlobalWin.mainWin.webContents.send('youdao-api-translate-callback-event', R.okT(error))
       })
   }
@@ -49,24 +54,37 @@ class YouDaoChannel implements ITranslateInterface {
   apiTranslateCheck(info): void {
     log.info('[有道翻译校验密钥事件] - 请求报文 : ', paramsFilter(info))
     // 响应信息
-    let responseData = {
+    const responseData = {
       id: info.id,
       appId: info.appId,
       appKey: info.appKey
     }
-    YouDaoRequest.apiTranslate(info).then((res) => {
+    YouDaoRequest.apiTranslate(info).then(
+      (res) => {
         log.info('[有道翻译校验密钥事件] - 响应报文 : ', res)
         const errorCode = res['errorCode']
         if (errorCode === '0') {
-          GlobalWin.setWin.webContents.send('api-check-translate-callback-event', TranslateServiceEnum.YOU_DAO, R.okD(responseData))
+          GlobalWin.setWin.webContents.send(
+            'api-check-translate-callback-event',
+            TranslateServiceEnum.YOU_DAO,
+            R.okD(responseData)
+          )
           return
         }
         const msg = this.getMsgByErrorCode(errorCode)
-        GlobalWin.setWin.webContents.send('api-check-translate-callback-event', TranslateServiceEnum.YOU_DAO, R.errorMD(msg, responseData))
+        GlobalWin.setWin.webContents.send(
+          'api-check-translate-callback-event',
+          TranslateServiceEnum.YOU_DAO,
+          R.errorMD(msg, responseData)
+        )
       },
       (err) => {
         log.error('[有道翻译校验密钥事件] - 异常响应报文 : ', err)
-        GlobalWin.setWin.webContents.send('api-check-translate-callback-event', TranslateServiceEnum.YOU_DAO, R.errorD(responseData))
+        GlobalWin.setWin.webContents.send(
+          'api-check-translate-callback-event',
+          TranslateServiceEnum.YOU_DAO,
+          R.errorD(responseData)
+        )
       }
     )
   }
@@ -105,7 +123,6 @@ class YouDaoChannel implements ITranslateInterface {
     }
     return msg
   }
-
 }
 
 export default YouDaoChannel

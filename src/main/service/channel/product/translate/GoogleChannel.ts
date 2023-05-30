@@ -13,7 +13,12 @@ class GoogleChannel implements ITranslateInterface {
    */
   apiTranslate(info): void {
     log.info('[Google翻译事件] - 请求报文 : ', paramsFilter(info))
-    GlobalWin.mainWin.webContents.send('agent-api-translate', TranslateServiceEnum.GOOGLE, info, false)
+    GlobalWin.mainWin.webContents.send(
+      'agent-api-translate',
+      TranslateServiceEnum.GOOGLE,
+      info,
+      false
+    )
   }
 
   /**
@@ -23,9 +28,13 @@ class GoogleChannel implements ITranslateInterface {
    */
   apiTranslateCheck(info): void {
     log.info('[Google翻译校验密钥事件] - 请求报文 : ', paramsFilter(info))
-    GlobalWin.mainWin.webContents.send('agent-api-translate', TranslateServiceEnum.GOOGLE, info, true)
+    GlobalWin.mainWin.webContents.send(
+      'agent-api-translate',
+      TranslateServiceEnum.GOOGLE,
+      info,
+      true
+    )
   }
-
 
   /**
    * 翻译
@@ -36,11 +45,19 @@ class GoogleChannel implements ITranslateInterface {
   static apiTranslateCallback(status, data): void {
     if (status) {
       log.info('[Google翻译事件] - 响应报文 : ', JSON.stringify(data))
-      GlobalWin.mainWin.webContents.send('google-api-translate-callback-event',
-        R.okT(data.data['translations'].map((translation) => translation.translatedText.replaceAll('&#39;', '\'')))
+      GlobalWin.mainWin.webContents.send(
+        'google-api-translate-callback-event',
+        R.okT(
+          data.data['translations'].map((translation) =>
+            translation.translatedText.replaceAll('&#39;', "'")
+          )
+        )
       )
     } else {
-      GlobalWin.mainWin.webContents.send('google-api-translate-callback-event', R.okT(GoogleChannel.commonErrorExpand(data)))
+      GlobalWin.mainWin.webContents.send(
+        'google-api-translate-callback-event',
+        R.okT(GoogleChannel.commonErrorExpand(data))
+      )
     }
   }
 
@@ -53,16 +70,24 @@ class GoogleChannel implements ITranslateInterface {
    */
   static apiTranslateCheckCallback(status, data, info): void {
     // 响应信息
-    let responseData = {
+    const responseData = {
       id: info.id,
       appId: info.appId,
       appKey: info.appKey
     }
     if (status) {
       log.info('[Google翻译校验密钥事件] - 响应报文 : ', JSON.stringify(data))
-      GlobalWin.setWin.webContents.send('api-check-translate-callback-event', TranslateServiceEnum.GOOGLE, R.okD(responseData))
+      GlobalWin.setWin.webContents.send(
+        'api-check-translate-callback-event',
+        TranslateServiceEnum.GOOGLE,
+        R.okD(responseData)
+      )
     } else {
-      GlobalWin.setWin.webContents.send('api-check-translate-callback-event', TranslateServiceEnum.GOOGLE, R.errorMD(GoogleChannel.commonErrorExpand(data), responseData))
+      GlobalWin.setWin.webContents.send(
+        'api-check-translate-callback-event',
+        TranslateServiceEnum.GOOGLE,
+        R.errorMD(GoogleChannel.commonErrorExpand(data), responseData)
+      )
     }
   }
 
@@ -80,7 +105,6 @@ class GoogleChannel implements ITranslateInterface {
     }
     return msg
   }
-
 }
 
 export default GoogleChannel

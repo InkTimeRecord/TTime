@@ -16,7 +16,6 @@ class UpdateStatusEnum {
    * 强制更新
    */
   static FORCED = 2
-
 }
 
 export { UpdateStatusEnum }

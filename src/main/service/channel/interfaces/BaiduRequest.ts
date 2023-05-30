@@ -58,15 +58,19 @@ const apiOcr = (info): Promise<AxiosPromise> => {
 const apiOcrGetToken = (info) => {
   return request({
     baseURL: 'https://aip.baidubce.com/',
-    url: 'oauth/2.0/token?client_id=' + info.appId + '&client_secret=' + info.appKey + '&grant_type=client_credentials',
+    url:
+      'oauth/2.0/token?client_id=' +
+      info.appId +
+      '&client_secret=' +
+      info.appKey +
+      '&grant_type=client_credentials',
     method: HttpMethodType.GET,
     headers: {
       'Content-Type': 'application/json',
-      'Accept': 'application/json'
+      Accept: 'application/json'
     }
   })
 }
-
 
 export default {
   apiTranslate,
