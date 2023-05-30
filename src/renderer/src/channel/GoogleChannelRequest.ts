@@ -48,15 +48,23 @@ class GoogleChannelRequest {
    */
   static apiTranslateByGoogleBuiltIn = (info, isCheckRequest): void => {
     const requestInfo = {
-      baseURL: 'https://translate.googleapis.com',
-      url: '/translate_a/single',
+      baseURL: 'https://translate.google.com',
+      // dt- 可以多次包含并指定在回复中返回的内容
+      // t- 源文本的翻译
+      // at- 替代翻译
+      // rm- 源和翻译文本的转录/音译
+      // bd- 字典，如果源文本是一个词（你会得到文章的翻译、反向翻译等）
+      // md- 源文本的定义，如果它是一个词
+      // ss- 源文本的同义词，如果它是一个词
+      // ex- 例子
+      // rw- 另见清单
+      url: '/translate_a/single?dt=at&dt=bd&dt=ex&dt=ld&dt=md&dt=qca&dt=rw&dt=rm&dt=ss&dt=t',
       method: HttpMethodType.GET,
       params: {
         client: 'gtx',
-        dt: 't',
         sl: info.languageType,
         tl: info.languageResultType,
-        q: info.translateContent
+        q: info.translateContent,
       }
     }
     request(requestInfo).then(

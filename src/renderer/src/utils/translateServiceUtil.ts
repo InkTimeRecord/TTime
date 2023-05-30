@@ -20,7 +20,7 @@ export const getTranslateServiceMap = () => {
   // 此处重新更新一下logo 防止当在缓存中存储后 如果应用修改了文件路径 会导致读取logo图片失败
   map.forEach((translateService) => {
     translateService['logo'] = TranslateServiceEnum.getInfoByService(translateService['type']).logo
-  });
+  })
   return map
 }
 
@@ -28,7 +28,7 @@ export const getTranslateServiceMap = () => {
  * 获取翻译服务 - 只获取出可使用的
  */
 export const getTranslateServiceMapByUse = () => {
-  let translateServiceMapData = getTranslateServiceMap()
+  const translateServiceMapData = getTranslateServiceMap()
   for (const [key, translateService] of translateServiceMapData.entries()) {
     if (!translateService['useStatus'] || !translateService['checkStatus']) {
       translateServiceMapData.delete(key)
@@ -43,10 +43,10 @@ export const buildService = (translateServiceEnum): {} => {
   const translateService = {
     id: random(),
     ...service
-  };
-  switch(translateServiceEnum) {
+  }
+  switch (translateServiceEnum) {
     case TranslateServiceEnum.TTIME:
-      return  {
+      return {
         ...translateService,
         useStatus: true,
         isBuiltIn: true,
@@ -93,7 +93,7 @@ export const buildService = (translateServiceEnum): {} => {
         ...translateService,
         useStatus: true,
         isBuiltIn: true,
-        checkStatus: true,
+        checkStatus: true
       }
     case TranslateServiceEnum.OPEN_AI:
       return {
@@ -137,19 +137,14 @@ export const buildService = (translateServiceEnum): {} => {
         ...translateService,
         useStatus: true,
         isBuiltIn: true,
-        checkStatus: true,
+        checkStatus: true
       }
     case TranslateServiceEnum.BING_DICT:
       return {
         ...translateService,
         useStatus: true,
         isBuiltIn: true,
-        checkStatus: true,
+        checkStatus: true
       }
   }
-
 }
-
-
-
-

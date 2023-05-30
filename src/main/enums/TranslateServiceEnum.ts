@@ -28,7 +28,7 @@ class TranslateServiceEnum {
   static GOOGLE = 'Google'
 
   /**
-   * Google翻译-内置
+   * Google翻译(内置)
    */
   static GOOGLE_BUILT_IN = 'GoogleBuiltIn'
 

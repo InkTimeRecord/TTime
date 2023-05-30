@@ -1,21 +1,21 @@
 <template>
-  <div class='block'>
+  <div class="block">
     <Header />
-    <div class='block-layer'>
+    <div class="block-layer">
       <Input
-        ref='translateInput'
-        @show-result-event='(value) => translatedResultInput.setShowResult(value)'
-        @is-result-loading-event='(value) => translatedResultInput.setIsResultLoading(value)'
+        ref="translateInput"
+        @show-result-event="(value) => translatedResultInput.setShowResult(value)"
+        @is-result-loading-event="(value) => translatedResultInput.setIsResultLoading(value)"
       />
 
       <language-select />
 
-      <input-result-content ref='translatedResultInput' />
+      <input-result-content ref="translatedResultInput" />
     </div>
   </div>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 import Header from './components/Header.vue'
 import Input from './components/Input.vue'
 import LanguageSelect from './components/LanguageSelect.vue'
@@ -27,8 +27,8 @@ import ElMessageExtend from '../utils/messageExtend'
 import { ShortcutKeyEnum } from '../enums/ShortcutKeyEnum'
 import { YesNoEnum } from '../enums/YesNoEnum'
 import { isNull } from '../utils/validate'
-import { buildService, setTranslateServiceMap }  from '../utils/translateServiceUtil'
-import { buildOcrTTimeService, setOcrServiceMap }  from '../utils/ocrServiceUtil'
+import { buildService, setTranslateServiceMap } from '../utils/translateServiceUtil'
+import { buildOcrTTimeService, setOcrServiceMap } from '../utils/ocrServiceUtil'
 import { initTheme } from '../utils/themeUtil'
 import { cacheGetStr, cacheSet, cacheSetStr } from '../utils/cacheUtil'
 import { PlaySpeechServiceEnum } from '../enums/PlaySpeechServiceEnum'
@@ -68,18 +68,21 @@ window.api.winShowByInputEvent(() => {
  */
 if (isNull(cacheGetStr('translateServiceMap'))) {
   const map = new Map()
-  let ttimeService = buildService(TranslateServiceEnum.TTIME)
+  const ttimeService = buildService(TranslateServiceEnum.TTIME)
   map.set(ttimeService.id, ttimeService)
+  setTranslateServiceMap(map)
+  const bingDictService = buildService(TranslateServiceEnum.BING_DICT)
+  map.set(bingDictService.id, bingDictService)
   setTranslateServiceMap(map)
 }
 
 /**
- * 翻译服务list 如果不存在则说明第一次打开
- * 初始化默认翻译服务
+ * Ocr服务list 如果不存在则说明第一次打开
+ * 初始化默认Ocr服务
  */
 if (isNull(cacheGetStr('ocrServiceMap'))) {
   const map = new Map()
-  let ttimeService = buildOcrTTimeService()
+  const ttimeService = buildOcrTTimeService()
   map.set(ttimeService.id, ttimeService)
   setOcrServiceMap(map)
 }
@@ -106,7 +109,6 @@ if (isNull(cacheGetStr('agentConfig'))) {
     passWord: ''
   })
 }
-
 
 const translateShortcutKeyList = [
   { type: ShortcutKeyEnum.INPUT, shortcutKey: cacheGetStr('inputShortcutKey') },
@@ -143,7 +145,7 @@ if (undefined === cacheGetStr('wrapReplaceSpaceStatus')) {
   cacheSetStr('wrapReplaceSpaceStatus', YesNoEnum.N)
 }
 window.api.updateCacheEvent((key, value) => {
-  window.api.logInfoEvent('[updateCacheEvent] - 触发了', key , value)
+  window.api.logInfoEvent('[updateCacheEvent] - 触发了', key, value)
   cacheSetStr(key, value)
 })
 
@@ -159,10 +161,9 @@ window.api.showMsgEvent((type, msg) => {
     ElMessageExtend.errorInOptions(msg, { duration: 5 * 1000 })
   }
 })
-
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 @import '../css/translate.scss';
 @import '../css/translate-input.scss';
 
@@ -196,5 +197,4 @@ window.api.showMsgEvent((type, msg) => {
 .block-layer::-webkit-scrollbar-track {
   background-color: transparent;
 }
-
 </style>
