@@ -27,6 +27,8 @@ html.light {
   --ttime-translate-service-block-hover-background: #dddddd;
   --ttime-translate-service-block-active-background: #d5d5d5;
 
+  --ttime-translate-service-msg-block: #4e4e4e;
+
   --ttime-translate-language-background: #d3d3d3;
   --ttime-translate-language-active-background: #b9b9b9;
   --ttime-translate-language-list-block-border-top: #cbcbcb;

@@ -27,6 +27,8 @@ html.dark {
   --ttime-translate-service-block-hover-background: #4f4f4f;
   --ttime-translate-service-block-active-background: #4f4f4f;
 
+  --ttime-translate-service-msg-block: #cfcfcf;
+
   --ttime-translate-language-background: #323232;
   --ttime-translate-language-active-background: #575757;
   --ttime-translate-language-list-block-border-top: #343434;

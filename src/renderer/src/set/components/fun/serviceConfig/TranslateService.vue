@@ -44,7 +44,6 @@
     </div>
     <div class='translate-service-set-block'>
       <div class='translate-service-set'>
-
         <el-form v-if='!translateServiceThis.isBuiltIn' label-width='80px' label-position='left'>
 
           <el-form-item v-if='translateServiceThis.type === TranslateServiceEnum.OPEN_AI' label='模型'>
@@ -94,7 +93,21 @@
           </div>
           <span class='form-switch-span'> 验证成功后将会保存配置信息 </span>
         </el-form>
-        <span v-else class='form-switch-span'>内置翻译源 - 无需配置</span>
+        <div v-else>
+          <span class='form-switch-span'>
+            内置翻译源 - 无需配置
+          </span>
+          <div v-if='
+          translateServiceThis.type === TranslateServiceEnum.BING ||
+          translateServiceThis.type === TranslateServiceEnum.BING_DICT
+          ' class='translate-service-bing-msg-block'>
+            <el-divider />
+            <span class='translate-service-bing-msg-title'>建议：</span>
+            <span class='translate-service-bing-msg'>开启了Bing字典翻译源就不用再开启Bing翻译</span>
+            <span class='translate-service-bing-msg'>Bing翻译 = Bing翻译</span>
+            <span class='translate-service-bing-msg'>Bing字典翻译 = Bing翻译 + Bing字典</span>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -103,11 +116,7 @@
 import { ref } from 'vue'
 import { Minus, Plus } from '@element-plus/icons-vue'
 
-import {
-  buildService,
-  getTranslateServiceMap,
-  setTranslateServiceMap
-} from '../../../../utils/translateServiceUtil'
+import { buildService, getTranslateServiceMap, setTranslateServiceMap } from '../../../../utils/translateServiceUtil'
 import { isNull } from '../../../../utils/validate'
 import { TranslateServiceEnum } from '../../../../enums/TranslateServiceEnum'
 import ElMessageExtend from '../../../../utils/messageExtend'
@@ -379,6 +388,22 @@ const saveTranslateService = (translateService) => {
         .translate-service-use-text {
           font-size: 14px;
           padding-right: 10px;
+        }
+
+      }
+
+      .translate-service-bing-msg-block {
+        display: flex;
+        flex-direction: column;
+        font-size: 12px;
+        color: var(--ttime-translate-service-msg-block);
+
+        .translate-service-bing-msg-title {
+          margin-top: 7px;
+          font-weight: 600;
+        }
+        .translate-service-bing-msg {
+          margin: 7px 0 0 10px;
         }
 
       }
