@@ -34,7 +34,7 @@ class BingChannelRequest {
       return
     }
     // token存在则进行校验当前token有效期是否小于或等于一分钟 如果满足这个条件则刷新Token
-    const tokenInfo = window.atob(BingChannelRequest.BING_TOKEN.split('.')[1])
+    const tokenInfo = JSON.parse(window.atob(BingChannelRequest.BING_TOKEN.split('.')[1]))
     // 待校验的时间戳，秒级别
     const timestamp = tokenInfo['exp']
     // 当前时间的时间戳，转换为秒级别
