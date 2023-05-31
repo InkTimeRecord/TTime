@@ -58,7 +58,7 @@ class GoogleChannelRequest {
       // ss- 源文本的同义词，如果它是一个词
       // ex- 例子
       // rw- 另见清单
-      url: '/translate_a/single?dt=at&dt=bd&dt=t',
+      url: '/translate_a/single?dt=t&dt=bd',
       method: HttpMethodType.GET,
       params: {
         client: 'gtx',

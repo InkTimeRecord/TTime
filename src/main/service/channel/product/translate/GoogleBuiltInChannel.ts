@@ -32,7 +32,12 @@ class GoogleBuiltInChannel implements ITranslateInterface {
           explains.push(data?.[0] + '：' + data?.[1].join('；'))
         })
       }
-      const vo = new TranslateVo([data[0][0][0]])
+      const dataList = data[0]
+      let text = ''
+      dataList.forEach((textArray) => {
+        text += textArray[0]
+      })
+      const vo = new TranslateVo([text])
       vo.dictBuild('', '', '', '', explains, [])
       GlobalWin.mainWinSend('googlebuiltin-api-translate-callback-event', R.okD(vo))
     } else {
