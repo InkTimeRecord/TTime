@@ -57,6 +57,8 @@ class GlobalWin {
    * 窗口显示后需要触发的回调
    */
   static mainWinShowCallback(): void {
+    // 不管有没有注册Esc快捷键 先注销
+    GlobalShortcutEvent.unregisterEsc()
     // TODO 这里暂时这么写 之后数据存储需要重构 不能继续放在 localStorage 中
     // alwaysOnTopAllowEscStatus 开启后，当翻译窗口置顶时，按ESC键依旧可隐藏窗口
     GlobalWin.mainWin.webContents
