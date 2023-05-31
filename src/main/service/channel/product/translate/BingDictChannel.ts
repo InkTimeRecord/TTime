@@ -40,10 +40,18 @@ class BingDictChannel implements ITranslateInterface {
         const explainNetworkRegex =
           /<span class="pos web">(.*?)<\/span><span class="def b_regtxt"><span>(.*?)<\/span><\/span>/g
         while ((match = explainOtherRegex.exec(res)) !== null) {
-          explains.push(match[1] + ' ' + match[2])
+          explains.push(
+            (await BingDictChannel.handleDictField(match[1])) +
+              ' ' +
+              (await BingDictChannel.handleDictField(match[2]))
+          )
         }
         while ((match = explainNetworkRegex.exec(res)) !== null) {
-          explains.push(match[1] + '. ' + match[2])
+          explains.push(
+            (await BingDictChannel.handleDictField(match[1])) +
+              '. ' +
+              (await BingDictChannel.handleDictField(match[2]))
+          )
         }
         // 匹配音标及语音
         const phoneticAndSpeechRegex =
@@ -53,17 +61,22 @@ class BingDictChannel implements ITranslateInterface {
         let usSpeech = ''
         let ukSpeech = ''
         while ((match = phoneticAndSpeechRegex.exec(res)) !== null) {
-          usPhonetic = match[2]
-          ukPhonetic = match[7]
-          usSpeech = match[3]
-          ukSpeech = match[8]
+          usPhonetic = await BingDictChannel.handleDictField(match[2])
+          ukPhonetic = await BingDictChannel.handleDictField(match[7])
+          usSpeech = await BingDictChannel.handleDictField(match[3])
+          ukSpeech = await BingDictChannel.handleDictField(match[8])
         }
         // 匹配语法类别
         const wfs: Array<{ wf: { name: string; value: string } }> = []
         const wfsRegex =
           /<span class="b_primtxt">(.*?)<\/span><a class="p1-5" title="" href="(.*?)" h="ID=Dictionary,(.*?)">(.*?)<\/a>/g
         while ((match = wfsRegex.exec(res)) !== null) {
-          wfs.push({ wf: { name: match[1], value: match[4] } })
+          wfs.push({
+            wf: {
+              name: await BingDictChannel.handleDictField(match[1]),
+              value: await BingDictChannel.handleDictField(match[4])
+            }
+          })
         }
         // 构建响应给页面环境接口的数据
         info.dictResponse = {
@@ -82,6 +95,27 @@ class BingDictChannel implements ITranslateInterface {
         log.info('[BingDict翻译事件] - 异常 : ', err)
         GlobalWin.mainWinSend('bingdict-api-translate-callback-event', R.okT(err))
       })
+  }
+
+  /**
+   * 处理字典字段数据
+   *
+   * 因为字典中匹配出来的结果可能部分是附带了html元素或符号的转义
+   * 所以这里需要再进行处理一遍值
+   *
+   * @param val 字段值
+   * @return 处理后的val值
+   */
+  static async handleDictField(val): Promise<string> {
+    val = val?.replace(/<\/?[^>]+(>|$)/g, '')
+    await GlobalWin.mainWin.webContents
+      .executeJavaScript(
+        `var txt = document.createElement("textarea"); txt.innerHTML = "${val}";txt.value`
+      )
+      .then((valExtend) => {
+        val = valExtend
+      })
+    return val
   }
 
   /**
