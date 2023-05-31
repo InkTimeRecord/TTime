@@ -4,9 +4,11 @@ import * as fs from 'fs'
 import * as path from 'path'
 import OcrServiceEnum from '../../../enums/OcrServiceEnum'
 import TTimeOnlineOcrChannel from '../product/ocr/TTimeOnlineOcrChannel'
+import VolcanoOcrChannel from '../product/ocr/VolcanoOcrChannel'
 
 const baiduOcrChannel = new BaiduOcrChannel()
 const ttimeOnlineOcrChannel = new TTimeOnlineOcrChannel()
+const volcanoOcrChannel = new VolcanoOcrChannel()
 
 /**
  * 选择渠道工厂
@@ -24,6 +26,8 @@ class OcrChannelFactory {
       baiduOcrChannel.apiOcr(info)
     } else if (OcrServiceEnum.TTIME_ONLINE === type) {
       ttimeOnlineOcrChannel.apiOcr(info)
+    } else if (OcrServiceEnum.VOLCANO === type) {
+      volcanoOcrChannel.apiOcr(info)
     }
   }
 
@@ -41,6 +45,8 @@ class OcrChannelFactory {
     if (OcrServiceEnum.BAIDU === type) {
       info['img'] = 'data:image/png;base64,' + info['img']
       baiduOcrChannel.apiOcrCheck(info)
+    } else if (OcrServiceEnum.VOLCANO === type) {
+      volcanoOcrChannel.apiOcrCheck(info)
     }
   }
 
@@ -49,7 +55,9 @@ class OcrChannelFactory {
    */
   static buildOcrCheckRequestInfo = () => {
     return {
-      img: Buffer.from(fs.readFileSync(path.join(__dirname, '../../ocr/ocrCheck.png'))).toString('base64')
+      img: Buffer.from(fs.readFileSync(path.join(__dirname, '../../ocr/ocrCheck.png'))).toString(
+        'base64'
+      )
     }
   }
 }

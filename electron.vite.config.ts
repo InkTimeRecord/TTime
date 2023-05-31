@@ -19,7 +19,7 @@ export default defineConfig({
           'axios',
           'tencentcloud-sdk-nodejs-tmt',
           'uiohook-napi',
-          '@volcengine/openapi',
+          '@volcengine/openapi'
         ]
       }
     }

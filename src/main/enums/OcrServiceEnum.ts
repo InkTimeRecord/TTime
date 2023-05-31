@@ -17,6 +17,10 @@ class OcrServiceEnum {
    */
   static BAIDU = 'Baidu'
 
+  /**
+   * 火山翻译
+   */
+  static VOLCANO = 'Volcano'
 }
 
 export default OcrServiceEnum

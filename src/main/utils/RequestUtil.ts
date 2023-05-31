@@ -18,17 +18,22 @@ export const commonError = (title, err): string => {
   const errResponseStatusText = response.statusText
   const errResponseData = response.data
   log.error('[' + title + '事件] - 异常响应报文 : ', {
-      errCode: errCode,
-      errMessage: errMessage,
-      errResponseStatus: errResponseStatus,
-      errResponseStatusText: errResponseStatusText,
-      errResponseData: (typeof errResponseData) === 'object' ? JSON.stringify(errResponseData) : errResponseData
-    }
-  )
+    errCode: errCode,
+    errMessage: errMessage,
+    errResponseStatus: errResponseStatus,
+    errResponseStatusText: errResponseStatusText,
+    errResponseData:
+      typeof errResponseData === 'object' ? JSON.stringify(errResponseData) : errResponseData
+  })
   let msg = ''
   if (errCode === 'ECONNREFUSED') {
     msg = '连接被拒绝，请检查配置的代理是否正确'
-  } else if (errCode === 'ECONNRESET' && errMessage.indexOf('Client network socket disconnected before secure TLS connection was established') !== -1) {
+  } else if (
+    errCode === 'ECONNRESET' &&
+    errMessage.indexOf(
+      'Client network socket disconnected before secure TLS connection was established'
+    ) !== -1
+  ) {
     msg = '代理连接中断，请检查配置的代理是否可用'
   } else if (errCode === 'ECONNRESET' && errMessage.indexOf('read ECONNRESET') !== -1) {
     msg = '代理连接读取中断，请检查配置的代理是否可用'
@@ -57,26 +62,31 @@ export const injectAgent = async (requestInfo): Promise<void> => {
  * @param requestInfo     请求信息
  * @param agentFieldName  根据字段名称设置代理信息
  */
-export const injectAgentBySetAgentFieldName = async (requestInfo, agentFieldName): Promise<void> => {
-  await GlobalWin.mainWin.webContents.executeJavaScript('JSON.parse(localStorage.agentConfig)').then((agentConfig) => {
-    if (
-      isNotNull(agentConfig) &&
-      isNotNull(agentConfig.host) &&
-      isNotNull(agentConfig.port) &&
-      agentConfig.type === 1
-    ) {
-      requestInfo[agentFieldName] = createHttpsProxyAgent({
-        host: agentConfig.host,
-        port: agentConfig.port
-      })
-      // if (isNotNull(agentConfig.userName) && isNotNull(agentConfig.passWord)) {
-      //   requestInfo.auth = {
-      //     username: agentConfig.userName,
-      //     password: agentConfig.passWord
-      //   }
-      // }
-    }
-  })
+export const injectAgentBySetAgentFieldName = async (
+  requestInfo,
+  agentFieldName
+): Promise<void> => {
+  await GlobalWin.mainWin.webContents
+    .executeJavaScript('JSON.parse(localStorage.agentConfig)')
+    .then((agentConfig) => {
+      if (
+        isNotNull(agentConfig) &&
+        isNotNull(agentConfig.host) &&
+        isNotNull(agentConfig.port) &&
+        agentConfig.type === 1
+      ) {
+        requestInfo[agentFieldName] = createHttpsProxyAgent({
+          host: agentConfig.host,
+          port: agentConfig.port
+        })
+        // if (isNotNull(agentConfig.userName) && isNotNull(agentConfig.passWord)) {
+        //   requestInfo.auth = {
+        //     username: agentConfig.userName,
+        //     password: agentConfig.passWord
+        //   }
+        // }
+      }
+    })
 }
 
 /**
@@ -130,7 +140,7 @@ export const injectUrlAgent = (agentConfig, requestInfo, agentFieldName): void =
  *
  * @param agentConfig 代理配置
  */
-export const getAgentUrl = (agentConfig): String => {
+export const getAgentUrl = (agentConfig): string => {
   let url = `http://{{account}}${agentConfig.host}:${agentConfig.port}`
   // if (isNotNull(agentConfig.userName) && isNotNull(agentConfig.passWord)) {
   //   log.info("[窗口代理] - 配置代理账号")

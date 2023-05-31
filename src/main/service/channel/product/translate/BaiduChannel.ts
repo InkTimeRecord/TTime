@@ -29,10 +29,10 @@ class BaiduChannel implements ITranslateInterface {
             data.push(transResult['dst'])
           })
         }
-        GlobalWin.mainWin.webContents.send('baidu-api-translate-callback-event', R.okT(data))
+        GlobalWin.mainWinSend('baidu-api-translate-callback-event', R.okT(data))
       })
       .catch((error) => {
-        GlobalWin.mainWin.webContents.send('baidu-api-translate-callback-event', R.okT(error))
+        GlobalWin.mainWinSend('baidu-api-translate-callback-event', R.okT(error))
       })
   }
 
@@ -44,7 +44,7 @@ class BaiduChannel implements ITranslateInterface {
   apiTranslateCheck(info): void {
     log.info('[百度翻译校验密钥事件] - 请求报文 : ', paramsFilter(info))
     // 响应信息
-    let responseData = {
+    const responseData = {
       id: info.id,
       appId: info.appId,
       appKey: info.appKey
@@ -54,15 +54,27 @@ class BaiduChannel implements ITranslateInterface {
         log.info('[百度翻译校验密钥事件] - 响应报文 : ', res)
         const errorCode = res['error_code']
         if (isNull(errorCode)) {
-          GlobalWin.setWin.webContents.send('api-check-translate-callback-event', TranslateServiceEnum.BAIDU, R.okD(responseData))
+          GlobalWin.setWin.webContents.send(
+            'api-check-translate-callback-event',
+            TranslateServiceEnum.BAIDU,
+            R.okD(responseData)
+          )
           return
         }
         const msg = this.getMsgByErrorCode(errorCode)
-        GlobalWin.setWin.webContents.send('api-check-translate-callback-event', TranslateServiceEnum.BAIDU, R.errorMD(msg, responseData))
+        GlobalWin.setWin.webContents.send(
+          'api-check-translate-callback-event',
+          TranslateServiceEnum.BAIDU,
+          R.errorMD(msg, responseData)
+        )
       },
       (err) => {
         log.error('[百度翻译校验密钥事件] - 异常响应报文 : ', err)
-        GlobalWin.setWin.webContents.send('api-check-translate-callback-event', TranslateServiceEnum.BAIDU, R.errorD(responseData))
+        GlobalWin.setWin.webContents.send(
+          'api-check-translate-callback-event',
+          TranslateServiceEnum.BAIDU,
+          R.errorD(responseData)
+        )
       }
     )
   }
@@ -101,7 +113,6 @@ class BaiduChannel implements ITranslateInterface {
     }
     return msg
   }
-
 }
 
 export default BaiduChannel

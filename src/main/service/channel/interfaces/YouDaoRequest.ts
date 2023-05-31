@@ -9,7 +9,7 @@ import crypto from 'crypto'
  */
 const apiTranslate = async (info) => {
   const content = info.translateContent
-  const salt = (new Date).getTime()
+  const salt = new Date().getTime()
   const curtime = Math.round(new Date().getTime() / 1000)
   const sign = info.appId + truncate(content) + salt + curtime + info.appKey
   const data = {

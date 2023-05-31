@@ -25,10 +25,13 @@ declare global {
     baiduApiTranslateCallbackEvent
     aliyunApiTranslateCallbackEvent
     googleApiTranslateCallbackEvent
+    googlebuiltinApiTranslateCallbackEvent,
     openaiApiTranslateCallbackEvent
     youdaoApiTranslateCallbackEvent
     deeplApiTranslateCallbackEvent
     volcanoApiTranslateCallbackEvent
+    bingApiTranslateCallbackEvent
+    bingdictApiTranslateCallbackEvent
     ttimeApiAppStart
     ttimeApiTranslateUse
     showMsgEvent

@@ -54,19 +54,33 @@ class GlobalWin {
   }
 
   /**
+   * 窗口事件发送
+   *
+   * @param key 发送key
+   * @param val 发送值
+   */
+  static mainWinSend(key, ...val): void {
+    GlobalWin.mainWin.webContents.send(key, ...val)
+  }
+
+  /**
    * 窗口显示后需要触发的回调
    */
   static mainWinShowCallback(): void {
+    // 不管有没有注册Esc快捷键 先注销
+    GlobalShortcutEvent.unregisterEsc()
     // TODO 这里暂时这么写 之后数据存储需要重构 不能继续放在 localStorage 中
     // alwaysOnTopAllowEscStatus 开启后，当翻译窗口置顶时，按ESC键依旧可隐藏窗口
-    GlobalWin.mainWin.webContents.executeJavaScript('localStorage.alwaysOnTopAllowEscStatus').then((alwaysOnTopAllowEscStatus) => {
-      // 当窗口置顶时不注册Esc快捷键
-      if (!WinEvent.isAlwaysOnTop || YesNoEnum.Y === alwaysOnTopAllowEscStatus) {
-        // 当显示窗口时注册快捷键
-        // 按下 Esc 隐藏窗口
-        WinEvent.translateWinRegisterEsc()
-      }
-    })
+    GlobalWin.mainWin.webContents
+      .executeJavaScript('localStorage.alwaysOnTopAllowEscStatus')
+      .then((alwaysOnTopAllowEscStatus) => {
+        // 当窗口置顶时不注册Esc快捷键
+        if (!WinEvent.isAlwaysOnTop || YesNoEnum.Y === alwaysOnTopAllowEscStatus) {
+          // 当显示窗口时注册快捷键
+          // 按下 Esc 隐藏窗口
+          WinEvent.translateWinRegisterEsc()
+        }
+      })
   }
 
   /**
@@ -87,7 +101,6 @@ class GlobalWin {
     TrayEvent.isMainWinClose = true
     app.quit()
   }
-
 }
 
 export default GlobalWin

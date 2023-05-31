@@ -1,86 +1,84 @@
 <template>
-  <div class="content">
-    <div class="content-input-block">
-      <div class="function-tools-block content-header-block">
-        <div class="content-tools-category">
-          <img class="content-translate-logo none-select" :src="translateLogoSrc" />
-          <span class="content-translate-name none-select">{{ translateName }}</span>
-          <img v-show="isResultLoading" class="content-translate-loading" :src="loadingImageSrc" />
+  <div class='content'>
+    <div class='content-input-block'>
+      <div class='function-tools-block content-header-block'>
+        <div class='content-tools-category'>
+          <img class='content-translate-logo none-select' :src='translateLogoSrc' />
+          <span class='content-translate-name none-select'>{{ translateName }}</span>
+          <img v-show='isResultLoading' class='content-translate-loading' :src='loadingImageSrc' />
         </div>
-        <div class="function-tools-category content-tools-category">
-          <a class="function-tools content-tools" @click="showResultFun">
+        <div class='function-tools-category content-tools-category'>
+          <a class='function-tools content-tools' @click='showResultFun'>
             <el-icon>
-              <ArrowDown v-if="showResult" />
+              <ArrowDown v-if='showResult' />
               <ArrowLeft v-else />
             </el-icon>
           </a>
         </div>
       </div>
       <el-collapse-transition>
-        <div v-show="showResult">
+        <div v-show='showResult'>
           <el-input
-            v-model="translatedResultContent"
-            class="content-input content-input-zero-padding-top"
-            :readonly="true"
-            spellcheck="false"
-            type="textarea"
-            :autosize="{ minRows: 1, maxRows: 10 }"
+            v-model='translatedResultContent'
+            class='content-input content-input-zero-padding-top'
+            :readonly='true'
+            spellcheck='false'
+            type='textarea'
+            :autosize='{ minRows: 1, maxRows: 10 }'
           />
 
-          <tpmplate v-if="TranslateServiceEnum.YOU_DAO === props.translateService.type">
-            <div class="phonetic-layer">
-              <div class="phonetic-block" v-show="youdaoTranslatedResultExpand.isUs">
-                <span class="phonetic-type">美 </span>
-                <span class="phonetic">[{{ youdaoTranslatedResultExpand.usPhonetic }}]</span>
-                <a
-                  class="phonetic-function-play cursor-pointer"
-                  @click="playSpeechByUrl(youdaoTranslatedResultExpand.usSpeech)"
-                >
-                  <svg-icon icon-class="play" class="phonetic-function-tools-icon" />
-                </a>
-              </div>
-              <div class="phonetic-block" v-show="youdaoTranslatedResultExpand.isUk">
-                <span class="phonetic-type">英 </span>
-                <span class="phonetic">[{{ youdaoTranslatedResultExpand.ukPhonetic }}]</span>
-                <a
-                  class="phonetic-function-play cursor-pointer"
-                  @click="playSpeechByUrl(youdaoTranslatedResultExpand.ukSpeech)"
-                >
-                  <svg-icon icon-class="play" class="phonetic-function-tools-icon" />
-                </a>
-              </div>
-            </div>
-
-            <div class="explain-layer" v-show="youdaoTranslatedResultExpand.isExplainList">
-              <span class="explain-title">其他释义</span>
-              <div
-                class="explain-block"
-                v-for="(explain, key) in youdaoTranslatedResultExpand.explainList"
-                :key="key"
+          <div class='phonetic-layer'>
+            <div v-show='dictTranslatedResultExpand.isUs' class='phonetic-block'>
+              <span class='phonetic-type'>美 </span>
+              <span class='phonetic'>[{{ dictTranslatedResultExpand.usPhonetic }}]</span>
+              <a
+                class='phonetic-function-play cursor-pointer'
+                @click='playSpeechByUrl(dictTranslatedResultExpand.usSpeech)'
               >
-                <span class="explain-type">{{ explain.type }}</span>
-                <span class="explain-content">{{ explain.content }}</span>
-              </div>
+                <svg-icon icon-class='play' class='phonetic-function-tools-icon' />
+              </a>
             </div>
-
-            <div class="explain-layer" v-show="youdaoTranslatedResultExpand.isWfs">
-              <div
-                class="explain-block"
-                v-for="(wfs, key) in youdaoTranslatedResultExpand.wfsList"
-                :key="key"
+            <div v-show='dictTranslatedResultExpand.isUk' class='phonetic-block'>
+              <span class='phonetic-type'>英 </span>
+              <span class='phonetic'>[{{ dictTranslatedResultExpand.ukPhonetic }}]</span>
+              <a
+                class='phonetic-function-play cursor-pointer'
+                @click='playSpeechByUrl(dictTranslatedResultExpand.ukSpeech)'
               >
-                <span class="explain-type">{{ wfs.wf.name + ' ' }}</span>
-                <span class="explain-content">{{ wfs.wf.value }}</span>
-              </div>
+                <svg-icon icon-class='play' class='phonetic-function-tools-icon' />
+              </a>
             </div>
-          </tpmplate>
+          </div>
 
-          <div class="function-tools-block">
-            <a class="function-tools" @click="playSpeech(translatedResultContent)">
-              <svg-icon icon-class="play" class="function-tools-icon" />
+          <div v-show='dictTranslatedResultExpand.isExplainList' class='explain-layer'>
+            <span class='explain-title'>其他释义</span>
+            <div
+              v-for='(explain, key) in dictTranslatedResultExpand.explainList'
+              :key='key'
+              class='explain-block'
+            >
+              <span class='explain-type'>{{ explain.type }}</span>
+              <span class='explain-content'>{{ explain.content }}</span>
+            </div>
+          </div>
+
+          <div v-show='dictTranslatedResultExpand.isWfs' class='explain-layer'>
+            <div
+              v-for='(wfs, key) in dictTranslatedResultExpand.wfsList'
+              :key='key'
+              class='explain-block'
+            >
+              <span class='explain-type'>{{ wfs.wf.name + ' ' }}</span>
+              <span class='explain-content'>{{ wfs.wf.value }}</span>
+            </div>
+          </div>
+
+          <div class='function-tools-block'>
+            <a class='function-tools' @click='playSpeech(translatedResultContent)'>
+              <svg-icon icon-class='play' class='function-tools-icon' />
             </a>
-            <a class="function-tools" @click="textWriteShearPlate(translatedResultContent)">
-              <svg-icon icon-class="copy" class="function-tools-icon" />
+            <a class='function-tools' @click='textWriteShearPlate(translatedResultContent)'>
+              <svg-icon icon-class='copy' class='function-tools-icon' />
             </a>
           </div>
         </div>
@@ -89,18 +87,8 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang='ts'>
 import { ref } from 'vue'
-import logo from '../../../assets/logo.png'
-import tencentCloudLogo from '../../../assets/tencentCloudLogo.png'
-import baiduLogo from '../../../assets/baiduLogo.png'
-import aliyunLogo from '../../../assets/aliyunLogo.png'
-import googleLogo from '../../../assets/googleLogo.png'
-import openAILogo from '../../../assets/openAILogo.png'
-import youdaoLogo from '../../../assets/youdaoLogo.png'
-import deepLLogo from '../../../assets/deepLLogo.png'
-import volcanoLogo from '../../../assets/volcanoLogo.png'
-
 import loadingImage from '../../../assets/loading.gif'
 import translate from '../../../utils/translate'
 import { TranslateServiceEnum } from '../../../enums/TranslateServiceEnum'
@@ -121,42 +109,16 @@ const getTranslateServiceBackEventName = (translateService) => {
   return translateService.type.toLowerCase() + 'ApiTranslateCallbackEvent'
 }
 
-/**
- * 获取翻译服务logo
- *
- * @param translateService 翻译服务信息
- * @return logo
- */
-const getTranslateServiceLogo = (translateService) => {
-  if (TranslateServiceEnum.TTIME === translateService.type) {
-    return logo
-  } else if (TranslateServiceEnum.TENCENT_CLOUD === translateService.type) {
-    return tencentCloudLogo
-  } else if (TranslateServiceEnum.BAIDU === translateService.type) {
-    return baiduLogo
-  } else if (TranslateServiceEnum.ALIYUN === translateService.type) {
-    return aliyunLogo
-  } else if (TranslateServiceEnum.GOOGLE === translateService.type) {
-    return googleLogo
-  } else if (TranslateServiceEnum.OPEN_AI === translateService.type) {
-    return openAILogo
-  } else if (TranslateServiceEnum.YOU_DAO === translateService.type) {
-    return youdaoLogo
-  } else if (TranslateServiceEnum.DEEP_L === translateService.type) {
-    return deepLLogo
-  } else if (TranslateServiceEnum.VOLCANO === translateService.type) {
-    return volcanoLogo
-  }
-}
-
 // 加载loading
 const loadingImageSrc = ref(loadingImage)
-const translateLogoSrc = ref(getTranslateServiceLogo(props.translateService))
+const translateLogoSrc = ref(
+  TranslateServiceEnum.getInfoByService(props.translateService.type).logo
+)
 const translateName = ref(props.translateService.name)
 
 // 翻译结果
 const translatedResultContent = ref('')
-const youdaoTranslatedResultExpand = ref({})
+const dictTranslatedResultExpand = ref({})
 // 是否正在加载翻译结果
 const isResultLoading = ref(false)
 // 显示翻译结果
@@ -231,41 +193,39 @@ window.api[getTranslateServiceBackEventName(props.translateService)]((res) => {
   isResultLoading.value = false
   showResult.value = true
 
-  if (TranslateServiceEnum.YOU_DAO === props.translateService['type']) {
-    let explainListDeal = []
-    if (!isNull(data.explains)) {
-      explainListDeal = data.explains.map((explain) => {
-        const regex = /^(\w+\.)\s*(.*)$/
-        const matches = explain.match(regex)
-        if (matches) {
-          return {
-            type: matches[1] + ' ',
-            content: matches[2]
-          }
-        }
-        // 处理没有词性的情况
+  let explainListDeal = []
+  if (!isNull(data?.explains)) {
+    explainListDeal = data.explains.map((explain) => {
+      const regex = /^(\w+\.)\s*(.*)$/
+      const matches = explain.match(regex)
+      if (matches) {
         return {
-          content: explain
+          type: matches[1] + ' ',
+          content: matches[2]
         }
-      })
-    }
+      }
+      // 处理没有词性的情况
+      return {
+        content: explain
+      }
+    })
+  }
 
-    const isUs = !isNull(data['usPhonetic'])
-    const isUk = !isNull(data['ukPhonetic'])
-    const isExplainList = explainListDeal.length > 0
-    const isWfs = !isNull(data['wfs']) && data['wfs'].length > 0
-    youdaoTranslatedResultExpand.value = {
-      isUs,
-      isUk,
-      isExplainList,
-      isWfs,
-      usPhonetic: data['usPhonetic'],
-      ukPhonetic: data['ukPhonetic'],
-      usSpeech: data['usSpeech'],
-      ukSpeech: data['ukSpeech'],
-      wfsList: data['wfs'],
-      explainList: explainListDeal
-    }
+  const isUs = !isNull(data?.['usPhonetic'])
+  const isUk = !isNull(data?.['ukPhonetic'])
+  const isExplainList = explainListDeal?.length > 0
+  const isWfs = !isNull(data?.['wfs']) && data['wfs']?.length > 0
+  dictTranslatedResultExpand.value = {
+    isUs,
+    isUk,
+    isExplainList,
+    isWfs,
+    usPhonetic: data['usPhonetic'],
+    ukPhonetic: data['ukPhonetic'],
+    usSpeech: data['usSpeech'],
+    ukSpeech: data['ukSpeech'],
+    wfsList: data['wfs'],
+    explainList: explainListDeal
   }
 })
 
@@ -313,7 +273,7 @@ defineExpose({
 })
 </script>
 
-<style lang="scss" scoped>
+<style lang='scss' scoped>
 @import '../../../css/translate.scss';
 @import '../../../css/translate-input.scss';
 

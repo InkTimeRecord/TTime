@@ -107,7 +107,8 @@ const updateTranslateContentEvent = (callback): void => {
   ipcRenderer.on('update-translated-content', (_event, content) => {
     // 先对文字做一次空处理 防止代码执行时出错
     // 不为空的情况下默认去掉文本内容前后的换行符
-    const newContent = content === undefined || content === null ? '' : content.replace(/^\n+|\n+$/g, '')
+    const newContent =
+      content === undefined || content === null ? '' : content.replace(/^\n+|\n+$/g, '')
     callback(newContent)
   })
 }
@@ -282,6 +283,17 @@ const googleApiTranslateCallbackEvent = (callback): void => {
 }
 
 /**
+ * 谷歌翻译 - 接口回调
+ *
+ * @param callback 回调方法 用于主进程内部触发时推送到Vue页面执行
+ */
+const googlebuiltinApiTranslateCallbackEvent = (callback): void => {
+  ipcRenderer.on('googlebuiltin-api-translate-callback-event', (_event, obj) => {
+    callback(obj)
+  })
+}
+
+/**
  * OpenAI - 翻译接口回调
  *
  * @param callback 回调方法 用于主进程内部触发时推送到Vue页面执行
@@ -326,6 +338,28 @@ const volcanoApiTranslateCallbackEvent = (callback): void => {
 }
 
 /**
+ * bing - 翻译接口回调
+ *
+ * @param callback 回调方法 用于主进程内部触发时推送到Vue页面执行
+ */
+const bingApiTranslateCallbackEvent = (callback): void => {
+  ipcRenderer.on('bing-api-translate-callback-event', (_event, obj) => {
+    callback(obj)
+  })
+}
+
+/**
+ * bing - 翻译接口回调
+ *
+ * @param callback 回调方法 用于主进程内部触发时推送到Vue页面执行
+ */
+const bingdictApiTranslateCallbackEvent = (callback): void => {
+  ipcRenderer.on('bingdict-api-translate-callback-event', (_event, obj) => {
+    callback(obj)
+  })
+}
+
+/**
  * 翻译结果消息回调
  * 如果校验无法翻译时，但也不能触发翻译事件时候，此处模拟翻译结果消息回调
  * 目前主要用于手动设置了翻译语言后的校验逻辑
@@ -361,9 +395,8 @@ const ttimeApiTranslateUse = (): void => {
   ipcRenderer.invoke('ttime-api-translate-use')
 }
 
-
 const showMsgEvent = (callback): void => {
-  ipcRenderer.on('show-msg-event', (_event, { type, msg }) => {
+  ipcRenderer.on('show-msg-event', (_event, type, msg) => {
     callback(type, msg)
   })
 }
@@ -434,10 +467,13 @@ const api = {
   baiduApiTranslateCallbackEvent,
   aliyunApiTranslateCallbackEvent,
   googleApiTranslateCallbackEvent,
+  googlebuiltinApiTranslateCallbackEvent,
   openaiApiTranslateCallbackEvent,
   youdaoApiTranslateCallbackEvent,
   deeplApiTranslateCallbackEvent,
   volcanoApiTranslateCallbackEvent,
+  bingApiTranslateCallbackEvent,
+  bingdictApiTranslateCallbackEvent,
   ttimeApiAppStart,
   showMsgEvent,
   updateTranslateServiceEvent,

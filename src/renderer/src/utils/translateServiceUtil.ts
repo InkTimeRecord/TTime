@@ -20,7 +20,7 @@ export const getTranslateServiceMap = () => {
   // 此处重新更新一下logo 防止当在缓存中存储后 如果应用修改了文件路径 会导致读取logo图片失败
   map.forEach((translateService) => {
     translateService['logo'] = TranslateServiceEnum.getInfoByService(translateService['type']).logo
-  });
+  })
   return map
 }
 
@@ -28,7 +28,7 @@ export const getTranslateServiceMap = () => {
  * 获取翻译服务 - 只获取出可使用的
  */
 export const getTranslateServiceMapByUse = () => {
-  let translateServiceMapData = getTranslateServiceMap()
+  const translateServiceMapData = getTranslateServiceMap()
   for (const [key, translateService] of translateServiceMapData.entries()) {
     if (!translateService['useStatus'] || !translateService['checkStatus']) {
       translateServiceMapData.delete(key)
@@ -37,148 +37,114 @@ export const getTranslateServiceMapByUse = () => {
   return translateServiceMapData
 }
 
-/**
- * 构建时记翻译源
- */
-export const buildTTimeService = () => {
-  const service = TranslateServiceEnum.getInfoByService(TranslateServiceEnum.TTIME)
-  return {
+// @ts-ignore
+export const buildTranslateService = (translateServiceEnum): {} => {
+  const service = TranslateServiceEnum.getInfoByService(translateServiceEnum)
+  const translateService = {
     id: random(),
-    ...service,
-    useStatus: true,
-    isBuiltIn: true,
-    checkStatus: true
+    ...service
+  }
+  switch (translateServiceEnum) {
+    case TranslateServiceEnum.TTIME:
+      return {
+        ...translateService,
+        useStatus: true,
+        isBuiltIn: true,
+        checkStatus: true
+      }
+    case TranslateServiceEnum.TENCENT_CLOUD:
+      return {
+        ...translateService,
+        useStatus: false,
+        isBuiltIn: false,
+        appId: '',
+        appKey: '',
+        checkStatus: false
+      }
+    case TranslateServiceEnum.BAIDU:
+      return {
+        ...translateService,
+        useStatus: false,
+        isBuiltIn: false,
+        appId: '',
+        appKey: '',
+        checkStatus: false
+      }
+    case TranslateServiceEnum.ALIYUN:
+      return {
+        ...translateService,
+        useStatus: false,
+        isBuiltIn: false,
+        appId: '',
+        appKey: '',
+        checkStatus: false
+      }
+    case TranslateServiceEnum.GOOGLE:
+      return {
+        ...translateService,
+        useStatus: false,
+        isBuiltIn: false,
+        appId: '',
+        appKey: '',
+        checkStatus: false
+      }
+    case TranslateServiceEnum.GOOGLE_BUILT_IN:
+      return {
+        ...translateService,
+        useStatus: true,
+        isBuiltIn: true,
+        checkStatus: true
+      }
+    case TranslateServiceEnum.OPEN_AI:
+      return {
+        ...translateService,
+        useStatus: false,
+        isBuiltIn: false,
+        appId: '',
+        appKey: '',
+        checkStatus: false,
+        model: OpenAIModelEnum.GPT_TURBO_35
+      }
+    case TranslateServiceEnum.YOU_DAO:
+      return {
+        ...translateService,
+        useStatus: false,
+        isBuiltIn: false,
+        appId: '',
+        appKey: '',
+        checkStatus: false
+      }
+    case TranslateServiceEnum.DEEP_L:
+      return {
+        ...translateService,
+        useStatus: false,
+        isBuiltIn: false,
+        appId: '',
+        appKey: '',
+        checkStatus: false
+      }
+    case TranslateServiceEnum.VOLCANO:
+      return {
+        ...translateService,
+        useStatus: false,
+        isBuiltIn: false,
+        appId: '',
+        appKey: '',
+        checkStatus: false
+      }
+    case TranslateServiceEnum.BING:
+      return {
+        ...translateService,
+        useStatus: true,
+        isBuiltIn: true,
+        checkStatus: true
+      }
+    case TranslateServiceEnum.BING_DICT:
+      return {
+        ...translateService,
+        useStatus: true,
+        isBuiltIn: true,
+        checkStatus: true
+      }
   }
 }
-
-/**
- * 构建腾讯云翻译源
- */
-export const buildTencentCloudService = () => {
-  const service = TranslateServiceEnum.getInfoByService(TranslateServiceEnum.TENCENT_CLOUD)
-  return {
-    id: random(),
-    ...service,
-    useStatus: false,
-    isBuiltIn: false,
-    appId: '',
-    appKey: '',
-    checkStatus: false
-  }
-}
-
-/**
- * 构建百度翻译源
- */
-export const buildBaiduService = () => {
-  const service = TranslateServiceEnum.getInfoByService(TranslateServiceEnum.BAIDU)
-  return {
-    id: random(),
-    ...service,
-    useStatus: false,
-    isBuiltIn: false,
-    appId: '',
-    appKey: '',
-    checkStatus: false
-  }
-}
-
-/**
- * 构建阿里云翻译源
- */
-export const buildAliyunService = () => {
-  const service = TranslateServiceEnum.getInfoByService(TranslateServiceEnum.ALIYUN)
-  return {
-    id: random(),
-    ...service,
-    useStatus: false,
-    isBuiltIn: false,
-    appId: '',
-    appKey: '',
-    checkStatus: false
-  }
-}
-
-/**
- * 构建Google翻译源
- */
-export const buildGoogleService = () => {
-  const service = TranslateServiceEnum.getInfoByService(TranslateServiceEnum.GOOGLE)
-  return {
-    id: random(),
-    ...service,
-    useStatus: false,
-    isBuiltIn: false,
-    appId: '',
-    appKey: '',
-    checkStatus: false
-  }
-}
-
-/**
- * 构建OpenAI翻译源
- */
-export const buildOpenAIService = () => {
-  const service = TranslateServiceEnum.getInfoByService(TranslateServiceEnum.OPEN_AI)
-  return {
-    id: random(),
-    ...service,
-    useStatus: false,
-    isBuiltIn: false,
-    appId: '',
-    appKey: '',
-    checkStatus: false,
-    model: OpenAIModelEnum.GPT_TURBO_35
-  }
-}
-
-/**
- * 构建有道翻译源
- */
-export const buildYouDaoService = () => {
-  const service = TranslateServiceEnum.getInfoByService(TranslateServiceEnum.YOU_DAO)
-  return {
-    id: random(),
-    ...service,
-    useStatus: false,
-    isBuiltIn: false,
-    appId: '',
-    appKey: '',
-    checkStatus: false
-  }
-}
-
-/**
- * 构建DeepL翻译源
- */
-export const buildDeepLService = () => {
-  const service = TranslateServiceEnum.getInfoByService(TranslateServiceEnum.DEEP_L)
-  return {
-    id: random(),
-    ...service,
-    useStatus: false,
-    isBuiltIn: false,
-    appId: '',
-    appKey: '',
-    checkStatus: false
-  }
-}
-
-/**
- * 构建火山翻译源
- */
-export const buildVolcanoService = () => {
-  const service = TranslateServiceEnum.getInfoByService(TranslateServiceEnum.VOLCANO)
-  return {
-    id: random(),
-    ...service,
-    useStatus: false,
-    isBuiltIn: false,
-    appId: '',
-    appKey: '',
-    checkStatus: false
-  }
-}
-
-
-

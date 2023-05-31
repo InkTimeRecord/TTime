@@ -55,7 +55,11 @@ class WinEvent {
     ipcMain.handle('auto-launch-init-event', (_event) => {
       log.info('开机自启初始化事件')
       this.updateAutoLaunch(null, (isEnabled) => {
-        GlobalWin.mainWin.webContents.send('update-cache-event', 'autoLaunch', isEnabled ? YesNoEnum.Y : YesNoEnum.N)
+        GlobalWin.mainWinSend(
+          'update-cache-event',
+          'autoLaunch',
+          isEnabled ? YesNoEnum.Y : YesNoEnum.N
+        )
         return isEnabled
       })
     })
@@ -75,7 +79,7 @@ class WinEvent {
    *
    * @param status 置顶状态
    */
-  static alwaysOnTop(status) {
+  static alwaysOnTop(status): void {
     GlobalWin.mainWin.setAlwaysOnTop(status)
     WinEvent.isAlwaysOnTop = status
     if (status) {
@@ -95,11 +99,13 @@ class WinEvent {
    * 翻译窗口注册Esc
    * 一般是窗口置顶时触发
    */
-  static translateWinRegisterEsc() {
-    // 翻译窗口注册Esc快捷键 一般是窗口置顶时触发
-    GlobalShortcutEvent.register('Esc', () => {
-      GlobalWin.mainWinHide()
-    })
+  static translateWinRegisterEsc(): void {
+    setTimeout(() => {
+      // 翻译窗口注册Esc快捷键 一般是窗口置顶时触发
+      GlobalShortcutEvent.register('Esc', () => {
+        GlobalWin.mainWinHide()
+      })
+    }, 300)
   }
 
   /**
@@ -108,7 +114,7 @@ class WinEvent {
    * @param status    设置自启状态
    * @param callback    设置自启状态
    */
-  updateAutoLaunch(status, callback) {
+  updateAutoLaunch(status, callback): void {
     if (EnvEnum.isDev()) {
       log.info('开发环境不设置开机自启')
       return

@@ -32,8 +32,8 @@ ipcMain.handle('api-unite-translate-check', (_event, channel, info) => {
  * @param channel 翻译类型
  * @param msg     回调消息内容
  */
-ipcMain.handle('api-translate-result-msg-callback-event',(_event, channel, msg) => {
-  GlobalWin.mainWin.webContents.send(channel.toLowerCase() + '-api-translate-callback-event', R.okT(msg))
+ipcMain.handle('api-translate-result-msg-callback-event', (_event, channel, msg) => {
+  GlobalWin.mainWinSend(channel.toLowerCase() + '-api-translate-callback-event', R.okT(msg))
 })
 
 /**
@@ -64,6 +64,6 @@ ipcMain.handle('api-unite-ocr-check', (_event, channel, info) => {
  * @param channel Ocr类型
  * @param msg     回调消息内容
  */
-ipcMain.handle('api-ocr-result-msg-callback-event',(_event, channel, msg) => {
-  GlobalWin.mainWin.webContents.send(channel.toLowerCase() + '-api-ocr-callback-event', R.okT(msg))
+ipcMain.handle('api-ocr-result-msg-callback-event', (_event, channel, msg) => {
+  GlobalWin.mainWinSend(channel.toLowerCase() + '-api-ocr-callback-event', R.okT(msg))
 })

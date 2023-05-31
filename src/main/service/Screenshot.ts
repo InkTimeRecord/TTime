@@ -25,24 +25,28 @@ app.whenReady().then(() => {
  */
 ipcMain.handle('handle-image-text-recognition-event', async (_event, img) => {
   // 执行前端脚本获取当前设置的Ocr服务
-  await GlobalWin.mainWin.webContents.executeJavaScript('JSON.parse(localStorage.ocrServiceMap).filter(ocrService => ocrService[1].useStatus)[0][1]').then((ocrService) => {
-    if (isNull(ocrService)) {
-      return
-    }
-    // 获取Ocr服务类型
-    const type = ocrService.type
-    if (OcrServiceEnum.TTIME === type) {
-      // TTime类型则调用本地Ocr
-      ScreenshotsMain.textOcrWin.webContents.send('local-ocr', img.toPNG())
-    } else {
-      // 调用第三方Ocr
-      OcrChannelFactory.ocr(ocrService.type, {
-        appId: ocrService.appId,
-        appKey: ocrService.appKey,
-        img: Buffer.from(img.toPNG()).toString('base64')
-      })
-    }
-  })
+  await GlobalWin.mainWin.webContents
+    .executeJavaScript(
+      'JSON.parse(localStorage.ocrServiceMap).filter(ocrService => ocrService[1].useStatus)[0][1]'
+    )
+    .then((ocrService) => {
+      if (isNull(ocrService)) {
+        return
+      }
+      // 获取Ocr服务类型
+      const type = ocrService.type
+      if (OcrServiceEnum.TTIME === type) {
+        // TTime类型则调用本地Ocr
+        ScreenshotsMain.textOcrWin.webContents.send('local-ocr', img.toPNG())
+      } else {
+        // 调用第三方Ocr
+        OcrChannelFactory.ocr(ocrService.type, {
+          appId: ocrService.appId,
+          appKey: ocrService.appKey,
+          img: Buffer.from(img.toPNG()).toString('base64')
+        })
+      }
+    })
 })
 
 /**
@@ -56,14 +60,14 @@ ipcMain.handle('screenshot-end-event', (_event, _image) => {
   // 并且要延迟执行 否则会重新设置失败
   setTimeout(() => WinEvent.alwaysOnTop(WinEvent.isAlwaysOnTop), 300)
   // 截图结束通知事件
-  GlobalWin.mainWin.webContents.send('screenshot-end-notify-event')
+  GlobalWin.mainWinSend('screenshot-end-notify-event')
 })
 
 /**
  * 文本识别事件
  */
 ipcMain.handle('text-ocr-event', (_event, text) => {
-  GlobalWin.mainWin.webContents.send('update-translated-content', text)
+  GlobalWin.mainWinSend('update-translated-content', text)
 })
 
 /**
@@ -203,22 +207,24 @@ class ScreenshotsSon {
     })
     // 生成显示器ID
     screenshotWinMap.set(this.screenshotsWinId, this.screenshotsWin)
-    this.screenshotsWin.webContents.executeJavaScript('JSON.stringify({width:screen.width,height: screen.height})').then(value => {
-      this.screenshotsWin.show()
-      const res = JSON.parse(value)
-      const screenWidth = res.width
-      const screenHeight = res.height
-      screenshots.capture().then((imgBuffer) => {
-        const image = 'data:image/png;base64,' + imgBuffer.toString('base64')
-        // 窗口绘制截图样式
-        this.screenshotsWin.webContents.send('win-draw-screenshot-style', {
-          screenId: this.screenshotsWinId,
-          screenImgUrl: image,
-          width: screenWidth,
-          height: screenHeight
+    this.screenshotsWin.webContents
+      .executeJavaScript('JSON.stringify({width:screen.width,height: screen.height})')
+      .then((value) => {
+        this.screenshotsWin.show()
+        const res = JSON.parse(value)
+        const screenWidth = res.width
+        const screenHeight = res.height
+        screenshots.capture().then((imgBuffer) => {
+          const image = 'data:image/png;base64,' + imgBuffer.toString('base64')
+          // 窗口绘制截图样式
+          this.screenshotsWin.webContents.send('win-draw-screenshot-style', {
+            screenId: this.screenshotsWinId,
+            screenImgUrl: image,
+            width: screenWidth,
+            height: screenHeight
+          })
         })
       })
-    })
   }
 }
 

@@ -124,16 +124,13 @@ ipcMain.handle('close-set-win-event', (_event, _args) => {
  * @param info    翻译信息
  */
 ipcMain.handle('update-translate-service-event', (_event, _args) => {
-  GlobalWin.mainWin.webContents.send('update-translate-service-event')
+  GlobalWin.mainWinSend('update-translate-service-event')
 })
 
 /**
  * 更新置顶时允许隐藏窗口选择事件通知
  */
 ipcMain.handle('always-onTop-allow-esc-status-notify', (_event, _args) => {
-  // 不管有没有注册Esc快捷键 先注销
-  GlobalShortcutEvent.unregisterEsc()
-  // 然后触发一次窗口显示事件的回调 方法内会根据状态重新更新Esc快捷键逻辑
   GlobalWin.mainWinShowCallback()
 })
 

@@ -1,118 +1,139 @@
 <template>
-  <div class='translate-service-layer'>
-    <div class='translate-service-div-block'>
-      <div class='translate-service-list-block'>
+  <div class="translate-service-layer">
+    <div class="translate-service-div-block">
+      <div class="translate-service-list-block">
         <el-scrollbar>
-          <div v-for='(translateService, key) in translateServiceMap.values()' :key='key'
-               class='translate-service-block cursor-pointer none-select'
-               :class='{"active" : translateServiceThis.id === translateService.id}'
-               @click='selectTranslateService(translateService)'
+          <div
+            v-for="(translateService, key) in translateServiceMap.values()"
+            :key="key"
+            class="translate-service-block cursor-pointer none-select"
+            :class="{ active: translateServiceThis.id === translateService.id }"
+            @click="selectTranslateService(translateService)"
           >
-            <a class='translate-service-block cursor-pointer none-select translate-service-expansion-block'>
-              <div class='left'>
-                <img class='translate-service-logo' :src='translateService.logo' />
-                <span class='translate-service-name'>{{ translateService.name }}</span>
+            <a
+              class="translate-service-block cursor-pointer none-select translate-service-expansion-block"
+            >
+              <div class="left">
+                <img class="translate-service-logo" :src="translateService.logo" />
+                <span class="translate-service-name">{{ translateService.name }}</span>
               </div>
-              <div class='right'>
-                <el-switch v-model='translateService.useStatus'
-                           @change='translateServiceUseStatusChange(translateService)' />
+              <div class="right">
+                <el-switch
+                  v-model="translateService.useStatus"
+                  @change="translateServiceUseStatusChange(translateService)"
+                />
               </div>
             </a>
           </div>
         </el-scrollbar>
       </div>
-      <div class='translate-service-edit'>
-        <div class='translate-service-edit-button'>
-          <el-dropdown trigger='click'>
-            <el-button :icon='Plus' size='small' />
+      <div class="translate-service-edit">
+        <div class="translate-service-edit-button">
+          <el-dropdown trigger="click">
+            <el-button :icon="Plus" size="small" />
             <template #dropdown>
               <el-dropdown-menu>
                 <el-dropdown-item
-                  v-for='(translateServiceSelectMenu, key) in translateServiceSelectMenuList'
-                  :key='key'
-                  @click='addTranslateService(translateServiceSelectMenu.type)'>
+                  v-for="(translateServiceSelectMenu, key) in translateServiceSelectMenuList"
+                  :key="key"
+                  :divided="translateServiceSelectMenu.dividedStatus"
+                  @click="addTranslateService(translateServiceSelectMenu.type)"
+                >
                   {{ translateServiceSelectMenu.name }}
                 </el-dropdown-item>
               </el-dropdown-menu>
             </template>
           </el-dropdown>
         </div>
-        <div class='translate-service-edit-button'>
-          <el-button @click='deleteTranslateService' :icon='Minus' size='small' />
+        <div class="translate-service-edit-button">
+          <el-button :icon="Minus" size="small" @click="deleteTranslateService" />
         </div>
       </div>
     </div>
-    <div class='translate-service-set-block'>
-      <div class='translate-service-set'>
-
-        <el-form v-if='!translateServiceThis.isBuiltIn' label-width='80px' label-position='left'>
-
-          <el-form-item v-if='translateServiceThis.type === TranslateServiceEnum.OPEN_AI' label='模型'>
-            <el-select v-model='translateServiceThis.model' size='small'>
-              <el-option v-for='model in openAIModelList' :key='model.value' :label='model.label'
-                         :value='model.value' />
+    <div class="translate-service-set-block">
+      <div class="translate-service-set">
+        <el-form v-if="!translateServiceThis.isBuiltIn" label-width="80px" label-position="left">
+          <el-form-item
+            v-if="translateServiceThis.type === TranslateServiceEnum.OPEN_AI"
+            label="模型"
+          >
+            <el-select v-model="translateServiceThis.model" size="small">
+              <el-option
+                v-for="model in openAIModelList"
+                :key="model.value"
+                :label="model.label"
+                :value="model.value"
+              />
             </el-select>
           </el-form-item>
 
           <el-form-item
-            v-if='
+            v-if="
               translateServiceThis.type !== TranslateServiceEnum.GOOGLE &&
               translateServiceThis.type !== TranslateServiceEnum.DEEP_L &&
               translateServiceThis.type !== TranslateServiceEnum.OPEN_AI
-              '
-            :label='
-              translateServiceThis.type === TranslateServiceEnum.TENCENT_CLOUD ? "SecretId" :
-              translateServiceThis.type === TranslateServiceEnum.BAIDU ? "AppId" :
-              translateServiceThis.type === TranslateServiceEnum.ALIYUN ? "KeyId" :
-              translateServiceThis.type === TranslateServiceEnum.YOU_DAO ? "应用ID" :
-              "AppId"
-              '>
-            <el-input v-model='translateServiceThis.appId' type='password' show-password placeholder='请输入AppId'
-                      spellcheck='false' />
+            "
+            :label="'AppId'"
+          >
+            <el-input
+              v-model="translateServiceThis.appId"
+              type="password"
+              show-password
+              placeholder="请输入AppId"
+              spellcheck="false"
+            />
           </el-form-item>
-          <el-form-item
-            :label='
-              translateServiceThis.type === TranslateServiceEnum.TENCENT_CLOUD ? "SecretKey" :
-              translateServiceThis.type === TranslateServiceEnum.BAIDU ? "SecretKey" :
-              translateServiceThis.type === TranslateServiceEnum.ALIYUN ? "KeySecret" :
-              translateServiceThis.type === TranslateServiceEnum.GOOGLE ? "ApiKey" :
-              translateServiceThis.type === TranslateServiceEnum.OPEN_AI ? "ApiKey" :
-              translateServiceThis.type === TranslateServiceEnum.YOU_DAO ? "应用秘钥" :
-               "AppKey"'>
-            <el-input v-model='translateServiceThis.appKey' type='password' show-password placeholder='请输入密钥'
-                      spellcheck='false' />
+          <el-form-item :label="'AppKey'">
+            <el-input
+              v-model="translateServiceThis.appKey"
+              type="password"
+              show-password
+              placeholder="请输入密钥"
+              spellcheck="false"
+            />
           </el-form-item>
-          <div class='translate-service-set-fun'>
-            <div class='translate-service-use-text'>
-              <el-tag v-if='checkIngStatus' type='info' effect='dark'>
-                验证中...
+          <div class="translate-service-set-fun">
+            <div class="translate-service-use-text">
+              <el-tag v-if="checkIngStatus" type="info" effect="dark"> 验证中...</el-tag>
+              <el-tag v-else-if="translateServiceThis.checkStatus" type="success" effect="dark"
+                >验证成功
               </el-tag>
-              <el-tag v-else-if='translateServiceThis.checkStatus' type='success' effect='dark'>验证成功</el-tag>
-              <el-tag v-else-if='!translateServiceThis.checkStatus' type='warning' effect='dark'>待验证</el-tag>
+              <el-tag v-else-if="!translateServiceThis.checkStatus" type="warning" effect="dark"
+                >待验证
+              </el-tag>
             </div>
-            <el-button plain :disabled='checkIngStatus' @click='translateServiceCheckAndSave'>验证</el-button>
+            <el-button plain :disabled="checkIngStatus" @click="translateServiceCheckAndSave"
+              >验证
+            </el-button>
           </div>
-          <span class='form-switch-span'> 验证成功后将会保存配置信息 </span>
+          <span class="form-switch-span"> 验证成功后将会保存配置信息 </span>
         </el-form>
-        <span v-else class='form-switch-span'>内置翻译源 - 无需配置</span>
+        <div v-else>
+          <span class="form-switch-span"> 内置翻译源 - 无需配置 </span>
+          <div
+            v-if="
+              translateServiceThis.type === TranslateServiceEnum.BING ||
+              translateServiceThis.type === TranslateServiceEnum.BING_DICT
+            "
+            class="translate-service-bing-msg-block"
+          >
+            <el-divider />
+            <span class="translate-service-bing-msg-title">建议：</span>
+            <span class="translate-service-bing-msg">开启了Bing字典翻译源就不用再开启Bing翻译</span>
+            <span class="translate-service-bing-msg">Bing翻译 = Bing翻译</span>
+            <span class="translate-service-bing-msg">Bing字典翻译 = Bing翻译 + Bing字典</span>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </template>
-<script setup lang='ts'>
+<script setup lang="ts">
 import { ref } from 'vue'
 import { Minus, Plus } from '@element-plus/icons-vue'
 
 import {
-  buildAliyunService,
-  buildBaiduService,
-  buildDeepLService,
-  buildGoogleService,
-  buildOpenAIService,
-  buildTencentCloudService,
-  buildTTimeService,
-  buildVolcanoService,
-  buildYouDaoService,
+  buildTranslateService,
   getTranslateServiceMap,
   setTranslateServiceMap
 } from '../../../../utils/translateServiceUtil'
@@ -124,25 +145,41 @@ import { OpenAIModelEnum } from '../../../../enums/OpenAIModelEnum'
 
 // 翻译服务验证状态
 const checkIngStatus = ref(false)
+
+// 可添加的翻译源列表 先把 values 格式转换为数组
+const translateServiceSelectMenuListTemp = Array.from(
+  TranslateServiceEnum.getServiceList().values()
+)
+// 这里获取翻译源对应的内置翻译源状态
+translateServiceSelectMenuListTemp.forEach((service) => {
+  service['isBuiltIn'] = buildTranslateService(service.type)?.['isBuiltIn']
+})
+// 根据内置状态进行排序分组
+translateServiceSelectMenuListTemp.sort((a, b) => a['isBuiltIn'] - b['isBuiltIn'])
+// 因为是否内置翻译源只有两种状态 是 与 否
+// 获取第一条数据的内置状态
+const lastIsBuiltIn = translateServiceSelectMenuListTemp[0]['isBuiltIn']
+// 然后这里跳过第一条数据 往后开始寻找 与第一条内置状态不一致的则说明可以设置 分割状态标记了
+for (let i = 1; i < translateServiceSelectMenuListTemp.length; i++) {
+  if (translateServiceSelectMenuListTemp[i]['isBuiltIn'] !== lastIsBuiltIn) {
+    // 因为需要对数据集进行内置与非内置的翻译源分组 所以这里需要对数据进行处理
+    translateServiceSelectMenuListTemp[i]['dividedStatus'] = true
+    break
+  }
+}
+
 // 获取缓存中的翻译服务list
-const translateServiceSelectMenuList = ref([
-  { type: TranslateServiceEnum.TTIME, name: 'TTime翻译' },
-  { type: TranslateServiceEnum.TENCENT_CLOUD, name: '腾讯翻译君' },
-  { type: TranslateServiceEnum.BAIDU, name: '百度翻译' },
-  { type: TranslateServiceEnum.ALIYUN, name: '阿里翻译' },
-  { type: TranslateServiceEnum.GOOGLE, name: 'Google翻译' },
-  { type: TranslateServiceEnum.OPEN_AI, name: 'OpenAI翻译' },
-  { type: TranslateServiceEnum.YOU_DAO, name: '有道翻译' },
-  { type: TranslateServiceEnum.DEEP_L, name: 'DeepL翻译' },
-  { type: TranslateServiceEnum.VOLCANO, name: '火山翻译' }
-])
+const translateServiceSelectMenuList = ref(translateServiceSelectMenuListTemp)
+
 const openAIModelList = OpenAIModelEnum.MODEL_LIST
 
 /**
  * 设置当前选中项默认为第一个翻译服务
  */
 const selectOneTranslateServiceThis = () => {
-  translateServiceThis.value = translateServiceMap.value.get(translateServiceMap.value.entries().next().value[0])
+  translateServiceThis.value = translateServiceMap.value.get(
+    translateServiceMap.value.entries().next().value[0]
+  )
 }
 
 // 获取缓存中的翻译服务list
@@ -172,35 +209,23 @@ const addTranslateService = (type) => {
   const insideTranslateServiceMap = getTranslateServiceMap()
   for (const translateService of insideTranslateServiceMap.values()) {
     // 如果已经添加过了TTime翻译源 重复添加时提示
-    if ((TranslateServiceEnum.TTIME === type) && type === translateService.type) {
-      ElMessageExtend.warning('TTime翻译源已存在了，请勿重复添加')
+    if (
+      (TranslateServiceEnum.TTIME === type && type === translateService.type) ||
+      (TranslateServiceEnum.BING === type && type === translateService.type) ||
+      (TranslateServiceEnum.BING_DICT === type && type === translateService.type) ||
+      (TranslateServiceEnum.GOOGLE_BUILT_IN === type && type === translateService.type)
+    ) {
+      ElMessageExtend.warning('此翻译源已存在了，请勿重复添加')
       return
     }
   }
-  let service = null
-  if (TranslateServiceEnum.TTIME === type) {
-    service = buildTTimeService()
-  } else if (TranslateServiceEnum.TENCENT_CLOUD === type) {
-    service = buildTencentCloudService()
-  } else if (TranslateServiceEnum.BAIDU === type) {
-    service = buildBaiduService()
-  } else if (TranslateServiceEnum.ALIYUN === type) {
-    service = buildAliyunService()
-  } else if (TranslateServiceEnum.GOOGLE === type) {
-    service = buildGoogleService()
-  } else if (TranslateServiceEnum.OPEN_AI === type) {
-    service = buildOpenAIService()
-  } else if (TranslateServiceEnum.YOU_DAO === type) {
-    service = buildYouDaoService()
-  } else if (TranslateServiceEnum.DEEP_L === type) {
-    service = buildDeepLService()
-  } else if (TranslateServiceEnum.VOLCANO === type) {
-    service = buildVolcanoService()
-  }
+  const service = buildTranslateService(type)
   if (null !== service) {
     saveTranslateService(service)
     translateServiceThis.value = service
   }
+  // 更新翻译源通知
+  window.api.updateTranslateServiceEvent()
 }
 
 /**
@@ -230,9 +255,8 @@ const translateServiceCheckAndSave = () => {
     (isNull(value.appId) &&
       TranslateServiceEnum.GOOGLE !== value.type &&
       TranslateServiceEnum.DEEP_L !== value.type &&
-      TranslateServiceEnum.OPEN_AI !== value.type
-    )
-    || (isNull(value.appKey))
+      TranslateServiceEnum.OPEN_AI !== value.type) ||
+    isNull(value.appKey)
   ) {
     return ElMessageExtend.warning('请输入密钥信息后再进行验证')
   }
@@ -292,7 +316,8 @@ const translateServiceUseStatusChange = (translateService) => {
   for (const insideTranslateService of getTranslateServiceMap().values()) {
     if (
       insideTranslateService.type === translateService.type &&
-      insideTranslateService.useStatus && translateService.useStatus
+      insideTranslateService.useStatus &&
+      translateService.useStatus
     ) {
       insideTranslateService.useStatus = false
       saveTranslateService(insideTranslateService)
@@ -319,7 +344,7 @@ const saveTranslateService = (translateService) => {
 }
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 @import '../../../../css/set';
 
 .header {
@@ -342,7 +367,6 @@ const saveTranslateService = (translateService) => {
       .translate-service-edit-button {
         margin-right: 10px;
       }
-
     }
 
     .translate-service-list-block {
@@ -391,7 +415,6 @@ const saveTranslateService = (translateService) => {
 
         .right {
         }
-
       }
     }
   }
@@ -416,11 +439,24 @@ const saveTranslateService = (translateService) => {
           font-size: 14px;
           padding-right: 10px;
         }
-
       }
 
-    }
+      .translate-service-bing-msg-block {
+        display: flex;
+        flex-direction: column;
+        font-size: 12px;
+        color: var(--ttime-tips-text-color);
 
+        .translate-service-bing-msg-title {
+          margin-top: 7px;
+          font-weight: 600;
+        }
+
+        .translate-service-bing-msg {
+          margin: 7px 0 0 10px;
+        }
+      }
+    }
   }
 }
 </style>

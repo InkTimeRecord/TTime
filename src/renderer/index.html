@@ -16,5 +16,10 @@
 <body>
 <div id='app'></div>
 <script type='module' src='/src/translate/main.ts'></script>
+<script>
+  window.addEventListener('error', function (event) {
+    window.api.logInfoEvent('[翻译窗口异常]', event.error)
+  });
+</script>
 </body>
 </html>
