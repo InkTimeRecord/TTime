@@ -13,12 +13,7 @@ class GoogleBuiltInChannel implements ITranslateInterface {
    * @param info 翻译信息
    */
   apiTranslate(info): void {
-    GlobalWin.mainWin.webContents.send(
-      'agent-api-translate',
-      TranslateServiceEnum.GOOGLE_BUILT_IN,
-      info,
-      false
-    )
+    GlobalWin.mainWinSend('agent-api-translate', TranslateServiceEnum.GOOGLE_BUILT_IN, info, false)
   }
 
   /**
@@ -39,9 +34,9 @@ class GoogleBuiltInChannel implements ITranslateInterface {
       }
       const vo = new TranslateVo([data[0][0][0]])
       vo.dictBuild('', '', '', '', explains, [])
-      GlobalWin.mainWin.webContents.send('googlebuiltin-api-translate-callback-event', R.okD(vo))
+      GlobalWin.mainWinSend('googlebuiltin-api-translate-callback-event', R.okD(vo))
     } else {
-      GlobalWin.mainWin.webContents.send('googlebuiltin-api-translate-callback-event', R.okT(data))
+      GlobalWin.mainWinSend('googlebuiltin-api-translate-callback-event', R.okT(data))
     }
   }
 

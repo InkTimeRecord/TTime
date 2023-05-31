@@ -76,16 +76,11 @@ class BingDictChannel implements ITranslateInterface {
         }
         // 这里内部处理Bing字典数据 PS: 尝试通过浏览器环境进行请求时Bing字典接口时不知道为什么一直无法获取正确数据
         // 初步怀疑是Bing字典有跨域检测机制
-        GlobalWin.mainWin.webContents.send(
-          'agent-api-translate',
-          TranslateServiceEnum.BING_DICT,
-          info,
-          false
-        )
+        GlobalWin.mainWinSend('agent-api-translate', TranslateServiceEnum.BING_DICT, info, false)
       })
       .catch((err) => {
         log.info('[BingDict翻译事件] - 异常 : ', err)
-        GlobalWin.mainWin.webContents.send('bingdict-api-translate-callback-event', R.okT(err))
+        GlobalWin.mainWinSend('bingdict-api-translate-callback-event', R.okT(err))
       })
   }
 
@@ -98,7 +93,7 @@ class BingDictChannel implements ITranslateInterface {
   static apiTranslateCallback(status, data): void {
     log.info('[BingDict翻译事件] - 响应报文 : ', JSON.stringify(data))
     if (!status) {
-      GlobalWin.mainWin.webContents.send('openai-api-translate-callback-event', R.okT(data))
+      GlobalWin.mainWinSend('openai-api-translate-callback-event', R.okT(data))
       return
     }
     const vo = new TranslateVo([data['text']])
@@ -110,7 +105,7 @@ class BingDictChannel implements ITranslateInterface {
       data.explains,
       data.wfs
     )
-    GlobalWin.mainWin.webContents.send('bingdict-api-translate-callback-event', R.okD(vo))
+    GlobalWin.mainWinSend('bingdict-api-translate-callback-event', R.okD(vo))
   }
 
   apiTranslateCheck(_info): void {}

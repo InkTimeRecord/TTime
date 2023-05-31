@@ -13,22 +13,12 @@ class DeepLChannel implements ITranslateInterface {
    */
   apiTranslate(info): void {
     log.info('[DeepL翻译事件] - 请求报文 : ', paramsFilter(info))
-    GlobalWin.mainWin.webContents.send(
-      'agent-api-translate',
-      TranslateServiceEnum.DEEP_L,
-      info,
-      false
-    )
+    GlobalWin.mainWinSend('agent-api-translate', TranslateServiceEnum.DEEP_L, info, false)
   }
 
   apiTranslateCheck(info): void {
     log.info('[DeepL翻译事件] - 请求报文 : ', paramsFilter(info))
-    GlobalWin.mainWin.webContents.send(
-      'agent-api-translate',
-      TranslateServiceEnum.DEEP_L,
-      info,
-      true
-    )
+    GlobalWin.mainWinSend('agent-api-translate', TranslateServiceEnum.DEEP_L, info, true)
   }
 
   /**
@@ -40,12 +30,12 @@ class DeepLChannel implements ITranslateInterface {
   static apiTranslateCallback(status, data): void {
     if (status) {
       log.info('[DeepL翻译事件] - 响应报文 : ', data)
-      GlobalWin.mainWin.webContents.send(
+      GlobalWin.mainWinSend(
         'deepl-api-translate-callback-event',
         R.okT(data['translations'].map((translation) => translation.text))
       )
     } else {
-      GlobalWin.mainWin.webContents.send(
+      GlobalWin.mainWinSend(
         'deepl-api-translate-callback-event',
         R.okT(DeepLChannel.commonErrorExpand(data))
       )

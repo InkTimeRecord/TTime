@@ -27,13 +27,14 @@ import ElMessageExtend from '../utils/messageExtend'
 import { ShortcutKeyEnum } from '../enums/ShortcutKeyEnum'
 import { YesNoEnum } from '../enums/YesNoEnum'
 import { isNull } from '../utils/validate'
-import { buildService, setTranslateServiceMap } from '../utils/translateServiceUtil'
-import { buildOcrTTimeService, setOcrServiceMap } from '../utils/ocrServiceUtil'
+import { buildTranslateService, setTranslateServiceMap } from '../utils/translateServiceUtil'
+import { buildOcrService, setOcrServiceMap } from '../utils/ocrServiceUtil'
 import { initTheme } from '../utils/themeUtil'
 import { cacheGetStr, cacheSet, cacheSetStr } from '../utils/cacheUtil'
 import { PlaySpeechServiceEnum } from '../enums/PlaySpeechServiceEnum'
 import '../channel/ChannelRequest'
 import { TranslateServiceEnum } from '../enums/TranslateServiceEnum'
+import { OcrServiceEnum } from '../enums/OcrServiceEnum'
 
 initTheme()
 
@@ -68,10 +69,10 @@ window.api.winShowByInputEvent(() => {
  */
 if (isNull(cacheGetStr('translateServiceMap'))) {
   const map = new Map()
-  const ttimeService = buildService(TranslateServiceEnum.TTIME)
+  const ttimeService = buildTranslateService(TranslateServiceEnum.TTIME)
   map.set(ttimeService.id, ttimeService)
   setTranslateServiceMap(map)
-  const bingDictService = buildService(TranslateServiceEnum.BING_DICT)
+  const bingDictService = buildTranslateService(TranslateServiceEnum.BING_DICT)
   map.set(bingDictService.id, bingDictService)
   setTranslateServiceMap(map)
 }
@@ -82,7 +83,7 @@ if (isNull(cacheGetStr('translateServiceMap'))) {
  */
 if (isNull(cacheGetStr('ocrServiceMap'))) {
   const map = new Map()
-  const ttimeService = buildOcrTTimeService()
+  const ttimeService = buildOcrService(OcrServiceEnum.TTIME)
   map.set(ttimeService.id, ttimeService)
   setOcrServiceMap(map)
 }
@@ -145,7 +146,6 @@ if (undefined === cacheGetStr('wrapReplaceSpaceStatus')) {
   cacheSetStr('wrapReplaceSpaceStatus', YesNoEnum.N)
 }
 window.api.updateCacheEvent((key, value) => {
-  window.api.logInfoEvent('[updateCacheEvent] - 触发了', key, value)
   cacheSetStr(key, value)
 })
 
@@ -153,6 +153,7 @@ window.api.updateCacheEvent((key, value) => {
  * 调起消息弹层提示事件
  */
 window.api.showMsgEvent((type, msg) => {
+  console.log('调起消息弹层提示事件 , type = ', type, ' , msg =', msg)
   if (type === ElMessageExtend.SUCCESS) {
     ElMessageExtend.success(msg)
   } else if (type === ElMessageExtend.WARNING) {

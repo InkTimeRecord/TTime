@@ -15,12 +15,7 @@ class BingChannel implements ITranslateInterface {
    */
   apiTranslate(info): void {
     log.info('[Bing翻译事件] - 请求报文 : ', paramsFilter(info))
-    GlobalWin.mainWin.webContents.send(
-      'agent-api-translate',
-      TranslateServiceEnum.BING,
-      info,
-      false
-    )
+    GlobalWin.mainWinSend('agent-api-translate', TranslateServiceEnum.BING, info, false)
   }
 
   /**
@@ -32,10 +27,10 @@ class BingChannel implements ITranslateInterface {
   static apiTranslateCallback(status, data): void {
     log.info('[Bing翻译事件] - 响应报文 : ', JSON.stringify(data))
     if (!status) {
-      GlobalWin.mainWin.webContents.send('bing-api-translate-callback-event', R.okT(data))
+      GlobalWin.mainWinSend('bing-api-translate-callback-event', R.okT(data))
       return
     }
-    GlobalWin.mainWin.webContents.send(
+    GlobalWin.mainWinSend(
       'bing-api-translate-callback-event',
       R.okT(data[0]['translations'][0]['text'])
     )

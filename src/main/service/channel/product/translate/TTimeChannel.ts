@@ -22,10 +22,10 @@ class TTimeChannel implements ITranslateInterface {
         } else {
           data = res['data']['translateList']
         }
-        GlobalWin.mainWin.webContents.send('ttime-api-translate-callback-event', R.okT(data))
+        GlobalWin.mainWinSend('ttime-api-translate-callback-event', R.okT(data))
       })
       .catch((error) => {
-        GlobalWin.mainWin.webContents.send('ttime-api-translate-callback-event', R.okT(error))
+        GlobalWin.mainWinSend('ttime-api-translate-callback-event', R.okT(error))
       })
   }
 

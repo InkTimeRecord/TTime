@@ -38,7 +38,7 @@ export const getTranslateServiceMapByUse = () => {
 }
 
 // @ts-ignore
-export const buildService = (translateServiceEnum): {} => {
+export const buildTranslateService = (translateServiceEnum): {} => {
   const service = TranslateServiceEnum.getInfoByService(translateServiceEnum)
   const translateService = {
     id: random(),

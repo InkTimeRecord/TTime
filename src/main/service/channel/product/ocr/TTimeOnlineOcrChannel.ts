@@ -20,7 +20,7 @@ class TTimeOnlineOcrChannel implements IOcrInterface {
         textList.forEach((text) => {
           data += text['text'] + '\n'
         })
-        GlobalWin.mainWin.webContents.send('update-translated-content', data)
+        GlobalWin.mainWinSend('update-translated-content', data)
       })
       .catch((_err) => {
         log.error('[TTime在线Ocr事件] - 异常 : ', _err)

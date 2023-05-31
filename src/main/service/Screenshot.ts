@@ -60,14 +60,14 @@ ipcMain.handle('screenshot-end-event', (_event, _image) => {
   // 并且要延迟执行 否则会重新设置失败
   setTimeout(() => WinEvent.alwaysOnTop(WinEvent.isAlwaysOnTop), 300)
   // 截图结束通知事件
-  GlobalWin.mainWin.webContents.send('screenshot-end-notify-event')
+  GlobalWin.mainWinSend('screenshot-end-notify-event')
 })
 
 /**
  * 文本识别事件
  */
 ipcMain.handle('text-ocr-event', (_event, text) => {
-  GlobalWin.mainWin.webContents.send('update-translated-content', text)
+  GlobalWin.mainWinSend('update-translated-content', text)
 })
 
 /**

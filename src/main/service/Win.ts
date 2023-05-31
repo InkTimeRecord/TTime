@@ -55,7 +55,7 @@ class WinEvent {
     ipcMain.handle('auto-launch-init-event', (_event) => {
       log.info('开机自启初始化事件')
       this.updateAutoLaunch(null, (isEnabled) => {
-        GlobalWin.mainWin.webContents.send(
+        GlobalWin.mainWinSend(
           'update-cache-event',
           'autoLaunch',
           isEnabled ? YesNoEnum.Y : YesNoEnum.N

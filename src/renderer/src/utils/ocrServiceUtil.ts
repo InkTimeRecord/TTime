@@ -7,7 +7,7 @@ import { cacheGet, cacheSet } from './cacheUtil'
  *
  * @param ocrServiceMap Ocr服务list
  */
-export const setOcrServiceMap = (ocrServiceMap) => {
+export const setOcrServiceMap = (ocrServiceMap): void => {
   cacheSet('ocrServiceMap', Array.from(ocrServiceMap.entries()))
 }
 
@@ -19,7 +19,7 @@ export const getOcrServiceMap = () => {
   // 此处重新更新一下logo 防止当在缓存中存储后 如果应用修改了文件路径 会导致读取logo图片失败
   map.forEach((translateService) => {
     translateService['logo'] = OcrServiceEnum.getInfoByService(translateService['type']).logo
-  });
+  })
   return map
 }
 
@@ -27,7 +27,7 @@ export const getOcrServiceMap = () => {
  * 获取Ocr服务 - 只获取出可使用的
  */
 export const getOcrServiceMapByUse = () => {
-  let ocrServiceMapData = getOcrServiceMap()
+  const ocrServiceMapData = getOcrServiceMap()
   for (const [key, ocrService] of ocrServiceMapData.entries()) {
     if (!ocrService['useStatus'] || !ocrService['checkStatus']) {
       ocrServiceMapData.delete(key)
@@ -36,46 +36,45 @@ export const getOcrServiceMapByUse = () => {
   return ocrServiceMapData
 }
 
-/**
- * 构建 TTime Ocr
- */
-export const buildOcrTTimeService = () => {
-  const service = OcrServiceEnum.getInfoByService(OcrServiceEnum.TTIME)
-  return {
+// @ts-ignore
+export const buildOcrService = (ocrServiceEnum): {} => {
+  const service = OcrServiceEnum.getInfoByService(ocrServiceEnum)
+  const ocrService = {
     id: random(),
-    ...service,
-    useStatus: true,
-    isBuiltIn: true,
-    checkStatus: true
+    ...service
   }
-}
-
-/**
- * 构建 TTime在线 Ocr
- */
-export const buildOcrTTimeOnlineService = () => {
-  const service = OcrServiceEnum.getInfoByService(OcrServiceEnum.TTIME_ONLINE)
-  return {
-    id: random(),
-    ...service,
-    useStatus: false,
-    isBuiltIn: true,
-    checkStatus: true
-  }
-}
-
-/**
- * 构建百度 Ocr
- */
-export const buildOcrBaiduService = () => {
-  const service = OcrServiceEnum.getInfoByService(OcrServiceEnum.BAIDU)
-  return {
-    id: random(),
-    ...service,
-    useStatus: false,
-    isBuiltIn: false,
-    appId: '',
-    appKey: '',
-    checkStatus: false
+  switch (ocrServiceEnum) {
+    case OcrServiceEnum.TTIME:
+      return {
+        ...ocrService,
+        useStatus: true,
+        isBuiltIn: true,
+        checkStatus: true
+      }
+    case OcrServiceEnum.TTIME_ONLINE:
+      return {
+        ...ocrService,
+        useStatus: false,
+        isBuiltIn: true,
+        checkStatus: true
+      }
+    case OcrServiceEnum.BAIDU:
+      return {
+        ...ocrService,
+        useStatus: false,
+        isBuiltIn: false,
+        appId: '',
+        appKey: '',
+        checkStatus: false
+      }
+    case OcrServiceEnum.VOLCANO:
+      return {
+        ...ocrService,
+        useStatus: false,
+        isBuiltIn: false,
+        appId: '',
+        appKey: '',
+        checkStatus: false
+      }
   }
 }

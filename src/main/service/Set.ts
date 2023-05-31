@@ -124,7 +124,7 @@ ipcMain.handle('close-set-win-event', (_event, _args) => {
  * @param info    翻译信息
  */
 ipcMain.handle('update-translate-service-event', (_event, _args) => {
-  GlobalWin.mainWin.webContents.send('update-translate-service-event')
+  GlobalWin.mainWinSend('update-translate-service-event')
 })
 
 /**

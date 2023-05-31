@@ -133,7 +133,7 @@ import { ref } from 'vue'
 import { Minus, Plus } from '@element-plus/icons-vue'
 
 import {
-  buildService,
+  buildTranslateService,
   getTranslateServiceMap,
   setTranslateServiceMap
 } from '../../../../utils/translateServiceUtil'
@@ -152,7 +152,7 @@ const translateServiceSelectMenuListTemp = Array.from(
 )
 // 这里获取翻译源对应的内置翻译源状态
 translateServiceSelectMenuListTemp.forEach((service) => {
-  service['isBuiltIn'] = buildService(service.type)?.['isBuiltIn']
+  service['isBuiltIn'] = buildTranslateService(service.type)?.['isBuiltIn']
 })
 // 根据内置状态进行排序分组
 translateServiceSelectMenuListTemp.sort((a, b) => a['isBuiltIn'] - b['isBuiltIn'])
@@ -219,7 +219,7 @@ const addTranslateService = (type) => {
       return
     }
   }
-  const service = buildService(type)
+  const service = buildTranslateService(type)
   if (null !== service) {
     saveTranslateService(service)
     translateServiceThis.value = service

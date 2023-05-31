@@ -135,8 +135,8 @@ class GlobalShortcutEvent {
    */
   static translateInput(): void {
     GlobalWin.mainWinShow()
-    GlobalWin.mainWin.webContents.send('clear-all-translated-content')
-    GlobalWin.mainWin.webContents.send('win-show-input-event')
+    GlobalWin.mainWinSend('clear-all-translated-content')
+    GlobalWin.mainWinSend('win-show-input-event')
   }
 
   /**
@@ -144,7 +144,7 @@ class GlobalShortcutEvent {
    */
   static translateScreenshot(): void {
     log.info('[截图翻译] - 开始截图')
-    GlobalWin.mainWin.webContents.send('clear-all-translated-content')
+    GlobalWin.mainWinSend('clear-all-translated-content')
     // 隐藏窗口
     GlobalWin.mainWinHide()
     new ScreenshotsMain().createScreenshotsWin()
@@ -174,14 +174,14 @@ class GlobalShortcutEvent {
     const printSelectedText = (selectedText) => {
       GlobalShortcutEvent.isChoice = false
       // 推送给Vue页面进行更新翻译输入内容
-      GlobalWin.mainWin.webContents.send('update-translated-content', selectedText)
+      GlobalWin.mainWinSend('update-translated-content', selectedText)
       GlobalWin.mainWinShow()
     }
     GlobalShortcutEvent.getSelectedText().then(printSelectedText)
   }
 
   static getSelectedText = async () => {
-    GlobalWin.mainWin.webContents.send('clear-all-translated-content')
+    GlobalWin.mainWinSend('clear-all-translated-content')
     const currentClipboardContent = clipboard.readText()
     log.info('[划词翻译] - 读取剪切板原文本 : ', currentClipboardContent)
     clipboard.clear()

@@ -15,12 +15,7 @@ class OpenAIChannel implements ITranslateInterface {
    */
   apiTranslate(info): void {
     log.info('[OpenAI翻译事件] - 请求报文 : ', paramsFilter(info))
-    GlobalWin.mainWin.webContents.send(
-      'agent-api-translate',
-      TranslateServiceEnum.OPEN_AI,
-      info,
-      false
-    )
+    GlobalWin.mainWinSend('agent-api-translate', TranslateServiceEnum.OPEN_AI, info, false)
   }
 
   /**
@@ -30,12 +25,7 @@ class OpenAIChannel implements ITranslateInterface {
    */
   apiTranslateCheck(info): void {
     log.info('[OpenAI翻译校验密钥事件] - 请求报文 : ', paramsFilter(info))
-    GlobalWin.mainWin.webContents.send(
-      'agent-api-translate',
-      TranslateServiceEnum.OPEN_AI,
-      info,
-      true
-    )
+    GlobalWin.mainWinSend('agent-api-translate', TranslateServiceEnum.OPEN_AI, info, true)
   }
 
   /**
@@ -95,7 +85,7 @@ class OpenAIChannel implements ITranslateInterface {
   }
 
   static callbackEvent(status, msg): void {
-    GlobalWin.mainWin.webContents.send('openai-api-translate-callback-event', R.okCT(status, msg))
+    GlobalWin.mainWinSend('openai-api-translate-callback-event', R.okCT(status, msg))
   }
 
   /**

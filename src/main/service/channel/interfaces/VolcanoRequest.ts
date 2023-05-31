@@ -30,6 +30,34 @@ const apiTranslate = async (info): Promise<OpenApiResponse<any>> => {
   return await fetchApi(data)
 }
 
+/**
+ * OCR
+ *
+ * 官方文档和node SDK没有支持翻译接口
+ * 这里参照上面的翻译接口和对照OCR文档填写
+ *
+ * @param info 翻译信息
+ */
+const apiOcr = async (info): Promise<OpenApiResponse<any>> => {
+  const data = {
+    image_base64: info.img
+  }
+  const service = new Service({
+    host: 'visual.volcengineapi.com',
+    serviceName: 'cv',
+    region: 'cn-north-1',
+    accessKeyId: info.appId,
+    secretKey: info.appKey
+  })
+  const fetchApi = service.createAPI('OCRNormal', {
+    Version: '2020-08-26',
+    method: 'POST',
+    contentType: 'urlencode'
+  })
+  return await fetchApi(data)
+}
+
 export default {
-  apiTranslate
+  apiTranslate,
+  apiOcr
 }

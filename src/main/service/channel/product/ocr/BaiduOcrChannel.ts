@@ -60,19 +60,16 @@ class BaiduOcrChannel implements IOcrInterface {
   }
 
   /**
-   * 翻译
+   * OCR
    *
-   * @param info 翻译信息
+   * @param info OCR信息
    */
   async apiOcr(info): Promise<void> {
     await this.injectionToken(info, false)
     if (isNull(BaiduOcrChannel.token)) {
       log.info('[百度Ocr事件] - 获取Token失败 :', BaiduOcrChannel.tokenErrMsg)
-      GlobalWin.mainWin.webContents.send(
-        'show-msg-event',
-        WebShowMsgEnum.ERROR,
-        BaiduOcrChannel.tokenErrMsg
-      )
+      GlobalWin.mainWinSend('show-msg-event', WebShowMsgEnum.ERROR, BaiduOcrChannel.tokenErrMsg)
+      GlobalWin.mainWinSend('update-translated-content', '')
       return
     }
     info.token = BaiduOcrChannel.token
@@ -84,7 +81,8 @@ class BaiduOcrChannel implements IOcrInterface {
         if (isNotNull(errorCode)) {
           let errorMsg = this.getMsgByErrorCode(errorCode)
           errorMsg = isNull(errorMsg) ? res['error_msg'] : errorMsg
-          GlobalWin.mainWin.webContents.send('show-msg-event', WebShowMsgEnum.ERROR, errorMsg)
+          GlobalWin.mainWinSend('show-msg-event', WebShowMsgEnum.ERROR, errorMsg)
+          GlobalWin.mainWinSend('update-translated-content', '')
           return
         }
         let data = ''
@@ -92,7 +90,7 @@ class BaiduOcrChannel implements IOcrInterface {
         textList.forEach((text) => {
           data += text['words'] + '\n'
         })
-        GlobalWin.mainWin.webContents.send('update-translated-content', data)
+        GlobalWin.mainWinSend('update-translated-content', data)
       })
       .catch((_err) => {})
   }

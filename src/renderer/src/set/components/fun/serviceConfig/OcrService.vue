@@ -1,91 +1,105 @@
 <template>
-  <div class='translate-service-layer'>
-    <div class='translate-service-div-block'>
-      <div class='translate-service-list-block'>
+  <div class="translate-service-layer">
+    <div class="translate-service-div-block">
+      <div class="translate-service-list-block">
         <el-scrollbar>
-          <div v-for='(ocrService, key) in ocrServiceMap.values()' :key='key'
-               class='translate-service-block cursor-pointer none-select'
-               :class='{"active" : ocrServiceThis.id === ocrService.id}'
-               @click='selectOcrService(ocrService)'
+          <div
+            v-for="(ocrService, key) in ocrServiceMap.values()"
+            :key="key"
+            class="translate-service-block cursor-pointer none-select"
+            :class="{ active: ocrServiceThis.id === ocrService.id }"
+            @click="selectOcrService(ocrService)"
           >
-            <a class='translate-service-block cursor-pointer none-select translate-service-expansion-block'>
-              <div class='left'>
-                <img class='translate-service-logo' :src='ocrService.logo' />
-                <span class='translate-service-name'>{{ ocrService.name }}</span>
+            <a
+              class="translate-service-block cursor-pointer none-select translate-service-expansion-block"
+            >
+              <div class="left">
+                <img class="translate-service-logo" :src="ocrService.logo" />
+                <span class="translate-service-name">{{ ocrService.name }}</span>
               </div>
-              <div class='right'>
-                <el-switch v-model='ocrService.useStatus'
-                           @change='ocrServiceUseStatusChange(ocrService)' />
+              <div class="right">
+                <el-switch
+                  v-model="ocrService.useStatus"
+                  @change="ocrServiceUseStatusChange(ocrService)"
+                />
               </div>
             </a>
           </div>
         </el-scrollbar>
       </div>
-      <div class='translate-service-edit'>
-        <div class='translate-service-edit-button'>
-          <el-dropdown trigger='click'>
-            <el-button :icon='Plus' size='small' />
+      <div class="translate-service-edit">
+        <div class="translate-service-edit-button">
+          <el-dropdown trigger="click">
+            <el-button :icon="Plus" size="small" />
             <template #dropdown>
               <el-dropdown-menu>
                 <el-dropdown-item
-                  v-for='(ocrServiceSelectMenu, key) in ocrServiceSelectMenuList'
-                  :key='key'
-                  @click='addOcrService(ocrServiceSelectMenu.type)'>
+                  v-for="(ocrServiceSelectMenu, key) in ocrServiceSelectMenuList"
+                  :key="key"
+                  :divided="ocrServiceSelectMenu.dividedStatus"
+                  @click="addOcrService(ocrServiceSelectMenu.type)"
+                >
                   {{ ocrServiceSelectMenu.name }}
                 </el-dropdown-item>
               </el-dropdown-menu>
             </template>
           </el-dropdown>
         </div>
-        <div class='translate-service-edit-button'>
-          <el-button @click='deleteOcrService' :icon='Minus' size='small' />
+        <div class="translate-service-edit-button">
+          <el-button :icon="Minus" size="small" @click="deleteOcrService" />
         </div>
       </div>
     </div>
-    <div class='translate-service-set-block'>
-      <div class='translate-service-set'>
-
-        <el-form v-if='!ocrServiceThis.isBuiltIn' label-width='80px' label-position='left'>
-
-          <el-form-item
-            :label='
-              ocrServiceThis.type === OcrServiceEnum.BAIDU ? "ApiKey" : "AppId"
-              '>
-            <el-input v-model='ocrServiceThis.appId' type='password' show-password placeholder='请输入AppId'
-                      spellcheck='false' />
+    <div class="translate-service-set-block">
+      <div class="translate-service-set">
+        <el-form v-if="!ocrServiceThis.isBuiltIn" label-width="80px" label-position="left">
+          <el-form-item :label="ocrServiceThis.type === OcrServiceEnum.BAIDU ? 'ApiKey' : 'AppId'">
+            <el-input
+              v-model="ocrServiceThis.appId"
+              type="password"
+              show-password
+              placeholder="请输入AppId"
+              spellcheck="false"
+            />
           </el-form-item>
           <el-form-item
-            :label='
-              ocrServiceThis.type === OcrServiceEnum.BAIDU ? "SecretKey" :
-               "AppKey"'>
-            <el-input v-model='ocrServiceThis.appKey' type='password' show-password placeholder='请输入密钥'
-                      spellcheck='false' />
+            :label="ocrServiceThis.type === OcrServiceEnum.BAIDU ? 'SecretKey' : 'AppKey'"
+          >
+            <el-input
+              v-model="ocrServiceThis.appKey"
+              type="password"
+              show-password
+              placeholder="请输入密钥"
+              spellcheck="false"
+            />
           </el-form-item>
-          <div class='translate-service-set-fun'>
-            <div class='translate-service-use-text'>
-              <el-tag v-if='checkIngStatus' type='info' effect='dark'>
-                验证中...
-              </el-tag>
-              <el-tag v-else-if='ocrServiceThis.checkStatus' type='success' effect='dark'>验证成功</el-tag>
-              <el-tag v-else-if='!ocrServiceThis.checkStatus' type='warning' effect='dark'>待验证</el-tag>
+          <div class="translate-service-set-fun">
+            <div class="translate-service-use-text">
+              <el-tag v-if="checkIngStatus" type="info" effect="dark"> 验证中... </el-tag>
+              <el-tag v-else-if="ocrServiceThis.checkStatus" type="success" effect="dark"
+                >验证成功</el-tag
+              >
+              <el-tag v-else-if="!ocrServiceThis.checkStatus" type="warning" effect="dark"
+                >待验证</el-tag
+              >
             </div>
-            <el-button plain :disabled='checkIngStatus' @click='ocrServiceCheckAndSave'>验证</el-button>
+            <el-button plain :disabled="checkIngStatus" @click="ocrServiceCheckAndSave"
+              >验证</el-button
+            >
           </div>
-          <span class='form-switch-span'> 验证成功后将会保存配置信息 </span>
+          <span class="form-switch-span"> 验证成功后将会保存配置信息 </span>
         </el-form>
-        <span v-else class='form-switch-span'>内置文本识别 - 无需配置</span>
+        <span v-else class="form-switch-span">内置文本识别 - 无需配置</span>
       </div>
     </div>
   </div>
 </template>
-<script setup lang='ts'>
+<script setup lang="ts">
 import { ref } from 'vue'
 import { Minus, Plus } from '@element-plus/icons-vue'
 
 import {
-  buildOcrBaiduService,
-  buildOcrTTimeOnlineService,
-  buildOcrTTimeService,
+  buildOcrService,
   getOcrServiceMap,
   getOcrServiceMapByUse,
   setOcrServiceMap
@@ -96,12 +110,27 @@ import { REnum } from '../../../../enums/REnum'
 
 // Ocr服务验证状态
 const checkIngStatus = ref(false)
+// 可添加的翻译源列表 先把 values 格式转换为数组
+const ocrServiceSelectMenuListTemp = Array.from(OcrServiceEnum.getServiceList().values())
+// 这里获取翻译源对应的内置翻译源状态
+ocrServiceSelectMenuListTemp.forEach((service) => {
+  service['isBuiltIn'] = buildOcrService(service.type)?.['isBuiltIn']
+})
+// 根据内置状态进行排序分组
+ocrServiceSelectMenuListTemp.sort((a, b) => a['isBuiltIn'] - b['isBuiltIn'])
+// 因为是否内置翻译源只有两种状态 是 与 否
+// 获取第一条数据的内置状态
+const lastIsBuiltIn = ocrServiceSelectMenuListTemp[0]['isBuiltIn']
+// 然后这里跳过第一条数据 往后开始寻找 与第一条内置状态不一致的则说明可以设置 分割状态标记了
+for (let i = 1; i < ocrServiceSelectMenuListTemp.length; i++) {
+  if (ocrServiceSelectMenuListTemp[i]['isBuiltIn'] !== lastIsBuiltIn) {
+    // 因为需要对数据集进行内置与非内置的翻译源分组 所以这里需要对数据进行处理
+    ocrServiceSelectMenuListTemp[i]['dividedStatus'] = true
+    break
+  }
+}
 // 获取缓存中的Ocr服务list
-const ocrServiceSelectMenuList = ref([
-  { type: OcrServiceEnum.TTIME, name: 'TTime Ocr' },
-  { type: OcrServiceEnum.TTIME_ONLINE, name: 'TTime在线 Ocr' },
-  { type: OcrServiceEnum.BAIDU, name: '百度 Ocr' }
-])
+const ocrServiceSelectMenuList = ref(ocrServiceSelectMenuListTemp)
 
 /**
  * 设置当前选中项默认为第一个Ocr服务
@@ -135,25 +164,18 @@ const selectOcrService = (ocrService) => {
  */
 const addOcrService = (type) => {
   const insideOcrServiceMap = getOcrServiceMap()
-  for (let ocrService of insideOcrServiceMap.values()) {
+  for (const ocrService of insideOcrServiceMap.values()) {
     // 如果已经添加过了TTimeOcr源 重复添加时提示
-    if ((OcrServiceEnum.TTIME === type) && type === ocrService.type) {
+    if (OcrServiceEnum.TTIME === type && type === ocrService.type) {
       ElMessageExtend.warning('TTime Ocr已存在了，请勿重复添加')
       return
     }
-    if ((OcrServiceEnum.TTIME_ONLINE === type) && type === ocrService.type) {
+    if (OcrServiceEnum.TTIME_ONLINE === type && type === ocrService.type) {
       ElMessageExtend.warning('TTime在线Ocr已存在了，请勿重复添加')
       return
     }
   }
-  let service = null
-  if (OcrServiceEnum.TTIME === type) {
-    service = buildOcrTTimeService()
-  } else if (OcrServiceEnum.TTIME_ONLINE === type) {
-    service = buildOcrTTimeOnlineService()
-  } else if (OcrServiceEnum.BAIDU === type) {
-    service = buildOcrBaiduService()
-  }
+  const service = buildOcrService(type)
   if (null !== service) {
     saveOcrService(service)
     ocrServiceThis.value = service
@@ -213,7 +235,7 @@ window.api.apiCheckOcrCallbackEvent((type, res) => {
   }
   const insideOcrServiceMap = getOcrServiceMap()
   const data = res.data
-  let insideOcrService = insideOcrServiceMap.get(data.id)
+  const insideOcrService = insideOcrServiceMap.get(data.id)
   insideOcrService.useStatus = useStatus
   insideOcrService.checkStatus = checkStatus
   insideOcrService.appId = data.appId
@@ -234,10 +256,8 @@ const ocrServiceUseStatusChange = (ocrService) => {
     ocrService.useStatus = false
     return ElMessageExtend.warning('未验证的服务无法使用')
   }
-  for (let insideOcrService of getOcrServiceMap().values()) {
-    if (
-      insideOcrService.useStatus && ocrService.useStatus
-    ) {
+  for (const insideOcrService of getOcrServiceMap().values()) {
+    if (insideOcrService.useStatus && ocrService.useStatus) {
       insideOcrService.useStatus = false
       saveOcrService(insideOcrService)
       break
@@ -252,7 +272,7 @@ const ocrServiceUseStatusChange = (ocrService) => {
       ElMessageExtend.warning('不能关闭所有文本识别服务')
     }
     // 遍历所有Ocr服务 找到TTime自带的Ocr服务开启
-    for (let insideOcrService of getOcrServiceMap().values()) {
+    for (const insideOcrService of getOcrServiceMap().values()) {
       if (insideOcrService.type === OcrServiceEnum.TTIME && insideOcrService.isBuiltIn) {
         insideOcrService.useStatus = true
         saveOcrService(insideOcrService)
@@ -275,7 +295,7 @@ const saveOcrService = (ocrService) => {
 }
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 @import '../../../../css/set';
 
 .header {
@@ -298,7 +318,6 @@ const saveOcrService = (ocrService) => {
       .translate-service-edit-button {
         margin-right: 10px;
       }
-
     }
 
     .translate-service-list-block {
@@ -346,7 +365,6 @@ const saveOcrService = (ocrService) => {
 
         .right {
         }
-
       }
     }
   }
@@ -371,12 +389,8 @@ const saveOcrService = (ocrService) => {
           font-size: 14px;
           padding-right: 10px;
         }
-
       }
-
     }
-
   }
 }
-
 </style>

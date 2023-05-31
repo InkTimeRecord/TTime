@@ -33,16 +33,16 @@ class YouDaoChannel implements ITranslateInterface {
               basic['wfs']
             )
           }
-          GlobalWin.mainWin.webContents.send('youdao-api-translate-callback-event', R.okD(vo))
+          GlobalWin.mainWinSend('youdao-api-translate-callback-event', R.okD(vo))
         } else {
-          GlobalWin.mainWin.webContents.send(
+          GlobalWin.mainWinSend(
             'youdao-api-translate-callback-event',
             R.okT(this.getMsgByErrorCode(errorCode))
           )
         }
       })
       .catch((error) => {
-        GlobalWin.mainWin.webContents.send('youdao-api-translate-callback-event', R.okT(error))
+        GlobalWin.mainWinSend('youdao-api-translate-callback-event', R.okT(error))
       })
   }
 

@@ -17,7 +17,7 @@ class TencentCloudChannel implements ITranslateInterface {
     TencentCloudRequest.apiTranslate(info).then(
       (data) => {
         log.info('[腾讯云翻译事件] - 响应报文 : ', data)
-        GlobalWin.mainWin.webContents.send(
+        GlobalWin.mainWinSend(
           'tencentcloud-api-translate-callback-event',
           // @ts-ignore
           R.okT(data.TargetText.split('\\n'))
@@ -32,7 +32,7 @@ class TencentCloudChannel implements ITranslateInterface {
         } else {
           msg = '未知错误 , 如重复出现 , 请联系开发者'
         }
-        GlobalWin.mainWin.webContents.send('tencentcloud-api-translate-callback-event', R.okT(msg))
+        GlobalWin.mainWinSend('tencentcloud-api-translate-callback-event', R.okT(msg))
       }
     )
   }

@@ -54,6 +54,16 @@ class GlobalWin {
   }
 
   /**
+   * 窗口事件发送
+   *
+   * @param key 发送key
+   * @param val 发送值
+   */
+  static mainWinSend(key, ...val): void {
+    GlobalWin.mainWin.webContents.send(key, ...val)
+  }
+
+  /**
    * 窗口显示后需要触发的回调
    */
   static mainWinShowCallback(): void {
