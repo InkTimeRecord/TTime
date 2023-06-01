@@ -59,6 +59,11 @@ class TranslateServiceEnum {
   static DEEP_L = 'DeepL'
 
   /**
+   * DeepL翻译(内置)
+   */
+  static DEEP_L_BUILT_IN = 'DeepLBuiltIn'
+
+  /**
    * 火山翻译
    */
   static VOLCANO = 'Volcano'
@@ -130,6 +135,14 @@ class TranslateServiceEnum {
       TranslateServiceEnum.buildServiceInfo('DeepL翻译', TranslateServiceEnum.DEEP_L, deepLLogo)
     )
     TranslateServiceEnum.translateServiceMap.set(
+      TranslateServiceEnum.DEEP_L_BUILT_IN,
+      TranslateServiceEnum.buildServiceInfo(
+        'DeepL翻译(内置)',
+        TranslateServiceEnum.DEEP_L_BUILT_IN,
+        deepLLogo
+      )
+    )
+    TranslateServiceEnum.translateServiceMap.set(
       TranslateServiceEnum.VOLCANO,
       TranslateServiceEnum.buildServiceInfo('火山翻译', TranslateServiceEnum.VOLCANO, volcanoLogo)
     )
@@ -164,7 +177,7 @@ class TranslateServiceEnum {
    * @param type 服务类型
    * @param logo 服务logo
    */
-  static buildServiceInfo(name, type, logo) {
+  static buildServiceInfo(name, type, logo): { name: string; type: string; logo: string } {
     return { name, type, logo }
   }
 }

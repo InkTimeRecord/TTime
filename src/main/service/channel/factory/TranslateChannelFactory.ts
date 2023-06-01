@@ -12,6 +12,7 @@ import VolcanoChannel from '../product/translate/VolcanoChannel'
 import BingChannel from '../product/translate/BingChannel'
 import BingDictChannel from '../product/translate/BingDictChannel'
 import '../product/translate/AgentChannel'
+import DeepLBuiltInChannel from '../product/translate/DeepLBuiltInChannel'
 
 const ttimeChannel = new TTimeChannel()
 const tencentCloudChannel = new TencentCloudChannel()
@@ -22,6 +23,7 @@ const googleBuiltInChannel = new GoogleBuiltInChannel()
 const openAIChannel = new OpenAIChannel()
 const youDaoChannel = new YouDaoChannel()
 const deepLChannel = new DeepLChannel()
+const deepLBuiltInChannel = new DeepLBuiltInChannel()
 const volcanoChannel = new VolcanoChannel()
 const bingChannel = new BingChannel()
 const bingDictChannel = new BingDictChannel()
@@ -55,6 +57,8 @@ class TranslateChannelFactory {
       youDaoChannel.apiTranslate(info)
     } else if (TranslateServiceEnum.DEEP_L === type) {
       deepLChannel.apiTranslate(info)
+    } else if (TranslateServiceEnum.DEEP_L_BUILT_IN === type) {
+      deepLBuiltInChannel.apiTranslate(info)
     } else if (TranslateServiceEnum.VOLCANO === type) {
       volcanoChannel.apiTranslate(info)
     } else if (TranslateServiceEnum.BING === type) {

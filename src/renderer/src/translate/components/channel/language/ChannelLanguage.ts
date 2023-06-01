@@ -4054,6 +4054,10 @@ languageMap.set(
   injectService(DeepLLanguageListOld, TranslateServiceEnum.DEEP_L)
 )
 languageMap.set(
+  TranslateServiceEnum.DEEP_L_BUILT_IN,
+  injectService(DeepLLanguageListOld, TranslateServiceEnum.DEEP_L_BUILT_IN)
+)
+languageMap.set(
   TranslateServiceEnum.VOLCANO,
   injectService(VolcanoLanguageListOld, TranslateServiceEnum.VOLCANO)
 )

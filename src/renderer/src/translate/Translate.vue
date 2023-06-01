@@ -50,6 +50,7 @@ window.api.pageHeightChangeEvent()
 
 // 清空翻译输入、结果内容事件
 window.api.clearAllTranslateContentEvent(() => {
+  console.log('translatedResultInput.val =', translatedResultInput)
   translatedResultInput.value.clearTranslatedResultContentEvent()
   translateInput.value.clearTranslatedContentEvent()
 })
@@ -72,8 +73,13 @@ if (isNull(cacheGetStr('translateServiceMap'))) {
   const ttimeService = buildTranslateService(TranslateServiceEnum.TTIME)
   map.set(ttimeService.id, ttimeService)
   setTranslateServiceMap(map)
+
   const bingDictService = buildTranslateService(TranslateServiceEnum.BING_DICT)
   map.set(bingDictService.id, bingDictService)
+  setTranslateServiceMap(map)
+
+  const deepLBuiltInService = buildTranslateService(TranslateServiceEnum.DEEP_L_BUILT_IN)
+  map.set(deepLBuiltInService.id, deepLBuiltInService)
   setTranslateServiceMap(map)
 }
 

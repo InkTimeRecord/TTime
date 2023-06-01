@@ -48,6 +48,11 @@ class TranslateServiceEnum {
   static DEEP_L = 'DeepL'
 
   /**
+   * DeepL翻译(内置)
+   */
+  static DEEP_L_BUILT_IN = 'DeepLBuiltIn'
+
+  /**
    * 火山翻译
    */
   static VOLCANO = 'Volcano'

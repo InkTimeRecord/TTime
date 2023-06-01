@@ -123,6 +123,13 @@ export const buildTranslateService = (translateServiceEnum): {} => {
         appKey: '',
         checkStatus: false
       }
+    case TranslateServiceEnum.DEEP_L_BUILT_IN:
+      return {
+        ...translateService,
+        useStatus: true,
+        isBuiltIn: true,
+        checkStatus: true
+      }
     case TranslateServiceEnum.VOLCANO:
       return {
         ...translateService,

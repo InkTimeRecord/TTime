@@ -327,6 +327,17 @@ const deeplApiTranslateCallbackEvent = (callback): void => {
 }
 
 /**
+ * Deepl翻译(内置) - 接口回调
+ *
+ * @param callback 回调方法 用于主进程内部触发时推送到Vue页面执行
+ */
+const deeplbuiltinApiTranslateCallbackEvent = (callback): void => {
+  ipcRenderer.on('deeplbuiltin-api-translate-callback-event', (_event, obj) => {
+    callback(obj)
+  })
+}
+
+/**
  * 火山 - 翻译接口回调
  *
  * @param callback 回调方法 用于主进程内部触发时推送到Vue页面执行
@@ -471,6 +482,7 @@ const api = {
   openaiApiTranslateCallbackEvent,
   youdaoApiTranslateCallbackEvent,
   deeplApiTranslateCallbackEvent,
+  deeplbuiltinApiTranslateCallbackEvent,
   volcanoApiTranslateCallbackEvent,
   bingApiTranslateCallbackEvent,
   bingdictApiTranslateCallbackEvent,
