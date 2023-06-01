@@ -1,6 +1,7 @@
 import { ipcMain } from 'electron'
 import TranslateServiceEnum from '../../../../enums/TranslateServiceEnum'
 import DeepLChannel from './DeepLChannel'
+import DeepLBuiltInChannel from './DeepLBuiltInChannel'
 import GoogleChannel from './GoogleChannel'
 import GoogleBuiltInChannel from './GoogleBuiltInChannel'
 import OpenAIChannel from './OpenAIChannel'
@@ -15,6 +16,8 @@ ipcMain.handle('agent-api-translate-callback', (_event, type, status, data, info
     info == null
       ? DeepLChannel.apiTranslateCallback(status, data)
       : DeepLChannel.apiTranslateCheckCallback(status, data, info)
+  } else if (TranslateServiceEnum.DEEP_L_BUILT_IN === type) {
+    DeepLBuiltInChannel.apiTranslateCallback(status, data)
   } else if (TranslateServiceEnum.GOOGLE === type) {
     info == null
       ? GoogleChannel.apiTranslateCallback(status, data)

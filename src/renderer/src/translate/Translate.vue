@@ -50,7 +50,6 @@ window.api.pageHeightChangeEvent()
 
 // 清空翻译输入、结果内容事件
 window.api.clearAllTranslateContentEvent(() => {
-  console.log('translatedResultInput.val =', translatedResultInput)
   translatedResultInput.value.clearTranslatedResultContentEvent()
   translateInput.value.clearTranslatedContentEvent()
 })

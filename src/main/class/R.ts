@@ -47,7 +47,12 @@ class R {
   }
 
   static okT(data: string[] | string): R {
-    if (typeof data === 'string') {
+    const type = Object.prototype.toString.call(data)
+    if (type !== '[object Array]') {
+      if (type === '[object Object]') {
+        data = JSON.stringify(data)
+      }
+      // @ts-ignore 类型强转
       data = [data]
     }
     return new R(R.SUCCESS, '', new TranslateVo(data))
