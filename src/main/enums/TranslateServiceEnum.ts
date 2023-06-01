@@ -66,6 +66,21 @@ class TranslateServiceEnum {
    * Bing词典翻译
    */
   static BING_DICT = 'BingDict'
+
+  /**
+   * 小牛翻译
+   */
+  static NIU_TRANS = 'NiuTrans'
+
+  /**
+   * 彩云翻译
+   */
+  static CAI_YUN = 'CaiYun'
+
+  /**
+   * 腾讯交互翻译
+   */
+  static TRAN_SMART = 'TranSmart'
 }
 
 export default TranslateServiceEnum

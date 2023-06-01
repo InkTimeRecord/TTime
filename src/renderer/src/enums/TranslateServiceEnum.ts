@@ -8,6 +8,9 @@ import youdaoLogo from '../assets/youdaoLogo.png'
 import deepLLogo from '../assets/deepLLogo.png'
 import volcanoLogo from '../assets/volcanoLogo.png'
 import bingLogo from '../assets/bingLogo.png'
+import caiyunLogo from '../assets/caiyunLogo.png'
+import niuTransLogo from '../assets/niuTransLogo.png'
+import transmart from '../assets/transmart.png'
 
 /**
  * 翻译服务枚举
@@ -77,6 +80,21 @@ class TranslateServiceEnum {
    * Bing词典翻译
    */
   static BING_DICT = 'BingDict'
+
+  /**
+   * 小牛翻译
+   */
+  static NIU_TRANS = 'NiuTrans'
+
+  /**
+   * 彩云翻译
+   */
+  static CAI_YUN = 'CaiYun'
+
+  /**
+   * 腾讯交互翻译
+   */
+  static TRAN_SMART = 'TranSmart'
 
   /**
    * 翻译服务信息Map
@@ -156,6 +174,26 @@ class TranslateServiceEnum {
         'Bing词典翻译',
         TranslateServiceEnum.BING_DICT,
         bingLogo
+      )
+    )
+    TranslateServiceEnum.translateServiceMap.set(
+      TranslateServiceEnum.NIU_TRANS,
+      TranslateServiceEnum.buildServiceInfo(
+        '小牛翻译',
+        TranslateServiceEnum.NIU_TRANS,
+        niuTransLogo
+      )
+    )
+    TranslateServiceEnum.translateServiceMap.set(
+      TranslateServiceEnum.CAI_YUN,
+      TranslateServiceEnum.buildServiceInfo('彩云翻译', TranslateServiceEnum.CAI_YUN, caiyunLogo)
+    )
+    TranslateServiceEnum.translateServiceMap.set(
+      TranslateServiceEnum.TRAN_SMART,
+      TranslateServiceEnum.buildServiceInfo(
+        '腾讯交互翻译',
+        TranslateServiceEnum.TRAN_SMART,
+        transmart
       )
     )
     return TranslateServiceEnum.translateServiceMap
