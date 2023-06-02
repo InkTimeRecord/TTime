@@ -111,8 +111,6 @@ class TranslateChannelFactory {
       niuTransChannel.apiTranslateCheck(info)
     } else if (TranslateServiceEnum.CAI_YUN === type) {
       caiYunChannel.apiTranslateCheck(info)
-    } else if (TranslateServiceEnum.TRAN_SMART === type) {
-      tranSmartChannel.apiTranslateCheck(info)
     }
   }
 

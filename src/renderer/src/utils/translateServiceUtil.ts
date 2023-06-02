@@ -174,11 +174,9 @@ export const buildTranslateService = (translateServiceEnum): {} => {
     case TranslateServiceEnum.TRAN_SMART:
       return {
         ...translateService,
-        useStatus: false,
-        isBuiltIn: false,
-        appId: '',
-        appKey: '',
-        checkStatus: false
+        useStatus: true,
+        isBuiltIn: true,
+        checkStatus: true
       }
   }
 }

@@ -217,7 +217,8 @@ const addTranslateService = (type) => {
       (TranslateServiceEnum.BING === type && type === translateService.type) ||
       (TranslateServiceEnum.BING_DICT === type && type === translateService.type) ||
       (TranslateServiceEnum.GOOGLE_BUILT_IN === type && type === translateService.type) ||
-      (TranslateServiceEnum.DEEP_L_BUILT_IN === type && type === translateService.type)
+      (TranslateServiceEnum.DEEP_L_BUILT_IN === type && type === translateService.type) ||
+      (TranslateServiceEnum.TRAN_SMART === type && type === translateService.type)
     ) {
       ElMessageExtend.warning('此翻译源已存在了，请勿重复添加')
       return
@@ -261,8 +262,7 @@ const translateServiceCheckAndSave = () => {
       TranslateServiceEnum.DEEP_L !== value.type &&
       TranslateServiceEnum.OPEN_AI !== value.type &&
       TranslateServiceEnum.NIU_TRANS !== value.type &&
-      TranslateServiceEnum.CAI_YUN !== value.type &&
-      TranslateServiceEnum.TRAN_SMART !== value.type) ||
+      TranslateServiceEnum.CAI_YUN !== value.type) ||
     isNull(value.appKey)
   ) {
     return ElMessageExtend.warning('请输入密钥信息后再进行验证')
@@ -416,7 +416,7 @@ const saveTranslateService = (translateService) => {
 
           .translate-service-name {
             font-size: 13px;
-            padding-left: 8px;
+            padding-left: 5px;
           }
         }
 

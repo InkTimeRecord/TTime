@@ -393,7 +393,7 @@ const caiyunApiTranslateCallbackEvent = (callback): void => {
 }
 
 /**
- * 腾讯交互翻译 - 翻译接口回调
+ * 腾讯交互翻译(内置) - 翻译接口回调
  *
  * @param callback 回调方法 用于主进程内部触发时推送到Vue页面执行
  */

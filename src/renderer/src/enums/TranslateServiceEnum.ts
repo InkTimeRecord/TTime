@@ -92,7 +92,7 @@ class TranslateServiceEnum {
   static CAI_YUN = 'CaiYun'
 
   /**
-   * 腾讯交互翻译
+   * 腾讯交互翻译(内置)
    */
   static TRAN_SMART = 'TranSmart'
 
@@ -191,7 +191,7 @@ class TranslateServiceEnum {
     TranslateServiceEnum.translateServiceMap.set(
       TranslateServiceEnum.TRAN_SMART,
       TranslateServiceEnum.buildServiceInfo(
-        '腾讯交互翻译',
+        '腾讯交互翻译(内置)',
         TranslateServiceEnum.TRAN_SMART,
         transmart
       )
