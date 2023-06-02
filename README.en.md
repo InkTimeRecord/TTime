@@ -59,7 +59,12 @@ The main functions are `input translation`, `screenshot translation`, `selected 
 [Translation source/text recognition application reference](https://ttime.timerecord.cn/pages/93e0f8/#%E7%BF%BB%E8%AF%91%E6%BA%90%E4%BB%8B%E7%BB%8D)
 
 - [x] Translation source
-  - [x] TTime
+  - [x] TTime (built-in)
+  - [x] Google Translation (built-in)
+  - [x] DeepL Translation (built-in) = DeepLX Translation
+  - [x] Bing Translation (built-in)
+  - [x] Bing dict Translation (built-in)
+  - [x] Tencent TranSmart Translation (built-in)
   - [x] Tencent Translator
   - [x] Baidu Translation
   - [x] Alibaba Translation
@@ -73,6 +78,7 @@ The main functions are `input translation`, `screenshot translation`, `selected 
   - [x] TTime
   - [x] TTime Online OCR
   - [x] Baidu OCR
+  - [x] Volcano OCR
 
 
 ## Thanks

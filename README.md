@@ -59,7 +59,12 @@
 [翻译源/文字识别申请参考](https://ttime.timerecord.cn/pages/93e0f8/#%E7%BF%BB%E8%AF%91%E6%BA%90%E4%BB%8B%E7%BB%8D)
 
 - [x] 翻译源
-  - [x] TTime
+  - [x] TTime (内置)
+  - [x] Google翻译 (内置)
+  - [x] DeepL (内置) = DeepLX
+  - [x] Bing (内置)
+  - [x] Bing词典翻译 (内置)
+  - [x] 腾讯交互翻译 (内置)
   - [x] 腾讯翻译君
   - [x] 百度翻译
   - [x] 阿里翻译
@@ -68,11 +73,14 @@
   - [x] 有道翻译
   - [x] DeepL翻译
   - [x] 火山翻译
+  - [x] 小牛翻译
+  - [x] 彩云翻译
 
 - [x] 文字识别
   - [x] TTime
   - [x] TTime在线
-  - [x] 百度
+  - [x] 百度OCR
+  - [x] 火山OCR
 
 
 ## 感谢
