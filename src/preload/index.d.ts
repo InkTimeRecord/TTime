@@ -33,6 +33,9 @@ declare global {
     volcanoApiTranslateCallbackEvent
     bingApiTranslateCallbackEvent
     bingdictApiTranslateCallbackEvent
+    niutransApiTranslateCallbackEvent
+    caiyunApiTranslateCallbackEvent
+    transmartApiTranslateCallbackEvent
     ttimeApiAppStart
     ttimeApiTranslateUse
     showMsgEvent

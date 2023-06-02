@@ -29,7 +29,7 @@
       </div>
       <div class="translate-service-edit">
         <div class="translate-service-edit-button">
-          <el-dropdown trigger="click">
+          <el-dropdown trigger="click" max-height="520px">
             <el-button :icon="Plus" size="small" />
             <template #dropdown>
               <el-dropdown-menu>
@@ -71,7 +71,10 @@
             v-if="
               translateServiceThis.type !== TranslateServiceEnum.GOOGLE &&
               translateServiceThis.type !== TranslateServiceEnum.DEEP_L &&
-              translateServiceThis.type !== TranslateServiceEnum.OPEN_AI
+              translateServiceThis.type !== TranslateServiceEnum.OPEN_AI &&
+              translateServiceThis.type !== TranslateServiceEnum.NIU_TRANS &&
+              translateServiceThis.type !== TranslateServiceEnum.CAI_YUN &&
+              translateServiceThis.type !== TranslateServiceEnum.TRAN_SMART
             "
             :label="'AppId'"
           >
@@ -256,7 +259,10 @@ const translateServiceCheckAndSave = () => {
     (isNull(value.appId) &&
       TranslateServiceEnum.GOOGLE !== value.type &&
       TranslateServiceEnum.DEEP_L !== value.type &&
-      TranslateServiceEnum.OPEN_AI !== value.type) ||
+      TranslateServiceEnum.OPEN_AI !== value.type &&
+      TranslateServiceEnum.NIU_TRANS !== value.type &&
+      TranslateServiceEnum.CAI_YUN !== value.type &&
+      TranslateServiceEnum.TRAN_SMART !== value.type) ||
     isNull(value.appKey)
   ) {
     return ElMessageExtend.warning('请输入密钥信息后再进行验证')

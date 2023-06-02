@@ -13,6 +13,9 @@ import BingChannel from '../product/translate/BingChannel'
 import BingDictChannel from '../product/translate/BingDictChannel'
 import '../product/translate/AgentChannel'
 import DeepLBuiltInChannel from '../product/translate/DeepLBuiltInChannel'
+import NiuTransChannel from '../product/translate/NiuTransChannel'
+import CaiYunChannel from '../product/translate/CaiYunChannel'
+import TranSmartChannel from '../product/translate/TranSmartChannel'
 
 const ttimeChannel = new TTimeChannel()
 const tencentCloudChannel = new TencentCloudChannel()
@@ -27,6 +30,9 @@ const deepLBuiltInChannel = new DeepLBuiltInChannel()
 const volcanoChannel = new VolcanoChannel()
 const bingChannel = new BingChannel()
 const bingDictChannel = new BingDictChannel()
+const niuTransChannel = new NiuTransChannel()
+const caiYunChannel = new CaiYunChannel()
+const tranSmartChannel = new TranSmartChannel()
 
 /**
  * 选择渠道工厂
@@ -65,6 +71,12 @@ class TranslateChannelFactory {
       bingChannel.apiTranslate(info)
     } else if (TranslateServiceEnum.BING_DICT === type) {
       bingDictChannel.apiTranslate(info)
+    } else if (TranslateServiceEnum.NIU_TRANS === type) {
+      niuTransChannel.apiTranslate(info)
+    } else if (TranslateServiceEnum.CAI_YUN === type) {
+      caiYunChannel.apiTranslate(info)
+    } else if (TranslateServiceEnum.TRAN_SMART === type) {
+      tranSmartChannel.apiTranslate(info)
     }
   }
 
@@ -95,6 +107,12 @@ class TranslateChannelFactory {
       deepLChannel.apiTranslateCheck(info)
     } else if (TranslateServiceEnum.VOLCANO === type) {
       volcanoChannel.apiTranslateCheck(info)
+    } else if (TranslateServiceEnum.NIU_TRANS === type) {
+      niuTransChannel.apiTranslateCheck(info)
+    } else if (TranslateServiceEnum.CAI_YUN === type) {
+      caiYunChannel.apiTranslateCheck(info)
+    } else if (TranslateServiceEnum.TRAN_SMART === type) {
+      tranSmartChannel.apiTranslateCheck(info)
     }
   }
 
