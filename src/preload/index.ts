@@ -327,6 +327,17 @@ const deeplApiTranslateCallbackEvent = (callback): void => {
 }
 
 /**
+ * Deepl翻译(内置) - 接口回调
+ *
+ * @param callback 回调方法 用于主进程内部触发时推送到Vue页面执行
+ */
+const deeplbuiltinApiTranslateCallbackEvent = (callback): void => {
+  ipcRenderer.on('deeplbuiltin-api-translate-callback-event', (_event, obj) => {
+    callback(obj)
+  })
+}
+
+/**
  * 火山 - 翻译接口回调
  *
  * @param callback 回调方法 用于主进程内部触发时推送到Vue页面执行
@@ -359,6 +370,38 @@ const bingdictApiTranslateCallbackEvent = (callback): void => {
   })
 }
 
+/**
+ * 小牛翻译 - 翻译接口回调
+ *
+ * @param callback 回调方法 用于主进程内部触发时推送到Vue页面执行
+ */
+const niutransApiTranslateCallbackEvent = (callback): void => {
+  ipcRenderer.on('niutrans-api-translate-callback-event', (_event, obj) => {
+    callback(obj)
+  })
+}
+
+/**
+ * 彩云翻译 - 翻译接口回调
+ *
+ * @param callback 回调方法 用于主进程内部触发时推送到Vue页面执行
+ */
+const caiyunApiTranslateCallbackEvent = (callback): void => {
+  ipcRenderer.on('caiyun-api-translate-callback-event', (_event, obj) => {
+    callback(obj)
+  })
+}
+
+/**
+ * 腾讯交互翻译(内置) - 翻译接口回调
+ *
+ * @param callback 回调方法 用于主进程内部触发时推送到Vue页面执行
+ */
+const transmartApiTranslateCallbackEvent = (callback): void => {
+  ipcRenderer.on('transmart-api-translate-callback-event', (_event, obj) => {
+    callback(obj)
+  })
+}
 /**
  * 翻译结果消息回调
  * 如果校验无法翻译时，但也不能触发翻译事件时候，此处模拟翻译结果消息回调
@@ -471,9 +514,13 @@ const api = {
   openaiApiTranslateCallbackEvent,
   youdaoApiTranslateCallbackEvent,
   deeplApiTranslateCallbackEvent,
+  deeplbuiltinApiTranslateCallbackEvent,
   volcanoApiTranslateCallbackEvent,
   bingApiTranslateCallbackEvent,
   bingdictApiTranslateCallbackEvent,
+  niutransApiTranslateCallbackEvent,
+  caiyunApiTranslateCallbackEvent,
+  transmartApiTranslateCallbackEvent,
   ttimeApiAppStart,
   showMsgEvent,
   updateTranslateServiceEvent,

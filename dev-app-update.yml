@@ -2,4 +2,4 @@ provider: generic
 url: https://update.timerecord.cn/pc/TTime/
 updaterCacheDirName: TTime-updater
 releaseInfo:
-  releaseNotes: 1.新增内置Bing翻译源(无需配置密钥可直接使用)||2.新增内置Bing词典翻译源，支持美式、英式发音，支持词性及其他释义(无需配置密钥可直接使用，效果类似有道)||3.新增内置Google词典翻译源，支持其他释义效果(无需配置密钥可直接使用，需要特殊网络方式使用)||4.新增火山文本识别(OCR)||5.修复截图、划词触发窗口显示后，当"置顶时允许隐藏窗口"配置开启时，Esc依旧无法赢藏翻译窗口问题
+  releaseNotes: 1.新增粘贴数据自动进行翻译 (by:@MHanL)||2.新增内置DeepL翻译源(无需配置密钥可直接使用)||3.新增内置腾讯交互翻译源(无需配置密钥可直接使用)||4.新增小牛、彩云翻译源

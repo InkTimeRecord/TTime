@@ -359,7 +359,7 @@ const saveOcrService = (ocrService) => {
 
           .translate-service-name {
             font-size: 13px;
-            padding-left: 8px;
+            padding-left: 5px;
           }
         }
 

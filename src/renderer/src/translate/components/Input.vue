@@ -1,41 +1,37 @@
 <template>
-  <div class='content-block'>
-    <div class='content'>
-      <div class='content-input-block'>
-        <div v-show='isScreenshotEnd' class='content-input-placeholder'>
-          <span class='content-input-screenshot-text'>文字识别中</span>
-          <img class='content-input-screenshot-loading' :src='loadingImageSrc' />
+  <div class="content-block">
+    <div class="content">
+      <div class="content-input-block">
+        <div v-show="isScreenshotEnd" class="content-input-placeholder">
+          <span class="content-input-screenshot-text">文字识别中</span>
+          <img class="content-input-screenshot-loading" :src="loadingImageSrc" />
         </div>
         <el-input
-          v-show='!isScreenshotEnd'
-          ref='translateContentInputRef'
-          v-model='translateContent'
-          class='content-input'
-          spellcheck='false'
-          type='textarea'
-          :autosize='{ minRows: 2, maxRows: 10 }'
-          placeholder='请输入单词或文字'
-          @keydown='translateChange'
-          @focus='translateContentFocus'
+          v-show="!isScreenshotEnd"
+          ref="translateContentInputRef"
+          v-model="translateContent"
+          class="content-input"
+          spellcheck="false"
+          type="textarea"
+          :autosize="{ minRows: 2, maxRows: 10 }"
+          placeholder="请输入单词或文字"
+          @keydown="translateChange"
+          @focus="translateContentFocus"
         >
         </el-input>
-        <div class='function-tools-block'>
-          <a
-            v-show='!isScreenshotEnd'
-            class='function-tools'
-            @click='playSpeech(translateContent)'
-          >
-            <svg-icon icon-class='play' class='function-tools-icon' />
+        <div class="function-tools-block">
+          <a v-show="!isScreenshotEnd" class="function-tools" @click="playSpeech(translateContent)">
+            <svg-icon icon-class="play" class="function-tools-icon" />
           </a>
           <a
-            v-show='!isScreenshotEnd'
-            class='function-tools'
-            @click='textWriteShearPlate(translateContent)'
+            v-show="!isScreenshotEnd"
+            class="function-tools"
+            @click="textWriteShearPlate(translateContent)"
           >
-            <svg-icon icon-class='copy' class='function-tools-icon' />
+            <svg-icon icon-class="copy" class="function-tools-icon" />
           </a>
-          <a v-show='isScreenshotEnd' class='function-tools' @click='screenshotRestore'>
-            <svg-icon icon-class='restore' class='function-tools-icon' />
+          <a v-show="isScreenshotEnd" class="function-tools" @click="screenshotRestore">
+            <svg-icon icon-class="restore" class="function-tools-icon" />
           </a>
         </div>
       </div>
@@ -43,7 +39,7 @@
   </div>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 import { nextTick, ref, watch } from 'vue'
 import { isNull } from '../../utils/validate'
 import LanguageEnum from '../../enums/LanguageEnum'
@@ -70,10 +66,7 @@ const isScreenshotEnd = ref(false)
 const translateContent = ref('')
 // 翻译输入框ref
 const translateContentInputRef = ref()
-const emit = defineEmits([
-  'show-result-event',
-  'is-result-loading-event'
-])
+const emit = defineEmits(['show-result-event', 'is-result-loading-event'])
 
 watch(translateContent, () => {
   // 页面高度改变监听
@@ -135,19 +128,28 @@ const textWriteShearPlate = (text): void => {
 /**
  * 翻译触发
  */
-const translateChange = (event): void => {
+const translateChange = async (event): Promise<void> => {
   // 按下 ctrl/command + 回车 = 换行
   if (event.keyCode === 13 && event.ctrlKey) {
     // 换行
     translateContent.value += '\n'
     return
   }
+
+  // 文本粘贴快捷键
+  const isCtrlV = event.ctrlKey && event.keyCode === 86
+
   // keyCode 13 = 回车
-  if (event.keyCode !== 13) {
+  if (event.keyCode !== 13 && !isCtrlV) {
     return
   }
-  if (isContentNull(translateContent.value)
-  ) {
+
+  // 延时100毫秒
+  if (isCtrlV) {
+    await new Promise((resolve) => setTimeout(resolve, 100))
+  }
+
+  if (isContentNull(translateContent.value)) {
     ElMessageExtend.warning('内容不能为空')
     event.preventDefault()
     return
@@ -166,8 +168,7 @@ const translateFun = (): void => {
   let translateContentDealWith = translateContent.value
   window.api.logInfoEvent('[翻译事件] - 翻译内容 : ', translateContentDealWith)
   // 替换所有换行符、回车符后如果发送的消息还是为空则默认不继续进行操作
-  if (isContentNull(translateContentDealWith)
-  ) {
+  if (isContentNull(translateContentDealWith)) {
     window.api.logInfoEvent('[翻译事件] - 翻译内容过滤后为空')
     translateContent.value = ''
     // 屏幕截图识别中状态重置
@@ -176,7 +177,7 @@ const translateFun = (): void => {
     return
   }
   // 换行符替换为空格状态
-  if(cacheGetStr('wrapReplaceSpaceStatus') === YesNoEnum.Y) {
+  if (cacheGetStr('wrapReplaceSpaceStatus') === YesNoEnum.Y) {
     translateContentDealWith = translateContentDealWith.replaceAll('\n', ' ')
   }
   // 获取当前默认输入文字语言
@@ -217,7 +218,7 @@ const translateFun = (): void => {
     let languageResultTypeRequest = languageResultType
     if (!isInputAuto) {
       // 如果不为自动识别 则从翻译源对应的文字语言中找到对应的语言代码
-      const language = inputLanguage.serviceList.find(service => {
+      const language = inputLanguage.serviceList.find((service) => {
         return service.type === translateService.type
       })
       if (isNull(language)) {
@@ -230,28 +231,35 @@ const translateFun = (): void => {
     } else {
       // 当 输入文字语言类型 为 自动识别 时 由于部分翻译源不支持 自动识别 所以此处做特殊处理 内部自己识别一下
       // 之后可以考虑都使用本地识别 不使用翻译源对应的自动识别类型
-      if(TranslateServiceEnum.OPEN_AI === type) {
+      if (TranslateServiceEnum.OPEN_AI === type) {
         languageInputTypeRequest = getLanguageTypeByOpenAI(translateContentDealWith)
       }
-      if(TranslateServiceEnum.VOLCANO === type) {
+      if (TranslateServiceEnum.VOLCANO === type) {
         languageInputTypeRequest = getLanguageTypeByVolcano(translateContentDealWith)
       }
     }
     if (!isResultAuto) {
-      const language = resultLanguage.serviceList.find(service => {
+      const language = resultLanguage.serviceList.find((service) => {
         return service.type === translateService.type
       })
       if (isNull(language)) {
-        window.api.apiTranslateResultMsgCallbackEvent(translateService.type, '不支持翻译当前语言结果')
+        window.api.apiTranslateResultMsgCallbackEvent(
+          translateService.type,
+          '不支持翻译当前语言结果'
+        )
         continue
       }
       languageResultTypeRequest = language.languageType
     } else {
-      if(TranslateServiceEnum.OPEN_AI === type) {
+      if (TranslateServiceEnum.OPEN_AI === type) {
         languageResultTypeRequest = getLanguageResultTypeByOpenAI(translateContentDealWith)
       }
     }
-    let info = buildTranslateRequestInfo(translateContentDealWith, languageInputTypeRequest, languageResultTypeRequest)
+    let info = buildTranslateRequestInfo(
+      translateContentDealWith,
+      languageInputTypeRequest,
+      languageResultTypeRequest
+    )
     if (TranslateServiceEnum.TTIME !== type) {
       info = {
         ...info,
@@ -267,13 +275,7 @@ const translateFun = (): void => {
 }
 
 const isContentNull = (content) => {
-  return isNull(
-    content
-      .replaceAll('\n', '')
-      .replaceAll('\r', '')
-      .replaceAll(' ', '')
-  );
-
+  return isNull(content.replaceAll('\n', '').replaceAll('\r', '').replaceAll(' ', ''))
 }
 
 const buildTranslateRequestInfo = (translateContentDealWith, languageType, languageResultType) => {
@@ -315,7 +317,7 @@ defineExpose({
 })
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 @import '../../css/translate.scss';
 @import '../../css/translate-input.scss';
 

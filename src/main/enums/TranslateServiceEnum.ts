@@ -48,6 +48,11 @@ class TranslateServiceEnum {
   static DEEP_L = 'DeepL'
 
   /**
+   * DeepL翻译(内置)
+   */
+  static DEEP_L_BUILT_IN = 'DeepLBuiltIn'
+
+  /**
    * 火山翻译
    */
   static VOLCANO = 'Volcano'
@@ -61,6 +66,21 @@ class TranslateServiceEnum {
    * Bing词典翻译
    */
   static BING_DICT = 'BingDict'
+
+  /**
+   * 小牛翻译
+   */
+  static NIU_TRANS = 'NiuTrans'
+
+  /**
+   * 彩云翻译
+   */
+  static CAI_YUN = 'CaiYun'
+
+  /**
+   * 腾讯交互翻译(内置)
+   */
+  static TRAN_SMART = 'TranSmart'
 }
 
 export default TranslateServiceEnum

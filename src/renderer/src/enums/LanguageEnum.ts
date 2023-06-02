@@ -20,6 +20,11 @@ class LanguageEnum {
     ['rus', { languageType: 'ru' }],
     ['kor', { languageType: 'ko' }]
   ])
+  static languageCaiYunMap = new Map([
+    ['cmn', { languageType: 'zh' }],
+    ['eng', { languageType: 'en' }],
+    ['jpn', { languageType: 'ja' }]
+  ])
   /**
    * 自动识别
    */

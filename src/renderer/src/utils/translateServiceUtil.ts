@@ -123,6 +123,13 @@ export const buildTranslateService = (translateServiceEnum): {} => {
         appKey: '',
         checkStatus: false
       }
+    case TranslateServiceEnum.DEEP_L_BUILT_IN:
+      return {
+        ...translateService,
+        useStatus: true,
+        isBuiltIn: true,
+        checkStatus: true
+      }
     case TranslateServiceEnum.VOLCANO:
       return {
         ...translateService,
@@ -140,6 +147,31 @@ export const buildTranslateService = (translateServiceEnum): {} => {
         checkStatus: true
       }
     case TranslateServiceEnum.BING_DICT:
+      return {
+        ...translateService,
+        useStatus: true,
+        isBuiltIn: true,
+        checkStatus: true
+      }
+    case TranslateServiceEnum.NIU_TRANS:
+      return {
+        ...translateService,
+        useStatus: false,
+        isBuiltIn: false,
+        appId: '',
+        appKey: '',
+        checkStatus: false
+      }
+    case TranslateServiceEnum.CAI_YUN:
+      return {
+        ...translateService,
+        useStatus: false,
+        isBuiltIn: false,
+        appId: '',
+        appKey: '',
+        checkStatus: false
+      }
+    case TranslateServiceEnum.TRAN_SMART:
       return {
         ...translateService,
         useStatus: true,

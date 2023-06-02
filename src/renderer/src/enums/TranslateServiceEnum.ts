@@ -8,6 +8,9 @@ import youdaoLogo from '../assets/youdaoLogo.png'
 import deepLLogo from '../assets/deepLLogo.png'
 import volcanoLogo from '../assets/volcanoLogo.png'
 import bingLogo from '../assets/bingLogo.png'
+import caiyunLogo from '../assets/caiyunLogo.png'
+import niuTransLogo from '../assets/niuTransLogo.png'
+import transmart from '../assets/transmart.png'
 
 /**
  * 翻译服务枚举
@@ -59,6 +62,11 @@ class TranslateServiceEnum {
   static DEEP_L = 'DeepL'
 
   /**
+   * DeepL翻译(内置)
+   */
+  static DEEP_L_BUILT_IN = 'DeepLBuiltIn'
+
+  /**
    * 火山翻译
    */
   static VOLCANO = 'Volcano'
@@ -72,6 +80,21 @@ class TranslateServiceEnum {
    * Bing词典翻译
    */
   static BING_DICT = 'BingDict'
+
+  /**
+   * 小牛翻译
+   */
+  static NIU_TRANS = 'NiuTrans'
+
+  /**
+   * 彩云翻译
+   */
+  static CAI_YUN = 'CaiYun'
+
+  /**
+   * 腾讯交互翻译(内置)
+   */
+  static TRAN_SMART = 'TranSmart'
 
   /**
    * 翻译服务信息Map
@@ -130,6 +153,14 @@ class TranslateServiceEnum {
       TranslateServiceEnum.buildServiceInfo('DeepL翻译', TranslateServiceEnum.DEEP_L, deepLLogo)
     )
     TranslateServiceEnum.translateServiceMap.set(
+      TranslateServiceEnum.DEEP_L_BUILT_IN,
+      TranslateServiceEnum.buildServiceInfo(
+        'DeepL翻译(内置)',
+        TranslateServiceEnum.DEEP_L_BUILT_IN,
+        deepLLogo
+      )
+    )
+    TranslateServiceEnum.translateServiceMap.set(
       TranslateServiceEnum.VOLCANO,
       TranslateServiceEnum.buildServiceInfo('火山翻译', TranslateServiceEnum.VOLCANO, volcanoLogo)
     )
@@ -143,6 +174,26 @@ class TranslateServiceEnum {
         'Bing词典翻译',
         TranslateServiceEnum.BING_DICT,
         bingLogo
+      )
+    )
+    TranslateServiceEnum.translateServiceMap.set(
+      TranslateServiceEnum.NIU_TRANS,
+      TranslateServiceEnum.buildServiceInfo(
+        '小牛翻译',
+        TranslateServiceEnum.NIU_TRANS,
+        niuTransLogo
+      )
+    )
+    TranslateServiceEnum.translateServiceMap.set(
+      TranslateServiceEnum.CAI_YUN,
+      TranslateServiceEnum.buildServiceInfo('彩云翻译', TranslateServiceEnum.CAI_YUN, caiyunLogo)
+    )
+    TranslateServiceEnum.translateServiceMap.set(
+      TranslateServiceEnum.TRAN_SMART,
+      TranslateServiceEnum.buildServiceInfo(
+        '腾讯交互翻译(内置)',
+        TranslateServiceEnum.TRAN_SMART,
+        transmart
       )
     )
     return TranslateServiceEnum.translateServiceMap
@@ -164,7 +215,7 @@ class TranslateServiceEnum {
    * @param type 服务类型
    * @param logo 服务logo
    */
-  static buildServiceInfo(name, type, logo) {
+  static buildServiceInfo(name, type, logo): { name: string; type: string; logo: string } {
     return { name, type, logo }
   }
 }

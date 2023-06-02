@@ -1,11 +1,7 @@
-import { isNotNull } from '../utils/validate'
-import HttpMethodType from '../enums/HttpMethodTypeClassEnum'
-import request from '../utils/requestNotHandle'
-import { TranslateServiceEnum } from '../enums/TranslateServiceEnum'
-import { commonError } from '../utils/RequestUtil'
 import { OpenAIChannelRequest } from './OpenAIChannelRequest'
 import { BingChannelRequest } from './BingChannelRequest'
 import { GoogleChannelRequest } from './GoogleChannelRequest'
+import { DeepLChannelRequest } from './DeepLChannelRequest'
 
 class ChannelRequest {
   /**
@@ -14,41 +10,18 @@ class ChannelRequest {
    * @param info 翻译信息
    * @param isCheckRequest  是否校验翻译请求状态
    */
-  static deeplTranslate = (info, isCheckRequest) => {
-    const data = {
-      text: info.translateContent.split('\n'),
-      target_lang: info.languageResultType
-    }
-    const languageType = info.languageType
-    if (isNotNull(languageType) && languageType !== 'auto') {
-      data['source_lang'] = languageType
-    }
-    const requestInfo = {
-      baseURL: 'https://api-free.deepl.com/v2/translate',
-      method: HttpMethodType.POST,
-      headers: {
-        Authorization: 'DeepL-Auth-Key ' + info.appKey
-      },
-      data
-    }
-    request(requestInfo).then(
-      (data) => {
-        window.api['agentApiTranslateCallback'](
-          TranslateServiceEnum.DEEP_L,
-          true,
-          data,
-          isCheckRequest ? info : null
-        )
-      },
-      (err) => {
-        window.api['agentApiTranslateCallback'](
-          TranslateServiceEnum.DEEP_L,
-          false,
-          commonError(TranslateServiceEnum.DEEP_L, err),
-          isCheckRequest ? info : null
-        )
-      }
-    )
+  static deeplTranslate = (info, isCheckRequest): void => {
+    DeepLChannelRequest.apiTranslateByDeepL(info, isCheckRequest)
+  }
+
+  /**
+   * DeepL - 翻译
+   *
+   * @param info 翻译信息
+   * @param isCheckRequest  是否校验翻译请求状态
+   */
+  static deeplbuiltinTranslate = (info, isCheckRequest): void => {
+    DeepLChannelRequest.apiTranslateByDeepLBuiltIn(info, isCheckRequest)
   }
 
   /**

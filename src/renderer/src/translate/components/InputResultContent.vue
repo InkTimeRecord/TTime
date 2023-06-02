@@ -1,28 +1,28 @@
 <template>
-  <div v-for='(translateService) in translateServiceMap.values()'>
+  <div v-for="translateService in translateServiceMap.values()">
     <input-result-content-channel
-    :key='translateService.id'
-    :ref='setChannelRef'
-    :translate-service='translateService'
-  />
+      :key="translateService.id"
+      :ref="setChannelRef"
+      :translate-service="translateService"
+    />
   </div>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 import InputResultContentChannel from './channel/InputResultContentChannel.vue'
 
 import { ref } from 'vue'
 import { getTranslateServiceMapByUse } from '../../utils/translateServiceUtil'
 
 // 翻译结果框
-let channelRefs = ref([])
+const channelRefs = ref([])
 // 获取缓存中的翻译服务list
 const translateServiceMap = ref()
 
 /**
  * 加载翻译服务
  */
-const initTranslateServiceMap = () => {
+const initTranslateServiceMap = (): void => {
   // 翻译结果框
   channelRefs.value = []
   // 获取缓存中的翻译服务list
@@ -44,7 +44,7 @@ window.api.updateTranslateServiceEvent(() => {
  *
  * @param ref ref
  */
-const setChannelRef = (ref) => {
+const setChannelRef = (ref): void => {
   if (ref) {
     channelRefs.value.push(ref)
   }
@@ -56,7 +56,7 @@ const setChannelRef = (ref) => {
  * @param value 翻译内容
  */
 const setTranslatedResultContent = (value): void => {
-  channelRefs.value.forEach(channel => {
+  channelRefs.value.forEach((channel) => {
     channel.setTranslatedResultContent(value)
   })
 }
@@ -67,7 +67,7 @@ const setTranslatedResultContent = (value): void => {
  * @param value 显示翻译结果
  */
 const setShowResult = (value): void => {
-  channelRefs.value.forEach(channel => {
+  channelRefs.value.forEach((channel) => {
     channel.setShowResult(value)
   })
 }
@@ -78,7 +78,7 @@ const setShowResult = (value): void => {
  * @param value 加载中状态
  */
 const setIsResultLoading = (value): void => {
-  channelRefs.value.forEach(channel => {
+  channelRefs.value.forEach((channel) => {
     channel.setIsResultLoading(value)
   })
 }
@@ -87,7 +87,7 @@ const setIsResultLoading = (value): void => {
  * 清空翻译结果内容事件
  */
 const clearTranslatedResultContentEvent = (): void => {
-  channelRefs.value.forEach(channel => {
+  channelRefs.value.forEach((channel) => {
     channel.clearTranslatedResultContentEvent()
   })
 }
@@ -100,5 +100,4 @@ defineExpose({
 })
 </script>
 
-<style lang='scss' scoped>
-</style>
+<style lang="scss" scoped></style>
