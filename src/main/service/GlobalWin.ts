@@ -4,6 +4,7 @@ import { app } from 'electron'
 import { TrayEvent } from './TrayEvent'
 import { WinEvent } from './Win'
 import { YesNoEnum } from '../enums/YesNoEnum'
+import { UiohookMouseEvent } from 'uiohook-napi'
 
 /**
  * 全局窗口
@@ -17,6 +18,10 @@ class GlobalWin {
    * 设置窗口
    */
   static setWin
+  /**
+   * 悬浮球窗口
+   */
+  static hoverBallWin
 
   /**
    * 设置主窗口
@@ -91,6 +96,43 @@ class GlobalWin {
   static setSetWin(setWin): void {
     // 在调用处保证只会创建一次 销毁时也自动置空 所以此处目前可以不加校验
     GlobalWin.setWin = setWin
+  }
+
+  /**
+   * 隐藏悬浮球窗口
+   */
+  static hoverBallWinHide(): void {
+    if (isNull(GlobalWin.hoverBallWin)) {
+      return
+    }
+    console.log('隐藏悬浮球窗口')
+    GlobalWin.hoverBallWin.hide()
+  }
+
+  /**
+   * 显示悬浮球窗口
+   */
+  static hoverBallWinShow(e: UiohookMouseEvent): void {
+    if (isNull(GlobalWin.hoverBallWin)) {
+      return
+    }
+    console.log('显示悬浮球窗口')
+    GlobalWin.hoverBallWin.setAlwaysOnTop(true, 'pop-up-menu', 1)
+    GlobalWin.hoverBallWin.setVisibleOnAllWorkspaces(true)
+    GlobalWin.hoverBallWin.showInactive()
+    GlobalWin.hoverBallWin.setPosition(e.x, e.y + 11)
+  }
+
+  /**
+   * 设置悬浮球窗口
+   *
+   * @param hoverBallWin 悬浮球窗口
+   */
+  static setHoverBallWin(hoverBallWin): void {
+    // 此处校验是因为主窗口不会销毁 所以防止重复设置
+    if (isNull(GlobalWin.hoverBallWin)) {
+      GlobalWin.hoverBallWin = hoverBallWin
+    }
   }
 
   /**

@@ -1,12 +1,12 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
 
-const setIgnoreMouseEvents = (setIgnoreMouseEvents): void => {
-  ipcRenderer.invoke('set-ignore-mouse-events', setIgnoreMouseEvents)
+const hoverBallEvents = (): void => {
+  ipcRenderer.invoke('hover-ball-events')
 }
 
 const api = {
-  setIgnoreMouseEvents
+  hoverBallEvents
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

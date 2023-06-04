@@ -158,7 +158,6 @@ window.api.updateCacheEvent((key, value) => {
  * 调起消息弹层提示事件
  */
 window.api.showMsgEvent((type, msg) => {
-  console.log('调起消息弹层提示事件 , type = ', type, ' , msg =', msg)
   if (type === ElMessageExtend.SUCCESS) {
     ElMessageExtend.success(msg)
   } else if (type === ElMessageExtend.WARNING) {
