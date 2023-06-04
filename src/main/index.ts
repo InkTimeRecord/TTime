@@ -11,6 +11,7 @@ import { SystemTypeEnum } from './enums/SystemTypeEnum'
 import GlobalWin from './service/GlobalWin'
 import './service/TTimeEvent'
 import './service/channel/TranslateChannel'
+import './service/HoverBall'
 import { isNull } from './utils/validate'
 import { injectWinAgent } from './utils/RequestUtil'
 
@@ -56,7 +57,7 @@ function createWindow(): void {
     transparent: true,
     // 设置窗口透明色
     backgroundColor: '#0000',
-    // 不显示窗口
+    // 去除窗口边框
     frame: false,
     // 可调整大小
     resizable: false,
@@ -76,6 +77,7 @@ function createWindow(): void {
   })
   // 禁用按下F11全屏事件
   mainWin.setFullScreenable(false)
+  // mainWin.setIgnoreMouseEvents(true, { forward: true })
 
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
     mainWin.loadURL(process.env['ELECTRON_RENDERER_URL'])

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<style>
+
+  body {
+    margin: 0;
+    overflow: hidden;
+  }
+
+  /*body {pointer-events: none}*/
+  /** {pointer-events: all;}*/
+  /*.draggable {-webkit-app-region: drag;}*/
+
+
+     /*禁止选择*/
+     .none-select {
+       user-select: none;
+     }
+
+     /*光标指针*/
+     .cursor-pointer {
+       cursor: pointer;
+     }
+
+
+     .img-layer {
+       /*position: relative;*/
+       position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;
+     }
+
+     .img-logo {
+       /*background-color:rgba(0,0,0,0);*/
+       /*position:fixed;*/
+       /*top:0;*/
+       /*left:0;*/
+       /*z-index:99999;*/
+       -webkit-app-region:drag;
+       width: 32px;
+       height: 32px;
+     }
+
+
+</style>
+<body>
+
+<div id='logo'  class='img-layer cursor-pointer'>
+  <img class='img-logo none-select cursor-pointer' src='./src/assets/logo.png'/>
+</div>
+
+</body>
+<script>
+
+  console.log(document.getElementById('logo'));
+
+  let img = document.getElementById('logo')
+
+  // 添加鼠标移入事件监听器
+  img.addEventListener('mouseover', function() {
+    console.log('鼠标移入了图片');
+  });
+
+  // 添加鼠标移出事件监听器
+  img.addEventListener('mouseout', function() {
+    console.log('鼠标移出了图片');
+  });
+
+  let t
+  // window.api.setIgnoreMouseEvents(true)
+  window.addEventListener('mousemove', (event) => {
+    // console.log('触发了 = ' ,event);
+    if (event.target === document.documentElement) {
+      window.api.setIgnoreMouseEvents(true)
+      if (t) {
+        clearTimeout(t)
+      }
+      t = setTimeout(function () {
+        window.api.setIgnoreMouseEvents(false)
+      }, 150)
+    } else {
+      window.api.setIgnoreMouseEvents(false)
+    }
+  })
+</script>
+</html>
