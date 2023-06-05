@@ -7,6 +7,7 @@ import path from 'path'
 import { is } from '@electron-toolkit/utils'
 import GlobalWin from './GlobalWin'
 import { WinEvent } from './Win'
+import { YesNoEnum } from '../enums/YesNoEnum'
 
 // 窗口加载完毕后执行
 app.whenReady().then(() => {
@@ -18,8 +19,8 @@ app.whenReady().then(() => {
 
 function createHoverBallWin(): void {
   const hoverBallWin = new BrowserWindow({
-    width: 25,
-    height: 25,
+    width: 30,
+    height: 30,
     // 跳过任务栏显示
     skipTaskbar: true,
     // 关闭阴影效果 否则设置了窗口透明清空下 透明处会显示阴影效果
@@ -48,7 +49,7 @@ function createHoverBallWin(): void {
   hoverBallWin.setFullScreenable(false)
 
   // 打开开发者工具
-  hoverBallWin.webContents.openDevTools({ mode: 'detach' })
+  // hoverBallWin.webContents.openDevTools({ mode: 'detach' })
 
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
     hoverBallWin.loadURL(`${process.env['ELECTRON_RENDERER_URL']}/hoverBall.html`)
@@ -63,33 +64,49 @@ uIOhook.start()
 
 uIOhook.on('click', (e: UiohookMouseEvent) => {
   if (e.clicks === 2 && e.button === 1) {
-    // log.info(e, '触发了双击')
-    GlobalWin.hoverBallWinShow(e)
-    return
+    GlobalWin.hoverBallWin.webContents
+      .executeJavaScript('localStorage.hoverBallStatus')
+      .then((val) => {
+        if (YesNoEnum.Y === val) {
+          // log.info(e, '触发了双击')
+          // log.info('触发了双击')
+          GlobalWin.hoverBallWinShow(e)
+          return
+        }
+      })
   }
-  const position = GlobalWin.hoverBallWin.getPosition()
-  const winX = position[0]
-  const winY = position[1]
-  // log.info('position x = ', winX, ' y = ', winY)
-  // log.info('e x = ', e.x, ' y = ', e.y)
-  const statusX = winX - e.x
-  const statusY = winY - e.y
-  if (statusX > 30 || statusY > 30 || statusX < -30 || statusY < -30) {
-    // 隐藏窗口
-    GlobalWin.hoverBallWinHide()
+  if (WinEvent.isHoverBall) {
+    const position = GlobalWin.hoverBallWin.getPosition()
+    const winX = position[0]
+    const winY = position[1]
+    // log.info('position x = ', winX, ' y = ', winY)
+    // log.info('e x = ', e.x, ' y = ', e.y)
+    const statusX = winX - e.x
+    const statusY = winY - e.y
+    if (statusX > 30 || statusY > 30 || statusX < -30 || statusY < -30) {
+      // log.info('触发了单击隐藏窗口')
+      // 隐藏窗口
+      GlobalWin.hoverBallWinHide()
+    }
   }
 })
 
+/**
+ * 滚动鼠标时关闭悬浮球
+ */
 uIOhook.on('wheel', (_e: UiohookWheelEvent) => {
-  GlobalWin.hoverBallWinHide()
+  if (WinEvent.isHoverBall) {
+    // log.info('触发了滚动隐藏窗口')
+    GlobalWin.hoverBallWinHide()
+  }
 })
 
 /**
  * 悬浮球取词
  */
 ipcMain.handle('hover-ball-events', (_event, _) => {
+  log.info('[悬浮球取词] - 开始')
   GlobalWin.hoverBallWinHide()
-  log.info('悬浮球取词')
   // 先释放按键
   uIOhook.keyToggle(UiohookKey.Ctrl, 'up')
   uIOhook.keyToggle(UiohookKey.CtrlRight, 'up')

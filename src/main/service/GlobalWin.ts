@@ -105,8 +105,15 @@ class GlobalWin {
     if (isNull(GlobalWin.hoverBallWin)) {
       return
     }
-    console.log('隐藏悬浮球窗口')
+    // console.log('隐藏悬浮球窗口')
+    WinEvent.isHoverBall = false
+    // GlobalWin.hoverBallWin.webContents
+    //   .executeJavaScript(
+    //     "setTimeout(() => document.getElementById('imgLogoSign').classList.add('hidden') ,300)"
+    //   )
+    //   .then(() => {})
     GlobalWin.hoverBallWin.hide()
+    GlobalWin.hoverBallWin.webContents.send('hover-ball-hide-events')
   }
 
   /**
@@ -116,11 +123,23 @@ class GlobalWin {
     if (isNull(GlobalWin.hoverBallWin)) {
       return
     }
-    console.log('显示悬浮球窗口')
+    // console.log('显示悬浮球窗口')
+    WinEvent.isHoverBall = true
     GlobalWin.hoverBallWin.setAlwaysOnTop(true, 'pop-up-menu', 1)
     GlobalWin.hoverBallWin.setVisibleOnAllWorkspaces(true)
+
     GlobalWin.hoverBallWin.showInactive()
     GlobalWin.hoverBallWin.setPosition(e.x, e.y + 11)
+    // GlobalWin.hoverBallWin.webContents.execu    teJavaScript(
+    //   "document.getElementById('imgLogoSign').classList.remove('hidden')"
+    // )
+    // GlobalWin.hoverBallWin.webContents.executeJavaScript(
+    //   "setTimeout(() => document.getElementById('imgLogoSign').classList.remove('hidden') ,300)"
+    // )
+    // GlobalWin.hoverBallWin.webContents.executeJavaScript(
+    //   "document.getElementById('imgLogoSign').classList.remove('hidden')"
+    // )
+    GlobalWin.hoverBallWin.webContents.send('hover-ball-show-events')
   }
 
   /**

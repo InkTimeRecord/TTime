@@ -5,8 +5,22 @@ const hoverBallEvents = (): void => {
   ipcRenderer.invoke('hover-ball-events')
 }
 
+const hoverBallShowEvents = (callback): void => {
+  ipcRenderer.on('hover-ball-show-events', () => {
+    callback()
+  })
+}
+
+const hoverBallHideEvents = (callback): void => {
+  ipcRenderer.on('hover-ball-hide-events', () => {
+    callback()
+  })
+}
+
 const api = {
-  hoverBallEvents
+  hoverBallEvents,
+  hoverBallShowEvents,
+  hoverBallHideEvents
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

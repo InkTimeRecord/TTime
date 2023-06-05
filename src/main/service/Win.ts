@@ -10,6 +10,7 @@ import { YesNoEnum } from '../enums/YesNoEnum'
 
 class WinEvent {
   static isAlwaysOnTop = true
+  static isHoverBall = false
 
   constructor(mainWinInfo) {
     /**

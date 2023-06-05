@@ -150,6 +150,10 @@ if (undefined === cacheGetStr('alwaysOnTopAllowEscStatus')) {
 if (undefined === cacheGetStr('wrapReplaceSpaceStatus')) {
   cacheSetStr('wrapReplaceSpaceStatus', YesNoEnum.N)
 }
+// 初始化鼠标悬浮球取词状态
+if (undefined === cacheGetStr('hoverBallStatus')) {
+  cacheSetStr('hoverBallStatus', YesNoEnum.N)
+}
 window.api.updateCacheEvent((key, value) => {
   cacheSetStr(key, value)
 })
