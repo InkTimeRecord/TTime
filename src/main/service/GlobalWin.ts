@@ -24,6 +24,11 @@ class GlobalWin {
   static hoverBallWin
 
   /**
+   * ocr窗口
+   */
+  static ocrWin
+
+  /**
    * 设置主窗口
    *
    * @param mainWin 主窗口
@@ -148,9 +153,21 @@ class GlobalWin {
    * @param hoverBallWin 悬浮球窗口
    */
   static setHoverBallWin(hoverBallWin): void {
-    // 此处校验是因为主窗口不会销毁 所以防止重复设置
+    // 此处校验是因为窗口不会销毁 所以防止重复设置
     if (isNull(GlobalWin.hoverBallWin)) {
       GlobalWin.hoverBallWin = hoverBallWin
+    }
+  }
+
+  /**
+   * 设置Ocr窗口
+   *
+   * @param ocrWin 悬浮球窗口
+   */
+  static setOcrWin(ocrWin): void {
+    // 此处校验是因为窗口不会销毁 所以防止重复设置
+    if (isNull(GlobalWin.ocrWin)) {
+      GlobalWin.ocrWin = ocrWin
     }
   }
 
