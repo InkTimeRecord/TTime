@@ -169,7 +169,6 @@ class GlobalShortcutEvent {
     uIOhook.keyToggle(UiohookKey.MetaRight, 'up')
     uIOhook.keyToggle(UiohookKey.Tab, 'up')
     uIOhook.keyToggle(UiohookKey.Escape, 'up')
-    uIOhook.keyToggle(UiohookKey.CapsLock, 'up')
     GlobalShortcutEvent.isChoice = true
     const printSelectedText = (selectedText) => {
       GlobalShortcutEvent.isChoice = false
