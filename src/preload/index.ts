@@ -105,11 +105,7 @@ const windowHeightChangeEvent = (): void => {
  */
 const updateTranslateContentEvent = (callback): void => {
   ipcRenderer.on('update-translated-content', (_event, content) => {
-    // 先对文字做一次空处理 防止代码执行时出错
-    // 不为空的情况下默认去掉文本内容前后的换行符
-    const newContent =
-      content === undefined || content === null ? '' : content.replace(/^\n+|\n+$/g, '')
-    callback(newContent)
+    callback(content)
   })
 }
 

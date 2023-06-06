@@ -126,7 +126,7 @@ ipcMain.handle('hover-ball-events', (_event, _) => {
     selectedText = GlobalShortcutEvent.splitSingleCamelCase(selectedText)
     selectedText = GlobalShortcutEvent.splitSingleUnderScore(selectedText)
     // 推送给Vue页面进行更新翻译输入内容
-    GlobalWin.mainWinSend('update-translated-content', selectedText)
+    GlobalWin.mainWinUpdateTranslatedContent(selectedText)
     GlobalWin.mainWinShow()
   })
 })

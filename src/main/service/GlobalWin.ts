@@ -5,6 +5,7 @@ import { TrayEvent } from './TrayEvent'
 import { WinEvent } from './Win'
 import { YesNoEnum } from '../enums/YesNoEnum'
 import { UiohookMouseEvent } from 'uiohook-napi'
+import { clipboard } from 'electron'
 
 /**
  * 全局窗口
@@ -86,6 +87,35 @@ class GlobalWin {
           WinEvent.translateWinRegisterEsc()
         }
       })
+  }
+
+  /**
+   * OCR翻译事件发送
+   *
+   * @param text OCR文本
+   */
+  static async mainWinSendOcrTranslated(text): Promise<void> {
+    await GlobalWin.mainWin.webContents
+      .executeJavaScript('localStorage.ocrWriteClipboardStatus')
+      .then((wrapReplaceSpaceStatus) => {
+        text = GlobalWin.mainWinUpdateTranslatedContent(text)
+        if (YesNoEnum.Y === wrapReplaceSpaceStatus) {
+          clipboard.writeText(text)
+        }
+      })
+  }
+
+  /**
+   * 更新翻译内容事件
+   *
+   * @param text OCR文本
+   */
+  static mainWinUpdateTranslatedContent(text): string {
+    // 先对文字做一次空处理 防止代码执行时出错
+    // 不为空的情况下默认去掉文本内容前后的换行符
+    text = text === undefined || text === null ? '' : text.replace(/^\n+|\n+$/g, '')
+    GlobalWin.mainWinSend('update-translated-content', text)
+    return text
   }
 
   /**
