@@ -169,15 +169,44 @@ class GlobalShortcutEvent {
     uIOhook.keyToggle(UiohookKey.MetaRight, 'up')
     uIOhook.keyToggle(UiohookKey.Tab, 'up')
     uIOhook.keyToggle(UiohookKey.Escape, 'up')
-    uIOhook.keyToggle(UiohookKey.CapsLock, 'up')
     GlobalShortcutEvent.isChoice = true
     const printSelectedText = (selectedText) => {
       GlobalShortcutEvent.isChoice = false
+      selectedText = GlobalShortcutEvent.splitSingleCamelCase(selectedText)
+      selectedText = GlobalShortcutEvent.splitSingleUnderScore(selectedText)
       // 推送给Vue页面进行更新翻译输入内容
-      GlobalWin.mainWinSend('update-translated-content', selectedText)
+      GlobalWin.mainWinUpdateTranslatedContent(selectedText)
       GlobalWin.mainWinShow()
     }
     GlobalShortcutEvent.getSelectedText().then(printSelectedText)
+  }
+
+  /**
+   * 单个词时拆分驼峰命名
+   *
+   * @param str 拆分的字符
+   * @return 处理后的字符
+   */
+  static splitSingleCamelCase = (str): string => {
+    if (/^[A-Za-z][A-Za-z]*$/.test(str)) {
+      return str.replace(/([a-z])([A-Z])/g, '$1 $2')
+    } else {
+      return str
+    }
+  }
+
+  /**
+   * 单个词时拆分下划线命名
+   *
+   * @param str 拆分的字符
+   * @return 处理后的字符
+   */
+  static splitSingleUnderScore = (str): string => {
+    if (/^[a-z0-9_]+$/i.test(str)) {
+      return str.replace(/_/g, ' ')
+    } else {
+      return str
+    }
   }
 
   static getSelectedText = async () => {

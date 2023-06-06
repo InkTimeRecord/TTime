@@ -9,7 +9,9 @@ import HttpMethodType from '../../../enums/HttpMethodTypeClassEnum'
 const apiTranslate = (info): Promise<object> => {
   const data = {
     header: {
-      fn: 'auto_translation_block'
+      fn: 'auto_translation_block',
+      user: 'byliangcheng',
+      token: 'X0HsYUSX24I2L8CmvLW8'
     },
     source: {
       text_block: info.translateContent,

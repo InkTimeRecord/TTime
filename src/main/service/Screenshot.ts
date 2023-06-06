@@ -66,8 +66,8 @@ ipcMain.handle('screenshot-end-event', (_event, _image) => {
 /**
  * 文本识别事件
  */
-ipcMain.handle('text-ocr-event', (_event, text) => {
-  GlobalWin.mainWinSend('update-translated-content', text)
+ipcMain.handle('text-ocr-event', async (_event, text) => {
+  await GlobalWin.mainWinSendOcrTranslated(text)
 })
 
 /**
@@ -159,7 +159,7 @@ class ScreenshotsSon {
       y: screenshots.y,
       // 透明的
       transparent: true,
-      // 不显示窗口
+      // 去除窗口边框
       frame: false,
       // 跳过任务栏
       skipTaskbar: true,

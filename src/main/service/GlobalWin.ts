@@ -4,6 +4,8 @@ import { app } from 'electron'
 import { TrayEvent } from './TrayEvent'
 import { WinEvent } from './Win'
 import { YesNoEnum } from '../enums/YesNoEnum'
+import { UiohookMouseEvent } from 'uiohook-napi'
+import { clipboard } from 'electron'
 
 /**
  * 全局窗口
@@ -17,6 +19,10 @@ class GlobalWin {
    * 设置窗口
    */
   static setWin
+  /**
+   * 悬浮球窗口
+   */
+  static hoverBallWin
 
   /**
    * 设置主窗口
@@ -84,6 +90,35 @@ class GlobalWin {
   }
 
   /**
+   * OCR翻译事件发送
+   *
+   * @param text OCR文本
+   */
+  static async mainWinSendOcrTranslated(text): Promise<void> {
+    await GlobalWin.mainWin.webContents
+      .executeJavaScript('localStorage.ocrWriteClipboardStatus')
+      .then((wrapReplaceSpaceStatus) => {
+        text = GlobalWin.mainWinUpdateTranslatedContent(text)
+        if (YesNoEnum.Y === wrapReplaceSpaceStatus) {
+          clipboard.writeText(text)
+        }
+      })
+  }
+
+  /**
+   * 更新翻译内容事件
+   *
+   * @param text OCR文本
+   */
+  static mainWinUpdateTranslatedContent(text): string {
+    // 先对文字做一次空处理 防止代码执行时出错
+    // 不为空的情况下默认去掉文本内容前后的换行符
+    text = text === undefined || text === null ? '' : text.replace(/^\n+|\n+$/g, '')
+    GlobalWin.mainWinSend('update-translated-content', text)
+    return text
+  }
+
+  /**
    * 设置设置窗口
    *
    * @param setWin 设置窗口
@@ -91,6 +126,62 @@ class GlobalWin {
   static setSetWin(setWin): void {
     // 在调用处保证只会创建一次 销毁时也自动置空 所以此处目前可以不加校验
     GlobalWin.setWin = setWin
+  }
+
+  /**
+   * 隐藏悬浮球窗口
+   */
+  static hoverBallWinHide(): void {
+    if (isNull(GlobalWin.hoverBallWin)) {
+      return
+    }
+    // console.log('隐藏悬浮球窗口')
+    WinEvent.isHoverBall = false
+    // GlobalWin.hoverBallWin.webContents
+    //   .executeJavaScript(
+    //     "setTimeout(() => document.getElementById('imgLogoSign').classList.add('hidden') ,300)"
+    //   )
+    //   .then(() => {})
+    GlobalWin.hoverBallWin.hide()
+    GlobalWin.hoverBallWin.webContents.send('hover-ball-hide-events')
+  }
+
+  /**
+   * 显示悬浮球窗口
+   */
+  static hoverBallWinShow(e: UiohookMouseEvent): void {
+    if (isNull(GlobalWin.hoverBallWin)) {
+      return
+    }
+    // console.log('显示悬浮球窗口')
+    WinEvent.isHoverBall = true
+    GlobalWin.hoverBallWin.setAlwaysOnTop(true, 'pop-up-menu', 1)
+    GlobalWin.hoverBallWin.setVisibleOnAllWorkspaces(true)
+
+    GlobalWin.hoverBallWin.showInactive()
+    GlobalWin.hoverBallWin.setPosition(e.x, e.y + 11)
+    // GlobalWin.hoverBallWin.webContents.execu    teJavaScript(
+    //   "document.getElementById('imgLogoSign').classList.remove('hidden')"
+    // )
+    // GlobalWin.hoverBallWin.webContents.executeJavaScript(
+    //   "setTimeout(() => document.getElementById('imgLogoSign').classList.remove('hidden') ,300)"
+    // )
+    // GlobalWin.hoverBallWin.webContents.executeJavaScript(
+    //   "document.getElementById('imgLogoSign').classList.remove('hidden')"
+    // )
+    GlobalWin.hoverBallWin.webContents.send('hover-ball-show-events')
+  }
+
+  /**
+   * 设置悬浮球窗口
+   *
+   * @param hoverBallWin 悬浮球窗口
+   */
+  static setHoverBallWin(hoverBallWin): void {
+    // 此处校验是因为主窗口不会销毁 所以防止重复设置
+    if (isNull(GlobalWin.hoverBallWin)) {
+      GlobalWin.hoverBallWin = hoverBallWin
+    }
   }
 
   /**

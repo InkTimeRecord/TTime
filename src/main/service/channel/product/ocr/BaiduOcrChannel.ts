@@ -69,7 +69,7 @@ class BaiduOcrChannel implements IOcrInterface {
     if (isNull(BaiduOcrChannel.token)) {
       log.info('[百度Ocr事件] - 获取Token失败 :', BaiduOcrChannel.tokenErrMsg)
       GlobalWin.mainWinSend('show-msg-event', WebShowMsgEnum.ERROR, BaiduOcrChannel.tokenErrMsg)
-      GlobalWin.mainWinSend('update-translated-content', '')
+      GlobalWin.mainWinUpdateTranslatedContent('')
       return
     }
     info.token = BaiduOcrChannel.token
@@ -82,7 +82,7 @@ class BaiduOcrChannel implements IOcrInterface {
           let errorMsg = this.getMsgByErrorCode(errorCode)
           errorMsg = isNull(errorMsg) ? res['error_msg'] : errorMsg
           GlobalWin.mainWinSend('show-msg-event', WebShowMsgEnum.ERROR, errorMsg)
-          GlobalWin.mainWinSend('update-translated-content', '')
+          GlobalWin.mainWinUpdateTranslatedContent('')
           return
         }
         let data = ''
@@ -90,7 +90,7 @@ class BaiduOcrChannel implements IOcrInterface {
         textList.forEach((text) => {
           data += text['words'] + '\n'
         })
-        GlobalWin.mainWinSend('update-translated-content', data)
+        GlobalWin.mainWinSendOcrTranslated(data)
       })
       .catch((_err) => {})
   }

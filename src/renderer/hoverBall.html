@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<style>
+
+  body {
+    margin: 0;
+    overflow: hidden;
+  }
+
+  .img-logo {
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
+    user-select: none;
+    transition: opacity 0.5s ease-in;
+    -webkit-user-drag: none;
+    box-shadow: 1px 1px 3px -1px #4a4747fc;
+    border: solid 1px #cfcfcf;
+    border-radius: 5px;
+    background-color: #fff;
+  }
+  }
+
+  /* 隐藏图像 */
+  .hidden {
+    opacity: 0;
+  }
+
+</style>
+<body>
+  <img id='imgLogoSign' class='img-logo' src='./src/assets/logo.png' onclick='hoverBall()'/>
+</body>
+<script>
+  function hoverBall() {
+    /* 点击时添加隐藏类 */
+    // document.getElementById('imgLogoSign').classList.add('hidden');
+    setTimeout(() => {
+      window.api.hoverBallEvents()
+    },300)
+  }
+
+  window.api.hoverBallShowEvents(() =>{
+    /* 回调时候删除隐藏类 */
+    setTimeout(() => {
+      document.getElementById('imgLogoSign').classList.remove('hidden');
+    },300)
+  })
+
+  window.api.hoverBallHideEvents(() =>{
+    /* 回调时候添加隐藏类 */
+      document.getElementById('imgLogoSign').classList.add('hidden');
+  })
+
+</script>
+</html>

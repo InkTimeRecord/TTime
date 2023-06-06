@@ -76,7 +76,7 @@ class AutoUpdater {
       transparent: true,
       // 设置窗口透明色
       backgroundColor: '#0000',
-      // 不显示窗口
+      // 去除窗口边框
       frame: false,
       // 可调整大小
       resizable: false,

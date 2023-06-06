@@ -10,6 +10,7 @@ import { YesNoEnum } from '../enums/YesNoEnum'
 
 class WinEvent {
   static isAlwaysOnTop = true
+  static isHoverBall = false
 
   constructor(mainWinInfo) {
     /**
@@ -82,17 +83,9 @@ class WinEvent {
   static alwaysOnTop(status): void {
     GlobalWin.mainWin.setAlwaysOnTop(status)
     WinEvent.isAlwaysOnTop = status
-    if (status) {
-      // 当置顶时注销Esc快捷键
-      GlobalShortcutEvent.unregisterEsc()
-    } else {
-      // 当窗口是可见时才会触发注册Esc快捷键事件
-      // 因为窗口首次加载时候会进入这里触发事件 如果窗口没有显示的情况下就注册了Esc 会导致快捷键被占用
-      if (GlobalWin.mainWin.isVisible()) {
-        // 当置顶时注册Esc快捷键事件
-        WinEvent.translateWinRegisterEsc()
-      }
-    }
+    // 触发窗口置顶时候也触发窗口显示回调
+    // 用于处理 alwaysOnTopAllowEscStatus 逻辑
+    GlobalWin.mainWinShowCallback()
   }
 
   /**

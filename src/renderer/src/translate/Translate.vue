@@ -150,6 +150,14 @@ if (undefined === cacheGetStr('alwaysOnTopAllowEscStatus')) {
 if (undefined === cacheGetStr('wrapReplaceSpaceStatus')) {
   cacheSetStr('wrapReplaceSpaceStatus', YesNoEnum.N)
 }
+// 初始化鼠标悬浮球取词状态
+if (undefined === cacheGetStr('hoverBallStatus')) {
+  cacheSetStr('hoverBallStatus', YesNoEnum.N)
+}
+// 初始化OCR结果写入剪切板状态
+if (undefined === cacheGetStr('ocrWriteClipboardStatus')) {
+  cacheSetStr('ocrWriteClipboardStatus', YesNoEnum.N)
+}
 window.api.updateCacheEvent((key, value) => {
   cacheSetStr(key, value)
 })
@@ -158,7 +166,6 @@ window.api.updateCacheEvent((key, value) => {
  * 调起消息弹层提示事件
  */
 window.api.showMsgEvent((type, msg) => {
-  console.log('调起消息弹层提示事件 , type = ', type, ' , msg =', msg)
   if (type === ElMessageExtend.SUCCESS) {
     ElMessageExtend.success(msg)
   } else if (type === ElMessageExtend.WARNING) {
