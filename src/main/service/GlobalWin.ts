@@ -1,10 +1,10 @@
 import { isNull } from '../utils/validate'
 import { GlobalShortcutEvent } from './GlobalShortcutEvent'
-import { app } from 'electron'
+import { app, screen } from 'electron'
 import { TrayEvent } from './TrayEvent'
 import { WinEvent } from './Win'
 import { YesNoEnum } from '../enums/YesNoEnum'
-import { UiohookMouseEvent } from 'uiohook-napi'
+import { clipboard } from 'electron'
 
 /**
  * 全局窗口
@@ -94,6 +94,35 @@ class GlobalWin {
   }
 
   /**
+   * OCR翻译事件发送
+   *
+   * @param text OCR文本
+   */
+  static async mainWinSendOcrTranslated(text): Promise<void> {
+    await GlobalWin.mainWin.webContents
+      .executeJavaScript('localStorage.ocrWriteClipboardStatus')
+      .then((wrapReplaceSpaceStatus) => {
+        text = GlobalWin.mainWinUpdateTranslatedContent(text)
+        if (YesNoEnum.Y === wrapReplaceSpaceStatus) {
+          clipboard.writeText(text)
+        }
+      })
+  }
+
+  /**
+   * 更新翻译内容事件
+   *
+   * @param text OCR文本
+   */
+  static mainWinUpdateTranslatedContent(text): string {
+    // 先对文字做一次空处理 防止代码执行时出错
+    // 不为空的情况下默认去掉文本内容前后的换行符
+    text = text === undefined || text === null ? '' : text.replace(/^\n+|\n+$/g, '')
+    GlobalWin.mainWinSend('update-translated-content', text)
+    return text
+  }
+
+  /**
    * 设置设置窗口
    *
    * @param setWin 设置窗口
@@ -124,7 +153,7 @@ class GlobalWin {
   /**
    * 显示悬浮球窗口
    */
-  static hoverBallWinShow(e: UiohookMouseEvent): void {
+  static hoverBallWinShow(): void {
     if (isNull(GlobalWin.hoverBallWin)) {
       return
     }
@@ -132,19 +161,19 @@ class GlobalWin {
     WinEvent.isHoverBall = true
     GlobalWin.hoverBallWin.setAlwaysOnTop(true, 'pop-up-menu', 1)
     GlobalWin.hoverBallWin.setVisibleOnAllWorkspaces(true)
-
     GlobalWin.hoverBallWin.showInactive()
-    GlobalWin.hoverBallWin.setPosition(e.x, e.y + 11)
-    // GlobalWin.hoverBallWin.webContents.execu    teJavaScript(
-    //   "document.getElementById('imgLogoSign').classList.remove('hidden')"
-    // )
-    // GlobalWin.hoverBallWin.webContents.executeJavaScript(
-    //   "setTimeout(() => document.getElementById('imgLogoSign').classList.remove('hidden') ,300)"
-    // )
-    // GlobalWin.hoverBallWin.webContents.executeJavaScript(
-    //   "document.getElementById('imgLogoSign').classList.remove('hidden')"
-    // )
-    GlobalWin.hoverBallWin.webContents.send('hover-ball-show-events')
+    GlobalWin.hoverBallWin.webContents
+      .executeJavaScript('JSON.stringify({width:screen.width,height: screen.height})')
+      .then((value) => {
+        const res = JSON.parse(value)
+        const width = res.width
+        const height = res.height
+        // 获取到鼠标的横坐标和纵坐标
+        const { x, y } = screen.getCursorScreenPoint()
+        // 设置坐标的同时设置宽高 否则在多显示器且显示器之间缩放比例不一致的情况下来回切换会导致悬浮球显示错位
+        GlobalWin.hoverBallWin.setBounds({ x: x, y: y + 11, width: width, height: height })
+        GlobalWin.hoverBallWin.webContents.send('hover-ball-show-events')
+      })
   }
 
   /**

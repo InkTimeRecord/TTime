@@ -81,6 +81,14 @@
       />
       <span class="form-switch-span none-select"> 将翻译结果的 [ 换行符 ] 替换为 [ 空格 ] </span>
     </el-form-item>
+
+    <el-form-item class="none-select" label="OCR结果写入剪切板">
+      <el-switch
+        v-model="advancedSettingInfo.ocrWriteClipboardStatus"
+        @change="ocrWriteClipboardStatusEvent"
+      />
+      <span class="form-switch-span none-select"> 将OCR识别后的文字自动写入剪切板 </span>
+    </el-form-item>
   </el-form>
 </template>
 <script setup lang="ts">
@@ -153,7 +161,8 @@ const playSpeechServiceEvent = (playSpeechService): void => {
 const advancedSettingInfo = ref({
   alwaysOnTopAllowEscStatus: cacheGetStr('alwaysOnTopAllowEscStatus'),
   wrapReplaceSpaceStatus: cacheGetStr('wrapReplaceSpaceStatus') === YesNoEnum.Y,
-  hoverBallStatus: cacheGetStr('hoverBallStatus')
+  hoverBallStatus: cacheGetStr('hoverBallStatus'),
+  ocrWriteClipboardStatus: cacheGetStr('ocrWriteClipboardStatus') === YesNoEnum.Y
 })
 
 /**
@@ -176,6 +185,16 @@ const alwaysOnTopAllowEscStatusEvent = (val): void => {
 const wrapReplaceSpaceStatusEvent = (val): void => {
   cacheSetStr('wrapReplaceSpaceStatus', val ? YesNoEnum.Y : YesNoEnum.N)
   advancedSettingInfo.value.wrapReplaceSpaceStatus = val
+}
+
+/**
+ * OCR结果写入剪切板
+ *
+ * @param val OCR结果写入剪切板状态
+ */
+const ocrWriteClipboardStatusEvent = (val): void => {
+  cacheSetStr('ocrWriteClipboardStatus', val ? YesNoEnum.Y : YesNoEnum.N)
+  advancedSettingInfo.value.ocrWriteClipboardStatus = val
 }
 
 /**

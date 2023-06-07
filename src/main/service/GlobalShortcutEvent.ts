@@ -169,14 +169,13 @@ class GlobalShortcutEvent {
     uIOhook.keyToggle(UiohookKey.MetaRight, 'up')
     uIOhook.keyToggle(UiohookKey.Tab, 'up')
     uIOhook.keyToggle(UiohookKey.Escape, 'up')
-    uIOhook.keyToggle(UiohookKey.CapsLock, 'up')
     GlobalShortcutEvent.isChoice = true
     const printSelectedText = (selectedText) => {
       GlobalShortcutEvent.isChoice = false
       selectedText = GlobalShortcutEvent.splitSingleCamelCase(selectedText)
       selectedText = GlobalShortcutEvent.splitSingleUnderScore(selectedText)
       // 推送给Vue页面进行更新翻译输入内容
-      GlobalWin.mainWinSend('update-translated-content', selectedText)
+      GlobalWin.mainWinUpdateTranslatedContent(selectedText)
       GlobalWin.mainWinShow()
     }
     GlobalShortcutEvent.getSelectedText().then(printSelectedText)

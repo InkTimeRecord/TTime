@@ -1,7 +1,7 @@
 import { uIOhook, UiohookKey, UiohookMouseEvent, UiohookWheelEvent } from 'uiohook-napi'
 import log from './../utils/log'
 import { GlobalShortcutEvent } from './GlobalShortcutEvent'
-import { app, BrowserWindow, ipcMain } from 'electron'
+import { app, BrowserWindow, ipcMain, screen } from 'electron'
 import { SystemTypeEnum } from '../enums/SystemTypeEnum'
 import path from 'path'
 import { is } from '@electron-toolkit/utils'
@@ -70,7 +70,7 @@ uIOhook.on('click', (e: UiohookMouseEvent) => {
         if (YesNoEnum.Y === val) {
           // log.info(e, '触发了双击')
           // log.info('触发了双击')
-          GlobalWin.hoverBallWinShow(e)
+          GlobalWin.hoverBallWinShow()
           return
         }
       })
@@ -79,10 +79,9 @@ uIOhook.on('click', (e: UiohookMouseEvent) => {
     const position = GlobalWin.hoverBallWin.getPosition()
     const winX = position[0]
     const winY = position[1]
-    // log.info('position x = ', winX, ' y = ', winY)
-    // log.info('e x = ', e.x, ' y = ', e.y)
-    const statusX = winX - e.x
-    const statusY = winY - e.y
+    const { x, y } = screen.getCursorScreenPoint()
+    const statusX = winX - x
+    const statusY = winY - y
     if (statusX > 30 || statusY > 30 || statusX < -30 || statusY < -30) {
       // log.info('触发了单击隐藏窗口')
       // 隐藏窗口
@@ -126,7 +125,7 @@ ipcMain.handle('hover-ball-events', (_event, _) => {
     selectedText = GlobalShortcutEvent.splitSingleCamelCase(selectedText)
     selectedText = GlobalShortcutEvent.splitSingleUnderScore(selectedText)
     // 推送给Vue页面进行更新翻译输入内容
-    GlobalWin.mainWinSend('update-translated-content', selectedText)
+    GlobalWin.mainWinUpdateTranslatedContent(selectedText)
     GlobalWin.mainWinShow()
   })
 })

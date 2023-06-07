@@ -2,7 +2,6 @@ import { resolve } from 'path'
 // @ts-ignore 抑制错误校验问题
 import { bytecodePlugin, defineConfig } from 'electron-vite'
 import vue from '@vitejs/plugin-vue'
-import commonjsExternals from 'vite-plugin-commonjs-externals'
 // @ts-ignore 抑制错误校验问题
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 
@@ -63,10 +62,6 @@ export default defineConfig({
         iconDirs: [resolve(process.cwd(), 'src/renderer/src/icons/svg')],
         // 指定symbolId格式
         symbolId: 'icon-[dir]-[name]'
-      }),
-      // @ts-ignore 忽略校验 这块目前只能这么调用
-      commonjsExternals.default({
-        externals: ['path', /^electron(\/.+)?$/]
       })
     ],
     build: {

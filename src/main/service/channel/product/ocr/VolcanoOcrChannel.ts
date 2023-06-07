@@ -27,7 +27,7 @@ class VolcanoOcrChannel implements IOcrInterface {
             WebShowMsgEnum.ERROR,
             this.getMsgByErrorCode(errorInfo)
           )
-          GlobalWin.mainWinSend('update-translated-content', '')
+          GlobalWin.mainWinUpdateTranslatedContent('')
           return
         }
         const code = res['code']
@@ -35,16 +35,16 @@ class VolcanoOcrChannel implements IOcrInterface {
           if (code === 63001) {
             // 进入这里的方法一般是因为识别的图片文本为空
             // 火山识别的图片文本为空时候 不会返回空串 而是这个code码
-            GlobalWin.mainWinSend('update-translated-content', '')
+            GlobalWin.mainWinUpdateTranslatedContent('')
             return
           }
           let errorMsg = this.getMsgByErrorCode(code)
           errorMsg = isNull(errorMsg) ? res['message'] : errorMsg
           GlobalWin.mainWinSend('show-msg-event', WebShowMsgEnum.ERROR, errorMsg)
-          GlobalWin.mainWinSend('update-translated-content', '')
+          GlobalWin.mainWinUpdateTranslatedContent('')
           return
         }
-        GlobalWin.mainWinSend('update-translated-content', res['data']?.['line_texts']?.join('\n'))
+        GlobalWin.mainWinSendOcrTranslated(res['data']?.['line_texts']?.join('\n'))
       })
       .catch((_err) => {})
   }

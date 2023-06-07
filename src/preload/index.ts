@@ -105,11 +105,7 @@ const windowHeightChangeEvent = (): void => {
  */
 const updateTranslateContentEvent = (callback): void => {
   ipcRenderer.on('update-translated-content', (_event, content) => {
-    // 先对文字做一次空处理 防止代码执行时出错
-    // 不为空的情况下默认去掉文本内容前后的换行符
-    const newContent =
-      content === undefined || content === null ? '' : content.replace(/^\n+|\n+$/g, '')
-    callback(newContent)
+    callback(content)
   })
 }
 
@@ -382,6 +378,17 @@ const niutransApiTranslateCallbackEvent = (callback): void => {
 }
 
 /**
+ * 小牛翻译 - 翻译接口回调
+ *
+ * @param callback 回调方法 用于主进程内部触发时推送到Vue页面执行
+ */
+const niutransbuiltinApiTranslateCallbackEvent = (callback): void => {
+  ipcRenderer.on('niutransbuiltin-api-translate-callback-event', (_event, obj) => {
+    callback(obj)
+  })
+}
+
+/**
  * 彩云翻译 - 翻译接口回调
  *
  * @param callback 回调方法 用于主进程内部触发时推送到Vue页面执行
@@ -519,6 +526,7 @@ const api = {
   bingApiTranslateCallbackEvent,
   bingdictApiTranslateCallbackEvent,
   niutransApiTranslateCallbackEvent,
+  niutransbuiltinApiTranslateCallbackEvent,
   caiyunApiTranslateCallbackEvent,
   transmartApiTranslateCallbackEvent,
   ttimeApiAppStart,

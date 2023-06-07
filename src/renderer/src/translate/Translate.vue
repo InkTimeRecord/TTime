@@ -80,6 +80,10 @@ if (isNull(cacheGetStr('translateServiceMap'))) {
   const deepLBuiltInService = buildTranslateService(TranslateServiceEnum.DEEP_L_BUILT_IN)
   map.set(deepLBuiltInService.id, deepLBuiltInService)
   setTranslateServiceMap(map)
+
+  const niuTransBuiltInService = buildTranslateService(TranslateServiceEnum.NIU_TRANS_BUILT_IN)
+  map.set(niuTransBuiltInService.id, niuTransBuiltInService)
+  setTranslateServiceMap(map)
 }
 
 /**
@@ -153,6 +157,10 @@ if (undefined === cacheGetStr('wrapReplaceSpaceStatus')) {
 // 初始化鼠标悬浮球取词状态
 if (undefined === cacheGetStr('hoverBallStatus')) {
   cacheSetStr('hoverBallStatus', YesNoEnum.N)
+}
+// 初始化OCR结果写入剪切板状态
+if (undefined === cacheGetStr('ocrWriteClipboardStatus')) {
+  cacheSetStr('ocrWriteClipboardStatus', YesNoEnum.N)
 }
 window.api.updateCacheEvent((key, value) => {
   cacheSetStr(key, value)
