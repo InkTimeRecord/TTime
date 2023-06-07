@@ -14,25 +14,27 @@ class NiuTransChannel implements ITranslateInterface {
    * @param info 翻译信息
    */
   apiTranslate(info): void {
+    const key =
+      info.type === TranslateServiceEnum.NIU_TRANS
+        ? 'niutrans-api-translate-callback-event'
+        : 'niutransbuiltin-api-translate-callback-event'
     log.info('[小牛翻译事件] - 请求报文 : ', paramsFilter(info))
     NiuTransRequest.apiTranslate(info)
       .then((res) => {
         log.info('[小牛翻译事件] - 响应报文 : ', res)
         const errorCode = res['error_code']
         if (isNotNull(errorCode)) {
-          GlobalWin.mainWinSend(
-            'niutrans-api-translate-callback-event',
-            R.okT(this.getMsgByErrorCode(res))
-          )
+          GlobalWin.mainWinSend(key, R.okT(this.getMsgByErrorCode(res)))
           return
         }
-        GlobalWin.mainWinSend(
-          'niutrans-api-translate-callback-event',
-          R.okT(res['tgt_text']?.split('\\n'))
-        )
+        log.info('[小牛翻译事件] - 响应发送: ', {
+          key: key,
+          info
+        })
+        GlobalWin.mainWinSend(key, R.okT(res['tgt_text']?.split('\\n')))
       })
       .catch((error) => {
-        GlobalWin.mainWinSend('niutrans-api-translate-callback-event', R.okT(error))
+        GlobalWin.mainWinSend(key, R.okT(error))
       })
   }
 

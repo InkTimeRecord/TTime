@@ -4556,6 +4556,10 @@ languageMap.set(
   injectService(NiuTransLanguageListOld, TranslateServiceEnum.NIU_TRANS)
 )
 languageMap.set(
+  TranslateServiceEnum.NIU_TRANS_BUILT_IN,
+  injectService(NiuTransLanguageListOld, TranslateServiceEnum.NIU_TRANS_BUILT_IN)
+)
+languageMap.set(
   TranslateServiceEnum.CAI_YUN,
   injectService(CaiYunLanguageListOld, TranslateServiceEnum.CAI_YUN)
 )

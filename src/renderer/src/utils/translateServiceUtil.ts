@@ -162,6 +162,13 @@ export const buildTranslateService = (translateServiceEnum): {} => {
         appKey: '',
         checkStatus: false
       }
+    case TranslateServiceEnum.NIU_TRANS_BUILT_IN:
+      return {
+        ...translateService,
+        useStatus: true,
+        isBuiltIn: true,
+        checkStatus: true
+      }
     case TranslateServiceEnum.CAI_YUN:
       return {
         ...translateService,

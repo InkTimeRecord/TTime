@@ -72,6 +72,11 @@ class TranslateChannelFactory {
     } else if (TranslateServiceEnum.BING_DICT === type) {
       bingDictChannel.apiTranslate(info)
     } else if (TranslateServiceEnum.NIU_TRANS === type) {
+      info['type'] = type
+      niuTransChannel.apiTranslate(info)
+    } else if (TranslateServiceEnum.NIU_TRANS_BUILT_IN === type) {
+      info['type'] = type
+      info['appKey'] = 'e535c7b7f256dffa4cf38599dba587b5'
       niuTransChannel.apiTranslate(info)
     } else if (TranslateServiceEnum.CAI_YUN === type) {
       caiYunChannel.apiTranslate(info)

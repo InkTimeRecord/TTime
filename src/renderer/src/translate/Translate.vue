@@ -80,6 +80,10 @@ if (isNull(cacheGetStr('translateServiceMap'))) {
   const deepLBuiltInService = buildTranslateService(TranslateServiceEnum.DEEP_L_BUILT_IN)
   map.set(deepLBuiltInService.id, deepLBuiltInService)
   setTranslateServiceMap(map)
+
+  const niuTransBuiltInService = buildTranslateService(TranslateServiceEnum.NIU_TRANS_BUILT_IN)
+  map.set(niuTransBuiltInService.id, niuTransBuiltInService)
+  setTranslateServiceMap(map)
 }
 
 /**
