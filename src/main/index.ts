@@ -12,6 +12,7 @@ import GlobalWin from './service/GlobalWin'
 import './service/TTimeEvent'
 import './service/channel/TranslateChannel'
 import './service/HoverBall'
+import './service/Ocr'
 import { isNull } from './utils/validate'
 import { injectWinAgent } from './utils/RequestUtil'
 

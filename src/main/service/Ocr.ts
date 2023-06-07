@@ -1,5 +1,4 @@
 import { app, BrowserWindow } from 'electron'
-import { SystemTypeEnum } from '../enums/SystemTypeEnum'
 import path from 'path'
 import { is } from '@electron-toolkit/utils'
 import GlobalWin from './GlobalWin'
@@ -12,10 +11,10 @@ app.whenReady().then(() => {
 
 function createOcrWin(): void {
   const createOcrWin = new BrowserWindow({
-    width: 500,
+    width: 800,
     height: 500,
     // 跳过任务栏显示
-    skipTaskbar: true,
+    // skipTaskbar: true,
     // 关闭阴影效果 否则设置了窗口透明清空下 透明处会显示阴影效果
     hasShadow: false,
     // 设置窗口透明
@@ -25,11 +24,11 @@ function createOcrWin(): void {
     // 去除窗口边框
     frame: false,
     // 可调整大小
-    resizable: false,
+    resizable: true,
     // 自动隐藏菜单栏
-    autoHideMenuBar: true,
-    focusable: false,
-    type: SystemTypeEnum.isMac() ? 'panel' : 'toolbar',
+    // autoHideMenuBar: true,
+    // focusable: false,
+    // type: SystemTypeEnum.isMac() ? 'panel' : 'toolbar',
     // alwaysOnTop: true,
     webPreferences: {
       preload: path.join(__dirname, '../preload/ocr.js'),
@@ -42,7 +41,7 @@ function createOcrWin(): void {
   createOcrWin.setFullScreenable(false)
 
   // 打开开发者工具
-  // createOcrWin.webContents.openDevTools({ mode: 'detach' })
+  createOcrWin.webContents.openDevTools({ mode: 'detach' })
 
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
     createOcrWin.loadURL(`${process.env['ELECTRON_RENDERER_URL']}/ocr.html`)

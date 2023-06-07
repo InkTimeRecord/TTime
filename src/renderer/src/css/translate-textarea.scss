@@ -1,0 +1,23 @@
+@import 'global';
+
+.content {
+  padding-bottom: 1px;
+
+  .content-textarea-block {
+    border-radius: 7px;
+    background: var(--ttime-translate-input-color-background);
+
+    .content-textarea {
+      border: 0;
+      outline: none;
+      resize: none;
+      width: 98%;
+      font-size: 14px;
+      padding: 10px 10px 1px 10px;
+    }
+
+    .content-textarea-zero-padding-top {
+      padding-top: 0;
+    }
+  }
+}
