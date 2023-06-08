@@ -11,7 +11,7 @@ app.whenReady().then(() => {
 
 function createOcrWin(): void {
   const createOcrWin = new BrowserWindow({
-    width: 1000,
+    width: 800,
     height: 700,
     // 跳过任务栏显示
     // skipTaskbar: true,

@@ -3,6 +3,7 @@ import TTimeRequest from '../../interfaces/TTimeRequest'
 import GlobalWin from '../../../GlobalWin'
 import log from '../../../../utils/log'
 import { paramsFilter } from '../../../../utils/logExtend'
+import WebShowMsgEnum from '../../../../enums/WebShowMsgEnum'
 
 class TTimeOnlineOcrChannel implements IOcrInterface {
   /**
@@ -15,6 +16,11 @@ class TTimeOnlineOcrChannel implements IOcrInterface {
     TTimeRequest.apiOcr(info)
       .then((res) => {
         log.info('[TTime在线Ocr事件] - 响应报文 : ', JSON.stringify(res))
+        if (res['status'] != 200) {
+          GlobalWin.mainWinSend('show-msg-event', WebShowMsgEnum.ERROR, res['msg'])
+          GlobalWin.mainWinUpdateTranslatedContent('')
+          return
+        }
         let data = ''
         const textList = res['data']['ocrTextList']
         textList.forEach((text) => {

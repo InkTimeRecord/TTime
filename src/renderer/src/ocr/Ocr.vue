@@ -6,7 +6,7 @@
         <div class="center-block">
           <!--          <img class="center-left" src="https://ttime.timerecord.cn/img/png/translate-fun.png" />-->
           <!--          <img class="center-left" src="https://ttime.timerecord.cn/img/png/basiInfo.png" />-->
-          <!--          <img class="center-left" src="https://ttime.timerecord.cn/img/test/01.png" />-->
+          <!--                    <img class="center-left" src="https://ttime.timerecord.cn/img/test/01.png" />-->
           <img class="center-left" src="https://ttime.timerecord.cn/img/test/02.png" />
         </div>
       </div>
@@ -41,7 +41,6 @@ const ocrText = ref('')
   border: solid 1px var(--ttime-translate-border-color);
 
   .block-layer {
-    height: 450px;
     display: flex;
     justify-content: space-between;
 
@@ -53,17 +52,18 @@ const ocrText = ref('')
 
       .center-block {
         width: 100%;
+        height: 100%;
         border-radius: 7px;
         background-color: var(--ttime-translate-input-color-background);
-        padding: 20px;
         text-align: center;
 
         .center-left {
           -webkit-user-drag: none;
           user-select: none;
-          width: 100%;
-          height: 100%;
+          //width: 100%;
+          //height: 100%;
           border-radius: 7px;
+          object-fit: scale-down;
         }
 
         .center-right {
