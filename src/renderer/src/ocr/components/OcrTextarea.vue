@@ -13,7 +13,7 @@
           class="content-textarea"
           spellcheck="false"
           type="textarea"
-          :autosize="{ minRows: 2, maxRows: 10 }"
+          :autosize="{ minRows: 18, maxRows: 18 }"
         >
         </el-input>
       </div>

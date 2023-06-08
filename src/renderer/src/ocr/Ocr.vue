@@ -4,10 +4,10 @@
     <div class="block-layer">
       <div class="layer-center">
         <div class="center-block">
-          <img
-            class="center-left"
-            src="https://ttime.timerecord.cn/img/png/translate-fun.png?v=20230403"
-          />
+          <!--          <img class="center-left" src="https://ttime.timerecord.cn/img/png/translate-fun.png" />-->
+          <!--          <img class="center-left" src="https://ttime.timerecord.cn/img/png/basiInfo.png" />-->
+          <!--          <img class="center-left" src="https://ttime.timerecord.cn/img/test/01.png" />-->
+          <img class="center-left" src="https://ttime.timerecord.cn/img/test/02.png" />
         </div>
       </div>
       <div class="layer-center">
@@ -48,13 +48,20 @@ const ocrText = ref('')
     .layer-center {
       display: flex;
       margin: 0 12px 12px 12px;
+      width: 100%;
+      align-items: center;
 
       .center-block {
+        width: 100%;
         border-radius: 7px;
         background-color: var(--ttime-translate-input-color-background);
         padding: 20px;
+        text-align: center;
 
         .center-left {
+          -webkit-user-drag: none;
+          user-select: none;
+          width: 100%;
           height: 100%;
           border-radius: 7px;
         }

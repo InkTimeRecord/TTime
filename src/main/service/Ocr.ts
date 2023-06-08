@@ -11,8 +11,8 @@ app.whenReady().then(() => {
 
 function createOcrWin(): void {
   const createOcrWin = new BrowserWindow({
-    width: 800,
-    height: 500,
+    width: 1000,
+    height: 700,
     // 跳过任务栏显示
     // skipTaskbar: true,
     // 关闭阴影效果 否则设置了窗口透明清空下 透明处会显示阴影效果
