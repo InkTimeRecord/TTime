@@ -60,7 +60,6 @@ ipcMain.handle('screenshot-end-event', (_event, imgByBase64) => {
     GlobalWin.ocrWin.show()
     setTimeout(() => WinEvent.ocrAlwaysOnTop(GlobalWin.isOcrAlwaysOnTop), 300)
     GlobalWin.ocrWin.webContents.send('update-img', imgByBase64)
-    return
   } else if (ScreenshotsMain.ocrType === OcrTypeEnum.OCR_TRANSLATE) {
     GlobalWin.mainWinShow()
     // 当窗口为置顶时触发截图会自动隐藏窗口 从而导致置顶失效
@@ -69,6 +68,9 @@ ipcMain.handle('screenshot-end-event', (_event, imgByBase64) => {
     setTimeout(() => WinEvent.alwaysOnTop(GlobalWin.isMainAlwaysOnTop), 300)
     // 截图结束通知事件
     GlobalWin.mainWinSend('screenshot-end-notify-event')
+  } else if (ScreenshotsMain.ocrType === OcrTypeEnum.OCR_SILENCE) {
+    GlobalWin.ocrSilenceTempImg = imgByBase64
+    GlobalWin.ocrSilenceWinShow()
   }
 })
 

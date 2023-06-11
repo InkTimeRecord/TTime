@@ -34,7 +34,8 @@ export default defineConfig({
           set: resolve(__dirname, 'src/preload/set.ts'),
           update: resolve(__dirname, 'src/preload/update.ts'),
           hoverBall: resolve(__dirname, 'src/preload/hoverBall.ts'),
-          ocr: resolve(__dirname, 'src/preload/ocr.ts')
+          ocr: resolve(__dirname, 'src/preload/ocr.ts'),
+          ocrSilence: resolve(__dirname, 'src/preload/ocrSilence.ts')
         }
       }
     }
@@ -74,7 +75,8 @@ export default defineConfig({
           set: resolve(__dirname, 'src/renderer/set.html'),
           update: resolve(__dirname, 'src/renderer/update.html'),
           hoverBall: resolve(__dirname, 'src/renderer/hoverBall.html'),
-          ocr: resolve(__dirname, 'src/renderer/ocr.html')
+          ocr: resolve(__dirname, 'src/renderer/ocr.html'),
+          ocrSilence: resolve(__dirname, 'src/renderer/ocrSilence.html')
         }
       }
     }

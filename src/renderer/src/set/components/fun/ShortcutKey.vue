@@ -55,6 +55,21 @@
       />
       <span class="form-switch-span none-select"> 按下此快捷键将会根据你截图区域进行文字识别 </span>
     </el-form-item>
+
+    <el-form-item class="none-select" label="截图静默OCR">
+      <el-input
+        v-model="shortcutKeyInfo.screenshotSilenceOcrShortcutKey"
+        class="input-shortcut-key"
+        placeholder="请设置快捷键"
+        clearable
+        :formatter="() => shortcutKeyInfo.screenshotSilenceOcrShortcutKey"
+        @keydown="translateShortcutKeySetEvent($event, ShortcutKeyEnum.SCREENSHOT_SILENCE_OCR)"
+        @clear="clearTranslateShortcutKey(ShortcutKeyEnum.SCREENSHOT_SILENCE_OCR)"
+      />
+      <span class="form-switch-span none-select">
+        按下此快捷键将会根据你截图区域进行文字识别，识别的内容自动写入剪切板不会打开OCR窗口
+      </span>
+    </el-form-item>
   </el-form>
 </template>
 <script setup lang="ts">
@@ -69,7 +84,8 @@ const shortcutKeyInfo = ref({
   inputShortcutKey: cacheGetStr('inputShortcutKey'),
   screenshotShortcutKey: cacheGetStr('screenshotShortcutKey'),
   choiceShortcutKey: cacheGetStr('choiceShortcutKey'),
-  screenshotOcrShortcutKey: cacheGetStr('screenshotOcrShortcutKey')
+  screenshotOcrShortcutKey: cacheGetStr('screenshotOcrShortcutKey'),
+  screenshotSilenceOcrShortcutKey: cacheGetStr('screenshotSilenceOcrShortcutKey')
 })
 
 const clearTranslateShortcutKey = (type): void => {

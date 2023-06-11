@@ -320,7 +320,6 @@ class Draw {
     if (null === imgByBase64) {
       return
     }
-    // const imgObj: NativeImage = nativeImage.createFromDataURL(base64Data)
     // 处理图片文字识别
     ipcRenderer.invoke('handle-image-text-recognition-event', imgByBase64)
     // 退出截图

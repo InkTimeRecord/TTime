@@ -43,7 +43,7 @@ function createOcrWin(): void {
   })
   // 禁用按下F11全屏事件
   createOcrWin.setFullScreenable(false)
-  createOcrWin.webContents.openDevTools({ mode: 'detach' })
+  // createOcrWin.webContents.openDevTools({ mode: 'detach' })
 
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
     createOcrWin.loadURL(`${process.env['ELECTRON_RENDERER_URL']}/ocr.html`)

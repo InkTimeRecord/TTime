@@ -126,6 +126,8 @@ class GlobalShortcutEvent {
       res = GlobalShortcutEvent.translateChoiceRegister(shortcutKey)
     } else if (ShortcutKeyEnum.SCREENSHOT_OCR === type) {
       res = GlobalShortcutEvent.ocrScreenshotRegister(shortcutKey)
+    } else if (ShortcutKeyEnum.SCREENSHOT_SILENCE_OCR === type) {
+      res = GlobalShortcutEvent.ocrSilenceScreenshotRegister(shortcutKey)
     } else {
       res = R.error('快捷键类型不存在')
     }
@@ -158,12 +160,26 @@ class GlobalShortcutEvent {
    * OCR截图快捷键
    */
   static ocrScreenshot(): void {
-    log.info('[截图翻译] - 开始截图')
+    log.info('[截图OCR] - 开始截图')
     GlobalWin.mainWinSend('clear-all-translated-content')
     // 隐藏窗口
     GlobalWin.mainWinHide()
     GlobalWin.ocrWinHide()
     ScreenshotsMain.ocrType = OcrTypeEnum.OCR
+    new ScreenshotsMain().createScreenshotsWin()
+  }
+
+  /**
+   * OCR静默截图快捷键
+   */
+  static ocrSilenceScreenshot(): void {
+    log.info('[截图静默OCR] - 开始截图')
+    GlobalWin.mainWinSend('clear-all-translated-content')
+    // 隐藏窗口
+    GlobalWin.mainWinHide()
+    GlobalWin.ocrWinHide()
+    GlobalWin.ocrSilenceTempImg = ''
+    ScreenshotsMain.ocrType = OcrTypeEnum.OCR_SILENCE
     new ScreenshotsMain().createScreenshotsWin()
   }
 
@@ -273,6 +289,15 @@ class GlobalShortcutEvent {
    */
   static ocrScreenshotRegister(shortcutKey: string): R {
     return GlobalShortcutEvent.register(shortcutKey, () => GlobalShortcutEvent.ocrScreenshot())
+  }
+
+  /**
+   * 静默OCR截图快捷键 - 注册
+   */
+  static ocrSilenceScreenshotRegister(shortcutKey: string): R {
+    return GlobalShortcutEvent.register(shortcutKey, () =>
+      GlobalShortcutEvent.ocrSilenceScreenshot()
+    )
   }
 }
 

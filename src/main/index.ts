@@ -13,6 +13,7 @@ import './service/TTimeEvent'
 import './service/channel/TranslateChannel'
 import './service/HoverBall'
 import './service/Ocr'
+import './service/OcrSilence'
 import { isNull } from './utils/validate'
 import { injectWinAgent } from './utils/RequestUtil'
 
