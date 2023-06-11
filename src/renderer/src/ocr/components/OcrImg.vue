@@ -22,11 +22,6 @@ import { isNull } from '../../utils/validate'
 import ElMessageExtend from '../../utils/messageExtend'
 const emit = defineEmits(['is-result-loading-event'])
 
-// const imgUrl = ref('https://ttime.timerecord.cn/img/png/translate-fun.png')
-// const imgUrl = ref('https://ttime.timerecord.cn/img/png/basiInfo.png')
-// const imgUrl = ref('https://ttime.timerecord.cn/img/test/01.png')
-// const imgUrl = ref('https://ttime.timerecord.cn/img/test/02.png')
-// const imgUrl = ref('https://ttime.timerecord.cn/img/test/03.png')
 const imgData = ref('')
 
 /**
@@ -37,10 +32,13 @@ const imgWriteShearPlate = (): void => {
     ElMessageExtend.warning('复制的图片不存在')
     return
   }
-  window.api.imgWriteShearPlateEvent(imgData.value)
+  window.api.base64ImgWriteShearPlateEvent(imgData.value)
   ElMessageExtend.success('复制成功')
 }
 
+/**
+ * 更新图片
+ */
 window.api.updateImg((img) => {
   imgData.value = img
   emit('is-result-loading-event', true)

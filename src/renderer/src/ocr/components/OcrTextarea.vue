@@ -25,7 +25,7 @@
             </el-tooltip>
             <el-tooltip placement="bottom-start">
               <template #content>翻译</template>
-              <a class="function-tools" @click="textWriteShearPlate()">
+              <a class="function-tools" @click="updateTranslatedContentEvent()">
                 <svg-icon icon-class="translate" class="function-tools-icon" />
               </a>
             </el-tooltip>
@@ -50,6 +50,9 @@ const loadingImageSrc = ref(loadingImage)
 // 是否触发屏幕截图
 const isScreenshotEnd = ref(false)
 
+/**
+ * 文本写入剪切板
+ */
 const textWriteShearPlate = (): void => {
   if (isNull(ocrContent.value)) {
     ElMessageExtend.warning('复制的文本内容为空')
@@ -57,6 +60,13 @@ const textWriteShearPlate = (): void => {
   }
   window.api.textWriteShearPlateEvent(ocrContent.value)
   ElMessageExtend.success('复制成功')
+}
+
+/**
+ * 调起翻译
+ */
+const updateTranslatedContentEvent = (): void => {
+  window.api.updateTranslatedContentEvent(ocrContent.value)
 }
 
 window.api.updateText((text) => {

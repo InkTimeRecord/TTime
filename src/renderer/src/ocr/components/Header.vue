@@ -54,7 +54,7 @@ const thumbtackFun = (): void => {
  * 跳转设置页面
  */
 const toSetPage = (): void => {
-  // window.api.openSetPageEvent()
+  window.api.openSetPageEvent()
 }
 </script>
 

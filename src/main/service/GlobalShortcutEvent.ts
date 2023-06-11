@@ -117,14 +117,15 @@ class GlobalShortcutEvent {
    */
   static translateRegister(type: string, shortcutKey: string): R {
     log.info('翻译窗口快捷键注册 , type : ', type, ' , shortcutKey : ', shortcutKey)
-    const thisShortcutKeyEnum = ShortcutKeyEnum.getCodeByEnum(type)
     let res
-    if (ShortcutKeyEnum.INPUT === thisShortcutKeyEnum) {
+    if (ShortcutKeyEnum.INPUT === type) {
       res = GlobalShortcutEvent.translateInputRegister(shortcutKey)
-    } else if (ShortcutKeyEnum.SCREENSHOT === thisShortcutKeyEnum) {
+    } else if (ShortcutKeyEnum.SCREENSHOT === type) {
       res = GlobalShortcutEvent.translateScreenshotRegister(shortcutKey)
-    } else if (ShortcutKeyEnum.CHOICE === thisShortcutKeyEnum) {
+    } else if (ShortcutKeyEnum.CHOICE === type) {
       res = GlobalShortcutEvent.translateChoiceRegister(shortcutKey)
+    } else if (ShortcutKeyEnum.SCREENSHOT_OCR === type) {
+      res = GlobalShortcutEvent.ocrScreenshotRegister(shortcutKey)
     } else {
       res = R.error('快捷键类型不存在')
     }

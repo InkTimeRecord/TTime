@@ -43,7 +43,6 @@ window.api.showMsgEvent((type, msg) => {
 })
 
 window.api.winSizeUpdate((newBounds) => {
-  console.log('newBounds = ', newBounds)
   const elements = document.querySelectorAll('.content-layer')
   elements.forEach((element) => {
     element['style'].maxHeight = newBounds.height - 60 + 'px'

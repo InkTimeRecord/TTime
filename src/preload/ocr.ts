@@ -16,6 +16,13 @@ const getSystemTypeEvent = (): string => {
 }
 
 /**
+ * 打开设置页面事件
+ */
+const openSetPageEvent = (): void => {
+  ipcRenderer.invoke('open-set-page-event')
+}
+
+/**
  * 窗口显示消息提示
  *
  * @param callback 回调方法
@@ -64,15 +71,40 @@ const updateText = (callback): void => {
   })
 }
 
+/**
+ * 文本写入剪切板事件
+ */
+const textWriteShearPlateEvent = (text): void => {
+  ipcRenderer.invoke('text-write-shear-plate-event', text)
+}
+
+/**
+ * 图片写入剪切板事件
+ */
+const base64ImgWriteShearPlateEvent = (base64Img): void => {
+  ipcRenderer.invoke('base64-img-write-shear-plate-event', base64Img)
+}
+
+/**
+ * 调起翻译
+ */
+const updateTranslatedContentEvent = (text): void => {
+  ipcRenderer.invoke('update-translated-content-event', text)
+}
+
 // Custom APIs for renderer
 const api = {
   closeOcrWinEvent,
   getSystemTypeEvent,
+  openSetPageEvent,
   showMsgEvent,
   ocrAlwaysOnTopEvent,
   updateImg,
   updateText,
-  winSizeUpdate
+  winSizeUpdate,
+  textWriteShearPlateEvent,
+  base64ImgWriteShearPlateEvent,
+  updateTranslatedContentEvent
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

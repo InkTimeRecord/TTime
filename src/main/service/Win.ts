@@ -1,4 +1,4 @@
-import { app, clipboard, ipcMain } from 'electron'
+import { app, clipboard, ipcMain, nativeImage } from 'electron'
 import { GlobalShortcutEvent } from './GlobalShortcutEvent'
 import { isNull } from '../utils/validate'
 import { SystemTypeEnum } from '../enums/SystemTypeEnum'
@@ -25,6 +25,13 @@ class WinEvent {
       clipboard.writeText(text)
     })
     /**
+     * 图片写入剪切板
+     */
+    ipcMain.handle('base64-img-write-shear-plate-event', (_event, base64Img) => {
+      // 写入剪切板
+      clipboard.writeImage(nativeImage.createFromDataURL(base64Img))
+    })
+    /**
      * 始终在最前面
      */
     ipcMain.handle('always-on-top-event', (_event, status) => {
@@ -35,6 +42,14 @@ class WinEvent {
      */
     ipcMain.handle('ocr-always-on-top-event', (_event, status) => {
       WinEvent.ocrAlwaysOnTop(status)
+    })
+    /**
+     * 调起翻译
+     */
+    ipcMain.handle('update-translated-content-event', (_event, text) => {
+      // 推送给Vue页面进行更新翻译输入内容
+      GlobalWin.mainWinUpdateTranslatedContent(text)
+      GlobalWin.mainWinShow()
     })
     /**
      * 初始加载翻译快捷键
@@ -51,7 +66,6 @@ class WinEvent {
           translateShortcutKey.shortcutKey
         )
       })
-      GlobalShortcutEvent.ocrScreenshotRegister('alt+shift+a')
     })
     /**
      * 开机自启事件
@@ -79,7 +93,7 @@ class WinEvent {
   }
 
   /**
-   * 窗口置顶
+   * 主窗口置顶
    *
    * @param status 置顶状态
    */
@@ -92,7 +106,7 @@ class WinEvent {
   }
 
   /**
-   * 窗口置顶
+   * OCR窗口置顶
    *
    * @param status 置顶状态
    */

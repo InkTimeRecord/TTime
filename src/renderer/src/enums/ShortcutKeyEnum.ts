@@ -16,6 +16,11 @@ class ShortcutKeyEnum {
    * 划词翻译快捷键
    */
   static CHOICE = 'choice'
+
+  /**
+   * 截图OCR快捷键
+   */
+  static SCREENSHOT_OCR = 'screenshotOcr'
 }
 
 export { ShortcutKeyEnum }

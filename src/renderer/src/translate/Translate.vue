@@ -107,6 +107,9 @@ if (undefined === cacheGetStr('screenshotShortcutKey')) {
 if (undefined === cacheGetStr('choiceShortcutKey')) {
   cacheSetStr('choiceShortcutKey', 'Alt + E')
 }
+if (undefined === cacheGetStr('screenshotOcrShortcutKey')) {
+  cacheSetStr('screenshotOcrShortcutKey', 'Alt + Shift + S')
+}
 
 // 首次加载 - 代理配置初始化
 if (isNull(cacheGetStr('agentConfig'))) {
@@ -123,7 +126,8 @@ if (isNull(cacheGetStr('agentConfig'))) {
 const translateShortcutKeyList = [
   { type: ShortcutKeyEnum.INPUT, shortcutKey: cacheGetStr('inputShortcutKey') },
   { type: ShortcutKeyEnum.SCREENSHOT, shortcutKey: cacheGetStr('screenshotShortcutKey') },
-  { type: ShortcutKeyEnum.CHOICE, shortcutKey: cacheGetStr('choiceShortcutKey') }
+  { type: ShortcutKeyEnum.CHOICE, shortcutKey: cacheGetStr('choiceShortcutKey') },
+  { type: ShortcutKeyEnum.SCREENSHOT_OCR, shortcutKey: cacheGetStr('screenshotOcrShortcutKey') }
 ]
 window.api.logInfoEvent(
   '[初始加载翻译快捷键事件] - 开始，翻译快捷键列表 : ',
