@@ -112,7 +112,7 @@ function createWindow(): void {
    * 主窗口关闭事件
    */
   mainWin.on('close', (event) => {
-    if (!TrayEvent.isMainWinClose && !is.dev) {
+    if (!GlobalWin.isMainWinClose && !is.dev) {
       // 阻止窗口关闭
       event.preventDefault()
       // 隐藏窗口
@@ -131,7 +131,7 @@ function createWindow(): void {
    * 窗口失去焦点事件
    */
   mainWin.on('blur', () => {
-    if (WinEvent.isAlwaysOnTop) {
+    if (GlobalWin.isMainAlwaysOnTop) {
       return
     }
     // 隐藏窗口

@@ -9,9 +9,6 @@ import GlobalWin from './GlobalWin'
 import { YesNoEnum } from '../enums/YesNoEnum'
 
 class WinEvent {
-  static isAlwaysOnTop = true
-  static isHoverBall = false
-
   constructor(mainWinInfo) {
     /**
      * 监听页面高度更新窗口大小
@@ -33,7 +30,12 @@ class WinEvent {
     ipcMain.handle('always-on-top-event', (_event, status) => {
       WinEvent.alwaysOnTop(status)
     })
-
+    /**
+     * 始终在最前面
+     */
+    ipcMain.handle('ocr-always-on-top-event', (_event, status) => {
+      WinEvent.ocrAlwaysOnTop(status)
+    })
     /**
      * 初始加载翻译快捷键
      */
@@ -49,6 +51,7 @@ class WinEvent {
           translateShortcutKey.shortcutKey
         )
       })
+      GlobalShortcutEvent.ocrScreenshotRegister('alt+shift+a')
     })
     /**
      * 开机自启事件
@@ -82,10 +85,23 @@ class WinEvent {
    */
   static alwaysOnTop(status): void {
     GlobalWin.mainWin.setAlwaysOnTop(status)
-    WinEvent.isAlwaysOnTop = status
+    GlobalWin.isMainAlwaysOnTop = status
     // 触发窗口置顶时候也触发窗口显示回调
     // 用于处理 alwaysOnTopAllowEscStatus 逻辑
-    GlobalWin.mainWinShowCallback()
+    GlobalWin.mainOrOcrWinShowCallback()
+  }
+
+  /**
+   * 窗口置顶
+   *
+   * @param status 置顶状态
+   */
+  static ocrAlwaysOnTop(status): void {
+    GlobalWin.ocrWin.setAlwaysOnTop(status)
+    GlobalWin.isOcrAlwaysOnTop = status
+    // 触发窗口置顶时候也触发窗口显示回调
+    // 用于处理 alwaysOnTopAllowEscStatus 逻辑
+    GlobalWin.mainOrOcrWinShowCallback()
   }
 
   /**
@@ -97,6 +113,7 @@ class WinEvent {
       // 翻译窗口注册Esc快捷键 一般是窗口置顶时触发
       GlobalShortcutEvent.register('Esc', () => {
         GlobalWin.mainWinHide()
+        GlobalWin.ocrWinHide()
       })
     }, 300)
   }

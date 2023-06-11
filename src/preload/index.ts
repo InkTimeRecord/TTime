@@ -445,6 +445,11 @@ const ttimeApiTranslateUse = (): void => {
   ipcRenderer.invoke('ttime-api-translate-use')
 }
 
+/**
+ * 窗口显示消息提示
+ *
+ * @param callback 回调方法
+ */
 const showMsgEvent = (callback): void => {
   ipcRenderer.on('show-msg-event', (_event, type, msg) => {
     callback(type, msg)

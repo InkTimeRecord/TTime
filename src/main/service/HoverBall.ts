@@ -6,7 +6,6 @@ import { SystemTypeEnum } from '../enums/SystemTypeEnum'
 import path from 'path'
 import { is } from '@electron-toolkit/utils'
 import GlobalWin from './GlobalWin'
-import { WinEvent } from './Win'
 import { YesNoEnum } from '../enums/YesNoEnum'
 
 // 窗口加载完毕后执行
@@ -75,7 +74,7 @@ uIOhook.on('click', (e: UiohookMouseEvent) => {
         }
       })
   }
-  if (WinEvent.isHoverBall) {
+  if (GlobalWin.isHoverBall) {
     const position = GlobalWin.hoverBallWin.getPosition()
     const winX = position[0]
     const winY = position[1]
@@ -94,7 +93,7 @@ uIOhook.on('click', (e: UiohookMouseEvent) => {
  * 滚动鼠标时关闭悬浮球
  */
 uIOhook.on('wheel', (_e: UiohookWheelEvent) => {
-  if (WinEvent.isHoverBall) {
+  if (GlobalWin.isHoverBall) {
     // log.info('触发了滚动隐藏窗口')
     GlobalWin.hoverBallWinHide()
   }

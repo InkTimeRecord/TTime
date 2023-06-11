@@ -1,10 +1,12 @@
 import { isNull } from '../utils/validate'
 import { GlobalShortcutEvent } from './GlobalShortcutEvent'
 import { app, screen } from 'electron'
-import { TrayEvent } from './TrayEvent'
 import { WinEvent } from './Win'
 import { YesNoEnum } from '../enums/YesNoEnum'
 import { clipboard } from 'electron'
+import { ScreenshotsMain } from './Screenshot'
+import OcrTypeEnum from '../enums/OcrTypeEnum'
+import WebShowMsgEnum from '../enums/WebShowMsgEnum'
 
 /**
  * 全局窗口
@@ -14,19 +16,68 @@ class GlobalWin {
    * 主窗口
    */
   static mainWin
+
+  /**
+   * 主窗口是否关闭
+   */
+  static isMainWinClose = false
+
+  /**
+   * 主窗口是否置顶
+   */
+  static isMainAlwaysOnTop = false
+
   /**
    * 设置窗口
    */
   static setWin
+
   /**
    * 悬浮球窗口
    */
   static hoverBallWin
 
   /**
+   * 是否显示悬浮球
+   */
+  static isHoverBall = false
+
+  /**
    * ocr窗口
    */
   static ocrWin
+
+  /**
+   * OCR窗口是否关闭
+   */
+  static isOcrWinClose = false
+
+  /**
+   * OCR是否置顶
+   */
+  static isOcrAlwaysOnTop = false
+
+  /**
+   * 显示窗口
+   */
+  static winShow(win): void {
+    if (isNull(win)) {
+      return
+    }
+    win.show()
+  }
+
+  /**
+   * 隐藏窗口
+   */
+  static winHide(win): void {
+    if (isNull(win)) {
+      return
+    }
+    // 当隐藏窗口时注销Esc快捷键
+    GlobalShortcutEvent.unregisterEsc()
+    win.hide()
+  }
 
   /**
    * 设置主窗口
@@ -44,27 +95,19 @@ class GlobalWin {
    * 隐藏主窗口
    */
   static mainWinHide(): void {
-    if (isNull(GlobalWin.mainWin)) {
-      return
-    }
-    // 当隐藏窗口时注销Esc快捷键
-    GlobalShortcutEvent.unregisterEsc()
-    GlobalWin.mainWin.hide()
+    GlobalWin.winHide(GlobalWin.mainWin)
   }
 
   /**
    * 显示主窗口
    */
   static mainWinShow(): void {
-    if (isNull(GlobalWin.mainWin)) {
-      return
-    }
-    GlobalWin.mainWin.show()
-    this.mainWinShowCallback()
+    GlobalWin.winShow(GlobalWin.mainWin)
+    this.mainOrOcrWinShowCallback()
   }
 
   /**
-   * 窗口事件发送
+   * 主窗口事件发送
    *
    * @param key 发送key
    * @param val 发送值
@@ -74,9 +117,9 @@ class GlobalWin {
   }
 
   /**
-   * 窗口显示后需要触发的回调
+   * 主窗口显示后需要触发的回调
    */
-  static mainWinShowCallback(): void {
+  static mainOrOcrWinShowCallback(): void {
     // 不管有没有注册Esc快捷键 先注销
     GlobalShortcutEvent.unregisterEsc()
     // TODO 这里暂时这么写 之后数据存储需要重构 不能继续放在 localStorage 中
@@ -85,7 +128,10 @@ class GlobalWin {
       .executeJavaScript('localStorage.alwaysOnTopAllowEscStatus')
       .then((alwaysOnTopAllowEscStatus) => {
         // 当窗口置顶时不注册Esc快捷键
-        if (!WinEvent.isAlwaysOnTop || YesNoEnum.Y === alwaysOnTopAllowEscStatus) {
+        if (
+          (!GlobalWin.isMainAlwaysOnTop && !GlobalWin.isOcrAlwaysOnTop) ||
+          YesNoEnum.Y === alwaysOnTopAllowEscStatus
+        ) {
           // 当显示窗口时注册快捷键
           // 按下 Esc 隐藏窗口
           WinEvent.translateWinRegisterEsc()
@@ -98,8 +144,8 @@ class GlobalWin {
    *
    * @param text OCR文本
    */
-  static async mainWinSendOcrTranslated(text): Promise<void> {
-    await GlobalWin.mainWin.webContents
+  static mainWinSendOcrTranslated(text): void {
+    GlobalWin.mainWin.webContents
       .executeJavaScript('localStorage.ocrWriteClipboardStatus')
       .then((wrapReplaceSpaceStatus) => {
         text = GlobalWin.mainWinUpdateTranslatedContent(text)
@@ -123,6 +169,33 @@ class GlobalWin {
   }
 
   /**
+   * 更新翻译内容事件
+   *
+   * @param status 状态
+   * @param text 结果
+   */
+  static ocrUpdateContent(status, text): void {
+    if (YesNoEnum.Y === status) {
+      // 先对文字做一次空处理 防止代码执行时出错
+      // 不为空的情况下默认去掉文本内容前后的换行符
+      text = text === undefined || text === null ? '' : text.replace(/^\n+|\n+$/g, '')
+      if (ScreenshotsMain.ocrType === OcrTypeEnum.OCR) {
+        GlobalWin.ocrWin.webContents.send('update-text', text)
+      } else if (ScreenshotsMain.ocrType === OcrTypeEnum.OCR_TRANSLATE) {
+        GlobalWin.mainWinSendOcrTranslated(text)
+      }
+    } else {
+      if (ScreenshotsMain.ocrType === OcrTypeEnum.OCR) {
+        GlobalWin.ocrWin.webContents.send('show-msg-event', WebShowMsgEnum.ERROR, text)
+        GlobalWin.ocrWin.webContents.send('update-text', '')
+      } else if (ScreenshotsMain.ocrType === OcrTypeEnum.OCR_TRANSLATE) {
+        GlobalWin.mainWinSend('show-msg-event', WebShowMsgEnum.ERROR, text)
+        GlobalWin.mainWinSend('update-translated-content', '')
+      }
+    }
+  }
+
+  /**
    * 设置设置窗口
    *
    * @param setWin 设置窗口
@@ -140,7 +213,7 @@ class GlobalWin {
       return
     }
     // console.log('隐藏悬浮球窗口')
-    WinEvent.isHoverBall = false
+    GlobalWin.isHoverBall = false
     // GlobalWin.hoverBallWin.webContents
     //   .executeJavaScript(
     //     "setTimeout(() => document.getElementById('imgLogoSign').classList.add('hidden') ,300)"
@@ -158,7 +231,7 @@ class GlobalWin {
       return
     }
     // console.log('显示悬浮球窗口')
-    WinEvent.isHoverBall = true
+    GlobalWin.isHoverBall = true
     GlobalWin.hoverBallWin.setAlwaysOnTop(true, 'pop-up-menu', 1)
     GlobalWin.hoverBallWin.setVisibleOnAllWorkspaces(true)
     GlobalWin.hoverBallWin.showInactive()
@@ -201,11 +274,26 @@ class GlobalWin {
   }
 
   /**
+   * 隐藏主窗口
+   */
+  static ocrWinHide(): void {
+    GlobalWin.winHide(GlobalWin.ocrWin)
+  }
+
+  /**
+   * 显示主窗口
+   */
+  static ocrWinShow(): void {
+    GlobalWin.winShow(GlobalWin.ocrWin)
+    this.mainOrOcrWinShowCallback()
+  }
+
+  /**
    * 退出应用
    */
   static closeApp(): void {
     // 设置主窗口可关闭
-    TrayEvent.isMainWinClose = true
+    GlobalWin.isMainWinClose = true
     app.quit()
   }
 }

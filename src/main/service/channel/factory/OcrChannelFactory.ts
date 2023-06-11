@@ -22,7 +22,6 @@ class OcrChannelFactory {
    */
   static ocr(type: OcrServiceEnum, info: object): void {
     if (OcrServiceEnum.BAIDU === type) {
-      info['img'] = 'data:image/png;base64,' + info['img']
       baiduOcrChannel.apiOcr(info)
     } else if (OcrServiceEnum.TTIME_ONLINE === type) {
       ttimeOnlineOcrChannel.apiOcr(info)
@@ -43,7 +42,6 @@ class OcrChannelFactory {
       ...this.buildOcrCheckRequestInfo()
     }
     if (OcrServiceEnum.BAIDU === type) {
-      info['img'] = 'data:image/png;base64,' + info['img']
       baiduOcrChannel.apiOcrCheck(info)
     } else if (OcrServiceEnum.VOLCANO === type) {
       volcanoOcrChannel.apiOcrCheck(info)

@@ -22,7 +22,7 @@ const apiTranslate = (info): Promise<AxiosPromise> => {
  */
 const apiOcr = (info): Promise<AxiosPromise> => {
   const data = {
-    image: info.img
+    image: info.img.replace('data:image/png;base64,', '')
   }
   return request({
     url: 'translate/ocr/',

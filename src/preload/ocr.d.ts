@@ -4,6 +4,10 @@ declare global {
   interface api {
     closeOcrWinEvent
     getSystemTypeEvent
+    showMsgEvent
+    ocrAlwaysOnTopEvent
+    updateImg
+    updateText
   }
 
   interface Window {

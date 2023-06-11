@@ -40,7 +40,7 @@ const apiTranslate = async (info): Promise<OpenApiResponse<any>> => {
  */
 const apiOcr = async (info): Promise<OpenApiResponse<any>> => {
   const data = {
-    image_base64: info.img
+    image_base64: info.img.replace('data:image/png;base64,', '')
   }
   const service = new Service({
     host: 'visual.volcengineapi.com',

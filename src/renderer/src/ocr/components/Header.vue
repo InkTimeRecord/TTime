@@ -31,23 +31,23 @@ if (undefined === cacheGetStr('ocrThumbtackStatus')) {
 const thumbtackStatus = ref(cacheGetStr('ocrThumbtackStatus'))
 
 // 根据固定状态设置窗口是否置于最前面
-// window.api.alwaysOnTopEvent(thumbtackStatus.value === YesNoEnum.Y)
+window.api.ocrAlwaysOnTopEvent(thumbtackStatus.value === YesNoEnum.Y)
 
 /**
  * 窗口固定
  */
 const thumbtackFun = (): void => {
-  const thumbtackStatusCache = cacheGetStr('thumbtackStatus')
+  const thumbtackStatusCache = cacheGetStr('ocrThumbtackStatus')
   cacheSetStr(
-    'thumbtackStatus',
+    'ocrThumbtackStatus',
     undefined === thumbtackStatusCache
       ? YesNoEnum.N
       : thumbtackStatusCache === YesNoEnum.N
       ? YesNoEnum.Y
       : YesNoEnum.N
   )
-  thumbtackStatus.value = cacheGetStr('thumbtackStatus')
-  // window.api.alwaysOnTopEvent(cacheGetStr('thumbtackStatus') === YesNoEnum.Y)
+  thumbtackStatus.value = cacheGetStr('ocrThumbtackStatus')
+  window.api.ocrAlwaysOnTopEvent(cacheGetStr('ocrThumbtackStatus') === YesNoEnum.Y)
 }
 
 /**
@@ -59,7 +59,7 @@ const toSetPage = (): void => {
 </script>
 
 <style lang="scss" scoped>
-@import '../../css/translate.scss';
+@import '../../css/global.scss';
 
 .header {
   // 配置窗口可拖拽

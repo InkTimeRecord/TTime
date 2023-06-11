@@ -2,20 +2,11 @@
   <div class="block">
     <Header />
     <div class="block-layer">
-      <div class="layer-center">
-        <div class="center-block">
-          <!--          <img class="center-left" src="https://ttime.timerecord.cn/img/png/translate-fun.png" />-->
-          <!--          <img class="center-left" src="https://ttime.timerecord.cn/img/png/basiInfo.png" />-->
-          <!--                    <img class="center-left" src="https://ttime.timerecord.cn/img/test/01.png" />-->
-          <img class="center-left" src="https://ttime.timerecord.cn/img/test/02.png" />
-        </div>
+      <div class="content-layer content-left-block">
+        <ocr-img @is-result-loading-event="(value) => ocrTextareaRef.setIsResultLoading(value)" />
       </div>
-      <div class="layer-center">
-        <div class="center-block">
-          <div class="center-right">
-            <ocr-textarea />
-          </div>
-        </div>
+      <div class="content-layer content-right-block">
+        <ocr-textarea ref="ocrTextareaRef" />
       </div>
     </div>
   </div>
@@ -23,11 +14,25 @@
 
 <script lang="ts" setup>
 import Header from './components/Header.vue'
-
-import { ref } from 'vue'
 import OcrTextarea from './components/OcrTextarea.vue'
+import OcrImg from './components/OcrImg.vue'
+import { ref } from 'vue'
+import ElMessageExtend from '../utils/messageExtend'
 
-const ocrText = ref('')
+const ocrTextareaRef = ref('')
+
+/**
+ * 调起消息弹层提示事件
+ */
+window.api.showMsgEvent((type, msg) => {
+  if (type === ElMessageExtend.SUCCESS) {
+    ElMessageExtend.success(msg)
+  } else if (type === ElMessageExtend.WARNING) {
+    ElMessageExtend.warning(msg)
+  } else if (type === ElMessageExtend.ERROR) {
+    ElMessageExtend.errorInOptions(msg, { duration: 5 * 1000 })
+  }
+})
 </script>
 
 <style lang="scss" scoped>
@@ -41,53 +46,21 @@ const ocrText = ref('')
   border: solid 1px var(--ttime-translate-border-color);
 
   .block-layer {
+    width: 1280px;
+    height: 690px;
     display: flex;
-    justify-content: space-between;
-
-    .layer-center {
-      display: flex;
-      margin: 0 12px 12px 12px;
-      width: 100%;
-      align-items: center;
-
-      .center-block {
-        width: 100%;
-        height: 100%;
-        border-radius: 7px;
-        background-color: var(--ttime-translate-input-color-background);
-        text-align: center;
-
-        .center-left {
-          -webkit-user-drag: none;
-          user-select: none;
-          //width: 100%;
-          //height: 100%;
-          border-radius: 7px;
-          object-fit: scale-down;
-        }
-
-        .center-right {
-          height: 100%;
-          border-radius: 7px;
-        }
-      }
+    .content-layer {
+      flex: 1;
+      width: 50%;
+      border-radius: 7px;
+      background-color: var(--ttime-translate-input-color-background);
+      overflow: hidden;
+      margin: 0 14px 14px 14px;
+    }
+    .content-left-block {
+    }
+    .content-right-block {
     }
   }
-}
-
-.block-layer::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-.block-layer::-webkit-scrollbar-thumb {
-  border-radius: 3px;
-  -moz-border-radius: 3px;
-  -webkit-border-radius: 3px;
-  background-color: #c3c3c3;
-}
-
-.block-layer::-webkit-scrollbar-track {
-  background-color: transparent;
 }
 </style>

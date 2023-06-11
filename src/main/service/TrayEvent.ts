@@ -14,17 +14,10 @@ class TrayEvent {
    */
   static mainTray
 
-  /**
-   * 主窗口是否关闭
-   */
-  static isMainWinClose
-
   constructor() {
     if (isNotNull(TrayEvent.mainTray)) {
       return
     }
-    // 默认主窗口不可关闭
-    TrayEvent.isMainWinClose = false
     // 托盘菜单列表
     const trayMenuTemplate = [
       {

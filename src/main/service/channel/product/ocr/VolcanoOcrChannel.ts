@@ -6,7 +6,7 @@ import IOcrInterface from './IOcrInterface'
 import VolcanoRequest from '../../interfaces/VolcanoRequest'
 import TranslateServiceEnum from '../../../../enums/TranslateServiceEnum'
 import { isNotNull, isNull } from '../../../../utils/validate'
-import WebShowMsgEnum from '../../../../enums/WebShowMsgEnum'
+import { YesNoEnum } from '../../../../enums/YesNoEnum'
 
 class VolcanoOcrChannel implements IOcrInterface {
   /**
@@ -22,12 +22,7 @@ class VolcanoOcrChannel implements IOcrInterface {
         // 火山接口报错时，接口参数时而为 ResponseMetadata 时而为 ResponseMetaData 很奇怪的操作 这里兼容处理
         const errorInfo = (res['ResponseMetadata'] || res['ResponseMetaData'])?.Error
         if (isNotNull(errorInfo)) {
-          GlobalWin.mainWinSend(
-            'show-msg-event',
-            WebShowMsgEnum.ERROR,
-            this.getMsgByErrorCode(errorInfo)
-          )
-          GlobalWin.mainWinUpdateTranslatedContent('')
+          GlobalWin.ocrUpdateContent(YesNoEnum.N, this.getMsgByErrorCode(errorInfo))
           return
         }
         const code = res['code']
@@ -35,16 +30,15 @@ class VolcanoOcrChannel implements IOcrInterface {
           if (code === 63001) {
             // 进入这里的方法一般是因为识别的图片文本为空
             // 火山识别的图片文本为空时候 不会返回空串 而是这个code码
-            GlobalWin.mainWinUpdateTranslatedContent('')
+            GlobalWin.ocrUpdateContent(YesNoEnum.Y, '')
             return
           }
           let errorMsg = this.getMsgByErrorCode(code)
           errorMsg = isNull(errorMsg) ? res['message'] : errorMsg
-          GlobalWin.mainWinSend('show-msg-event', WebShowMsgEnum.ERROR, errorMsg)
-          GlobalWin.mainWinUpdateTranslatedContent('')
+          GlobalWin.ocrUpdateContent(YesNoEnum.N, errorMsg)
           return
         }
-        GlobalWin.mainWinSendOcrTranslated(res['data']?.['line_texts']?.join('\n'))
+        GlobalWin.ocrUpdateContent(YesNoEnum.Y, res['data']?.['line_texts']?.join('\n'))
       })
       .catch((_err) => {})
   }

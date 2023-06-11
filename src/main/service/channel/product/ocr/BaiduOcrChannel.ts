@@ -6,8 +6,8 @@ import IOcrInterface from './IOcrInterface'
 import BaiduRequest from '../../interfaces/BaiduRequest'
 import TranslateServiceEnum from '../../../../enums/TranslateServiceEnum'
 import { isNotNull, isNull } from '../../../../utils/validate'
-import WebShowMsgEnum from '../../../../enums/WebShowMsgEnum'
 import { commonError } from '../../../../utils/RequestUtil'
+import { YesNoEnum } from '../../../../enums/YesNoEnum'
 
 class BaiduOcrChannel implements IOcrInterface {
   /**
@@ -26,7 +26,7 @@ class BaiduOcrChannel implements IOcrInterface {
    * @param info         请求信息
    * @param isForceGet   是否强制获取token (不强制的情况下，会只读取应用生命周期内的 BaiduOcrChannel.token )
    */
-  async injectionToken(info, isForceGet) {
+  async injectionToken(info, isForceGet): Promise<void> {
     BaiduOcrChannel.tokenErrMsg = ''
     if (isForceGet || isNull(BaiduOcrChannel.token)) {
       // 获取前先置空token
@@ -68,8 +68,7 @@ class BaiduOcrChannel implements IOcrInterface {
     await this.injectionToken(info, false)
     if (isNull(BaiduOcrChannel.token)) {
       log.info('[百度Ocr事件] - 获取Token失败 :', BaiduOcrChannel.tokenErrMsg)
-      GlobalWin.mainWinSend('show-msg-event', WebShowMsgEnum.ERROR, BaiduOcrChannel.tokenErrMsg)
-      GlobalWin.mainWinUpdateTranslatedContent('')
+      GlobalWin.ocrUpdateContent(YesNoEnum.N, BaiduOcrChannel.tokenErrMsg)
       return
     }
     info.token = BaiduOcrChannel.token
@@ -81,8 +80,7 @@ class BaiduOcrChannel implements IOcrInterface {
         if (isNotNull(errorCode)) {
           let errorMsg = this.getMsgByErrorCode(errorCode)
           errorMsg = isNull(errorMsg) ? res['error_msg'] : errorMsg
-          GlobalWin.mainWinSend('show-msg-event', WebShowMsgEnum.ERROR, errorMsg)
-          GlobalWin.mainWinUpdateTranslatedContent('')
+          GlobalWin.ocrUpdateContent(YesNoEnum.N, errorMsg)
           return
         }
         let data = ''
@@ -90,7 +88,7 @@ class BaiduOcrChannel implements IOcrInterface {
         textList.forEach((text) => {
           data += text['words'] + '\n'
         })
-        GlobalWin.mainWinSendOcrTranslated(data)
+        GlobalWin.ocrUpdateContent(YesNoEnum.Y, data)
       })
       .catch((_err) => {})
   }

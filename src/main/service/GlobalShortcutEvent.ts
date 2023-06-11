@@ -7,6 +7,7 @@ import { ShortcutKeyEnum } from '../enums/ShortcutKeyEnum'
 import { SystemTypeEnum } from '../enums/SystemTypeEnum'
 import GlobalWin from './GlobalWin'
 import { uIOhook, UiohookKey } from 'uiohook-napi'
+import OcrTypeEnum from '../enums/OcrTypeEnum'
 
 uIOhook.start()
 
@@ -147,6 +148,21 @@ class GlobalShortcutEvent {
     GlobalWin.mainWinSend('clear-all-translated-content')
     // 隐藏窗口
     GlobalWin.mainWinHide()
+    GlobalWin.ocrWinHide()
+    ScreenshotsMain.ocrType = OcrTypeEnum.OCR_TRANSLATE
+    new ScreenshotsMain().createScreenshotsWin()
+  }
+
+  /**
+   * OCR截图快捷键
+   */
+  static ocrScreenshot(): void {
+    log.info('[截图翻译] - 开始截图')
+    GlobalWin.mainWinSend('clear-all-translated-content')
+    // 隐藏窗口
+    GlobalWin.mainWinHide()
+    GlobalWin.ocrWinHide()
+    ScreenshotsMain.ocrType = OcrTypeEnum.OCR
     new ScreenshotsMain().createScreenshotsWin()
   }
 
@@ -249,6 +265,13 @@ class GlobalShortcutEvent {
     return GlobalShortcutEvent.register(shortcutKey, async () =>
       GlobalShortcutEvent.translateChoice()
     )
+  }
+
+  /**
+   * OCR截图快捷键 - 注册
+   */
+  static ocrScreenshotRegister(shortcutKey: string): R {
+    return GlobalShortcutEvent.register(shortcutKey, () => GlobalShortcutEvent.ocrScreenshot())
   }
 }
 
