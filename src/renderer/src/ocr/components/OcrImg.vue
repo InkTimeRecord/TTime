@@ -72,10 +72,7 @@ window.api.updateImg((img) => {
   }
 }
 .function-tools-layer {
-  margin-top: 7px;
-  height: 40px;
-  //background-color: var(--ttime-translate-input-header-color-background);
-  display: flex;
-  align-items: center;
+  position: fixed;
+  bottom: 21px;
 }
 </style>

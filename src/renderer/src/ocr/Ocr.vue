@@ -2,12 +2,20 @@
   <div class="block">
     <Header />
     <div class="block-layer">
-      <div class="content-layer content-left-block">
-        <ocr-img @is-result-loading-event="(value) => ocrTextareaRef.setIsResultLoading(value)" />
-      </div>
-      <div class="content-layer content-right-block">
-        <ocr-textarea ref="ocrTextareaRef" />
-      </div>
+      <el-row>
+        <el-col :span="12">
+          <div class="content-layer content-left-block">
+            <ocr-img
+              @is-result-loading-event="(value) => ocrTextareaRef.setIsResultLoading(value)"
+            />
+          </div>
+        </el-col>
+        <el-col :span="12">
+          <div class="content-layer content-right-block">
+            <ocr-textarea ref="ocrTextareaRef" />
+          </div>
+        </el-col>
+      </el-row>
     </div>
   </div>
 </template>
@@ -33,6 +41,18 @@ window.api.showMsgEvent((type, msg) => {
     ElMessageExtend.errorInOptions(msg, { duration: 5 * 1000 })
   }
 })
+
+window.api.winSizeUpdate((newBounds) => {
+  console.log('newBounds = ', newBounds)
+  const elements = document.querySelectorAll('.content-layer')
+  elements.forEach((element) => {
+    element['style'].maxHeight = newBounds.height - 60 + 'px'
+    element['style'].height = newBounds.height - 60 + 'px'
+    // 除2是因为有两个div : ocr图片div 和 ocr文本div
+    const width = newBounds.width / 2
+    element['style'].maxWidth = width - 10 + 'px'
+  })
+})
 </script>
 
 <style lang="scss" scoped>
@@ -46,21 +66,25 @@ window.api.showMsgEvent((type, msg) => {
   border: solid 1px var(--ttime-translate-border-color);
 
   .block-layer {
-    width: 1280px;
-    height: 690px;
-    display: flex;
+    min-width: 789px;
+    min-height: 380px;
     .content-layer {
-      flex: 1;
-      width: 50%;
+      height: 100%;
       border-radius: 7px;
       background-color: var(--ttime-translate-input-color-background);
       overflow: hidden;
       margin: 0 14px 14px 14px;
+      max-width: 789px;
+      max-height: 370px;
     }
     .content-left-block {
     }
     .content-right-block {
     }
   }
+}
+.el-row {
+  min-width: 789px;
+  min-height: 370px;
 }
 </style>

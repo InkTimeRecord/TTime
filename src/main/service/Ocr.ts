@@ -11,8 +11,10 @@ app.whenReady().then(() => {
 
 function createOcrWin(): void {
   const createOcrWin = new BrowserWindow({
-    width: 1300,
-    height: 750,
+    width: 810,
+    height: 430,
+    minWidth: 810,
+    minHeight: 430,
     // 跳过任务栏显示
     skipTaskbar: true,
     // 关闭阴影效果 否则设置了窗口透明清空下 透明处会显示阴影效果
@@ -71,5 +73,14 @@ function createOcrWin(): void {
     }
     // 隐藏窗口
     GlobalWin.ocrWinHide()
+  })
+
+  /**
+   * 调整窗口大小时触发
+   *
+   * @param newBounds 新位置的坐标、宽高信息
+   */
+  GlobalWin.ocrWin.on('will-resize', (_event, newBounds) => {
+    GlobalWin.ocrWin.webContents.send('win-size-update', newBounds)
   })
 }

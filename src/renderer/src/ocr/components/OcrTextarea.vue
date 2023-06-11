@@ -13,7 +13,7 @@
           class="content-textarea"
           spellcheck="false"
           type="textarea"
-          :autosize="{ minRows: 29, maxRows: 29 }"
+          :autosize="{ minRows: 10 }"
         />
         <div v-show="!isScreenshotEnd" class="function-tools-layer">
           <div class="function-tools-block">
@@ -99,10 +99,7 @@ defineExpose({
   }
 }
 .function-tools-layer {
-  margin-top: 6px;
-  height: 40px;
-  //background-color: var(--ttime-translate-input-header-color-background);
-  display: flex;
-  align-items: center;
+  position: fixed;
+  bottom: 21px;
 }
 </style>

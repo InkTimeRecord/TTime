@@ -8,6 +8,7 @@ declare global {
     ocrAlwaysOnTopEvent
     updateImg
     updateText
+    winSizeUpdate
   }
 
   interface Window {

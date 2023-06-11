@@ -34,6 +34,15 @@ const ocrAlwaysOnTopEvent = (status): void => {
 }
 
 /**
+ * 窗口大小更新
+ */
+const winSizeUpdate = (callback): void => {
+  ipcRenderer.on('win-size-update', (_event, newBounds) => {
+    callback(newBounds)
+  })
+}
+
+/**
  * 更新图片
  *
  * @param callback 回调方法
@@ -62,7 +71,8 @@ const api = {
   showMsgEvent,
   ocrAlwaysOnTopEvent,
   updateImg,
-  updateText
+  updateText,
+  winSizeUpdate
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to
