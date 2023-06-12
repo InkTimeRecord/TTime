@@ -158,22 +158,6 @@ class GlobalWin {
   }
 
   /**
-   * OCR翻译事件发送
-   *
-   * @param text OCR文本
-   */
-  static mainWinSendOcrTranslated(text): void {
-    GlobalWin.mainWin.webContents
-      .executeJavaScript('localStorage.ocrWriteClipboardStatus')
-      .then((wrapReplaceSpaceStatus) => {
-        text = GlobalWin.mainWinUpdateTranslatedContent(text)
-        if (YesNoEnum.Y === wrapReplaceSpaceStatus) {
-          clipboard.writeText(text)
-        }
-      })
-  }
-
-  /**
    * 更新翻译内容事件
    *
    * @param text OCR文本
@@ -192,15 +176,31 @@ class GlobalWin {
    * @param status 状态
    * @param text 结果
    */
-  static ocrUpdateContent(status, text): void {
+  static async ocrUpdateContent(status, text): Promise<void> {
     if (YesNoEnum.Y === status) {
       // 先对文字做一次空处理 防止代码执行时出错
       // 不为空的情况下默认去掉文本内容前后的换行符
       text = text === undefined || text === null ? '' : text.replace(/^\n+|\n+$/g, '')
+      // 换行符替换为空格状态
+      await GlobalWin.mainWin.webContents
+        .executeJavaScript('localStorage.ocrWrapReplaceSpaceStatus')
+        .then((ocrWrapReplaceSpaceStatus) => {
+          if (YesNoEnum.Y === ocrWrapReplaceSpaceStatus) {
+            text = text.replaceAll('\n', ' ')
+          }
+        })
+      // OCR结果写入剪切板
+      GlobalWin.mainWin.webContents
+        .executeJavaScript('localStorage.ocrWriteClipboardStatus')
+        .then((ocrWriteClipboardStatus) => {
+          if (YesNoEnum.Y === ocrWriteClipboardStatus) {
+            clipboard.writeText(text)
+          }
+        })
       if (ScreenshotsMain.ocrType === OcrTypeEnum.OCR) {
         GlobalWin.ocrWin.webContents.send('update-text', text)
       } else if (ScreenshotsMain.ocrType === OcrTypeEnum.OCR_TRANSLATE) {
-        GlobalWin.mainWinSendOcrTranslated(text)
+        GlobalWin.mainWinUpdateTranslatedContent(text)
       } else if (ScreenshotsMain.ocrType === OcrTypeEnum.OCR_SILENCE) {
         // 临时存储的图片清空
         GlobalWin.ocrSilenceTempImg = ''

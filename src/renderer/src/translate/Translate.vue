@@ -172,6 +172,10 @@ if (undefined === cacheGetStr('hoverBallStatus')) {
 if (undefined === cacheGetStr('ocrWriteClipboardStatus')) {
   cacheSetStr('ocrWriteClipboardStatus', YesNoEnum.N)
 }
+// 初始化OCR结果换行符替换为空格状态
+if (undefined === cacheGetStr('ocrWrapReplaceSpaceStatus')) {
+  cacheSetStr('ocrWrapReplaceSpaceStatus', YesNoEnum.N)
+}
 window.api.updateCacheEvent((key, value) => {
   cacheSetStr(key, value)
 })
