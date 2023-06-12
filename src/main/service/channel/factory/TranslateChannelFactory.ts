@@ -76,7 +76,7 @@ class TranslateChannelFactory {
       niuTransChannel.apiTranslate(info)
     } else if (TranslateServiceEnum.NIU_TRANS_BUILT_IN === type) {
       info['type'] = type
-      info['appKey'] = 'e535c7b7f256dffa4cf38599dba587b5'
+      info['appKey'] = 'cac7d8ffe82465cb2559f0f3afb07062'
       niuTransChannel.apiTranslate(info)
     } else if (TranslateServiceEnum.CAI_YUN === type) {
       caiYunChannel.apiTranslate(info)
