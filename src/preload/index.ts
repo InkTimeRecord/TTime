@@ -378,6 +378,17 @@ const niutransApiTranslateCallbackEvent = (callback): void => {
 }
 
 /**
+ * 小牛翻译 - 翻译接口回调
+ *
+ * @param callback 回调方法 用于主进程内部触发时推送到Vue页面执行
+ */
+const niutransbuiltinApiTranslateCallbackEvent = (callback): void => {
+  ipcRenderer.on('niutransbuiltin-api-translate-callback-event', (_event, obj) => {
+    callback(obj)
+  })
+}
+
+/**
  * 彩云翻译 - 翻译接口回调
  *
  * @param callback 回调方法 用于主进程内部触发时推送到Vue页面执行
@@ -434,6 +445,11 @@ const ttimeApiTranslateUse = (): void => {
   ipcRenderer.invoke('ttime-api-translate-use')
 }
 
+/**
+ * 窗口显示消息提示
+ *
+ * @param callback 回调方法
+ */
 const showMsgEvent = (callback): void => {
   ipcRenderer.on('show-msg-event', (_event, type, msg) => {
     callback(type, msg)
@@ -515,6 +531,7 @@ const api = {
   bingApiTranslateCallbackEvent,
   bingdictApiTranslateCallbackEvent,
   niutransApiTranslateCallbackEvent,
+  niutransbuiltinApiTranslateCallbackEvent,
   caiyunApiTranslateCallbackEvent,
   transmartApiTranslateCallbackEvent,
   ttimeApiAppStart,

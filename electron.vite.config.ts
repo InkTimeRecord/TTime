@@ -2,7 +2,6 @@ import { resolve } from 'path'
 // @ts-ignore 抑制错误校验问题
 import { bytecodePlugin, defineConfig } from 'electron-vite'
 import vue from '@vitejs/plugin-vue'
-import commonjsExternals from 'vite-plugin-commonjs-externals'
 // @ts-ignore 抑制错误校验问题
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 
@@ -34,7 +33,9 @@ export default defineConfig({
           textOcr: resolve(__dirname, 'src/preload/textOcr.ts'),
           set: resolve(__dirname, 'src/preload/set.ts'),
           update: resolve(__dirname, 'src/preload/update.ts'),
-          hoverBall: resolve(__dirname, 'src/preload/hoverBall.ts')
+          hoverBall: resolve(__dirname, 'src/preload/hoverBall.ts'),
+          ocr: resolve(__dirname, 'src/preload/ocr.ts'),
+          ocrSilence: resolve(__dirname, 'src/preload/ocrSilence.ts')
         }
       }
     }
@@ -63,10 +64,6 @@ export default defineConfig({
         iconDirs: [resolve(process.cwd(), 'src/renderer/src/icons/svg')],
         // 指定symbolId格式
         symbolId: 'icon-[dir]-[name]'
-      }),
-      // @ts-ignore 忽略校验 这块目前只能这么调用
-      commonjsExternals.default({
-        externals: ['path', /^electron(\/.+)?$/]
       })
     ],
     build: {
@@ -77,7 +74,9 @@ export default defineConfig({
           textOcr: resolve(__dirname, 'src/renderer/textOcr.html'),
           set: resolve(__dirname, 'src/renderer/set.html'),
           update: resolve(__dirname, 'src/renderer/update.html'),
-          hoverBall: resolve(__dirname, 'src/renderer/hoverBall.html')
+          hoverBall: resolve(__dirname, 'src/renderer/hoverBall.html'),
+          ocr: resolve(__dirname, 'src/renderer/ocr.html'),
+          ocrSilence: resolve(__dirname, 'src/renderer/ocrSilence.html')
         }
       }
     }

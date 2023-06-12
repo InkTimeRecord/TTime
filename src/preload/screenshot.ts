@@ -307,26 +307,23 @@ class Draw {
    * 退出截图
    *
    */
-  destroy(): void {
+  destroy(imgByBase64): void {
     // 截图退出事件
-    ipcRenderer.invoke('screenshot-end-event', '')
+    ipcRenderer.invoke('screenshot-end-event', imgByBase64)
   }
 
   /**
    * 完成截图
    */
   done(): void {
-    const base64Data = this.selectRectMeta.base64Data
-    if (null === base64Data) {
+    const imgByBase64 = this.selectRectMeta.base64Data
+    if (null === imgByBase64) {
       return
     }
     // 处理图片文字识别
-    ipcRenderer.invoke(
-      'handle-image-text-recognition-event',
-      nativeImage.createFromDataURL(base64Data)
-    )
+    ipcRenderer.invoke('handle-image-text-recognition-event', imgByBase64)
     // 退出截图
-    this.destroy()
+    this.destroy(imgByBase64)
   }
 
   /**
@@ -354,7 +351,6 @@ class Draw {
     return canvas.toDataURL()
   }
 }
-
 
 /**
  * 截图结束事件

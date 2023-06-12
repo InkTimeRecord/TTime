@@ -2,6 +2,7 @@ import HttpMethodType from '../enums/HttpMethodTypeClassEnum'
 import request from '../utils/requestNotHandle'
 import { TranslateServiceEnum } from '../enums/TranslateServiceEnum'
 import { commonError } from '../utils/RequestUtil'
+import { isNotNull } from '../utils/validate'
 
 class DeepLChannelRequest {
   /**
@@ -11,19 +12,26 @@ class DeepLChannelRequest {
    * @param isCheckRequest  是否校验翻译请求状态
    */
   static apiTranslateByDeepL = (info, isCheckRequest): void => {
+    const data = {
+      text: info.translateContent.split('\n'),
+      target_lang: info.languageResultType
+    }
+    const languageType = info.languageType
+    if (isNotNull(languageType) && languageType !== 'auto') {
+      data['source_lang'] = languageType
+    }
     const requestInfo = {
-      baseURL: 'https://translation.googleapis.com',
-      url: '/language/translate/v2?key=' + info.appKey,
+      baseURL: 'https://api-free.deepl.com/v2/translate',
       method: HttpMethodType.POST,
-      data: {
-        q: info.translateContent.split('\n'),
-        target: info.languageResultType
-      }
+      headers: {
+        Authorization: 'DeepL-Auth-Key ' + info.appKey
+      },
+      data
     }
     request(requestInfo).then(
       (data) => {
         window.api['agentApiTranslateCallback'](
-          TranslateServiceEnum.GOOGLE,
+          TranslateServiceEnum.DEEP_L,
           true,
           data,
           isCheckRequest ? info : null
@@ -31,9 +39,9 @@ class DeepLChannelRequest {
       },
       (err) => {
         window.api['agentApiTranslateCallback'](
-          TranslateServiceEnum.GOOGLE,
+          TranslateServiceEnum.DEEP_L,
           false,
-          commonError(TranslateServiceEnum.GOOGLE, err),
+          commonError(TranslateServiceEnum.DEEP_L, err),
           isCheckRequest ? info : null
         )
       }

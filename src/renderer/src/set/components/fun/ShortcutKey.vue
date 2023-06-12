@@ -1,45 +1,78 @@
 <template>
-  <el-form :model='shortcutKeyInfo' label-width='120px'>
-    <el-form-item class='none-select' label='输入翻译'>
+  <el-form :model="shortcutKeyInfo" label-width="120px">
+    <el-form-item class="none-select" label="输入翻译">
       <el-input
-        class='input-shortcut-key'
-        placeholder='请设置快捷键'
+        v-model="shortcutKeyInfo.inputShortcutKey"
+        class="input-shortcut-key"
+        placeholder="请设置快捷键"
         clearable
-        v-model='shortcutKeyInfo.inputShortcutKey'
         :formatter="() => shortcutKeyInfo.inputShortcutKey"
-        @keydown='translateShortcutKeySetEvent($event, ShortcutKeyEnum.INPUT)'
-        @clear='clearTranslateShortcutKey(ShortcutKeyEnum.INPUT)'
+        @keydown="translateShortcutKeySetEvent($event, ShortcutKeyEnum.INPUT)"
+        @clear="clearTranslateShortcutKey(ShortcutKeyEnum.INPUT)"
       />
-      <span class='form-switch-span none-select'> 按下此快捷键调出翻译窗口 </span>
+      <span class="form-switch-span none-select"> 按下此快捷键调出翻译窗口 </span>
     </el-form-item>
-    <el-form-item class='none-select' label='截图翻译'>
+    <el-form-item class="none-select" label="截图翻译">
       <el-input
-        class='input-shortcut-key'
-        placeholder='请设置快捷键'
+        v-model="shortcutKeyInfo.screenshotShortcutKey"
+        class="input-shortcut-key"
+        placeholder="请设置快捷键"
         clearable
-        v-model='shortcutKeyInfo.screenshotShortcutKey'
         :formatter="() => shortcutKeyInfo.screenshotShortcutKey"
-        @keydown='translateShortcutKeySetEvent($event, ShortcutKeyEnum.SCREENSHOT)'
-        @clear='clearTranslateShortcutKey(ShortcutKeyEnum.SCREENSHOT)'
+        @keydown="translateShortcutKeySetEvent($event, ShortcutKeyEnum.SCREENSHOT)"
+        @clear="clearTranslateShortcutKey(ShortcutKeyEnum.SCREENSHOT)"
       />
-      <span class='form-switch-span none-select'> 按下此快捷键将会根据你截图区域进行文字识别并翻译 </span>
+      <span class="form-switch-span none-select">
+        按下此快捷键将会根据你截图区域进行文字识别并翻译
+      </span>
     </el-form-item>
-    <el-form-item class='none-select' label='划词翻译'>
+    <el-form-item class="none-select" label="划词翻译">
       <el-input
-        class='input-shortcut-key'
-        placeholder='请设置快捷键'
+        v-model="shortcutKeyInfo.choiceShortcutKey"
+        class="input-shortcut-key"
+        placeholder="请设置快捷键"
         clearable
-        v-model='shortcutKeyInfo.choiceShortcutKey'
         :formatter="() => shortcutKeyInfo.choiceShortcutKey"
-        @keydown='translateShortcutKeySetEvent($event, ShortcutKeyEnum.CHOICE)'
-        @clear='clearTranslateShortcutKey(ShortcutKeyEnum.CHOICE)'
+        @keydown="translateShortcutKeySetEvent($event, ShortcutKeyEnum.CHOICE)"
+        @clear="clearTranslateShortcutKey(ShortcutKeyEnum.CHOICE)"
       />
-      <span class='form-switch-span none-select'> 按下此快捷键光标选中的内容会自动复制并识别翻译 </span>
+      <span class="form-switch-span none-select">
+        按下此快捷键光标选中的内容会自动复制并识别翻译
+      </span>
+    </el-form-item>
+
+    <el-divider />
+
+    <el-form-item class="none-select" label="截图OCR">
+      <el-input
+        v-model="shortcutKeyInfo.screenshotOcrShortcutKey"
+        class="input-shortcut-key"
+        placeholder="请设置快捷键"
+        clearable
+        :formatter="() => shortcutKeyInfo.screenshotOcrShortcutKey"
+        @keydown="translateShortcutKeySetEvent($event, ShortcutKeyEnum.SCREENSHOT_OCR)"
+        @clear="clearTranslateShortcutKey(ShortcutKeyEnum.SCREENSHOT_OCR)"
+      />
+      <span class="form-switch-span none-select"> 按下此快捷键将会根据你截图区域进行文字识别 </span>
+    </el-form-item>
+
+    <el-form-item class="none-select" label="截图静默OCR">
+      <el-input
+        v-model="shortcutKeyInfo.screenshotSilenceOcrShortcutKey"
+        class="input-shortcut-key"
+        placeholder="请设置快捷键"
+        clearable
+        :formatter="() => shortcutKeyInfo.screenshotSilenceOcrShortcutKey"
+        @keydown="translateShortcutKeySetEvent($event, ShortcutKeyEnum.SCREENSHOT_SILENCE_OCR)"
+        @clear="clearTranslateShortcutKey(ShortcutKeyEnum.SCREENSHOT_SILENCE_OCR)"
+      />
+      <span class="form-switch-span none-select">
+        按下此快捷键将会根据你截图区域进行文字识别，识别的内容自动写入剪切板不会打开OCR窗口
+      </span>
     </el-form-item>
   </el-form>
 </template>
-<script setup lang='ts'>
-
+<script setup lang="ts">
 import { ref } from 'vue'
 import { getNameByCode } from '@/utils/keyboard'
 import ElMessageExtend from '../../../utils/messageExtend'
@@ -50,7 +83,9 @@ import { isNull } from '../../../utils/validate'
 const shortcutKeyInfo = ref({
   inputShortcutKey: cacheGetStr('inputShortcutKey'),
   screenshotShortcutKey: cacheGetStr('screenshotShortcutKey'),
-  choiceShortcutKey: cacheGetStr('choiceShortcutKey')
+  choiceShortcutKey: cacheGetStr('choiceShortcutKey'),
+  screenshotOcrShortcutKey: cacheGetStr('screenshotOcrShortcutKey'),
+  screenshotSilenceOcrShortcutKey: cacheGetStr('screenshotSilenceOcrShortcutKey')
 })
 
 const clearTranslateShortcutKey = (type): void => {
@@ -74,15 +109,17 @@ const clearTranslateShortcutKey = (type): void => {
  */
 const translateShortcutKeySetEvent = (event, type): void => {
   // 中文模式下输入会触发 这里手动拦截掉
-  if(event.keyCode === 229) {
+  if (event.keyCode === 229) {
     return
   }
-  const shortcutKey = getShortcutKey(event)
+  let shortcutKey = getShortcutKey(event)
   const shortcutKeyElement = type + 'ShortcutKey'
   const oldShortcutKey = shortcutKeyInfo.value[shortcutKeyElement]
   if (oldShortcutKey === shortcutKey || isNull(shortcutKey)) {
     return
   }
+  // 优化显示格式
+  shortcutKey = shortcutKey.replaceAll('+', ' + ')
   window.api.updateTranslateShortcutKeyEvent(type, oldShortcutKey, shortcutKey, (res) => {
     if (res.code === -1) {
       ElMessageExtend.error(res.msg)
@@ -109,6 +146,10 @@ const CODE_CONTROL = [
   'Meta',
   'MetaLeft',
   'MetaRight',
+  ' ',
+  '+',
+  '-',
+  '*'
 ]
 
 const CODE_SYS_CONTROL = [
@@ -165,7 +206,7 @@ const getShortcutKey = (event): string => {
 }
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 @import '../../../css/set.scss';
 
 .input-shortcut-key {

@@ -3,6 +3,7 @@ import TTimeRequest from '../../interfaces/TTimeRequest'
 import GlobalWin from '../../../GlobalWin'
 import log from '../../../../utils/log'
 import { paramsFilter } from '../../../../utils/logExtend'
+import { YesNoEnum } from '../../../../enums/YesNoEnum'
 
 class TTimeOnlineOcrChannel implements IOcrInterface {
   /**
@@ -15,15 +16,19 @@ class TTimeOnlineOcrChannel implements IOcrInterface {
     TTimeRequest.apiOcr(info)
       .then((res) => {
         log.info('[TTime在线Ocr事件] - 响应报文 : ', JSON.stringify(res))
+        if (res['status'] != 200) {
+          GlobalWin.ocrUpdateContent(YesNoEnum.N, res['msg'])
+          return
+        }
         let data = ''
         const textList = res['data']['ocrTextList']
         textList.forEach((text) => {
           data += text['text'] + '\n'
         })
-        GlobalWin.mainWinSendOcrTranslated(data)
+        GlobalWin.ocrUpdateContent(YesNoEnum.Y, data)
       })
-      .catch((_err) => {
-        log.error('[TTime在线Ocr事件] - 异常 : ', _err)
+      .catch((err) => {
+        log.error('[TTime在线Ocr事件] - 异常 : ', err)
       })
   }
 

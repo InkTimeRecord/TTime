@@ -87,6 +87,11 @@ class TranslateServiceEnum {
   static NIU_TRANS = 'NiuTrans'
 
   /**
+   * 小牛翻译(内置)
+   */
+  static NIU_TRANS_BUILT_IN = 'NiuTransBuiltIn'
+
+  /**
    * 彩云翻译
    */
   static CAI_YUN = 'CaiYun'
@@ -181,6 +186,14 @@ class TranslateServiceEnum {
       TranslateServiceEnum.buildServiceInfo(
         '小牛翻译',
         TranslateServiceEnum.NIU_TRANS,
+        niuTransLogo
+      )
+    )
+    TranslateServiceEnum.translateServiceMap.set(
+      TranslateServiceEnum.NIU_TRANS_BUILT_IN,
+      TranslateServiceEnum.buildServiceInfo(
+        '小牛翻译(内置)',
+        TranslateServiceEnum.NIU_TRANS_BUILT_IN,
         niuTransLogo
       )
     )

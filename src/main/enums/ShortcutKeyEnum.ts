@@ -18,20 +18,14 @@ class ShortcutKeyEnum {
   static CHOICE = 'choice'
 
   /**
-   * 获取快捷键类型
-   *
-   * @returns {string} 系统类型
+   * 截图OCR快捷键
    */
-  static getCodeByEnum(code: string): string {
-    if (code === ShortcutKeyEnum.INPUT) {
-      return ShortcutKeyEnum.INPUT
-    } else if (code === ShortcutKeyEnum.SCREENSHOT) {
-      return ShortcutKeyEnum.SCREENSHOT
-    } else if (code === ShortcutKeyEnum.CHOICE) {
-      return ShortcutKeyEnum.CHOICE
-    }
-    return ''
-  }
+  static SCREENSHOT_OCR = 'screenshotOcr'
+
+  /**
+   * 截图静默OCR快捷键
+   */
+  static SCREENSHOT_SILENCE_OCR = 'screenshotSilenceOcr'
 }
 
 export { ShortcutKeyEnum }

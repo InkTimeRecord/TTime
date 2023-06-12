@@ -80,6 +80,10 @@ if (isNull(cacheGetStr('translateServiceMap'))) {
   const deepLBuiltInService = buildTranslateService(TranslateServiceEnum.DEEP_L_BUILT_IN)
   map.set(deepLBuiltInService.id, deepLBuiltInService)
   setTranslateServiceMap(map)
+
+  const niuTransBuiltInService = buildTranslateService(TranslateServiceEnum.NIU_TRANS_BUILT_IN)
+  map.set(niuTransBuiltInService.id, niuTransBuiltInService)
+  setTranslateServiceMap(map)
 }
 
 /**
@@ -103,7 +107,12 @@ if (undefined === cacheGetStr('screenshotShortcutKey')) {
 if (undefined === cacheGetStr('choiceShortcutKey')) {
   cacheSetStr('choiceShortcutKey', 'Alt + E')
 }
-
+if (undefined === cacheGetStr('screenshotOcrShortcutKey')) {
+  cacheSetStr('screenshotOcrShortcutKey', 'Alt + Shift + S')
+}
+if (undefined === cacheGetStr('screenshotSilenceOcrShortcutKey')) {
+  cacheSetStr('screenshotSilenceOcrShortcutKey', 'Alt + Shift + D')
+}
 // 首次加载 - 代理配置初始化
 if (isNull(cacheGetStr('agentConfig'))) {
   cacheSet('agentConfig', {
@@ -119,7 +128,12 @@ if (isNull(cacheGetStr('agentConfig'))) {
 const translateShortcutKeyList = [
   { type: ShortcutKeyEnum.INPUT, shortcutKey: cacheGetStr('inputShortcutKey') },
   { type: ShortcutKeyEnum.SCREENSHOT, shortcutKey: cacheGetStr('screenshotShortcutKey') },
-  { type: ShortcutKeyEnum.CHOICE, shortcutKey: cacheGetStr('choiceShortcutKey') }
+  { type: ShortcutKeyEnum.CHOICE, shortcutKey: cacheGetStr('choiceShortcutKey') },
+  { type: ShortcutKeyEnum.SCREENSHOT_OCR, shortcutKey: cacheGetStr('screenshotOcrShortcutKey') },
+  {
+    type: ShortcutKeyEnum.SCREENSHOT_SILENCE_OCR,
+    shortcutKey: cacheGetStr('screenshotSilenceOcrShortcutKey')
+  }
 ]
 window.api.logInfoEvent(
   '[初始加载翻译快捷键事件] - 开始，翻译快捷键列表 : ',
@@ -157,6 +171,10 @@ if (undefined === cacheGetStr('hoverBallStatus')) {
 // 初始化OCR结果写入剪切板状态
 if (undefined === cacheGetStr('ocrWriteClipboardStatus')) {
   cacheSetStr('ocrWriteClipboardStatus', YesNoEnum.N)
+}
+// 初始化OCR结果换行符替换为空格状态
+if (undefined === cacheGetStr('ocrWrapReplaceSpaceStatus')) {
+  cacheSetStr('ocrWrapReplaceSpaceStatus', YesNoEnum.N)
 }
 window.api.updateCacheEvent((key, value) => {
   cacheSetStr(key, value)

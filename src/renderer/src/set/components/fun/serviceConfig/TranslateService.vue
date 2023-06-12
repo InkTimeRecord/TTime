@@ -218,6 +218,7 @@ const addTranslateService = (type) => {
       (TranslateServiceEnum.BING_DICT === type && type === translateService.type) ||
       (TranslateServiceEnum.GOOGLE_BUILT_IN === type && type === translateService.type) ||
       (TranslateServiceEnum.DEEP_L_BUILT_IN === type && type === translateService.type) ||
+      (TranslateServiceEnum.NIU_TRANS_BUILT_IN === type && type === translateService.type) ||
       (TranslateServiceEnum.TRAN_SMART === type && type === translateService.type)
     ) {
       ElMessageExtend.warning('此翻译源已存在了，请勿重复添加')

@@ -12,6 +12,8 @@ import GlobalWin from './service/GlobalWin'
 import './service/TTimeEvent'
 import './service/channel/TranslateChannel'
 import './service/HoverBall'
+import './service/Ocr'
+import './service/OcrSilence'
 import { isNull } from './utils/validate'
 import { injectWinAgent } from './utils/RequestUtil'
 
@@ -111,7 +113,7 @@ function createWindow(): void {
    * 主窗口关闭事件
    */
   mainWin.on('close', (event) => {
-    if (!TrayEvent.isMainWinClose && !is.dev) {
+    if (!GlobalWin.isMainWinClose && !is.dev) {
       // 阻止窗口关闭
       event.preventDefault()
       // 隐藏窗口
@@ -130,7 +132,7 @@ function createWindow(): void {
    * 窗口失去焦点事件
    */
   mainWin.on('blur', () => {
-    if (WinEvent.isAlwaysOnTop) {
+    if (GlobalWin.isMainAlwaysOnTop) {
       return
     }
     // 隐藏窗口

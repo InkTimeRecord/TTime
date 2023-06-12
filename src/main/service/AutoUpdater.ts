@@ -180,7 +180,7 @@ class AutoUpdater {
           AutoUpdater.isSilence = false
           AutoUpdater.forcedUpdate(newVersion + ' - 此版本须必更', updateContent)
           // 设置主窗口为可关闭状态
-          TrayEvent.isMainWinClose = true
+          GlobalWin.isMainWinClose = true
           // 销毁托盘菜单
           TrayEvent.mainTray.destroy()
           // 销毁主窗口

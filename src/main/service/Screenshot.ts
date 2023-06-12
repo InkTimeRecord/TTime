@@ -9,6 +9,8 @@ import OcrServiceEnum from '../enums/OcrServiceEnum'
 import OcrChannelFactory from './channel/factory/OcrChannelFactory'
 import { isNull } from '../utils/validate'
 import { WinEvent } from './Win'
+import OcrTypeEnum from '../enums/OcrTypeEnum'
+import { YesNoEnum } from '../enums/YesNoEnum'
 
 let nullWin: BrowserWindow
 
@@ -23,7 +25,7 @@ app.whenReady().then(() => {
 /**
  * 处理图片文字识别
  */
-ipcMain.handle('handle-image-text-recognition-event', async (_event, img) => {
+ipcMain.handle('handle-image-text-recognition-event', async (_event, imgByBase64) => {
   // 执行前端脚本获取当前设置的Ocr服务
   await GlobalWin.mainWin.webContents
     .executeJavaScript(
@@ -37,13 +39,13 @@ ipcMain.handle('handle-image-text-recognition-event', async (_event, img) => {
       const type = ocrService.type
       if (OcrServiceEnum.TTIME === type) {
         // TTime类型则调用本地Ocr
-        ScreenshotsMain.textOcrWin.webContents.send('local-ocr', img.toPNG())
+        ScreenshotsMain.textOcrWin.webContents.send('local-ocr', imgByBase64)
       } else {
         // 调用第三方Ocr
         OcrChannelFactory.ocr(ocrService.type, {
           appId: ocrService.appId,
           appKey: ocrService.appKey,
-          img: Buffer.from(img.toPNG()).toString('base64')
+          img: imgByBase64
         })
       }
     })
@@ -52,22 +54,31 @@ ipcMain.handle('handle-image-text-recognition-event', async (_event, img) => {
 /**
  * 截图结束事件
  */
-ipcMain.handle('screenshot-end-event', (_event, _image) => {
+ipcMain.handle('screenshot-end-event', (_event, imgByBase64) => {
   ScreenshotsMain.closeScreenshotsWin()
-  GlobalWin.mainWinShow()
-  // 当窗口为置顶时触发截图会自动隐藏窗口 从而导致置顶失效
-  // 这里在重新获取置顶状态进行设置
-  // 并且要延迟执行 否则会重新设置失败
-  setTimeout(() => WinEvent.alwaysOnTop(WinEvent.isAlwaysOnTop), 300)
-  // 截图结束通知事件
-  GlobalWin.mainWinSend('screenshot-end-notify-event')
+  if (ScreenshotsMain.ocrType === OcrTypeEnum.OCR) {
+    GlobalWin.ocrWin.show()
+    setTimeout(() => WinEvent.ocrAlwaysOnTop(GlobalWin.isOcrAlwaysOnTop), 300)
+    GlobalWin.ocrWin.webContents.send('update-img', imgByBase64)
+  } else if (ScreenshotsMain.ocrType === OcrTypeEnum.OCR_TRANSLATE) {
+    GlobalWin.mainWinShow()
+    // 当窗口为置顶时触发截图会自动隐藏窗口 从而导致置顶失效
+    // 这里在重新获取置顶状态进行设置
+    // 并且要延迟执行 否则会重新设置失败
+    setTimeout(() => WinEvent.alwaysOnTop(GlobalWin.isMainAlwaysOnTop), 300)
+    // 截图结束通知事件
+    GlobalWin.mainWinSend('screenshot-end-notify-event')
+  } else if (ScreenshotsMain.ocrType === OcrTypeEnum.OCR_SILENCE) {
+    GlobalWin.ocrSilenceTempImg = imgByBase64
+    GlobalWin.ocrSilenceWinShow()
+  }
 })
 
 /**
  * 文本识别事件
  */
 ipcMain.handle('text-ocr-event', async (_event, text) => {
-  await GlobalWin.mainWinSendOcrTranslated(text)
+  await GlobalWin.ocrUpdateContent(YesNoEnum.Y, text)
 })
 
 /**
@@ -233,6 +244,11 @@ class ScreenshotsMain {
    * 文字识别窗口
    */
   static textOcrWin: BrowserWindow
+
+  /**
+   * ocr类型
+   */
+  static ocrType: string
 
   /**
    * 是否已创建截图窗口

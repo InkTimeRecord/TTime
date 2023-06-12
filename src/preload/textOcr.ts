@@ -9,12 +9,12 @@ const WordsNinjaPack = require('wordsninja')
 const WordsNinja = new WordsNinjaPack()
 
 const ipcRenderer = electronAPI.ipcRenderer
-ipcRenderer.on('local-ocr', async (_event, image) => {
-  localOcrFun(image, (_err, text) => {
+ipcRenderer.on('local-ocr', async (_event, imgByBase64) => {
+  localOcrFun(imgByBase64, (_err, text) => {
     ipcRenderer.invoke('text-ocr-event', text)
   })
 })
-async function localOcrFun(image, callback): Promise<void> {
+async function localOcrFun(imgByBase64, callback): Promise<void> {
   // 默认模型路径
   let ocrPath
   if (EnvEnum.isPro()) {
@@ -28,7 +28,7 @@ async function localOcrFun(image, callback): Promise<void> {
   // 初始化
   await init(detPath, recPath, dictPath)
   const img = document.createElement('img')
-  img.src = 'data:image/png;base64,' + Buffer.from(image).toString('base64')
+  img.src = imgByBase64
   img.onload = async (): Promise<void> => {
     const canvas = document.createElement('canvas')
     canvas.width = img.width

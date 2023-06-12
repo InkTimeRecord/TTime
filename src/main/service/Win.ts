@@ -1,4 +1,4 @@
-import { app, clipboard, ipcMain } from 'electron'
+import { app, clipboard, ipcMain, nativeImage } from 'electron'
 import { GlobalShortcutEvent } from './GlobalShortcutEvent'
 import { isNull } from '../utils/validate'
 import { SystemTypeEnum } from '../enums/SystemTypeEnum'
@@ -9,9 +9,6 @@ import GlobalWin from './GlobalWin'
 import { YesNoEnum } from '../enums/YesNoEnum'
 
 class WinEvent {
-  static isAlwaysOnTop = true
-  static isHoverBall = false
-
   constructor(mainWinInfo) {
     /**
      * 监听页面高度更新窗口大小
@@ -28,12 +25,32 @@ class WinEvent {
       clipboard.writeText(text)
     })
     /**
+     * 图片写入剪切板
+     */
+    ipcMain.handle('base64-img-write-shear-plate-event', (_event, base64Img) => {
+      // 写入剪切板
+      clipboard.writeImage(nativeImage.createFromDataURL(base64Img))
+    })
+    /**
      * 始终在最前面
      */
     ipcMain.handle('always-on-top-event', (_event, status) => {
       WinEvent.alwaysOnTop(status)
     })
-
+    /**
+     * 始终在最前面
+     */
+    ipcMain.handle('ocr-always-on-top-event', (_event, status) => {
+      WinEvent.ocrAlwaysOnTop(status)
+    })
+    /**
+     * 调起翻译
+     */
+    ipcMain.handle('update-translated-content-event', (_event, text) => {
+      // 推送给Vue页面进行更新翻译输入内容
+      GlobalWin.mainWinUpdateTranslatedContent(text)
+      GlobalWin.mainWinShow()
+    })
     /**
      * 初始加载翻译快捷键
      */
@@ -76,16 +93,29 @@ class WinEvent {
   }
 
   /**
-   * 窗口置顶
+   * 主窗口置顶
    *
    * @param status 置顶状态
    */
   static alwaysOnTop(status): void {
     GlobalWin.mainWin.setAlwaysOnTop(status)
-    WinEvent.isAlwaysOnTop = status
+    GlobalWin.isMainAlwaysOnTop = status
     // 触发窗口置顶时候也触发窗口显示回调
     // 用于处理 alwaysOnTopAllowEscStatus 逻辑
-    GlobalWin.mainWinShowCallback()
+    GlobalWin.mainOrOcrWinShowCallback()
+  }
+
+  /**
+   * OCR窗口置顶
+   *
+   * @param status 置顶状态
+   */
+  static ocrAlwaysOnTop(status): void {
+    GlobalWin.ocrWin.setAlwaysOnTop(status)
+    GlobalWin.isOcrAlwaysOnTop = status
+    // 触发窗口置顶时候也触发窗口显示回调
+    // 用于处理 alwaysOnTopAllowEscStatus 逻辑
+    GlobalWin.mainOrOcrWinShowCallback()
   }
 
   /**
@@ -97,6 +127,7 @@ class WinEvent {
       // 翻译窗口注册Esc快捷键 一般是窗口置顶时触发
       GlobalShortcutEvent.register('Esc', () => {
         GlobalWin.mainWinHide()
+        GlobalWin.ocrWinHide()
       })
     }, 300)
   }

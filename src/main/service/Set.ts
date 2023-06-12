@@ -131,7 +131,7 @@ ipcMain.handle('update-translate-service-event', (_event, _args) => {
  * 更新置顶时允许隐藏窗口选择事件通知
  */
 ipcMain.handle('always-onTop-allow-esc-status-notify', (_event, _args) => {
-  GlobalWin.mainWinShowCallback()
+  GlobalWin.mainOrOcrWinShowCallback()
 })
 
 export default createSetWindow
