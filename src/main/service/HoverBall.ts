@@ -7,13 +7,14 @@ import path from 'path'
 import { is } from '@electron-toolkit/utils'
 import GlobalWin from './GlobalWin'
 import { YesNoEnum } from '../enums/YesNoEnum'
+import { isNotNull } from '../utils/validate'
 
 // 窗口加载完毕后执行
 app.whenReady().then(() => {
   // 预加载文字识别窗口
   createHoverBallWin()
   // 隐藏窗口
-  GlobalWin.hoverBallWinHide()
+  hoverBallWinHide()
 })
 
 function createHoverBallWin(): void {
@@ -69,7 +70,7 @@ uIOhook.on('click', (e: UiohookMouseEvent) => {
         if (YesNoEnum.Y === val) {
           // log.info(e, '触发了双击')
           // log.info('触发了双击')
-          GlobalWin.hoverBallWinShow()
+          hoverBallWinShow()
           return
         }
       })
@@ -84,7 +85,7 @@ uIOhook.on('click', (e: UiohookMouseEvent) => {
     if (statusX > 30 || statusY > 30 || statusX < -30 || statusY < -30) {
       // log.info('触发了单击隐藏窗口')
       // 隐藏窗口
-      GlobalWin.hoverBallWinHide()
+      hoverBallWinHide()
     }
   }
 })
@@ -95,7 +96,7 @@ uIOhook.on('click', (e: UiohookMouseEvent) => {
 uIOhook.on('wheel', (_e: UiohookWheelEvent) => {
   if (GlobalWin.isHoverBall) {
     // log.info('触发了滚动隐藏窗口')
-    GlobalWin.hoverBallWinHide()
+    hoverBallWinHide()
   }
 })
 
@@ -104,7 +105,7 @@ uIOhook.on('wheel', (_e: UiohookWheelEvent) => {
  */
 ipcMain.handle('hover-ball-events', (_event, _) => {
   log.info('[悬浮球取词] - 开始')
-  GlobalWin.hoverBallWinHide()
+  hoverBallWinHide()
   // 先释放按键
   uIOhook.keyToggle(UiohookKey.Ctrl, 'up')
   uIOhook.keyToggle(UiohookKey.CtrlRight, 'up')
@@ -128,3 +129,30 @@ ipcMain.handle('hover-ball-events', (_event, _) => {
     GlobalWin.mainWinShow()
   })
 })
+
+let hoverBallWinHideTask
+
+/**
+ * 悬浮球窗口显示
+ */
+const hoverBallWinShow = (): void => {
+  if (isNotNull(hoverBallWinHideTask)) {
+    clearTimeout(hoverBallWinHideTask)
+  }
+  GlobalWin.hoverBallWinShow()
+  // 3秒后自动关闭悬浮球
+  hoverBallWinHideTask = setTimeout(() => {
+    hoverBallWinHide()
+  }, 3000)
+}
+
+/**
+ * 悬浮球窗口隐藏
+ */
+const hoverBallWinHide = (): void => {
+  if (isNotNull(hoverBallWinHideTask)) {
+    clearTimeout(hoverBallWinHideTask)
+    hoverBallWinHideTask = null
+  }
+  GlobalWin.hoverBallWinHide()
+}
