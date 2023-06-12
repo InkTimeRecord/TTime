@@ -7,7 +7,7 @@ import GlobalWin from './GlobalWin'
 
 // 窗口加载完毕后执行
 app.whenReady().then(() => {
-  // 预加载文字识别窗口
+  // 预加载窗口
   createOcrSilenceWin()
   // 隐藏窗口
   GlobalWin.ocrSilenceWinHide()

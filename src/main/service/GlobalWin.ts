@@ -7,6 +7,7 @@ import { clipboard } from 'electron'
 import { ScreenshotsMain } from './Screenshot'
 import OcrTypeEnum from '../enums/OcrTypeEnum'
 import WebShowMsgEnum from '../enums/WebShowMsgEnum'
+import { SystemTypeEnum } from '../enums/SystemTypeEnum'
 
 /**
  * 全局窗口
@@ -352,7 +353,11 @@ class GlobalWin {
     GlobalWin.isOcrSilence = true
     GlobalWin.ocrSilenceWin.setAlwaysOnTop(true, 'pop-up-menu', 1)
     GlobalWin.ocrSilenceWin.setVisibleOnAllWorkspaces(true)
-    GlobalWin.ocrSilenceWin.showInactive()
+    if (SystemTypeEnum.isMac()) {
+      GlobalWin.ocrSilenceWin.show()
+    } else {
+      GlobalWin.ocrSilenceWin.showInactive()
+    }
     GlobalWin.ocrSilenceWin.webContents
       .executeJavaScript('JSON.stringify({width:screen.width,height: screen.height})')
       .then((value) => {
