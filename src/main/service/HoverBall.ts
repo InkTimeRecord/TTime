@@ -118,7 +118,7 @@ ipcMain.handle('hover-ball-events', (_event, _) => {
   uIOhook.keyToggle(UiohookKey.MetaRight, 'up')
   uIOhook.keyToggle(UiohookKey.Tab, 'up')
   uIOhook.keyToggle(UiohookKey.Escape, 'up')
-  uIOhook.keyToggle(UiohookKey.CapsLock, 'up')
+  // uIOhook.keyToggle(UiohookKey.CapsLock, 'up')
   GlobalShortcutEvent.isChoice = true
   GlobalShortcutEvent.getSelectedText().then((selectedText) => {
     GlobalShortcutEvent.isChoice = false
