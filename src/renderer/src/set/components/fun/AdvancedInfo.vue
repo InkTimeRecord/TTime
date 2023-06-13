@@ -193,7 +193,7 @@ const hoverBallStatusEvent = (val): void => {
 .group-title-span {
   margin-left: 5px;
   font-size: 13px;
-  color: var(--ttime-tips-text-color);
+  color: var(--el-menu-text-color);
 }
 
 .play-speech-service-block {
