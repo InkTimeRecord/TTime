@@ -17,7 +17,7 @@
 
 ## 简介
 
-主要功能：`输入翻译`、`截图翻译`、`划词翻译`
+主要功能：`输入翻译`、`截图翻译`、`划词翻译`、`悬浮球翻译`、`截图OCR`、`静默截图OCR`
 
 ## 界面
 <div align='center'>
@@ -35,25 +35,14 @@
   </table>
 </div>
 
-## 使用示例
-<div align="center">
-  <table>
-    <tr>
-        <td>
-        <p>输入翻译 （快捷键：Alt + Q）</p>
-        <img width="350px" style='border-radius: 10px;' src="https://raw.githubusercontent.com/InkTimeRecord/TTime/dev/README.assets/input.gif"/>
-        </td>
-        <td>
-        <p>截图翻译 （快捷键：Alt + W）</p>
-        <img width="350px" style='border-radius: 10px;' src="https://raw.githubusercontent.com/InkTimeRecord/TTime/dev/README.assets/screenshot.gif"/>
-        </td>
-        <td>
-          <p>划词翻译 （快捷键：Alt + E）</p>
-          <img width="350px" style='border-radius: 10px;' src="https://raw.githubusercontent.com/InkTimeRecord/TTime/dev/README.assets/choice.gif"/>
-        </td>
-    </tr>
-  </table>
-</div>
+| 方式 | 描述 | 预览 |
+| :---: | :---: | :---: |
+| 截图翻译 | 按下截图翻译快捷键（默认 `Alt + W`），截取需要翻译的区域 | ![截图翻译](https://raw.githubusercontent.com/InkTimeRecord/TTime/dev/README.assets/screenshot.gif) |
+| 划词翻译 | 选中需要翻译的文本之后，按下划词翻译快捷键即可（默认 `Alt + E`） | ![划词翻译](https://raw.githubusercontent.com/InkTimeRecord/TTime/dev/README.assets/choice.gif) |
+| 输入翻译| 按下输入翻译快捷键（默认 `Alt + Q`），输入需要翻译的文本，`Enter` 键翻译 | ![输入翻译](https://raw.githubusercontent.com/InkTimeRecord/TTime/dev/README.assets/input.gif) |
+| 悬浮球翻译 | 选中需要翻译的文本之后，点击悬浮球图标即可 (默认关闭，需要自行在设置中开启) | ![悬浮球翻译](https://raw.githubusercontent.com/InkTimeRecord/TTime/dev/README.assets/hover-ball.gif) |
+| 截图OCR | 按下此快捷键将会根据你截图区域进行文字识别 | ![截图OCR](https://raw.githubusercontent.com/InkTimeRecord/TTime/dev/README.assets/screenshot-ocr.gif) |
+| 截图静默OCR | 按下此快捷键将会根据你截图区域进行文字识别，识别的内容自动写入剪切板不会打开OCR窗口 | ![截图静默OCR](https://raw.githubusercontent.com/InkTimeRecord/TTime/dev/README.assets/screenshot-silence-ocr.gif) |
 
 ## 目前已集成翻译/文字识别服务
 [翻译源/文字识别申请参考](https://ttime.timerecord.cn/pages/93e0f8/#%E7%BF%BB%E8%AF%91%E6%BA%90%E4%BB%8B%E7%BB%8D)
@@ -65,6 +54,7 @@
   - [x] Bing (内置)
   - [x] Bing词典翻译 (内置)
   - [x] 腾讯交互翻译 (内置)
+  - [x] 小牛翻译 (内置)
   - [x] 腾讯翻译君
   - [x] 百度翻译
   - [x] 阿里翻译
