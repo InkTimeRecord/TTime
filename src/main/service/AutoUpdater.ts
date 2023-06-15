@@ -8,6 +8,8 @@ import { is } from '@electron-toolkit/utils'
 import TTimeRequest from './channel/interfaces/TTimeRequest'
 import { TrayEvent } from './TrayEvent'
 import GlobalWin from './GlobalWin'
+import { EnvEnum } from '../enums/EnvEnum'
+import { spawn } from 'child_process'
 
 let nullWin: BrowserWindow
 
@@ -40,9 +42,9 @@ class AutoUpdater {
   static isSilence = false
 
   /**
-   * 初始化配置
+   * 新版本下载路径
    */
-  constructor() {}
+  static newVersionPath
 
   /**
    * 创建窗口
@@ -107,6 +109,51 @@ class AutoUpdater {
       isWinCreate = true
     })
     // updateWin.webContents.openDevTools({ mode: 'detach' })
+
+    // 监听下载事件
+    updateWin.webContents.session.on('will-download', (_event, item, _webContents) => {
+      // 新版本下载路径
+      AutoUpdater.newVersionPath = path.join(
+        app.getPath('userData') + '/newVersion/',
+        item.getFilename()
+      )
+      // 设置默认路径
+      item.setSavePath(AutoUpdater.newVersionPath)
+      //获取文件的总大小
+      const totalBytes = item.getTotalBytes()
+      /**
+       * 下载中事件
+       */
+      item.on('updated', (_event, state) => {
+        if (state === 'interrupted') {
+          log.info('下载被打断')
+        } else if (state === 'progressing') {
+          if (item.isPaused()) {
+            log.info('下载暂停了')
+          } else {
+            let percent = item.getReceivedBytes() / totalBytes
+            percent = Math.round(percent * 100)
+            log.info(`下载中 process : ${percent}`)
+            AutoUpdater.autoUpdaterSendEvent(AutoUpdaterEnum.DOWNLOAD_PROGRESS, {
+              percent
+            })
+          }
+        }
+      })
+
+      /**
+       * 下载完成事件
+       */
+      item.once('done', (_event, state) => {
+        if (state === 'completed') {
+          log.info('下载完毕')
+          AutoUpdater.autoUpdaterSendEvent(AutoUpdaterEnum.UPDATE_DOWNLOADED, '下载完成')
+          // quitAndInstall(newVersionPath)
+        } else {
+          log.info(`下载失败: ${state}`)
+        }
+      })
+    })
   }
 
   /**
@@ -135,7 +182,7 @@ class AutoUpdater {
   /**
    * 更新检测
    */
-  static startCheck(isSilence) {
+  static startCheck(isSilence): void {
     AutoUpdater.isSilence = isSilence
     log.info('当前版本 : ', thisVersion, ' , 开始更新检测')
     AutoUpdater.autoUpdaterSendEventByMsg(
@@ -209,7 +256,7 @@ class AutoUpdater {
    * @param autoUpdaterEnum 自动更新枚举
    * @param data 更新数据
    */
-  static autoUpdaterSendEvent(autoUpdaterEnum, data) {
+  static autoUpdaterSendEvent(autoUpdaterEnum, data): void {
     data = { ...data, thisVersion }
     AutoUpdater.createWin(() => {
       updateWin.webContents.send('auto-updater-event', autoUpdaterEnum, data)
@@ -222,9 +269,79 @@ class AutoUpdater {
    * @param autoUpdaterEnum 自动更新枚举
    * @param msg 更新消息
    */
-  static autoUpdaterSendEventByMsg(autoUpdaterEnum, msg) {
+  static autoUpdaterSendEventByMsg(autoUpdaterEnum, msg): void {
     this.autoUpdaterSendEvent(autoUpdaterEnum, {
       message: msg
+    })
+  }
+
+  /**
+   * 开始安装新版本 - 下载完成后触发
+   */
+  static startInstall(): void {
+    this.quitAndInstall(AutoUpdater.newVersionPath)
+  }
+
+  /**
+   * 用户手动退出并安装
+   * @param pathInfo 安装包目录
+   */
+  static quitAndInstall = (pathInfo: string): void => {
+    // TODO 处理退出前需要执行的内容
+    this.execInstall(pathInfo).then()
+  }
+
+  /**
+   * 执行安装
+   */
+  static execInstall = (exePath): Promise<void> => {
+    return new Promise(() => {
+      const args = ['--updated', '/S', '--force-run']
+      this.spawnExpand(exePath, ['--updated', '/S', '--force-run']).catch((e) => {
+        const errorCode = e.code
+        log.error(
+          `Cannot run installer: error code: ${errorCode}, error message: "${e.message}", will be executed again using elevate if EACCES"`
+        )
+        if (errorCode === 'UNKNOWN' || errorCode === 'EACCES') {
+          console.log('需要权限更新')
+          // elevate.exe 主要用于解决运行权限问题
+          let elevatePath = './resources/elevate.exe'
+          if (EnvEnum.isDev()) {
+            elevatePath = './dist/win-unpacked/resources/elevate.exe'
+          }
+          this.spawnExpand(elevatePath, [exePath].concat(args)).catch((e) => {
+            log.error('elevateUrl e ', e)
+          })
+        } else {
+          log.error('安装异常 e ', e)
+        }
+      })
+    })
+  }
+
+  /**
+   * This handles both node 8 and node 10 way of emitting error when spawning a process
+   *   - node 8: Throws the error
+   *   - node 10: Emit the error(Need to listen with on)
+   */
+  static spawnExpand = async (exe, args): Promise<boolean> => {
+    return new Promise((resolve, reject) => {
+      try {
+        const process = spawn(exe, args, {
+          detached: true,
+          stdio: 'ignore'
+        })
+        process.on('error', (error) => {
+          reject(error)
+        })
+        process.unref()
+
+        if (process.pid !== undefined) {
+          resolve(true)
+        }
+      } catch (error) {
+        reject(error)
+      }
     })
   }
 }
@@ -250,6 +367,23 @@ ipcMain.handle('auto-updater-silence-start-check', () => {
  */
 ipcMain.handle('close-update-win-event', (_event, _args) => {
   updateWin.close()
+})
+
+/**
+ * 自动更新开始下载
+ */
+ipcMain.handle('auto-updater-start-download', () => {
+  // 触发下载
+  updateWin.webContents.downloadURL(
+    'https://gitcode.net/qq_37346938/TTime/-/raw/main/version/TTime-0.3.0-setup.exe'
+  )
+})
+
+/**
+ * 开始安装新版本 - 下载完成后触发
+ */
+ipcMain.handle('auto-updater-start-install', () => {
+  AutoUpdater.startInstall()
 })
 
 export default AutoUpdater

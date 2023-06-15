@@ -16,8 +16,6 @@ import './service/Ocr'
 import './service/OcrSilence'
 import { isNull } from './utils/validate'
 import { injectWinAgent } from './utils/RequestUtil'
-import { spawn } from 'child_process'
-import { EnvEnum } from './enums/EnvEnum'
 
 // 解决使用 win.hide() 后再使用 win.show() 会引起窗口闪烁问题
 app.commandLine.appendSwitch('wm-window-animations-disabled')
@@ -142,123 +140,6 @@ function createWindow(): void {
     mainWin.webContents.send('clear-all-translated-content')
     mainWin.webContents.send('win-show-input-event')
   })
-
-  // 监听 will-download
-  mainWin.webContents.session.on('will-download', (event, item, webContents) => {
-    const newVersionPath = path.join(app.getPath('userData') + '/newVersion/', item.getFilename())
-    item.setSavePath(newVersionPath)
-    // 计算下载进度
-    const progress = item.getReceivedBytes() / item.getTotalBytes()
-    log.info({
-      progress: progress
-    })
-    item.on('updated', (event, state) => {
-      if (state === 'interrupted') {
-        console.log('Download is interrupted but can be resumed')
-      } else if (state === 'progressing') {
-        if (item.isPaused()) {
-          console.log('Download is paused')
-        } else {
-          console.log(`Received bytes: ${item.getReceivedBytes()}`)
-        }
-      }
-    })
-    item.once('done', (event, state) => {
-      if (state === 'completed') {
-        console.log('Download successfully')
-        quitAndInstallByUser(newVersionPath)
-      } else {
-        console.log(`Download failed: ${state}`)
-      }
-    })
-  })
-  // // 触发下载
-  // mainWin.webContents.downloadURL(
-  //   'https://gitcode.net/qq_37346938/TTime/-/raw/main/version/TTime-0.4.0-setup.exe'
-  // )
-
-  /**
-   * This handles both node 8 and node 10 way of emitting error when spawning a process
-   *   - node 8: Throws the error
-   *   - node 10: Emit the error(Need to listen with on)
-   */
-  async function spawnExpand(exe, args) {
-    return new Promise((resolve, reject) => {
-      try {
-        const process = spawn(exe, args, {
-          detached: true,
-          stdio: 'ignore'
-        })
-        process.on('error', (error) => {
-          reject(error)
-        })
-        process.unref()
-
-        if (process.pid !== undefined) {
-          resolve(true)
-        }
-      } catch (error) {
-        reject(error)
-      }
-    })
-  }
-
-  /**
-   * 执行安装
-   */
-  const execInstall = (exePath) => {
-    log.info('process.resourcesPath = ', process.resourcesPath)
-    // elevate.exe 主要用于解决运行权限问题
-    let elevateUrl = path.join(process.resourcesPath!, 'elevate.exe')
-    log.info('elevateUrl = ', elevateUrl)
-    if (EnvEnum.isDev()) {
-      elevateUrl = './dist/win-unpacked/resources/elevate.exe'
-    } else {
-      //  打包后的 resources 文件夹内获取
-      elevateUrl = `./resources/elevate.exe`
-    }
-
-    const callUsingElevation = (args) => {
-      spawnExpand(elevateUrl, [exePath].concat(args)).catch((e) => {
-        log.error('elevateUrl e ', e)
-      })
-    }
-
-    return new Promise((resolve, reject) => {
-      const args = ['--updated', '/S', '--force-run']
-      spawnExpand(exePath, ['--updated', '/S', '--force-run']).catch((e) => {
-        // https://github.com/electron-userland/electron-builder/issues/1129
-        // Node 8 sends errors: https://nodejs.org/dist/latest-v8.x/docs/api/errors.html#errors_common_system_errors
-        const errorCode = e.code
-        console.error(
-          `Cannot run installer: error code: ${errorCode}, error message: "${e.message}", will be executed again using elevate if EACCES"`
-        )
-        if (errorCode === 'UNKNOWN' || errorCode === 'EACCES') {
-          console.log('errorCode', e)
-          callUsingElevation(args, exePath)
-        } else {
-          console.log('e', e)
-          // this.dispatchError(e)
-        }
-      })
-    })
-  }
-  /**
-   * 用户手动退出并安装
-   * @param path：安装包目录
-   */
-  const quitAndInstallByUser = (pathInfo: string) => {
-    // TODO 处理退出前需要执行的内容
-    execInstall(pathInfo)
-  }
-
-  // item.on('done', (e, state) => {
-  //   log.info({
-  //     state: state,
-  //     receivedBytes: item.getReceivedBytes(),
-  //     lastModifiedTime: item.getLastModifiedTime()
-  //   })
-  // })
 }
 
 app.whenReady().then(() => {
