@@ -47,13 +47,29 @@ const autoUpdaterStartCheck = (): void => {
   ipcRenderer.invoke('auto-updater-start-check')
 }
 
+/**
+ * 开始下载
+ */
+const autoUpdaterStartDownload = (): void => {
+  ipcRenderer.invoke('auto-updater-start-download')
+}
+
+/**
+ * 开始安装
+ */
+const autoUpdaterStartInstall = (): void => {
+  ipcRenderer.invoke('auto-updater-start-install')
+}
+
 const api = {
   closeUpdateWinEvent,
   closeAppEvent,
   autoUpdaterEvent,
   autoUpdaterStartCheck,
   getSystemTypeEvent,
-  jumpToPage
+  jumpToPage,
+  autoUpdaterStartDownload,
+  autoUpdaterStartInstall
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

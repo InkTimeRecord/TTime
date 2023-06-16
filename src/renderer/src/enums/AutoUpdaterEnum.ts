@@ -22,6 +22,15 @@ class AutoUpdaterEnum {
    */
   static UPDATE_NOT_AVAILABLE = 'update-not-available'
 
+  /**
+   * 更新下载进度事件
+   */
+  static DOWNLOAD_PROGRESS = 'download-progress'
+
+  /**
+   * 下载完成事件
+   */
+  static UPDATE_DOWNLOADED = 'update-downloaded'
 }
 
 export { AutoUpdaterEnum }

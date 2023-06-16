@@ -9,6 +9,8 @@ declare global {
     autoUpdaterStartCheck
     getSystemTypeEvent
     jumpToPage
+    autoUpdaterStartDownload
+    autoUpdaterStartInstall
   }
 
   interface Window {
