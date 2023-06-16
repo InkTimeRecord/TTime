@@ -203,13 +203,6 @@ const updateCacheEvent = (callback): void => {
 }
 
 /**
- * 静默更新事件
- */
-const autoUpdaterSilenceStartCheckEvent = (): void => {
-  ipcRenderer.invoke('auto-updater-silence-start-check')
-}
-
-/**
  * 日志 - info级别
  */
 const logInfoEvent = (...text): void => {
@@ -509,7 +502,6 @@ const api = {
   initLoadTranslateShortcutKeyEvent,
   autoLaunchInitEvent,
   updateMessageEvent,
-  autoUpdaterSilenceStartCheckEvent,
   windowHeightChangeMaxEvent,
   logInfoEvent,
   logErrorEvent,

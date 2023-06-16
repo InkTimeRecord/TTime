@@ -10,6 +10,8 @@ import { TrayEvent } from './TrayEvent'
 import GlobalWin from './GlobalWin'
 import { EnvEnum } from '../enums/EnvEnum'
 import { spawn } from 'child_process'
+import { YesNoEnum } from '../enums/YesNoEnum'
+import fs from 'fs'
 
 let nullWin: BrowserWindow
 
@@ -44,7 +46,46 @@ class AutoUpdater {
   /**
    * 新版本下载路径
    */
-  static newVersionPath
+  static newVersionPath = path.join(app.getPath('userData') + '/newVersion/TTime-setup.exe')
+
+  /**
+   * 是否已下载新版本
+   */
+  static isDownloadNewVersion = false
+
+  /**
+   * 新版本下载地址
+   */
+  static newVersionDownloadUrl = ''
+
+  constructor() {
+    log.info('[检测安装包事件] 检测 - 开始')
+    // 检测之前下载的包是否存在 存在则进行删除
+    fs.exists(AutoUpdater.newVersionPath, (exists) => {
+      if (!exists) {
+        log.info('[检测安装包事件] 检测 - 结束')
+        return
+      }
+      log.info('[检测安装包事件] 存在旧版本安装包，开始清理')
+      fs.unlink(AutoUpdater.newVersionPath, (e) => {
+        // 移除成功后 e 回调为 null
+        if (e) {
+          log.error('[检测安装包事件] 旧版本安装包清理异常', e)
+          return
+        }
+        log.info('[检测安装包事件] 旧版本安装包清理成功')
+      })
+    })
+
+    // 启动后自动检测一次
+    setTimeout(() => {
+      AutoUpdater.autoUpdaterStartCheck()
+    }, 1000 * 10)
+    // 每12小时检测一次
+    setInterval(() => {
+      AutoUpdater.autoUpdaterStartCheck()
+    }, 1000 * 90)
+  }
 
   /**
    * 创建窗口
@@ -112,11 +153,6 @@ class AutoUpdater {
 
     // 监听下载事件
     updateWin.webContents.session.on('will-download', (_event, item, _webContents) => {
-      // 新版本下载路径
-      AutoUpdater.newVersionPath = path.join(
-        app.getPath('userData') + '/newVersion/',
-        item.getFilename()
-      )
       // 设置默认路径
       item.setSavePath(AutoUpdater.newVersionPath)
       //获取文件的总大小
@@ -126,14 +162,19 @@ class AutoUpdater {
        */
       item.on('updated', (_event, state) => {
         if (state === 'interrupted') {
-          log.info('下载被打断')
+          AutoUpdater.autoUpdaterSendEventByMsg(AutoUpdaterEnum.ERROR, '下载中断，请检查网络后再试')
+          log.info('[新版本下载事件] 触发了下载打断状态')
         } else if (state === 'progressing') {
           if (item.isPaused()) {
-            log.info('下载暂停了')
+            AutoUpdater.autoUpdaterSendEventByMsg(
+              AutoUpdaterEnum.ERROR,
+              '下载中断，请检查网络后再试'
+            )
+            log.info('[新版本下载事件] 触发了下载暂停状态')
           } else {
             let percent = item.getReceivedBytes() / totalBytes
             percent = Math.round(percent * 100)
-            log.info(`下载中 process : ${percent}`)
+            log.info(`[新版本下载事件] 下载进度 : ${percent}`)
             AutoUpdater.autoUpdaterSendEvent(AutoUpdaterEnum.DOWNLOAD_PROGRESS, {
               percent
             })
@@ -146,11 +187,13 @@ class AutoUpdater {
        */
       item.once('done', (_event, state) => {
         if (state === 'completed') {
-          log.info('下载完毕')
+          log.info('[新版本下载事件] 下载完毕')
           AutoUpdater.autoUpdaterSendEvent(AutoUpdaterEnum.UPDATE_DOWNLOADED, '下载完成')
-          // quitAndInstall(newVersionPath)
+          // 是否下载新版本状态设置为成功
+          AutoUpdater.isDownloadNewVersion = true
         } else {
-          log.info(`下载失败: ${state}`)
+          AutoUpdater.autoUpdaterSendEventByMsg(AutoUpdaterEnum.ERROR, `下载失败: ${state}`)
+          log.info(`[新版本下载事件] 下载失败: ${state}`)
         }
       })
     })
@@ -159,11 +202,10 @@ class AutoUpdater {
   /**
    * 强制更新
    */
-  static forcedUpdate(newVersion, content): void {
+  static forcedUpdate(info): void {
     log.info('当前版本 : ', thisVersion, ' , 开始强制更新')
     AutoUpdater.autoUpdaterSendEvent(AutoUpdaterEnum.UPDATE_AVAILABLE, {
-      newVersion: newVersion,
-      releaseNotes: content,
+      ...info,
       forcedUpdate: true
     })
   }
@@ -171,12 +213,9 @@ class AutoUpdater {
   /**
    * 检测更新
    */
-  static checkUpdate(newVersion, content): void {
+  static checkUpdate(info): void {
     // 设置强制更新状态
-    AutoUpdater.autoUpdaterSendEvent(AutoUpdaterEnum.UPDATE_AVAILABLE, {
-      newVersion: newVersion,
-      releaseNotes: content
-    })
+    AutoUpdater.autoUpdaterSendEvent(AutoUpdaterEnum.UPDATE_AVAILABLE, info)
   }
 
   /**
@@ -198,6 +237,8 @@ class AutoUpdater {
         const newVersion = data['newVersion']
         const newStatus = data['newStatus']
         const updateContent = data['updateContent']
+        const downloadType = data['downloadType']
+        AutoUpdater.newVersionDownloadUrl = data['downloadUrl']
         // updateStatus = 0
         // newVersion = '0.0.5'
         // newStatus = true
@@ -221,11 +262,19 @@ class AutoUpdater {
         if (updateStatus === UpdateStatusEnum.TIPS) {
           // 当有新版本时 关闭静默检测
           AutoUpdater.isSilence = false
-          AutoUpdater.checkUpdate(newVersion, updateContent)
+          AutoUpdater.checkUpdate({
+            newVersion,
+            updateContent,
+            downloadType
+          })
         } else if (updateStatus === UpdateStatusEnum.FORCED) {
           // 当有新版本时 关闭静默检测
           AutoUpdater.isSilence = false
-          AutoUpdater.forcedUpdate(newVersion + ' - 此版本须必更', updateContent)
+          AutoUpdater.forcedUpdate({
+            newVersion: newVersion + ' - 此版本须必更',
+            updateContent,
+            downloadType
+          })
           // 设置主窗口为可关闭状态
           GlobalWin.isMainWinClose = true
           // 销毁托盘菜单
@@ -248,6 +297,18 @@ class AutoUpdater {
         }
         AutoUpdater.autoUpdaterSendEventByMsg(AutoUpdaterEnum.ERROR, msg)
       })
+  }
+
+  /**
+   * 自动更新检测
+   */
+  static autoUpdaterStartCheck(): void {
+    GlobalWin.mainWin.webContents.executeJavaScript('localStorage.autoUpdater').then((status) => {
+      if (YesNoEnum.Y === status) {
+        // 静默更新检测
+        AutoUpdater.startCheck(true)
+      }
+    })
   }
 
   /**
@@ -279,44 +340,16 @@ class AutoUpdater {
    * 开始安装新版本 - 下载完成后触发
    */
   static startInstall(): void {
-    this.quitAndInstall(AutoUpdater.newVersionPath)
-  }
-
-  /**
-   * 用户手动退出并安装
-   * @param pathInfo 安装包目录
-   */
-  static quitAndInstall = (pathInfo: string): void => {
-    // TODO 处理退出前需要执行的内容
-    this.execInstall(pathInfo).then()
-  }
-
-  /**
-   * 执行安装
-   */
-  static execInstall = (exePath): Promise<void> => {
-    return new Promise(() => {
-      const args = ['--updated', '/S', '--force-run']
-      this.spawnExpand(exePath, ['--updated', '/S', '--force-run']).catch((e) => {
-        const errorCode = e.code
-        log.error(
-          `Cannot run installer: error code: ${errorCode}, error message: "${e.message}", will be executed again using elevate if EACCES"`
-        )
-        if (errorCode === 'UNKNOWN' || errorCode === 'EACCES') {
-          console.log('需要权限更新')
-          // elevate.exe 主要用于解决运行权限问题
-          let elevatePath = './resources/elevate.exe'
-          if (EnvEnum.isDev()) {
-            elevatePath = './dist/win-unpacked/resources/elevate.exe'
-          }
-          this.spawnExpand(elevatePath, [exePath].concat(args)).catch((e) => {
-            log.error('elevateUrl e ', e)
-          })
-        } else {
-          log.error('安装异常 e ', e)
-        }
+    log.info('[新版本安装] 执行安装')
+    this.execInstall(AutoUpdater.newVersionPath)
+      .then(() => {
+        // 调用成功后关闭窗口
+        updateWin.close()
       })
-    })
+      .catch((e) => {
+        log.error('[新版本安装] 安装异常', e)
+        AutoUpdater.autoUpdaterSendEventByMsg(AutoUpdaterEnum.ERROR, '调起安装任务失败')
+      })
   }
 
   /**
@@ -324,7 +357,7 @@ class AutoUpdater {
    *   - node 8: Throws the error
    *   - node 10: Emit the error(Need to listen with on)
    */
-  static spawnExpand = async (exe, args): Promise<boolean> => {
+  static spawnExpandFun = (exe, args): Promise<boolean> => {
     return new Promise((resolve, reject) => {
       try {
         const process = spawn(exe, args, {
@@ -342,6 +375,38 @@ class AutoUpdater {
       } catch (error) {
         reject(error)
       }
+    })
+  }
+
+  /**
+   * 执行安装
+   */
+  static execInstall = (exePath): Promise<void> => {
+    return new Promise((resolve, reject) => {
+      const args = ['--updated', '/S', '--force-run']
+      AutoUpdater.spawnExpandFun(exePath, args).catch((e) => {
+        const errorCode = e.code
+        if (errorCode !== 'UNKNOWN' && errorCode !== 'EACCES') {
+          log.error('[新版本安装] 安装异常', e)
+          reject(e)
+          return
+        }
+        // elevate.exe 主要用于解决运行权限问题
+        let elevatePath = './resources/elevate.exe'
+        if (EnvEnum.isDev()) {
+          elevatePath = './dist/win-unpacked/resources/elevate.exe'
+        }
+        log.info('[新版本安装] 开始提权安装')
+        AutoUpdater.spawnExpandFun(elevatePath, [exePath].concat(args))
+          .then(() => {
+            log.info('[新版本安装] 调起安装命令成功')
+            resolve()
+          })
+          .catch((e) => {
+            log.error('[新版本安装] 提权安装异常', e)
+            reject(e)
+          })
+      })
     })
   }
 }
@@ -373,14 +438,16 @@ ipcMain.handle('close-update-win-event', (_event, _args) => {
  * 自动更新开始下载
  */
 ipcMain.handle('auto-updater-start-download', () => {
+  if (AutoUpdater.isDownloadNewVersion) {
+    AutoUpdater.autoUpdaterSendEvent(AutoUpdaterEnum.UPDATE_DOWNLOADED, '下载完成')
+    return
+  }
   // 触发下载
-  updateWin.webContents.downloadURL(
-    'https://gitcode.net/qq_37346938/TTime/-/raw/main/version/TTime-0.3.0-setup.exe'
-  )
+  updateWin.webContents.downloadURL(AutoUpdater.newVersionDownloadUrl)
 })
 
 /**
- * 开始安装新版本 - 下载完成后触发
+ * 开始安装新版本 - 下载完成后可触发
  */
 ipcMain.handle('auto-updater-start-install', () => {
   AutoUpdater.startInstall()

@@ -54,6 +54,7 @@
         </el-result>
         <el-result
           v-else-if="autoUpdaterStatus === AutoUpdaterEnum.UPDATE_DOWNLOADED"
+          style="padding-top: 80px"
           title="下载完成"
           sub-title="新版已下载完毕，点击安装，立即体验新版本功能"
         >
@@ -75,8 +76,10 @@
       <div class="bottom-block">
         <el-button
           v-if="
-            autoUpdaterStatus === AutoUpdaterEnum.UPDATE_AVAILABLE &&
-            systemType === SystemTypeEnum.WIN
+            (autoUpdaterStatus === AutoUpdaterEnum.UPDATE_AVAILABLE || forcedUpdate) &&
+            systemType === SystemTypeEnum.WIN &&
+            (downloadType === UpdateDownloadTypeEnum.IN_APP ||
+              downloadType === UpdateDownloadTypeEnum.TO_OFFICIAL_IN_APP)
           "
           type="success"
           :loading="preDownloadingStatus"
@@ -85,8 +88,10 @@
         </el-button>
         <el-button
           v-if="
-            autoUpdaterStatus === AutoUpdaterEnum.UPDATE_AVAILABLE &&
-            systemType === SystemTypeEnum.MAC
+            (autoUpdaterStatus === AutoUpdaterEnum.UPDATE_AVAILABLE || forcedUpdate) &&
+            (systemType === SystemTypeEnum.MAC ||
+              downloadType === UpdateDownloadTypeEnum.TO_OFFICIAL ||
+              downloadType === UpdateDownloadTypeEnum.TO_OFFICIAL_IN_APP)
           "
           type="success"
           @click="toOfficialPage"
@@ -137,6 +142,7 @@
 <script lang="ts" setup>
 import { nextTick, ref } from 'vue'
 import { AutoUpdaterEnum } from '../enums/AutoUpdaterEnum'
+import { UpdateDownloadTypeEnum } from '../enums/UpdateDownloadTypeEnum'
 import { ElLoading } from 'element-plus'
 import { isNotNull, isNull } from '../utils/validate'
 import { initTheme } from '../utils/themeUtil'
@@ -157,6 +163,8 @@ const thisVersion = ref('')
 const newVersion = ref('')
 // 新版本更新内容
 const contentList = ref([])
+// 下载类型
+const downloadType = ref()
 // 错误信息
 const errorMsg = ref('')
 // 下载进度
@@ -246,6 +254,8 @@ window.api.autoUpdaterEvent((eventType, res) => {
   autoUpdaterStatus.value = eventType
   forcedUpdate.value = res.forcedUpdate
   thisVersion.value = res.thisVersion
+  // 下载进度事件
+  securityCloseLoading(loading)
   // 触发了方法就直接关闭下载预加载Loading
   securityCloseLoading(preDownloading)
   preDownloadingStatus.value = false
@@ -258,28 +268,25 @@ window.api.autoUpdaterEvent((eventType, res) => {
     })
   } else if (AutoUpdaterEnum.UPDATE_AVAILABLE === eventType) {
     // 存在新版本时触发
-    securityCloseLoading(loading)
     thisVersion.value = res.thisVersion
     newVersion.value = res.newVersion
-    let releaseNotes = res.releaseNotes
-    if (isNotNull(releaseNotes)) {
-      releaseNotes = releaseNotes.split('|')
+    downloadType.value = res.downloadType
+    let updateContent = res.updateContent
+    if (isNotNull(updateContent)) {
+      updateContent = updateContent.split('|')
     }
     // 添加之前先清空
     contentList.value = []
-    releaseNotes.forEach((value) => {
+    updateContent.forEach((value) => {
       contentList.value.push(value)
     })
   } else if (AutoUpdaterEnum.UPDATE_NOT_AVAILABLE === eventType) {
     // 不存在新版本时触发
-    securityCloseLoading(loading)
     thisVersion.value = res.thisVersion
   } else if (AutoUpdaterEnum.ERROR === eventType) {
     // 异常时触发
-    securityCloseLoading(loading)
     errorMsg.value = res.message
   } else if (AutoUpdaterEnum.DOWNLOAD_PROGRESS === eventType) {
-    console.log('DOWNLOAD_PROGRESS res = ', res)
     if (isNull(downloading)) {
       nextTick(() => {
         downloading = ElLoading.service({
@@ -291,11 +298,9 @@ window.api.autoUpdaterEvent((eventType, res) => {
         })
       })
     }
-    // 下载进度事件
-    securityCloseLoading(loading)
     percent.value = res.percent
   } else if (AutoUpdaterEnum.UPDATE_DOWNLOADED === eventType) {
-    securityCloseLoading(downloading)
+    /* empty */
   }
 })
 </script>

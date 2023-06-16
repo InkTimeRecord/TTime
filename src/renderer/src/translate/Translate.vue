@@ -148,10 +148,6 @@ window.api.autoLaunchInitEvent()
 if (undefined === cacheGetStr('autoUpdater')) {
   cacheSetStr('autoUpdater', YesNoEnum.Y)
 }
-if (cacheGetStr('autoUpdater') === YesNoEnum.Y) {
-  // 静默更新事件
-  window.api.autoUpdaterSilenceStartCheckEvent()
-}
 // 语音播放源
 if (undefined === cacheGetStr('playSpeechService')) {
   cacheSetStr('playSpeechService', PlaySpeechServiceEnum.TTIME)

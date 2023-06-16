@@ -12,7 +12,6 @@ declare global {
     alwaysOnTopEvent
     initLoadTranslateShortcutKeyEvent
     autoLaunchInitEvent
-    autoUpdaterSilenceStartCheckEvent
     windowHeightChangeMaxEvent
     logInfoEvent
     logErrorEvent
