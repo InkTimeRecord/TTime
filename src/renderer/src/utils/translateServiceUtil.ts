@@ -103,7 +103,8 @@ export const buildTranslateService = (translateServiceEnum): {} => {
         appId: '',
         appKey: '',
         checkStatus: false,
-        model: OpenAIModelEnum.GPT_TURBO_35
+        model: OpenAIModelEnum.GPT_TURBO_35,
+        requestUrl: OpenAIModelEnum.REQUEST_URL
       }
     case TranslateServiceEnum.YOU_DAO:
       return {

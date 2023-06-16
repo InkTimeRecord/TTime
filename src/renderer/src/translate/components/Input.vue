@@ -266,7 +266,9 @@ const translateFun = (): void => {
         appId: translateService.appId,
         appKey: translateService.appKey,
         // 此参数 OpenAI 使用
-        model: translateService.model
+        model: translateService.model,
+        // 此参数 OpenAI 使用
+        requestUrl: translateService.requestUrl
       }
     }
     // 此处触发之后会异步回调到 *ApiTranslateCallbackEvent 方法中去执行

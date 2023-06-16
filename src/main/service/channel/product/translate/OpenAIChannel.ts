@@ -100,7 +100,9 @@ class OpenAIChannel implements ITranslateInterface {
     const responseData = {
       id: info.id,
       appId: info.appId,
-      appKey: info.appKey
+      appKey: info.appKey,
+      requestUrl: info.requestUrl,
+      model: info.model
     }
     if (status) {
       log.info('[OpenAI翻译校验密钥事件] - 响应报文 : ', JSON.stringify(data))

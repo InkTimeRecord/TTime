@@ -5,6 +5,7 @@ import { TranslateServiceEnum } from '../enums/TranslateServiceEnum'
 import { commonError } from '../utils/RequestUtil'
 import { OpenAIStatusEnum } from '../enums/OpenAIStatusEnum'
 import { v4 as uuidv4 } from 'uuid'
+import { OpenAIModelEnum } from '../enums/OpenAIModelEnum'
 
 export class QuoteProcessor {
   private quote: string
@@ -200,8 +201,11 @@ class OpenAIChannelRequest {
       { code: OpenAIStatusEnum.START },
       isCheckRequest ? info : null
     )
+    if (isNull(info.requestUrl)) {
+      info.requestUrl = OpenAIModelEnum.REQUEST_URL
+    }
     let text = ''
-    fetch('https://api.openai.com/v1/chat/completions', {
+    fetch(info.requestUrl + '/v1/chat/completions', {
       method: 'POST',
       body: JSON.stringify(data),
       headers: {
@@ -281,13 +285,16 @@ class OpenAIChannelRequest {
   /**
    * OpenAI - 翻译
    *
-   * @param info            翻译信息
+   * @param info 翻译信息
    */
   static openaiCheck = (info): void => {
     const isCheckRequest = true
     const { data } = OpenAIChannelRequest.buildOpenAIRequest(info, isCheckRequest)
+    if (isNull(info.requestUrl)) {
+      info.requestUrl = OpenAIModelEnum.REQUEST_URL
+    }
     const requestInfo = {
-      baseURL: 'https://api.openai.com',
+      baseURL: info.requestUrl,
       url: '/v1/chat/completions',
       method: HttpMethodType.POST,
       data,

@@ -55,6 +55,18 @@
         <el-form v-if="!translateServiceThis.isBuiltIn" label-width="80px" label-position="left">
           <el-form-item
             v-if="translateServiceThis.type === TranslateServiceEnum.OPEN_AI"
+            label="请求地址"
+          >
+            <el-input
+              v-model="translateServiceThis.requestUrl"
+              type="text"
+              placeholder="https://api.openai.com"
+              spellcheck="false"
+            />
+            <span class="form-switch-span"> 留空默认：https://api.openai.com </span>
+          </el-form-item>
+          <el-form-item
+            v-if="translateServiceThis.type === TranslateServiceEnum.OPEN_AI"
             label="模型"
           >
             <el-select v-model="translateServiceThis.model" size="small">
@@ -140,7 +152,7 @@ import {
   getTranslateServiceMap,
   setTranslateServiceMap
 } from '../../../../utils/translateServiceUtil'
-import { isNull } from '../../../../utils/validate'
+import { isNotUrl, isNull } from '../../../../utils/validate'
 import { TranslateServiceEnum } from '../../../../enums/TranslateServiceEnum'
 import ElMessageExtend from '../../../../utils/messageExtend'
 import { REnum } from '../../../../enums/REnum'
@@ -268,12 +280,25 @@ const translateServiceCheckAndSave = () => {
   ) {
     return ElMessageExtend.warning('请输入密钥信息后再进行验证')
   }
+  if (TranslateServiceEnum.OPEN_AI === value.type) {
+    if (isNotUrl(value.requestUrl)) {
+      value.requestUrl = OpenAIModelEnum.REQUEST_URL
+    } else {
+      // 检查尾部的斜杠
+      if (value.requestUrl.endsWith('/')) {
+        // 移除尾部的斜杠
+        value.requestUrl = value.requestUrl.slice(0, -1)
+      }
+    }
+  }
   window.api.apiUniteTranslateCheck(value.type, {
     id: value.id,
     appId: value.appId,
     appKey: value.appKey,
     // 此参数 OpenAI 使用
-    model: value.model
+    model: value.model,
+    // 此参数 OpenAI 使用
+    requestUrl: value.requestUrl
   })
   // 开启翻译服务验证加载状态
   checkIngStatus.value = true
@@ -303,6 +328,10 @@ window.api.apiCheckTranslateCallbackEvent((type, res) => {
   insideTranslateService.checkStatus = checkStatus
   insideTranslateService.appId = data.appId
   insideTranslateService.appKey = data.appKey
+  if (TranslateServiceEnum.OPEN_AI === type) {
+    insideTranslateService.requestUrl = data.requestUrl
+    insideTranslateService.model = data.model
+  }
   saveTranslateService(insideTranslateService)
   if (translateServiceThis.value.id === insideTranslateService.id) {
     translateServiceThis.value = insideTranslateService
