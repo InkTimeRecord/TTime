@@ -84,7 +84,7 @@ class AutoUpdater {
     // 每12小时检测一次
     setInterval(() => {
       AutoUpdater.autoUpdaterStartCheck()
-    }, 1000 * 90)
+    }, 1000 * 60 * 60 * 12)
   }
 
   /**
