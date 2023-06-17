@@ -48,7 +48,7 @@ class VolcanoChannel implements ITranslateInterface {
       appId: info.appId,
       appKey: info.appKey
     }
-    // 火山翻译不支持输入文字自动识别语言 这里默认识别中文
+    // 此翻译不支持输入文字自动识别语言 这里默认识别中文
     info.languageType = 'zh'
     VolcanoRequest.apiTranslate(info).then(
       (res) => {

@@ -11,6 +11,7 @@ import bingLogo from '../assets/bingLogo.png'
 import caiyunLogo from '../assets/caiyunLogo.png'
 import niuTransLogo from '../assets/niuTransLogo.png'
 import transmart from '../assets/transmart.png'
+import papagoLogo from '../assets/papagoLogo.png'
 
 /**
  * 翻译服务枚举
@@ -100,6 +101,11 @@ class TranslateServiceEnum {
    * 腾讯交互翻译(内置)
    */
   static TRAN_SMART = 'TranSmart'
+
+  /**
+   * Papago翻译
+   */
+  static PAPAGO = 'PAPAGO'
 
   /**
    * 翻译服务信息Map
@@ -208,6 +214,10 @@ class TranslateServiceEnum {
         TranslateServiceEnum.TRAN_SMART,
         transmart
       )
+    )
+    TranslateServiceEnum.translateServiceMap.set(
+      TranslateServiceEnum.PAPAGO,
+      TranslateServiceEnum.buildServiceInfo('Papago翻译', TranslateServiceEnum.PAPAGO, papagoLogo)
     )
     return TranslateServiceEnum.translateServiceMap
   }

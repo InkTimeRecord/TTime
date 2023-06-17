@@ -54,7 +54,8 @@ import {
   getLanguageTypeByOpenAI,
   getLanguageResultTypeByOpenAI,
   getLanguageResultType,
-  getLanguageTypeByVolcano
+  getLanguageTypeByVolcano,
+  getLanguageTypeByPapago
 } from '../../utils/languageUtil'
 import { YesNoEnum } from '../../enums/YesNoEnum'
 
@@ -236,6 +237,9 @@ const translateFun = (): void => {
       }
       if (TranslateServiceEnum.VOLCANO === type) {
         languageInputTypeRequest = getLanguageTypeByVolcano(translateContentDealWith)
+      }
+      if (TranslateServiceEnum.PAPAGO === type) {
+        languageInputTypeRequest = getLanguageTypeByPapago(translateContentDealWith)
       }
     }
     if (!isResultAuto) {

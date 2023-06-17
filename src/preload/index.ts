@@ -402,6 +402,18 @@ const transmartApiTranslateCallbackEvent = (callback): void => {
     callback(obj)
   })
 }
+
+/**
+ * Papago翻译 - 接口回调
+ *
+ * @param callback 回调方法 用于主进程内部触发时推送到Vue页面执行
+ */
+const papagoApiTranslateCallbackEvent = (callback): void => {
+  ipcRenderer.on('papago-api-translate-callback-event', (_event, obj) => {
+    callback(obj)
+  })
+}
+
 /**
  * 翻译结果消息回调
  * 如果校验无法翻译时，但也不能触发翻译事件时候，此处模拟翻译结果消息回调
@@ -526,6 +538,7 @@ const api = {
   niutransbuiltinApiTranslateCallbackEvent,
   caiyunApiTranslateCallbackEvent,
   transmartApiTranslateCallbackEvent,
+  papagoApiTranslateCallbackEvent,
   ttimeApiAppStart,
   showMsgEvent,
   updateTranslateServiceEvent,

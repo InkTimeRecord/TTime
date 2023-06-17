@@ -213,5 +213,14 @@ export const buildTranslateService = (translateServiceEnum): {} => {
         isBuiltIn: true,
         checkStatus: true
       }
+    case TranslateServiceEnum.PAPAGO:
+      return {
+        ...translateService,
+        useStatus: false,
+        isBuiltIn: false,
+        appId: '',
+        appKey: '',
+        checkStatus: false
+      }
   }
 }

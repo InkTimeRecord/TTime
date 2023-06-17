@@ -16,6 +16,7 @@ import DeepLBuiltInChannel from '../product/translate/DeepLBuiltInChannel'
 import NiuTransChannel from '../product/translate/NiuTransChannel'
 import CaiYunChannel from '../product/translate/CaiYunChannel'
 import TranSmartChannel from '../product/translate/TranSmartChannel'
+import PapagoChannel from '../product/translate/PapagoChannel'
 
 const ttimeChannel = new TTimeChannel()
 const tencentCloudChannel = new TencentCloudChannel()
@@ -33,6 +34,7 @@ const bingDictChannel = new BingDictChannel()
 const niuTransChannel = new NiuTransChannel()
 const caiYunChannel = new CaiYunChannel()
 const tranSmartChannel = new TranSmartChannel()
+const papagoChannel = new PapagoChannel()
 
 /**
  * 选择渠道工厂
@@ -82,6 +84,8 @@ class TranslateChannelFactory {
       caiYunChannel.apiTranslate(info)
     } else if (TranslateServiceEnum.TRAN_SMART === type) {
       tranSmartChannel.apiTranslate(info)
+    } else if (TranslateServiceEnum.PAPAGO === type) {
+      papagoChannel.apiTranslate(info)
     }
   }
 
@@ -116,6 +120,8 @@ class TranslateChannelFactory {
       niuTransChannel.apiTranslateCheck(info)
     } else if (TranslateServiceEnum.CAI_YUN === type) {
       caiYunChannel.apiTranslateCheck(info)
+    } else if (TranslateServiceEnum.PAPAGO === type) {
+      papagoChannel.apiTranslateCheck(info)
     }
   }
 

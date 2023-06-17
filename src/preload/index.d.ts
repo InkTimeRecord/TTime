@@ -35,6 +35,7 @@ declare global {
     niutransApiTranslateCallbackEvent
     caiyunApiTranslateCallbackEvent
     transmartApiTranslateCallbackEvent
+    papagoApiTranslateCallbackEvent
     ttimeApiAppStart
     ttimeApiTranslateUse
     showMsgEvent
