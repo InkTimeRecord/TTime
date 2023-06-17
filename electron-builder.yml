@@ -14,7 +14,6 @@ asarUnpack:
 #asar:
 #  false
 afterSign: build/notarize.js
-beforePack: build/builder-installer-before.js
 win:
   executableName: TTime
 nsis:
