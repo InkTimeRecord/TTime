@@ -7,6 +7,7 @@ import VolcanoRequest from '../../interfaces/VolcanoRequest'
 import TranslateServiceEnum from '../../../../enums/TranslateServiceEnum'
 import { isNotNull, isNull } from '../../../../utils/validate'
 import { YesNoEnum } from '../../../../enums/YesNoEnum'
+import { VolcanoOcrModelEnum } from '../../../../enums/VolcanoOcrModelEnum'
 
 class VolcanoOcrChannel implements IOcrInterface {
   /**
@@ -38,7 +39,16 @@ class VolcanoOcrChannel implements IOcrInterface {
           GlobalWin.ocrUpdateContent(YesNoEnum.N, errorMsg)
           return
         }
-        GlobalWin.ocrUpdateContent(YesNoEnum.Y, res['data']?.['line_texts']?.join('\n'))
+        if (info.model === VolcanoOcrModelEnum.OCR_NORMAL) {
+          GlobalWin.ocrUpdateContent(YesNoEnum.Y, res['data']?.['line_texts']?.join('\n'))
+        } else if (info.model === VolcanoOcrModelEnum.MULTI_LANGUAGE_OCR) {
+          const textList = res['data']?.['ocr_infos']
+          let data = ''
+          textList.forEach((text) => {
+            data += text['text'] + '\n'
+          })
+          GlobalWin.ocrUpdateContent(YesNoEnum.Y, data)
+        }
       })
       .catch((_err) => {})
   }
@@ -53,7 +63,8 @@ class VolcanoOcrChannel implements IOcrInterface {
     const responseData = {
       id: info.id,
       appId: info.appId,
-      appKey: info.appKey
+      appKey: info.appKey,
+      model: info.model
     }
     log.info('[火山Ocr校验密钥事件] - 请求报文 : ', paramsFilter(info))
     VolcanoRequest.apiOcr(info).then(

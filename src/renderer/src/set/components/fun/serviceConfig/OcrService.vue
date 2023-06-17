@@ -62,7 +62,22 @@
     <div class="translate-service-set-block">
       <div class="translate-service-set">
         <el-form v-if="!ocrServiceThis.isBuiltIn" label-width="80px" label-position="left">
-          <el-form-item :label="ocrServiceThis.type === OcrServiceEnum.BAIDU ? 'ApiKey' : 'AppId'">
+          <el-form-item v-if="ocrServiceThis.type === OcrServiceEnum.VOLCANO" label="类型">
+            <el-select
+              v-model="ocrServiceThis.model"
+              size="small"
+              :placeholder="VolcanoOcrModelList[0].label"
+            >
+              <el-option
+                v-for="model in VolcanoOcrModelList"
+                :key="model.value"
+                :label="model.label"
+                :value="model.value"
+              />
+            </el-select>
+          </el-form-item>
+
+          <el-form-item :label="'AppId'">
             <el-input
               v-model="ocrServiceThis.appId"
               type="password"
@@ -71,9 +86,7 @@
               spellcheck="false"
             />
           </el-form-item>
-          <el-form-item
-            :label="ocrServiceThis.type === OcrServiceEnum.BAIDU ? 'SecretKey' : 'AppKey'"
-          >
+          <el-form-item :label="'AppKey'">
             <el-input
               v-model="ocrServiceThis.appKey"
               type="password"
@@ -117,6 +130,8 @@ import { OcrServiceEnum } from '../../../../enums/OcrServiceEnum'
 import ElMessageExtend from '../../../../utils/messageExtend'
 import { REnum } from '../../../../enums/REnum'
 import draggable from 'vuedraggable'
+import { VolcanoOcrModelEnum } from '../../../../enums/VolcanoOcrModelEnum'
+import { isNull } from '../../../../utils/validate'
 
 // Ocr服务验证状态
 const checkIngStatus = ref(false)
@@ -141,6 +156,8 @@ for (let i = 1; i < ocrServiceSelectMenuListTemp.length; i++) {
 }
 // 获取缓存中的Ocr服务list
 const ocrServiceSelectMenuList = ref(ocrServiceSelectMenuListTemp)
+
+const VolcanoOcrModelList = VolcanoOcrModelEnum.MODEL_LIST
 
 /**
  * 设置当前选中项默认为第一个Ocr服务
@@ -223,7 +240,9 @@ const ocrServiceCheckAndSave = () => {
   window.api.apiUniteOcrCheck(value.type, {
     id: value.id,
     appId: value.appId,
-    appKey: value.appKey
+    appKey: value.appKey,
+    // 此参数 OpenAI 使用
+    model: value.model
   })
   // 开启Ocr服务验证加载状态
   checkIngStatus.value = true
@@ -253,6 +272,9 @@ window.api.apiCheckOcrCallbackEvent((type, res) => {
   insideOcrService.checkStatus = checkStatus
   insideOcrService.appId = data.appId
   insideOcrService.appKey = data.appKey
+  if (OcrServiceEnum.VOLCANO === type) {
+    insideOcrService.model = data.model
+  }
   ocrServiceUseStatusChange(insideOcrService)
   if (ocrServiceThis.value.id === insideOcrService.id) {
     ocrServiceThis.value = insideOcrService

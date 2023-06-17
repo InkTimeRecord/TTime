@@ -2,6 +2,7 @@ import { random } from './strUtil'
 import { OcrServiceEnum } from '../enums/OcrServiceEnum'
 import { cacheGet, cacheSet } from './cacheUtil'
 import { isNull } from './validate'
+import { VolcanoOcrModelEnum } from '../enums/VolcanoOcrModelEnum'
 
 /**
  * 保存Ocr服务list
@@ -100,7 +101,8 @@ export const buildOcrService = (ocrServiceEnum): {} => {
         isBuiltIn: false,
         appId: '',
         appKey: '',
-        checkStatus: false
+        checkStatus: false,
+        model: VolcanoOcrModelEnum.MULTI_LANGUAGE_OCR
       }
   }
 }
