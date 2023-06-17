@@ -1,6 +1,7 @@
 import { random } from './strUtil'
 import { OcrServiceEnum } from '../enums/OcrServiceEnum'
 import { cacheGet, cacheSet } from './cacheUtil'
+import { isNull } from './validate'
 
 /**
  * 保存Ocr服务list
@@ -8,6 +9,16 @@ import { cacheGet, cacheSet } from './cacheUtil'
  * @param ocrServiceMap Ocr服务list
  */
 export const setOcrServiceMap = (ocrServiceMap): void => {
+  if (ocrServiceMap.size > 0) {
+    const ocrServiceOne = ocrServiceMap.entries().next().value[0]
+    if (isNull(ocrServiceOne['index'])) {
+      let index = 0
+      ocrServiceMap.forEach((ocrService) => {
+        ocrService['index'] = index
+        index++
+      })
+    }
+  }
   cacheSet('ocrServiceMap', Array.from(ocrServiceMap.entries()))
 }
 
@@ -15,10 +26,25 @@ export const setOcrServiceMap = (ocrServiceMap): void => {
  * 获取Ocr服务list
  */
 export const getOcrServiceMap = () => {
-  const map = new Map(cacheGet('ocrServiceMap'))
+  let map = new Map(cacheGet('ocrServiceMap'))
+  if (map.size > 0) {
+    // 因为之前的版本中的数据没有 index 所以这里默认获取第一条翻译源
+    // 看是否有设置 index 如果没有默认赋值一遍
+    const ocrServiceOne = map.entries().next().value[0]
+    if (isNull(ocrServiceOne['index'])) {
+      setOcrServiceMap(map)
+    }
+  }
+  map = new Map(cacheGet('ocrServiceMap'))
+  // 将 Map 转换为包含键值对数组的二维数组
+  const entries = Array.from(map.entries())
+  // 对二维数组按照对象的 index 属性进行排序
+  entries.sort((a, b) => a[1]['index'] - b[1]['index'])
+  // 创建一个新的有序 Map
+  map = new Map(entries)
   // 此处重新更新一下logo 防止当在缓存中存储后 如果应用修改了文件路径 会导致读取logo图片失败
-  map.forEach((translateService) => {
-    translateService['logo'] = OcrServiceEnum.getInfoByService(translateService['type']).logo
+  map.forEach((ocrService) => {
+    ocrService['logo'] = OcrServiceEnum.getInfoByService(ocrService['type']).logo
   })
   return map
 }
