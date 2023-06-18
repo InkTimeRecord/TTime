@@ -12,7 +12,6 @@ declare global {
     alwaysOnTopEvent
     initLoadTranslateShortcutKeyEvent
     autoLaunchInitEvent
-    autoUpdaterSilenceStartCheckEvent
     windowHeightChangeMaxEvent
     logInfoEvent
     logErrorEvent
@@ -36,6 +35,7 @@ declare global {
     niutransApiTranslateCallbackEvent
     caiyunApiTranslateCallbackEvent
     transmartApiTranslateCallbackEvent
+    papagoApiTranslateCallbackEvent
     ttimeApiAppStart
     ttimeApiTranslateUse
     showMsgEvent

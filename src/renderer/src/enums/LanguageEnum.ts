@@ -25,6 +25,13 @@ class LanguageEnum {
     ['eng', { languageType: 'en' }],
     ['jpn', { languageType: 'ja' }]
   ])
+  static languagePapagoMap = new Map([
+    ['cmn', { languageType: 'zh-CN' }],
+    ['eng', { languageType: 'en' }],
+    ['jpn', { languageType: 'ja' }],
+    ['rus', { languageType: 'ru' }],
+    ['kor', { languageType: 'ko' }]
+  ])
   /**
    * 自动识别
    */

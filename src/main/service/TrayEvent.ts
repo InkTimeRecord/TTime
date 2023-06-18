@@ -1,4 +1,4 @@
-import { app, Menu, shell, Tray } from 'electron'
+import { app, Menu, nativeImage, shell, Tray } from 'electron'
 import { isNotNull } from '../utils/validate'
 import * as path from 'path'
 import { SystemTypeEnum } from '../enums/SystemTypeEnum'
@@ -80,16 +80,23 @@ class TrayEvent {
       }
     ]
     let iconPath
-    const systemType = SystemTypeEnum.getSystemType()
-    if (systemType === SystemTypeEnum.MAC) {
-      iconPath = path.join(__dirname, '../../public/icon-16x16.png')
-    } else if (systemType === SystemTypeEnum.WIN) {
+    if (SystemTypeEnum.isMac()) {
+      iconPath = path.join(__dirname, '../../public/icon-mac-tray.png')
+    } else if (SystemTypeEnum.isWin()) {
       iconPath = path.join(__dirname, '../../public/icon-1024x1024.png')
     } else {
       iconPath = path.join(__dirname, '../../public/logo-16x16.png')
     }
-    // 创建系统托盘
-    TrayEvent.mainTray = new Tray(iconPath)
+    if (SystemTypeEnum.isMac()) {
+      const icon = nativeImage.createFromPath(iconPath)
+      const trayIcon = icon.resize({ width: 16 })
+      trayIcon.setTemplateImage(true)
+      // 创建系统托盘
+      TrayEvent.mainTray = new Tray(trayIcon)
+    } else {
+      // 创建系统托盘
+      TrayEvent.mainTray = new Tray(iconPath)
+    }
     // 设置托盘图标悬停时提示内容
     TrayEvent.mainTray.setToolTip('TTime')
     // 构建托盘菜单列表

@@ -1,84 +1,82 @@
 <template>
   <el-form :model="basiInfo" label-width="150px">
-    <el-collapse v-model="activeNames">
-      <el-collapse-item title="翻译设置" name="1">
-        <el-form-item class="none-select" label="语音播放源">
-          <el-tooltip placement="bottom-start">
-            <template #content>
-              除了TTime播放源以外其他语音播放源来自第三方，需要网络调用<br />当网速过慢时，可能会出现点击没反应的情况，一般都是因为网络延迟造成</template
-            >
-            <el-icon class="set-page-icon"><QuestionFilled /></el-icon>
-          </el-tooltip>
-          <div class="play-speech-service-block">
-            <el-radio-group v-model="basiInfo.playSpeechService" @change="playSpeechServiceEvent">
-              <el-radio :label="PlaySpeechServiceEnum.TTIME">TTime</el-radio>
-              <el-radio :label="PlaySpeechServiceEnum.YOUDAO">网易有道</el-radio>
-              <el-radio :label="PlaySpeechServiceEnum.SOGOU">搜狗</el-radio>
-            </el-radio-group>
-          </div>
-        </el-form-item>
-        <el-form-item class="none-select" label="文本处理">
-          <el-switch
-            v-model="advancedSettingInfo.wrapReplaceSpaceStatus"
-            @change="wrapReplaceSpaceStatusEvent"
-          />
-          <span class="form-switch-span none-select">
-            将翻译结果的 [ 换行符 ] 替换为 [ 空格 ]
-          </span>
-        </el-form-item>
-      </el-collapse-item>
-      <el-collapse-item title="OCR设置" name="2">
-        <el-form-item class="none-select" label="OCR文本处理">
-          <el-switch
-            v-model="advancedSettingInfo.ocrWrapReplaceSpaceStatus"
-            @change="ocrWrapReplaceSpaceStatusEvent"
-          />
-          <span class="form-switch-span none-select"> 将OCR结果的 [ 换行符 ] 替换为 [ 空格 ] </span>
-        </el-form-item>
-        <el-form-item class="none-select" label="OCR结果写入剪切板">
-          <el-switch
-            v-model="advancedSettingInfo.ocrWriteClipboardStatus"
-            @change="ocrWriteClipboardStatusEvent"
-          />
-          <span class="form-switch-span none-select"> 将OCR识别后的文字自动写入剪切板 </span>
-        </el-form-item>
-      </el-collapse-item>
-      <el-collapse-item title="功能设置" name="3">
-        <el-form-item class="none-select" label="鼠标悬浮球取词(Beta)">
-          <el-tooltip placement="bottom-start">
-            <template #content>
-              开启后，操作流程：鼠标双击需要翻译的词 -> 浮现TTime小图标 -> 点击翻译
-              <br />
-              注意：此功能正在测试试行阶段，目前仅支持Windows，如果使用过程中出现问题欢迎联系我们进行反馈修复
-            </template>
-            <el-icon class="set-page-icon"><QuestionFilled /></el-icon>
-          </el-tooltip>
-          <div class="play-speech-service-block">
-            <el-radio-group
-              v-model="advancedSettingInfo.hoverBallStatus"
-              @change="hoverBallStatusEvent"
-            >
-              <el-radio :label="YesNoEnum.Y">开启</el-radio>
-              <el-radio :label="YesNoEnum.N">关闭</el-radio>
-            </el-radio-group>
-          </div>
-        </el-form-item>
-        <el-form-item class="none-select" label="置顶时允许隐藏窗口">
-          <div class="play-speech-service-block">
-            <el-radio-group
-              v-model="advancedSettingInfo.alwaysOnTopAllowEscStatus"
-              @change="alwaysOnTopAllowEscStatusEvent"
-            >
-              <el-radio :label="YesNoEnum.Y">开启</el-radio>
-              <el-radio :label="YesNoEnum.N">关闭</el-radio>
-            </el-radio-group>
-            <span class="form-switch-span none-select">
-              开启后，当翻译/Ocr窗口置顶时，按ESC键依旧可隐藏窗口
-            </span>
-          </div>
-        </el-form-item>
-      </el-collapse-item>
-    </el-collapse>
+    <span class="group-title-span none-select"> 翻译设置 </span>
+    <el-divider />
+    <el-form-item class="none-select" label="语音播放源">
+      <el-tooltip placement="bottom-start">
+        <template #content>
+          除了TTime播放源以外其他语音播放源来自第三方，需要网络调用<br />当网速过慢时，可能会出现点击没反应的情况，一般都是因为网络延迟造成</template
+        >
+        <el-icon class="set-page-icon"><QuestionFilled /></el-icon>
+      </el-tooltip>
+      <div class="play-speech-service-block">
+        <el-radio-group v-model="basiInfo.playSpeechService" @change="playSpeechServiceEvent">
+          <el-radio :label="PlaySpeechServiceEnum.TTIME">TTime</el-radio>
+          <el-radio :label="PlaySpeechServiceEnum.YOUDAO">网易有道</el-radio>
+          <el-radio :label="PlaySpeechServiceEnum.SOGOU">搜狗</el-radio>
+        </el-radio-group>
+      </div>
+    </el-form-item>
+    <el-form-item class="none-select" label="文本处理">
+      <el-switch
+        v-model="advancedSettingInfo.wrapReplaceSpaceStatus"
+        @change="wrapReplaceSpaceStatusEvent"
+      />
+      <span class="form-switch-span none-select"> 将翻译结果的 [ 换行符 ] 替换为 [ 空格 ] </span>
+    </el-form-item>
+
+    <span class="group-title-span none-select"> OCR设置 </span>
+    <el-divider />
+    <el-form-item class="none-select" label="OCR文本处理">
+      <el-switch
+        v-model="advancedSettingInfo.ocrWrapReplaceSpaceStatus"
+        @change="ocrWrapReplaceSpaceStatusEvent"
+      />
+      <span class="form-switch-span none-select"> 将OCR结果的 [ 换行符 ] 替换为 [ 空格 ] </span>
+    </el-form-item>
+    <el-form-item class="none-select" label="OCR结果写入剪切板">
+      <el-switch
+        v-model="advancedSettingInfo.ocrWriteClipboardStatus"
+        @change="ocrWriteClipboardStatusEvent"
+      />
+      <span class="form-switch-span none-select"> 将OCR识别后的文字自动写入剪切板 </span>
+    </el-form-item>
+
+    <span class="group-title-span none-select"> 功能设置 </span>
+    <el-divider />
+    <el-form-item class="none-select" label="鼠标悬浮球取词(Beta)">
+      <el-tooltip placement="bottom-start">
+        <template #content>
+          开启后，操作流程：鼠标双击需要翻译的词 -> 浮现TTime小图标 -> 点击翻译
+          <br />
+          注意：此功能正在测试试行阶段，目前仅支持Windows，如果使用过程中出现问题欢迎联系我们进行反馈修复
+        </template>
+        <el-icon class="set-page-icon"><QuestionFilled /></el-icon>
+      </el-tooltip>
+      <div class="play-speech-service-block">
+        <el-radio-group
+          v-model="advancedSettingInfo.hoverBallStatus"
+          @change="hoverBallStatusEvent"
+        >
+          <el-radio :label="YesNoEnum.Y">开启</el-radio>
+          <el-radio :label="YesNoEnum.N">关闭</el-radio>
+        </el-radio-group>
+      </div>
+    </el-form-item>
+    <el-form-item class="none-select" label="置顶时允许隐藏窗口">
+      <div class="play-speech-service-block">
+        <el-radio-group
+          v-model="advancedSettingInfo.alwaysOnTopAllowEscStatus"
+          @change="alwaysOnTopAllowEscStatusEvent"
+        >
+          <el-radio :label="YesNoEnum.Y">开启</el-radio>
+          <el-radio :label="YesNoEnum.N">关闭</el-radio>
+        </el-radio-group>
+        <span class="form-switch-span none-select">
+          开启后，当翻译/Ocr窗口置顶时，按ESC键依旧可隐藏窗口
+        </span>
+      </div>
+    </el-form-item>
   </el-form>
 </template>
 <script setup lang="ts">
@@ -88,8 +86,6 @@ import { YesNoEnum } from '../../../enums/YesNoEnum'
 import { PlaySpeechServiceEnum } from '../../../enums/PlaySpeechServiceEnum'
 import { cacheGetStr, cacheSetStr } from '../../../utils/cacheUtil'
 import { ElMessageBox } from 'element-plus'
-
-const activeNames = ref(['1', '2', '3', '4', '5'])
 
 const basiInfo = ref({
   playSpeechService: cacheGetStr('playSpeechService')
@@ -194,8 +190,18 @@ const hoverBallStatusEvent = (val): void => {
   margin-left: 5px;
 }
 
+.group-title-span {
+  margin-left: 5px;
+  font-size: 13px;
+  color: var(--el-menu-text-color);
+}
+
 .play-speech-service-block {
   display: flex;
   flex-direction: column;
+}
+
+:deep(.el-divider--horizontal) {
+  margin: 15px 0;
 }
 </style>

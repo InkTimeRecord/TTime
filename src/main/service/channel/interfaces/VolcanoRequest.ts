@@ -1,5 +1,7 @@
 import { Service } from '@volcengine/openapi'
 import { OpenApiResponse } from '@volcengine/openapi/lib/base/types'
+import { VolcanoOcrModelEnum } from '../../../enums/VolcanoOcrModelEnum'
+import { isNull } from '../../../utils/validate'
 
 /**
  * 翻译
@@ -49,8 +51,18 @@ const apiOcr = async (info): Promise<OpenApiResponse<any>> => {
     accessKeyId: info.appId,
     secretKey: info.appKey
   })
-  const fetchApi = service.createAPI('OCRNormal', {
-    Version: '2020-08-26',
+  // 由于之前的没有设置模型字段 所以会有存在旧数据为空的情况 这里默认设置多语种OCR
+  if (isNull(info.model)) {
+    info.model = VolcanoOcrModelEnum.MULTI_LANGUAGE_OCR
+  }
+  let version = ''
+  if (info.model === VolcanoOcrModelEnum.OCR_NORMAL) {
+    version = '2020-08-26'
+  } else if (info.model === VolcanoOcrModelEnum.MULTI_LANGUAGE_OCR) {
+    version = '2022-08-31'
+  }
+  const fetchApi = service.createAPI(info.model, {
+    Version: version,
     method: 'POST',
     contentType: 'urlencode'
   })

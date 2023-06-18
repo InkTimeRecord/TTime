@@ -54,7 +54,8 @@ import {
   getLanguageTypeByOpenAI,
   getLanguageResultTypeByOpenAI,
   getLanguageResultType,
-  getLanguageTypeByVolcano
+  getLanguageTypeByVolcano,
+  getLanguageTypeByPapago
 } from '../../utils/languageUtil'
 import { YesNoEnum } from '../../enums/YesNoEnum'
 
@@ -237,6 +238,9 @@ const translateFun = (): void => {
       if (TranslateServiceEnum.VOLCANO === type) {
         languageInputTypeRequest = getLanguageTypeByVolcano(translateContentDealWith)
       }
+      if (TranslateServiceEnum.PAPAGO === type) {
+        languageInputTypeRequest = getLanguageTypeByPapago(translateContentDealWith)
+      }
     }
     if (!isResultAuto) {
       const language = resultLanguage.serviceList.find((service) => {
@@ -266,7 +270,9 @@ const translateFun = (): void => {
         appId: translateService.appId,
         appKey: translateService.appKey,
         // 此参数 OpenAI 使用
-        model: translateService.model
+        model: translateService.model,
+        // 此参数 OpenAI 使用
+        requestUrl: translateService.requestUrl
       }
     }
     // 此处触发之后会异步回调到 *ApiTranslateCallbackEvent 方法中去执行

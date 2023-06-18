@@ -62,6 +62,37 @@ function createHoverBallWin(): void {
 
 uIOhook.start()
 
+let mousedownInfo: UiohookMouseEvent
+
+/**
+ * 鼠标单击按下事件
+ */
+uIOhook.on('mousedown', (e: UiohookMouseEvent) => {
+  // 鼠标左键单机
+  if (e.button === 1) {
+    mousedownInfo = e
+  }
+})
+
+/**
+ * 鼠标单击放开事件
+ */
+uIOhook.on('mouseup', (e: UiohookMouseEvent) => {
+  // 鼠标左键单机
+  if (e.button === 1) {
+    if (mousedownInfo.x !== e.x || mousedownInfo.y !== e.y) {
+      GlobalWin.hoverBallWin.webContents
+        .executeJavaScript('localStorage.hoverBallStatus')
+        .then((val) => {
+          if (YesNoEnum.Y === val) {
+            hoverBallWinShow()
+            return
+          }
+        })
+    }
+  }
+})
+
 uIOhook.on('click', (e: UiohookMouseEvent) => {
   if (e.clicks === 2 && e.button === 1) {
     GlobalWin.hoverBallWin.webContents
@@ -118,7 +149,6 @@ ipcMain.handle('hover-ball-events', (_event, _) => {
   uIOhook.keyToggle(UiohookKey.MetaRight, 'up')
   uIOhook.keyToggle(UiohookKey.Tab, 'up')
   uIOhook.keyToggle(UiohookKey.Escape, 'up')
-  uIOhook.keyToggle(UiohookKey.CapsLock, 'up')
   GlobalShortcutEvent.isChoice = true
   GlobalShortcutEvent.getSelectedText().then((selectedText) => {
     GlobalShortcutEvent.isChoice = false

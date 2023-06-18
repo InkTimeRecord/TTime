@@ -22,7 +22,7 @@ export const getLanguageTypeByOpenAI = (translateContent) => {
     // 识别的语种范围
     only: only
   })
-  if(LanguageEnum.NO === language) {
+  if (LanguageEnum.NO === language) {
     language = LanguageEnum.ENGLISH
   }
   return LanguageEnum.languageOpenAIMap.get(language).languageType
@@ -35,10 +35,23 @@ export const getLanguageTypeByVolcano = (translateContent) => {
     // 识别的语种范围
     only: only
   })
-  if(LanguageEnum.NO === language) {
+  if (LanguageEnum.NO === language) {
     language = LanguageEnum.ENGLISH
   }
   return LanguageEnum.languageVolcanoMap.get(language).languageType
+}
+
+export const getLanguageTypeByPapago = (translateContent) => {
+  let language = franc(translateContent, {
+    // 检测最短字符
+    minLength: 1,
+    // 识别的语种范围
+    only: only
+  })
+  if (LanguageEnum.NO === language) {
+    language = LanguageEnum.ENGLISH
+  }
+  return LanguageEnum.languagePapagoMap.get(language).languageType
 }
 
 export const getLanguageResultTypeByOpenAI = (translateContent) => {

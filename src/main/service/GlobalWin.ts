@@ -378,6 +378,8 @@ class GlobalWin {
   static closeApp(): void {
     // 设置主窗口可关闭
     GlobalWin.isMainWinClose = true
+    // 设置悬浮窗可关闭
+    GlobalWin.isOcrWinClose = true
     app.quit()
   }
 }

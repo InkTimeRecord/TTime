@@ -1,35 +1,44 @@
 <template>
   <div class="translate-service-layer">
     <div class="translate-service-div-block">
-      <div class="translate-service-list-block">
+      <ul class="translate-service-list-block">
         <el-scrollbar>
-          <div
-            v-for="(ocrService, key) in ocrServiceMap.values()"
-            :key="key"
-            class="translate-service-block cursor-pointer none-select"
-            :class="{ active: ocrServiceThis.id === ocrService.id }"
-            @click="selectOcrService(ocrService)"
+          <draggable
+            v-model="ocrServiceList"
+            group="people"
+            chosen-class="chosen"
+            item-key="id"
+            animation="300"
+            @change="ocrServiceSortDragChange"
           >
-            <a
-              class="translate-service-block cursor-pointer none-select translate-service-expansion-block"
-            >
-              <div class="left">
-                <img class="translate-service-logo" :src="ocrService.logo" />
-                <span class="translate-service-name">{{ ocrService.name }}</span>
-              </div>
-              <div class="right">
-                <el-switch
-                  v-model="ocrService.useStatus"
-                  @change="ocrServiceUseStatusChange(ocrService)"
-                />
-              </div>
-            </a>
-          </div>
+            <template #item="{ element }">
+              <li
+                class="translate-service-block cursor-pointer none-select"
+                :class="{ active: ocrServiceThis.id === element.id }"
+                @click="selectOcrService(element)"
+              >
+                <a
+                  class="translate-service-block cursor-pointer none-select translate-service-expansion-block"
+                >
+                  <div class="left">
+                    <img class="translate-service-logo" :src="element.logo" />
+                    <span class="translate-service-name">{{ element.name }}</span>
+                  </div>
+                  <div class="right">
+                    <el-switch
+                      v-model="element.useStatus"
+                      @change="ocrServiceUseStatusChange(element)"
+                    />
+                  </div>
+                </a>
+              </li>
+            </template>
+          </draggable>
         </el-scrollbar>
-      </div>
+      </ul>
       <div class="translate-service-edit">
         <div class="translate-service-edit-button">
-          <el-dropdown trigger="click">
+          <el-dropdown trigger="click" max-height="490px">
             <el-button :icon="Plus" size="small" />
             <template #dropdown>
               <el-dropdown-menu>
@@ -53,7 +62,22 @@
     <div class="translate-service-set-block">
       <div class="translate-service-set">
         <el-form v-if="!ocrServiceThis.isBuiltIn" label-width="80px" label-position="left">
-          <el-form-item :label="ocrServiceThis.type === OcrServiceEnum.BAIDU ? 'ApiKey' : 'AppId'">
+          <el-form-item v-if="ocrServiceThis.type === OcrServiceEnum.VOLCANO" label="类型">
+            <el-select
+              v-model="ocrServiceThis.model"
+              size="small"
+              :placeholder="VolcanoOcrModelList[0].label"
+            >
+              <el-option
+                v-for="model in VolcanoOcrModelList"
+                :key="model.value"
+                :label="model.label"
+                :value="model.value"
+              />
+            </el-select>
+          </el-form-item>
+
+          <el-form-item :label="'AppId'">
             <el-input
               v-model="ocrServiceThis.appId"
               type="password"
@@ -62,9 +86,7 @@
               spellcheck="false"
             />
           </el-form-item>
-          <el-form-item
-            :label="ocrServiceThis.type === OcrServiceEnum.BAIDU ? 'SecretKey' : 'AppKey'"
-          >
+          <el-form-item :label="'AppKey'">
             <el-input
               v-model="ocrServiceThis.appKey"
               type="password"
@@ -107,6 +129,9 @@ import {
 import { OcrServiceEnum } from '../../../../enums/OcrServiceEnum'
 import ElMessageExtend from '../../../../utils/messageExtend'
 import { REnum } from '../../../../enums/REnum'
+import draggable from 'vuedraggable'
+import { VolcanoOcrModelEnum } from '../../../../enums/VolcanoOcrModelEnum'
+import { isNull } from '../../../../utils/validate'
 
 // Ocr服务验证状态
 const checkIngStatus = ref(false)
@@ -132,6 +157,8 @@ for (let i = 1; i < ocrServiceSelectMenuListTemp.length; i++) {
 // 获取缓存中的Ocr服务list
 const ocrServiceSelectMenuList = ref(ocrServiceSelectMenuListTemp)
 
+const VolcanoOcrModelList = VolcanoOcrModelEnum.MODEL_LIST
+
 /**
  * 设置当前选中项默认为第一个Ocr服务
  */
@@ -141,6 +168,8 @@ const selectOneOcrServiceThis = () => {
 
 // 获取缓存中的Ocr服务list
 const ocrServiceMap = ref(getOcrServiceMap())
+// 获取缓存中的Ocr服务list
+const ocrServiceList = ref([...ocrServiceMap.value.values()])
 // 当前选择的Ocr服务
 const ocrServiceThis = ref()
 // 设置当前选择的Ocr服务默认为第一个
@@ -196,7 +225,8 @@ const deleteOcrService = () => {
   }
   insideOcrServiceMap.delete(ocrService.id)
   setOcrServiceMap(insideOcrServiceMap)
-  ocrServiceMap.value = insideOcrServiceMap
+  // 更新页面绑定翻译OCR数据
+  updateThisOcrServiceMap(insideOcrServiceMap)
   // 设置当前选中项默认为第一个Ocr服务
   selectOneOcrServiceThis()
 }
@@ -210,7 +240,9 @@ const ocrServiceCheckAndSave = () => {
   window.api.apiUniteOcrCheck(value.type, {
     id: value.id,
     appId: value.appId,
-    appKey: value.appKey
+    appKey: value.appKey,
+    // 此参数 OpenAI 使用
+    model: value.model
   })
   // 开启Ocr服务验证加载状态
   checkIngStatus.value = true
@@ -240,6 +272,9 @@ window.api.apiCheckOcrCallbackEvent((type, res) => {
   insideOcrService.checkStatus = checkStatus
   insideOcrService.appId = data.appId
   insideOcrService.appKey = data.appKey
+  if (OcrServiceEnum.VOLCANO === type) {
+    insideOcrService.model = data.model
+  }
   ocrServiceUseStatusChange(insideOcrService)
   if (ocrServiceThis.value.id === insideOcrService.id) {
     ocrServiceThis.value = insideOcrService
@@ -291,7 +326,34 @@ const saveOcrService = (ocrService) => {
   const insideOcrServiceMap = getOcrServiceMap()
   insideOcrServiceMap.set(ocrService.id, ocrService)
   setOcrServiceMap(insideOcrServiceMap)
-  ocrServiceMap.value = insideOcrServiceMap
+  // 更新页面绑定翻译OCR数据
+  updateThisOcrServiceMap(insideOcrServiceMap)
+}
+
+const ocrServiceSortDragChange = (event): void => {
+  const moved = event.moved
+  // 将 Map 转换为数组
+  const entries = Array.from(getOcrServiceMap().entries())
+  // 交换索引位置
+  ;[entries[moved.oldIndex], entries[moved.newIndex]] = [
+    entries[moved.newIndex],
+    entries[moved.oldIndex]
+  ]
+  // 创建一个新的有序 Map
+  const swappedMap = new Map(entries)
+  setOcrServiceMap(swappedMap)
+  // 更新页面绑定翻译OCR数据
+  updateThisOcrServiceMap(swappedMap)
+}
+
+/**
+ * 更新页面绑定OCR服务数据
+ *
+ * @param newOcrServiceMap 新OCR服务数据
+ */
+const updateThisOcrServiceMap = (newOcrServiceMap): void => {
+  ocrServiceMap.value = newOcrServiceMap
+  ocrServiceList.value = [...ocrServiceMap.value.values()]
 }
 </script>
 
@@ -313,7 +375,7 @@ const saveOcrService = (ocrService) => {
     .translate-service-edit {
       display: flex;
       align-items: center;
-      padding-top: 10px;
+      margin-top: -6px;
 
       .translate-service-edit-button {
         margin-right: 10px;
@@ -325,6 +387,7 @@ const saveOcrService = (ocrService) => {
       background: var(--ttime-translate-service-color-background);
       margin-top: 10px;
       border-radius: 8px;
+      padding: 0;
 
       .translate-service-block {
         width: 210px;

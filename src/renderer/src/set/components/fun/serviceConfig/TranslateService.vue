@@ -1,35 +1,42 @@
 <template>
   <div class="translate-service-layer">
     <div class="translate-service-div-block">
-      <div class="translate-service-list-block">
+      <ul class="translate-service-list-block">
         <el-scrollbar>
-          <div
-            v-for="(translateService, key) in translateServiceMap.values()"
-            :key="key"
-            class="translate-service-block cursor-pointer none-select"
-            :class="{ active: translateServiceThis.id === translateService.id }"
-            @click="selectTranslateService(translateService)"
+          <draggable
+            v-model="translateServiceList"
+            group="people"
+            chosen-class="chosen"
+            item-key="id"
+            animation="300"
+            @change="translateServiceSortDragChange"
           >
-            <a
-              class="translate-service-block cursor-pointer none-select translate-service-expansion-block"
-            >
-              <div class="left">
-                <img class="translate-service-logo" :src="translateService.logo" />
-                <span class="translate-service-name">{{ translateService.name }}</span>
-              </div>
-              <div class="right">
-                <el-switch
-                  v-model="translateService.useStatus"
-                  @change="translateServiceUseStatusChange(translateService)"
-                />
-              </div>
-            </a>
-          </div>
+            <template #item="{ element }">
+              <li
+                class="translate-service-block cursor-pointer none-select"
+                :class="{ active: translateServiceThis.id === element.id }"
+                @click="selectTranslateService(element)"
+              >
+                <a class="translate-service-block none-select translate-service-expansion-block">
+                  <div class="left">
+                    <img class="translate-service-logo none-select" :src="element.logo" />
+                    <span class="translate-service-name none-select">{{ element.name }}</span>
+                  </div>
+                  <div class="right">
+                    <el-switch
+                      v-model="element.useStatus"
+                      @change="translateServiceUseStatusChange(element)"
+                    />
+                  </div>
+                </a>
+              </li>
+            </template>
+          </draggable>
         </el-scrollbar>
-      </div>
+      </ul>
       <div class="translate-service-edit">
         <div class="translate-service-edit-button">
-          <el-dropdown trigger="click" max-height="520px">
+          <el-dropdown trigger="click" max-height="490px">
             <el-button :icon="Plus" size="small" />
             <template #dropdown>
               <el-dropdown-menu>
@@ -53,6 +60,18 @@
     <div class="translate-service-set-block">
       <div class="translate-service-set">
         <el-form v-if="!translateServiceThis.isBuiltIn" label-width="80px" label-position="left">
+          <el-form-item
+            v-if="translateServiceThis.type === TranslateServiceEnum.OPEN_AI"
+            label="请求地址"
+          >
+            <el-input
+              v-model="translateServiceThis.requestUrl"
+              type="text"
+              placeholder="https://api.openai.com"
+              spellcheck="false"
+            />
+            <span class="form-switch-span"> 留空默认：https://api.openai.com </span>
+          </el-form-item>
           <el-form-item
             v-if="translateServiceThis.type === TranslateServiceEnum.OPEN_AI"
             label="模型"
@@ -140,11 +159,12 @@ import {
   getTranslateServiceMap,
   setTranslateServiceMap
 } from '../../../../utils/translateServiceUtil'
-import { isNull } from '../../../../utils/validate'
+import { isNotUrl, isNull } from '../../../../utils/validate'
 import { TranslateServiceEnum } from '../../../../enums/TranslateServiceEnum'
 import ElMessageExtend from '../../../../utils/messageExtend'
 import { REnum } from '../../../../enums/REnum'
 import { OpenAIModelEnum } from '../../../../enums/OpenAIModelEnum'
+import draggable from 'vuedraggable'
 
 // 翻译服务验证状态
 const checkIngStatus = ref(false)
@@ -187,9 +207,11 @@ const selectOneTranslateServiceThis = () => {
 
 // 获取缓存中的翻译服务list
 const translateServiceMap = ref(getTranslateServiceMap())
+// 获取缓存中的翻译服务list
+const translateServiceList = ref([...translateServiceMap.value.values()])
 // 当前选择的翻译服务
 const translateServiceThis = ref()
-// 设置当前选择的翻译服务默认为第一个
+// 设置当前选择的翻译服务默认OpenAI翻译为第一个
 selectOneTranslateServiceThis()
 
 /**
@@ -244,7 +266,8 @@ const deleteTranslateService = () => {
   }
   insideTranslateServiceMap.delete(translateServiceThis.value.id)
   setTranslateServiceMap(insideTranslateServiceMap)
-  translateServiceMap.value = insideTranslateServiceMap
+  // 更新页面绑定翻译服务数据
+  updateThisTranslateServiceMap(insideTranslateServiceMap)
   // 设置当前选中项默认为第一个翻译服务
   selectOneTranslateServiceThis()
   // 更新翻译源通知
@@ -268,12 +291,25 @@ const translateServiceCheckAndSave = () => {
   ) {
     return ElMessageExtend.warning('请输入密钥信息后再进行验证')
   }
+  if (TranslateServiceEnum.OPEN_AI === value.type) {
+    if (isNotUrl(value.requestUrl)) {
+      value.requestUrl = OpenAIModelEnum.REQUEST_URL
+    } else {
+      // 检查尾部的斜杠
+      if (value.requestUrl.endsWith('/')) {
+        // 移除尾部的斜杠
+        value.requestUrl = value.requestUrl.slice(0, -1)
+      }
+    }
+  }
   window.api.apiUniteTranslateCheck(value.type, {
     id: value.id,
     appId: value.appId,
     appKey: value.appKey,
     // 此参数 OpenAI 使用
-    model: value.model
+    model: value.model,
+    // 此参数 OpenAI 使用
+    requestUrl: value.requestUrl
   })
   // 开启翻译服务验证加载状态
   checkIngStatus.value = true
@@ -303,6 +339,10 @@ window.api.apiCheckTranslateCallbackEvent((type, res) => {
   insideTranslateService.checkStatus = checkStatus
   insideTranslateService.appId = data.appId
   insideTranslateService.appKey = data.appKey
+  if (TranslateServiceEnum.OPEN_AI === type) {
+    insideTranslateService.requestUrl = data.requestUrl
+    insideTranslateService.model = data.model
+  }
   saveTranslateService(insideTranslateService)
   if (translateServiceThis.value.id === insideTranslateService.id) {
     translateServiceThis.value = insideTranslateService
@@ -348,7 +388,36 @@ const saveTranslateService = (translateService) => {
   const insideTranslateServiceMap = getTranslateServiceMap()
   insideTranslateServiceMap.set(translateService.id, translateService)
   setTranslateServiceMap(insideTranslateServiceMap)
-  translateServiceMap.value = insideTranslateServiceMap
+  // 更新页面绑定翻译服务数据
+  updateThisTranslateServiceMap(insideTranslateServiceMap)
+}
+
+const translateServiceSortDragChange = (event): void => {
+  const moved = event.moved
+  // 将 Map 转换为数组
+  const entries = Array.from(getTranslateServiceMap().entries())
+  // 交换索引位置
+  ;[entries[moved.oldIndex], entries[moved.newIndex]] = [
+    entries[moved.newIndex],
+    entries[moved.oldIndex]
+  ]
+  // 创建一个新的有序 Map
+  const swappedMap = new Map(entries)
+  setTranslateServiceMap(swappedMap)
+  // 更新页面绑定翻译服务数据
+  updateThisTranslateServiceMap(swappedMap)
+  // 更新翻译源通知
+  window.api.updateTranslateServiceEvent()
+}
+
+/**
+ * 更新页面绑定翻译服务数据
+ *
+ * @param newTranslateServiceMap 新翻译服务数据
+ */
+const updateThisTranslateServiceMap = (newTranslateServiceMap): void => {
+  translateServiceMap.value = newTranslateServiceMap
+  translateServiceList.value = [...translateServiceMap.value.values()]
 }
 </script>
 
@@ -370,7 +439,7 @@ const saveTranslateService = (translateService) => {
     .translate-service-edit {
       display: flex;
       align-items: center;
-      padding-top: 10px;
+      margin-top: -6px;
 
       .translate-service-edit-button {
         margin-right: 10px;
@@ -382,6 +451,7 @@ const saveTranslateService = (translateService) => {
       background: var(--ttime-translate-service-color-background);
       margin-top: 10px;
       border-radius: 8px;
+      padding: 0;
 
       .translate-service-block {
         width: 210px;

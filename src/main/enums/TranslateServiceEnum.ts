@@ -86,6 +86,11 @@ class TranslateServiceEnum {
    * 腾讯交互翻译(内置)
    */
   static TRAN_SMART = 'TranSmart'
+
+  /**
+   * Papago翻译
+   */
+  static PAPAGO = 'PAPAGO'
 }
 
 export default TranslateServiceEnum
