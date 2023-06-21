@@ -8,6 +8,8 @@ import { is } from '@electron-toolkit/utils'
 import GlobalWin from './GlobalWin'
 import { YesNoEnum } from '../enums/YesNoEnum'
 import { isNotNull } from '../utils/validate'
+import { spawn } from 'child_process'
+import { EnvEnum } from '../enums/EnvEnum'
 
 // 窗口加载完毕后执行
 app.whenReady().then(() => {
@@ -37,7 +39,7 @@ function createHoverBallWin(): void {
     autoHideMenuBar: true,
     focusable: false,
     type: SystemTypeEnum.isMac() ? 'panel' : 'toolbar',
-    // alwaysOnTop: true,
+    alwaysOnTop: true,
     webPreferences: {
       preload: path.join(__dirname, '../preload/hoverBall.js'),
       sandbox: false,
@@ -67,7 +69,8 @@ let mousedownInfo: UiohookMouseEvent
 /**
  * 鼠标单击按下事件
  */
-uIOhook.on('mousedown', (e: UiohookMouseEvent) => {
+uIOhook.on('mousedown', async (e: UiohookMouseEvent) => {
+  const status = await isSelectTextStatus()
   // 鼠标左键单机
   if (e.button === 1) {
     mousedownInfo = e
@@ -185,4 +188,42 @@ const hoverBallWinHide = (): void => {
     hoverBallWinHideTask = null
   }
   GlobalWin.hoverBallWinHide()
+}
+
+/**
+ * 是否文本选中状态
+ */
+const isSelectTextStatus = async (): Promise<boolean> => {
+  const promise = new Promise((resolve, reject) => {
+    let selectStatusPath
+    if (EnvEnum.isPro()) {
+      selectStatusPath = path.join(
+        __dirname,
+        '../../../app.asar.unpacked/plugins/select-status.exe'
+      )
+    } else {
+      selectStatusPath = path.join(__dirname, '../../plugins/select-status.exe')
+    }
+    const selectStatusSpawn = spawn(selectStatusPath)
+    // 执行成功的输出
+    selectStatusSpawn.stdout.on('data', (data) => {
+      log.info('data.toString() = ', data.toString())
+      // 1 为文本选中模式
+      // 2 为其他
+      resolve(data.toString() === '1')
+    })
+    // 打印错误的后台可执行程序输出
+    selectStatusSpawn.stderr.on('data', (data) => {
+      reject(data)
+    })
+  })
+  await promise
+    .then(() => {
+      return true
+    })
+    .catch((error) => {
+      log.info('error =', error)
+      return false
+    })
+  return false
 }
