@@ -160,9 +160,19 @@ if (undefined === cacheGetStr('alwaysOnTopAllowEscStatus')) {
 if (undefined === cacheGetStr('wrapReplaceSpaceStatus')) {
   cacheSetStr('wrapReplaceSpaceStatus', YesNoEnum.N)
 }
+const hoverBallStatus = cacheGetStr('hoverBallStatus')
 // 初始化鼠标悬浮球取词状态
-if (undefined === cacheGetStr('hoverBallStatus')) {
+if (undefined === hoverBallStatus) {
   cacheSetStr('hoverBallStatus', YesNoEnum.N)
+  // 悬浮球增强模式
+  cacheSetStr('hoverBallEnhanceStatus', YesNoEnum.N)
+} else {
+  const hoverBallEnhanceStatus = cacheGetStr('hoverBallEnhanceStatus')
+  // 因为新增了悬浮球增强模式 所以此处主要用于兼容之前开启了悬浮球的 但是没有开启增强的 默认赋值开启
+  if (hoverBallStatus === YesNoEnum.Y && undefined === hoverBallEnhanceStatus) {
+    // 悬浮球增强模式
+    cacheSetStr('hoverBallEnhanceStatus', YesNoEnum.Y)
+  }
 }
 // 初始化OCR结果写入剪切板状态
 if (undefined === cacheGetStr('ocrWriteClipboardStatus')) {

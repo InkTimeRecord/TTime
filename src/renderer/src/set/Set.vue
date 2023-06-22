@@ -90,4 +90,8 @@ const menuSelect = (index): void => {
     margin-right: 10px;
   }
 }
+// 设置宽度不完全百分百 否则内容会和滚动条重叠
+:deep(.el-scrollbar__wrap) {
+  width: 98%;
+}
 </style>

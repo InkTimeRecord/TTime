@@ -45,7 +45,6 @@ export const getTranslateServiceMap = () => {
   map = new Map(entries)
   // 此处重新更新一下logo 防止当在缓存中存储后 如果应用修改了文件路径 会导致读取logo图片失败
   map.forEach((translateService) => {
-    console.log(translateService)
     translateService['logo'] = TranslateServiceEnum.getInfoByService(translateService['type']).logo
   })
   return map

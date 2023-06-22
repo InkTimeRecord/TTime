@@ -9,7 +9,7 @@
         >
         <el-icon class="set-page-icon"><QuestionFilled /></el-icon>
       </el-tooltip>
-      <div class="play-speech-service-block">
+      <div class="comment-wrap-block">
         <el-radio-group v-model="basiInfo.playSpeechService" @change="playSpeechServiceEvent">
           <el-radio :label="PlaySpeechServiceEnum.TTIME">TTime</el-radio>
           <el-radio :label="PlaySpeechServiceEnum.YOUDAO">网易有道</el-radio>
@@ -18,7 +18,7 @@
       </div>
     </el-form-item>
     <el-form-item class="none-select" label="文本处理">
-      <el-switch
+      <el-checkbox
         v-model="advancedSettingInfo.wrapReplaceSpaceStatus"
         @change="wrapReplaceSpaceStatusEvent"
       />
@@ -28,14 +28,14 @@
     <span class="group-title-span none-select"> OCR设置 </span>
     <el-divider />
     <el-form-item class="none-select" label="OCR文本处理">
-      <el-switch
+      <el-checkbox
         v-model="advancedSettingInfo.ocrWrapReplaceSpaceStatus"
         @change="ocrWrapReplaceSpaceStatusEvent"
       />
       <span class="form-switch-span none-select"> 将OCR结果的 [ 换行符 ] 替换为 [ 空格 ] </span>
     </el-form-item>
     <el-form-item class="none-select" label="OCR结果写入剪切板">
-      <el-switch
+      <el-checkbox
         v-model="advancedSettingInfo.ocrWriteClipboardStatus"
         @change="ocrWriteClipboardStatusEvent"
       />
@@ -44,38 +44,37 @@
 
     <span class="group-title-span none-select"> 功能设置 </span>
     <el-divider />
-    <el-form-item class="none-select" label="鼠标悬浮球取词(Beta)">
-      <el-tooltip placement="bottom-start">
-        <template #content>
-          开启后，操作流程：鼠标双击需要翻译的词 -> 浮现TTime小图标 -> 点击翻译
-          <br />
-          注意：此功能正在测试试行阶段，目前仅支持Windows，如果使用过程中出现问题欢迎联系我们进行反馈修复
-        </template>
-        <el-icon class="set-page-icon"><QuestionFilled /></el-icon>
-      </el-tooltip>
-      <div class="play-speech-service-block">
-        <el-radio-group
-          v-model="advancedSettingInfo.hoverBallStatus"
-          @change="hoverBallStatusEvent"
-        >
-          <el-radio :label="YesNoEnum.Y">开启</el-radio>
-          <el-radio :label="YesNoEnum.N">关闭</el-radio>
-        </el-radio-group>
-      </div>
+    <el-form-item class="form-item-group none-select" label="鼠标悬浮球(Beta)">
+      <el-checkbox
+        v-model="advancedSettingInfo.hoverBallStatus"
+        label="悬浮球取词"
+        @change="hoverBallStatusEvent"
+      />
+      <span class="form-switch-span none-select">
+        开启后，操作流程：鼠标双击需要翻译的词 -> 浮现TTime小图标 -> 点击翻译
+      </span>
     </el-form-item>
-    <el-form-item class="none-select" label="置顶时允许隐藏窗口">
-      <div class="play-speech-service-block">
-        <el-radio-group
-          v-model="advancedSettingInfo.alwaysOnTopAllowEscStatus"
-          @change="alwaysOnTopAllowEscStatusEvent"
-        >
-          <el-radio :label="YesNoEnum.Y">开启</el-radio>
-          <el-radio :label="YesNoEnum.N">关闭</el-radio>
-        </el-radio-group>
+    <el-form-item class="none-select">
+      <div class="comment-wrap-block">
+        <el-checkbox
+          v-model="advancedSettingInfo.hoverBallEnhanceStatus"
+          label="增强模式"
+          @change="hoverBallEnhanceStatusEvent"
+        />
         <span class="form-switch-span none-select">
-          开启后，当翻译/Ocr窗口置顶时，按ESC键依旧可隐藏窗口
+          开启后，鼠标拖动非文本内容或双击非文本区域时不会出现悬浮球
         </span>
       </div>
+    </el-form-item>
+    <el-form-item class="none-select" label="窗口配置">
+      <el-checkbox
+        v-model="advancedSettingInfo.alwaysOnTopAllowEscStatus"
+        label="置顶时允许隐藏窗口"
+        @change="alwaysOnTopAllowEscStatusEvent"
+      />
+      <span class="form-switch-span none-select">
+        开启后，当翻译 / OCR窗口置顶时，按ESC键依旧可隐藏窗口
+      </span>
     </el-form-item>
   </el-form>
 </template>
@@ -105,9 +104,10 @@ const playSpeechServiceEvent = (playSpeechService): void => {
  * 翻译相关设置
  */
 const advancedSettingInfo = ref({
-  alwaysOnTopAllowEscStatus: cacheGetStr('alwaysOnTopAllowEscStatus'),
+  alwaysOnTopAllowEscStatus: cacheGetStr('alwaysOnTopAllowEscStatus') === YesNoEnum.Y,
   wrapReplaceSpaceStatus: cacheGetStr('wrapReplaceSpaceStatus') === YesNoEnum.Y,
-  hoverBallStatus: cacheGetStr('hoverBallStatus'),
+  hoverBallStatus: cacheGetStr('hoverBallStatus') === YesNoEnum.Y,
+  hoverBallEnhanceStatus: cacheGetStr('hoverBallEnhanceStatus') === YesNoEnum.Y,
   ocrWriteClipboardStatus: cacheGetStr('ocrWriteClipboardStatus') === YesNoEnum.Y,
   ocrWrapReplaceSpaceStatus: cacheGetStr('ocrWrapReplaceSpaceStatus') === YesNoEnum.Y
 })
@@ -118,7 +118,7 @@ const advancedSettingInfo = ref({
  * @param val 置顶时允许隐藏窗口状态
  */
 const alwaysOnTopAllowEscStatusEvent = (val): void => {
-  cacheSetStr('alwaysOnTopAllowEscStatus', val)
+  cacheSetStr('alwaysOnTopAllowEscStatus', val ? YesNoEnum.Y : YesNoEnum.N)
   advancedSettingInfo.value.alwaysOnTopAllowEscStatus = val
   // 更新置顶时允许隐藏窗口选择事件通知
   window.api.alwaysOnTopAllowEscStatusNotify()
@@ -160,7 +160,7 @@ const ocrWriteClipboardStatusEvent = (val): void => {
  * @param val 状态
  */
 const hoverBallStatusEvent = (val): void => {
-  if (val === YesNoEnum.Y) {
+  if (val) {
     ElMessageBox({
       title: '鼠标悬浮球取词(Beta)',
       message: h('p', null, [
@@ -177,9 +177,25 @@ const hoverBallStatusEvent = (val): void => {
         )
       ])
     })
+    const el = document.querySelector('.el-overlay')
+    if (el) {
+      // 此处动态调整下遮罩 否则大小会超过窗口
+      el['style'].cssText = 'width: 97.2%;margin-left: 13px;border-radius: 8px;'
+    }
   }
-  cacheSetStr('hoverBallStatus', val)
+  hoverBallEnhanceStatusEvent(val)
+  cacheSetStr('hoverBallStatus', val ? YesNoEnum.Y : YesNoEnum.N)
   advancedSettingInfo.value.hoverBallStatus = val
+}
+
+/**
+ * 悬浮球增强模式事件
+ *
+ * @param val 状态
+ */
+const hoverBallEnhanceStatusEvent = (val): void => {
+  cacheSetStr('hoverBallEnhanceStatus', val ? YesNoEnum.Y : YesNoEnum.N)
+  advancedSettingInfo.value.hoverBallEnhanceStatus = val
 }
 </script>
 
@@ -196,12 +212,20 @@ const hoverBallStatusEvent = (val): void => {
   color: var(--el-menu-text-color);
 }
 
-.play-speech-service-block {
+.comment-wrap-block {
   display: flex;
   flex-direction: column;
 }
 
+.form-item-group {
+  margin-bottom: 0;
+}
+
 :deep(.el-divider--horizontal) {
   margin: 15px 0;
+}
+
+:deep(.el-checkbox) {
+  margin-right: 10px;
 }
 </style>

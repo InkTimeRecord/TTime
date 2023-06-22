@@ -2,11 +2,10 @@
 #include <Windows.h>
 
 // 添加 user32.lib 到链接器的附加依赖项
-#pragma comment(lib, "user32.lib") 
+#pragma comment(lib, "user32.lib")
 
 int main()
 {
-
     CURSORINFO cursorInfo = { sizeof(CURSORINFO) };
     GetCursorInfo(&cursorInfo);
 
@@ -19,7 +18,7 @@ int main()
             {
                 // 文本选择状态
                 std::cout << "1";
-            } 
+            }
             else
             {
                 // 非文本选择状态

@@ -9,7 +9,6 @@ import GlobalWin from './GlobalWin'
 import { YesNoEnum } from '../enums/YesNoEnum'
 import { isNotNull } from '../utils/validate'
 import { spawn } from 'child_process'
-import { EnvEnum } from '../enums/EnvEnum'
 
 // 窗口加载完毕后执行
 app.whenReady().then(() => {
@@ -66,11 +65,13 @@ uIOhook.start()
 
 let mousedownInfo: UiohookMouseEvent
 
+let selectTextStatus
+
 /**
  * 鼠标单击按下事件
  */
 uIOhook.on('mousedown', async (e: UiohookMouseEvent) => {
-  const status = await isSelectTextStatus()
+  selectTextStatus = await isMouseSelectTextStatus()
   // 鼠标左键单机
   if (e.button === 1) {
     mousedownInfo = e
@@ -80,9 +81,12 @@ uIOhook.on('mousedown', async (e: UiohookMouseEvent) => {
 /**
  * 鼠标单击放开事件
  */
-uIOhook.on('mouseup', (e: UiohookMouseEvent) => {
+uIOhook.on('mouseup', async (e: UiohookMouseEvent) => {
+  if (!selectTextStatus) {
+    selectTextStatus = await isMouseSelectTextStatus()
+  }
   // 鼠标左键单机
-  if (e.button === 1) {
+  if (e.button === 1 && selectTextStatus) {
     if (mousedownInfo.x !== e.x || mousedownInfo.y !== e.y) {
       GlobalWin.hoverBallWin.webContents
         .executeJavaScript('localStorage.hoverBallStatus')
@@ -96,8 +100,11 @@ uIOhook.on('mouseup', (e: UiohookMouseEvent) => {
   }
 })
 
-uIOhook.on('click', (e: UiohookMouseEvent) => {
+uIOhook.on('click', async (e: UiohookMouseEvent) => {
   if (e.clicks === 2 && e.button === 1) {
+    if (!(await isMouseSelectTextStatus())) {
+      return
+    }
     GlobalWin.hoverBallWin.webContents
       .executeJavaScript('localStorage.hoverBallStatus')
       .then((val) => {
@@ -191,39 +198,48 @@ const hoverBallWinHide = (): void => {
 }
 
 /**
- * 是否文本选中状态
+ * 鼠标指针是否选中文本状态
  */
-const isSelectTextStatus = async (): Promise<boolean> => {
+const isMouseSelectTextStatus = async (): Promise<boolean> => {
+  let response = false
+  // 悬浮球增强模式
+  await GlobalWin.hoverBallWin.webContents
+    .executeJavaScript('localStorage.hoverBallEnhanceStatus')
+    .then((val) => {
+      response = YesNoEnum.Y === val
+    })
+  if (!SystemTypeEnum.isWin() || !response) {
+    // 如果不为Win环境下这块默认不进行获取状态 直接返回取词
+    return true
+  }
   const promise = new Promise((resolve, reject) => {
-    let selectStatusPath
-    if (EnvEnum.isPro()) {
-      selectStatusPath = path.join(
+    let mouseSelectTextStatusPath
+    if (app.isPackaged) {
+      mouseSelectTextStatusPath = path.join(
         __dirname,
-        '../../../app.asar.unpacked/plugins/select-status.exe'
+        '../../../app.asar.unpacked/plugins/mouse-select-text-status.exe'
       )
     } else {
-      selectStatusPath = path.join(__dirname, '../../plugins/select-status.exe')
+      mouseSelectTextStatusPath = path.join(__dirname, '../../plugins/mouse-select-text-status.exe')
     }
-    const selectStatusSpawn = spawn(selectStatusPath)
-    // 执行成功的输出
+    const selectStatusSpawn = spawn(mouseSelectTextStatusPath)
+    // 执行成功回调
     selectStatusSpawn.stdout.on('data', (data) => {
-      log.info('data.toString() = ', data.toString())
-      // 1 为文本选中模式
-      // 2 为其他
-      resolve(data.toString() === '1')
+      resolve(data.toString())
     })
-    // 打印错误的后台可执行程序输出
+    // 执行失败回调
     selectStatusSpawn.stderr.on('data', (data) => {
       reject(data)
     })
   })
+  //
   await promise
-    .then(() => {
-      return true
+    .then((status) => {
+      response = status === '1'
     })
     .catch((error) => {
-      log.info('error =', error)
-      return false
+      log.error('获取鼠标指针是否选中文本状态异常 = ', error)
+      response = false
     })
-  return false
+  return response
 }
