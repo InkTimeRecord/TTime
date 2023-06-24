@@ -14,8 +14,13 @@
     "src/main/enums/*",
     "src/main/utils/*",
     "src/main/class/*",
+    "src/common/enums/*",
+    "src/common/class/*",
+    "src/common/utils/*",
+    "src/common/channel/translate/info/*"
   ],
   "compilerOptions": {
     "composite": true,
+    "types": ["electron-vite/node", "vite/client"]
   }
 }

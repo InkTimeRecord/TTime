@@ -41,13 +41,13 @@
 
 <script setup lang="ts">
 import { nextTick, ref, watch } from 'vue'
-import { isNull } from '../../utils/validate'
+import { isNull } from '../../../../common/utils/validate'
 import LanguageEnum from '../../enums/LanguageEnum'
 
 import loadingImage from '../../assets/loading.gif'
 import translate from '../../utils/translate'
 import { getTranslateServiceMapByUse } from '../../utils/translateServiceUtil'
-import { TranslateServiceEnum } from '../../enums/TranslateServiceEnum'
+import TranslateServiceEnum from '../../../../common/enums/TranslateServiceEnum'
 import { cacheGet, cacheGetStr } from '../../utils/cacheUtil'
 import ElMessageExtend from '../../utils/messageExtend'
 import {
@@ -57,7 +57,7 @@ import {
   getLanguageTypeByVolcano,
   getLanguageTypeByPapago
 } from '../../utils/languageUtil'
-import { YesNoEnum } from '../../enums/YesNoEnum'
+import { YesNoEnum } from '../../../../common/enums/YesNoEnum'
 
 // 加载loading
 const loadingImageSrc = ref(loadingImage)

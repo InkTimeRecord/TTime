@@ -1,14 +1,20 @@
-import BaiduOcrChannel from '../product/ocr/BaiduOcrChannel'
-import '../product/translate/AgentChannel'
 import * as fs from 'fs'
 import * as path from 'path'
-import OcrServiceEnum from '../../../enums/OcrServiceEnum'
-import TTimeOnlineOcrChannel from '../product/ocr/TTimeOnlineOcrChannel'
-import VolcanoOcrChannel from '../product/ocr/VolcanoOcrChannel'
+import OcrServiceEnum from '../../../../common/enums/OcrServiceEnum'
 
-const baiduOcrChannel = new BaiduOcrChannel()
-const ttimeOnlineOcrChannel = new TTimeOnlineOcrChannel()
-const volcanoOcrChannel = new VolcanoOcrChannel()
+// 获取所有OCR源模块
+const channelModules = import.meta.glob('../product/ocr/*.ts')
+const channels = {}
+// 构建翻译源
+Object.keys(channelModules).map(async (modulePath) => {
+  // 过滤非OCR通道
+  if (modulePath.endsWith('/IOcrInterface.ts')) {
+    return
+  }
+  const module = (await channelModules[modulePath]()) as { default: new () => never }
+  const Channel = module.default
+  channels[Channel.name] = new Channel()
+})
 
 /**
  * 选择渠道工厂
@@ -21,13 +27,7 @@ class OcrChannelFactory {
    * @param info 翻译信息
    */
   static ocr(type: OcrServiceEnum, info: object): void {
-    if (OcrServiceEnum.BAIDU === type) {
-      baiduOcrChannel.apiOcr(info)
-    } else if (OcrServiceEnum.TTIME_ONLINE === type) {
-      ttimeOnlineOcrChannel.apiOcr(info)
-    } else if (OcrServiceEnum.VOLCANO === type) {
-      volcanoOcrChannel.apiOcr(info)
-    }
+    channels[type + 'OcrChannel'].apiOcr(info)
   }
 
   /**
@@ -41,11 +41,7 @@ class OcrChannelFactory {
       ...info,
       ...this.buildOcrCheckRequestInfo()
     }
-    if (OcrServiceEnum.BAIDU === type) {
-      baiduOcrChannel.apiOcrCheck(info)
-    } else if (OcrServiceEnum.VOLCANO === type) {
-      volcanoOcrChannel.apiOcrCheck(info)
-    }
+    channels[type + 'OcrChannel'].apiOcrCheck(info)
   }
 
   /**

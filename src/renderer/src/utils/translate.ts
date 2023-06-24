@@ -1,4 +1,4 @@
-import { isNull } from './validate'
+import { isNull } from '../../../common/utils/validate'
 import ElMessageExtend from './messageExtend'
 import { cacheGetStr } from './cacheUtil'
 import { PlaySpeechServiceEnum } from '../enums/PlaySpeechServiceEnum'
@@ -44,7 +44,10 @@ const playSpeechNewAudioByService = (playSpeechService, text): void => {
   if (playSpeechService === PlaySpeechServiceEnum.YOUDAO) {
     url = 'https://dict.youdao.com/dictvoice?audio=' + text + '&le=zh'
   } else if (playSpeechService === PlaySpeechServiceEnum.SOGOU) {
-    url = 'https://fanyi.sogou.com/reventondc/synthesis?text=' + text + '&speed=1&lang=zh-CHS&from=translateweb&speaker=6'
+    url =
+      'https://fanyi.sogou.com/reventondc/synthesis?text=' +
+      text +
+      '&speed=1&lang=zh-CHS&from=translateweb&speaker=6'
   }
   playSpeechNewAudio(url)
 }
@@ -68,11 +71,11 @@ const playSpeechNewAudio = (url): void => {
   // 此处是异步加载的语音文件
   playSpeechAudio = new Audio(url)
   // 文件加载错误事件
-  playSpeechAudio.onerror = function() {
+  playSpeechAudio.onerror = function () {
     ElMessageExtend.error('语音播放失败')
   }
   // 文件加载成功事件
-  playSpeechAudio.onloadeddata = function() {
+  playSpeechAudio.onloadeddata = function () {
     playSpeechAudio.play()
   }
 }

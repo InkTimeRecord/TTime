@@ -25,7 +25,7 @@
 <script setup lang="ts">
 // 翻译内容框内容
 import { ref } from 'vue'
-import { YesNoEnum } from '../../../enums/YesNoEnum'
+import { YesNoEnum } from '../../../../../common/enums/YesNoEnum'
 import { ThemeTypeEnum } from '../../../enums/ThemeTypeEnum'
 import { initTheme } from '../../../utils/themeUtil'
 import { cacheGetStr, cacheSetStr } from '../../../utils/cacheUtil'

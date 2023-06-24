@@ -1,12 +1,12 @@
 import { app, clipboard, ipcMain, nativeImage } from 'electron'
 import { GlobalShortcutEvent } from './GlobalShortcutEvent'
-import { isNull } from '../utils/validate'
+import { isNull } from '../../common/utils/validate'
 import { SystemTypeEnum } from '../enums/SystemTypeEnum'
 import AutoLaunch from 'auto-launch'
 import log from '../utils/log'
 import { EnvEnum } from '../enums/EnvEnum'
 import GlobalWin from './GlobalWin'
-import { YesNoEnum } from '../enums/YesNoEnum'
+import { YesNoEnum } from '../../common/enums/YesNoEnum'
 
 class WinEvent {
   constructor(mainWinInfo) {

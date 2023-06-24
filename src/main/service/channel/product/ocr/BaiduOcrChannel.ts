@@ -1,13 +1,13 @@
 import log from '../../../../utils/log'
 import { paramsFilter, responseFilterByCustomField } from '../../../../utils/logExtend'
-import R from '../../../../class/R'
+import R from '../../../../../common/class/R'
 import GlobalWin from '../../../GlobalWin'
 import IOcrInterface from './IOcrInterface'
 import BaiduRequest from '../../interfaces/BaiduRequest'
-import TranslateServiceEnum from '../../../../enums/TranslateServiceEnum'
-import { isNotNull, isNull } from '../../../../utils/validate'
+import TranslateServiceEnum from '../../../../../common/enums/TranslateServiceEnum'
+import { isNotNull, isNull } from '../../../../../common/utils/validate'
 import { commonError } from '../../../../utils/RequestUtil'
-import { YesNoEnum } from '../../../../enums/YesNoEnum'
+import { YesNoEnum } from '../../../../../common/enums/YesNoEnum'
 
 class BaiduOcrChannel implements IOcrInterface {
   /**

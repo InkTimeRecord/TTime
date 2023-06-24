@@ -1,9 +1,9 @@
 /**
- * Ocr服务枚举
+ * OCR服务枚举
  */
 class OcrServiceEnum {
   /**
-   * TTime
+   * TTime翻译
    */
   static TTIME = 'TTime'
 
@@ -13,7 +13,7 @@ class OcrServiceEnum {
   static TTIME_ONLINE = 'TTimeOnline'
 
   /**
-   * 百度
+   * 百度翻译
    */
   static BAIDU = 'Baidu'
 

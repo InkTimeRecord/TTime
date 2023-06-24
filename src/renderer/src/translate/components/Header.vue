@@ -1,25 +1,24 @@
 <template>
-  <div class='header'>
-    <div class='function-tools-block'>
-      <div class='function-tools-category'>
-        <a class='function-tools' @click='thumbtackFun'>
+  <div class="header">
+    <div class="function-tools-block">
+      <div class="function-tools-category">
+        <a class="function-tools" @click="thumbtackFun">
           <svg-icon
             :icon-class="thumbtackStatus === YesNoEnum.Y ? 'thumbtack-select' : 'thumbtack'"
-            class='function-tools-icon'
+            class="function-tools-icon"
           />
         </a>
       </div>
-      <div class='function-tools-category'>
-        <a class='function-tools' @click='toSetPage'>
-          <svg-icon icon-class='set-up' class='function-tools-icon' />
+      <div class="function-tools-category">
+        <a class="function-tools" @click="toSetPage">
+          <svg-icon icon-class="set-up" class="function-tools-icon" />
         </a>
       </div>
     </div>
   </div>
 </template>
-<script setup lang='ts'>
-
-import { YesNoEnum } from '../../enums/YesNoEnum'
+<script setup lang="ts">
+import { YesNoEnum } from '../../../../common/enums/YesNoEnum'
 import { ref } from 'vue'
 import { cacheGetStr, cacheSetStr } from '../../utils/cacheUtil'
 
@@ -39,12 +38,13 @@ window.api.alwaysOnTopEvent(thumbtackStatus.value === YesNoEnum.Y)
  */
 const thumbtackFun = (): void => {
   const thumbtackStatusCache = cacheGetStr('thumbtackStatus')
-  cacheSetStr('thumbtackStatus',
+  cacheSetStr(
+    'thumbtackStatus',
     undefined === thumbtackStatusCache
       ? YesNoEnum.N
       : thumbtackStatusCache === YesNoEnum.N
-        ? YesNoEnum.Y
-        : YesNoEnum.N
+      ? YesNoEnum.Y
+      : YesNoEnum.N
   )
   thumbtackStatus.value = cacheGetStr('thumbtackStatus')
   window.api.alwaysOnTopEvent(cacheGetStr('thumbtackStatus') === YesNoEnum.Y)
@@ -58,7 +58,7 @@ const toSetPage = (): void => {
 }
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 @import '../../css/translate.scss';
 
 .header {
@@ -73,6 +73,5 @@ const toSetPage = (): void => {
     display: flex;
     justify-content: space-between;
   }
-
 }
 </style>

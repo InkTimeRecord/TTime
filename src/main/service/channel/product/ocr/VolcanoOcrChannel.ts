@@ -1,12 +1,12 @@
 import log from '../../../../utils/log'
 import { paramsFilter } from '../../../../utils/logExtend'
-import R from '../../../../class/R'
+import R from '../../../../../common/class/R'
 import GlobalWin from '../../../GlobalWin'
 import IOcrInterface from './IOcrInterface'
 import VolcanoRequest from '../../interfaces/VolcanoRequest'
-import TranslateServiceEnum from '../../../../enums/TranslateServiceEnum'
-import { isNotNull, isNull } from '../../../../utils/validate'
-import { YesNoEnum } from '../../../../enums/YesNoEnum'
+import TranslateServiceEnum from '../../../../../common/enums/TranslateServiceEnum'
+import { isNotNull, isNull } from '../../../../../common/utils/validate'
+import { YesNoEnum } from '../../../../../common/enums/YesNoEnum'
 import { VolcanoOcrModelEnum } from '../../../../enums/VolcanoOcrModelEnum'
 
 class VolcanoOcrChannel implements IOcrInterface {

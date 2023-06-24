@@ -6,8 +6,8 @@ import { SystemTypeEnum } from '../enums/SystemTypeEnum'
 import path from 'path'
 import { is } from '@electron-toolkit/utils'
 import GlobalWin from './GlobalWin'
-import { YesNoEnum } from '../enums/YesNoEnum'
-import { isNotNull } from '../utils/validate'
+import { YesNoEnum } from '../../common/enums/YesNoEnum'
+import { isNotNull } from '../../common/utils/validate'
 import { spawn } from 'child_process'
 
 // 窗口加载完毕后执行

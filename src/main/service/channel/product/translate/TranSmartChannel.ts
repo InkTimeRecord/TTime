@@ -1,11 +1,11 @@
 import log from '../../../../utils/log'
-import { paramsFilter } from '../../../../utils/logExtend'
-import R from '../../../../class/R'
+import R from '../../../../../common/class/R'
 import GlobalWin from '../../../GlobalWin'
 import ITranslateInterface from './ITranslateInterface'
 import TranSmartRequest from '../../interfaces/TranSmartRequest'
 import { commonError } from '../../../../utils/RequestUtil'
-import { isNull } from '../../../../utils/validate'
+import { isNull } from '../../../../../common/utils/validate'
+import TranslateChannelFactory from '../../factory/TranslateChannelFactory'
 
 class TranSmartChannel implements ITranslateInterface {
   /**
@@ -14,21 +14,23 @@ class TranSmartChannel implements ITranslateInterface {
    * @param info 翻译信息
    */
   apiTranslate(info): void {
-    log.info('[腾讯交互翻译(内置)事件] - 请求报文 : ', paramsFilter(info))
     TranSmartRequest.apiTranslate(info)
       .then((res) => {
         log.info('[腾讯交互翻译(内置)事件] - 响应报文 : ', res)
         const autoTranslation = res['auto_translation']
         if (isNull(autoTranslation)) {
           const errMessage = this.getMsgByErrorCode(res['message'])
-          GlobalWin.mainWinSend('transmart-api-translate-callback-event', R.okT(errMessage))
+          GlobalWin.mainWinSend(TranslateChannelFactory.callbackName(info.type), R.okT(errMessage))
           return
         }
-        GlobalWin.mainWinSend('transmart-api-translate-callback-event', R.okT(autoTranslation))
+        GlobalWin.mainWinSend(
+          TranslateChannelFactory.callbackName(info.type),
+          R.okT(autoTranslation)
+        )
       })
       .catch((err) => {
         GlobalWin.mainWinSend(
-          'transmart-api-translate-callback-event',
+          TranslateChannelFactory.callbackName(info.type),
           R.okT(commonError('腾讯交互翻译(内置)', err))
         )
       })
@@ -39,6 +41,7 @@ class TranSmartChannel implements ITranslateInterface {
    *
    * @param info 翻译信息
    */
+  // eslint-disable-next-line @typescript-eslint/no-empty-function,@typescript-eslint/no-unused-vars
   apiTranslateCheck(_info): void {}
 
   /**

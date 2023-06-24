@@ -24,17 +24,17 @@ import InputResultContent from './components/InputResultContent.vue'
 import { nextTick, ref } from 'vue'
 import ElMessageExtend from '../utils/messageExtend'
 
-import { ShortcutKeyEnum } from '../enums/ShortcutKeyEnum'
-import { YesNoEnum } from '../enums/YesNoEnum'
-import { isNull } from '../utils/validate'
+import { ShortcutKeyEnum } from '../../../common/enums/ShortcutKeyEnum'
+import { YesNoEnum } from '../../../common/enums/YesNoEnum'
+import { isNull } from '../../../common/utils/validate'
 import { buildTranslateService, setTranslateServiceMap } from '../utils/translateServiceUtil'
 import { buildOcrService, setOcrServiceMap } from '../utils/ocrServiceUtil'
 import { initTheme } from '../utils/themeUtil'
 import { cacheGetStr, cacheSet, cacheSetStr } from '../utils/cacheUtil'
 import { PlaySpeechServiceEnum } from '../enums/PlaySpeechServiceEnum'
 import '../channel/ChannelRequest'
-import { TranslateServiceEnum } from '../enums/TranslateServiceEnum'
-import { OcrServiceEnum } from '../enums/OcrServiceEnum'
+import TranslateServiceEnum from '../../../common/enums/TranslateServiceEnum'
+import OcrServiceEnum from '../../../common/enums/OcrServiceEnum'
 
 initTheme()
 

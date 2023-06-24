@@ -14,7 +14,7 @@ import './service/channel/TranslateChannel'
 import './service/HoverBall'
 import './service/Ocr'
 import './service/OcrSilence'
-import { isNull } from './utils/validate'
+import { isNull } from '../common/utils/validate'
 import { injectWinAgent } from './utils/RequestUtil'
 
 // 解决使用 win.hide() 后再使用 win.show() 会引起窗口闪烁问题

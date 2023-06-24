@@ -1,10 +1,10 @@
 import log from '../../../../utils/log'
-import R from '../../../../class/R'
+import R from '../../../../../common/class/R'
 import GlobalWin from '../../../GlobalWin'
 import ITranslateInterface from './ITranslateInterface'
 import TencentCloudRequest from '../../interfaces/TencentCloudRequest'
-import TranslateServiceEnum from '../../../../enums/TranslateServiceEnum'
-import { paramsFilter } from '../../../../utils/logExtend'
+import TranslateServiceEnum from '../../../../../common/enums/TranslateServiceEnum'
+import TranslateChannelFactory from '../../factory/TranslateChannelFactory'
 
 class TencentCloudChannel implements ITranslateInterface {
   /**
@@ -13,12 +13,12 @@ class TencentCloudChannel implements ITranslateInterface {
    * @param info 翻译信息
    */
   apiTranslate(info): void {
-    log.info('[腾讯云翻译事件] - 请求报文 : ', paramsFilter(info))
     TencentCloudRequest.apiTranslate(info).then(
       (data) => {
         log.info('[腾讯云翻译事件] - 响应报文 : ', data)
         GlobalWin.mainWinSend(
-          'tencentcloud-api-translate-callback-event',
+          TranslateChannelFactory.callbackName(info.type),
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
           R.okT(data.TargetText.split('\\n'))
         )
@@ -32,7 +32,7 @@ class TencentCloudChannel implements ITranslateInterface {
         } else {
           msg = '未知错误 , 如重复出现 , 请联系开发者'
         }
-        GlobalWin.mainWinSend('tencentcloud-api-translate-callback-event', R.okT(msg))
+        GlobalWin.mainWinSend(TranslateChannelFactory.callbackName(info.type), R.okT(msg))
       }
     )
   }
@@ -43,7 +43,6 @@ class TencentCloudChannel implements ITranslateInterface {
    * @param info 翻译信息
    */
   apiTranslateCheck(info): void {
-    log.info('[腾讯云翻译校验密钥事件] - 请求报文 : ', paramsFilter(info))
     // 响应信息
     const responseData = {
       id: info.id,

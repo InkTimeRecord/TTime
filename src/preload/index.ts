@@ -1,5 +1,6 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
+import TranslateServiceEnum from '../common/enums/TranslateServiceEnum'
 
 let windowHeightList = []
 let windowHeightEventStatue = false
@@ -217,202 +218,22 @@ const logErrorEvent = (...text): void => {
 }
 
 /**
- * 翻译
- *
- * @param callback 回调方法 用于主进程内部触发时推送到Vue页面执行
+ * api翻译回调
  */
-const ttimeApiTranslateCallbackEvent = (callback): void => {
-  ipcRenderer.on('ttime-api-translate-callback-event', (_event, obj) => {
-    callback(obj)
-  })
-}
-
+const apiTranslateCallbackEventList = {}
 /**
- * 腾讯云翻译 - 接口回调
- *
- * @param callback 回调方法 用于主进程内部触发时推送到Vue页面执行
+ * 根据枚举类型进行创建回调方法
  */
-const tencentcloudApiTranslateCallbackEvent = (callback): void => {
-  ipcRenderer.on('tencentcloud-api-translate-callback-event', (_event, obj) => {
-    callback(obj)
+Object.keys(TranslateServiceEnum)
+  .filter((key) => typeof TranslateServiceEnum[key] === 'string')
+  .map((key) => TranslateServiceEnum[key].toLowerCase())
+  .forEach((code) => {
+    apiTranslateCallbackEventList[code + 'ApiTranslateCallbackEvent'] = (callback): void => {
+      ipcRenderer.on(code + '-api-translate-callback-event', (_event, obj) => {
+        callback(obj)
+      })
+    }
   })
-}
-
-/**
- * 百度翻译 - 接口回调
- *
- * @param callback 回调方法 用于主进程内部触发时推送到Vue页面执行
- */
-const baiduApiTranslateCallbackEvent = (callback): void => {
-  ipcRenderer.on('baidu-api-translate-callback-event', (_event, obj) => {
-    callback(obj)
-  })
-}
-
-/**
- * 阿里云翻译 - 接口回调
- *
- * @param callback 回调方法 用于主进程内部触发时推送到Vue页面执行
- */
-const aliyunApiTranslateCallbackEvent = (callback): void => {
-  ipcRenderer.on('aliyun-api-translate-callback-event', (_event, obj) => {
-    callback(obj)
-  })
-}
-
-/**
- * 谷歌翻译 - 接口回调
- *
- * @param callback 回调方法 用于主进程内部触发时推送到Vue页面执行
- */
-const googleApiTranslateCallbackEvent = (callback): void => {
-  ipcRenderer.on('google-api-translate-callback-event', (_event, obj) => {
-    callback(obj)
-  })
-}
-
-/**
- * 谷歌翻译 - 接口回调
- *
- * @param callback 回调方法 用于主进程内部触发时推送到Vue页面执行
- */
-const googlebuiltinApiTranslateCallbackEvent = (callback): void => {
-  ipcRenderer.on('googlebuiltin-api-translate-callback-event', (_event, obj) => {
-    callback(obj)
-  })
-}
-
-/**
- * OpenAI - 翻译接口回调
- *
- * @param callback 回调方法 用于主进程内部触发时推送到Vue页面执行
- */
-const openaiApiTranslateCallbackEvent = (callback): void => {
-  ipcRenderer.on('openai-api-translate-callback-event', (_event, obj) => {
-    callback(obj)
-  })
-}
-
-/**
- * 网易有道 - 翻译接口回调
- *
- * @param callback 回调方法 用于主进程内部触发时推送到Vue页面执行
- */
-const youdaoApiTranslateCallbackEvent = (callback): void => {
-  ipcRenderer.on('youdao-api-translate-callback-event', (_event, obj) => {
-    callback(obj)
-  })
-}
-
-/**
- * DeepL - 翻译接口回调
- *
- * @param callback 回调方法 用于主进程内部触发时推送到Vue页面执行
- */
-const deeplApiTranslateCallbackEvent = (callback): void => {
-  ipcRenderer.on('deepl-api-translate-callback-event', (_event, obj) => {
-    callback(obj)
-  })
-}
-
-/**
- * Deepl翻译(内置) - 接口回调
- *
- * @param callback 回调方法 用于主进程内部触发时推送到Vue页面执行
- */
-const deeplbuiltinApiTranslateCallbackEvent = (callback): void => {
-  ipcRenderer.on('deeplbuiltin-api-translate-callback-event', (_event, obj) => {
-    callback(obj)
-  })
-}
-
-/**
- * 火山 - 翻译接口回调
- *
- * @param callback 回调方法 用于主进程内部触发时推送到Vue页面执行
- */
-const volcanoApiTranslateCallbackEvent = (callback): void => {
-  ipcRenderer.on('volcano-api-translate-callback-event', (_event, obj) => {
-    callback(obj)
-  })
-}
-
-/**
- * bing - 翻译接口回调
- *
- * @param callback 回调方法 用于主进程内部触发时推送到Vue页面执行
- */
-const bingApiTranslateCallbackEvent = (callback): void => {
-  ipcRenderer.on('bing-api-translate-callback-event', (_event, obj) => {
-    callback(obj)
-  })
-}
-
-/**
- * bing - 翻译接口回调
- *
- * @param callback 回调方法 用于主进程内部触发时推送到Vue页面执行
- */
-const bingdictApiTranslateCallbackEvent = (callback): void => {
-  ipcRenderer.on('bingdict-api-translate-callback-event', (_event, obj) => {
-    callback(obj)
-  })
-}
-
-/**
- * 小牛翻译 - 翻译接口回调
- *
- * @param callback 回调方法 用于主进程内部触发时推送到Vue页面执行
- */
-const niutransApiTranslateCallbackEvent = (callback): void => {
-  ipcRenderer.on('niutrans-api-translate-callback-event', (_event, obj) => {
-    callback(obj)
-  })
-}
-
-/**
- * 小牛翻译 - 翻译接口回调
- *
- * @param callback 回调方法 用于主进程内部触发时推送到Vue页面执行
- */
-const niutransbuiltinApiTranslateCallbackEvent = (callback): void => {
-  ipcRenderer.on('niutransbuiltin-api-translate-callback-event', (_event, obj) => {
-    callback(obj)
-  })
-}
-
-/**
- * 彩云翻译 - 翻译接口回调
- *
- * @param callback 回调方法 用于主进程内部触发时推送到Vue页面执行
- */
-const caiyunApiTranslateCallbackEvent = (callback): void => {
-  ipcRenderer.on('caiyun-api-translate-callback-event', (_event, obj) => {
-    callback(obj)
-  })
-}
-
-/**
- * 腾讯交互翻译(内置) - 翻译接口回调
- *
- * @param callback 回调方法 用于主进程内部触发时推送到Vue页面执行
- */
-const transmartApiTranslateCallbackEvent = (callback): void => {
-  ipcRenderer.on('transmart-api-translate-callback-event', (_event, obj) => {
-    callback(obj)
-  })
-}
-
-/**
- * Papago翻译 - 接口回调
- *
- * @param callback 回调方法 用于主进程内部触发时推送到Vue页面执行
- */
-const papagoApiTranslateCallbackEvent = (callback): void => {
-  ipcRenderer.on('papago-api-translate-callback-event', (_event, obj) => {
-    callback(obj)
-  })
-}
 
 /**
  * 翻译结果消息回调
@@ -478,28 +299,18 @@ const updateTranslateServiceEvent = (callback): void => {
  * @param callback 回调
  */
 const agentApiTranslate = (callback): void => {
-  /**
-   * 代理模式 - api翻译
-   *
-   * @param type 翻译源类型
-   * @param info 翻译源类型
-   * @param isCheckRequest 是验证请求
-   */
-  ipcRenderer.on('agent-api-translate', (_event, type, info, isCheckRequest) => {
-    callback(type, info, isCheckRequest)
+  ipcRenderer.on('agent-api-translate', (_event, info) => {
+    callback(info)
   })
 }
 
 /**
  * 代理翻译 - 调用翻译结果回调
  *
- * @param type      翻译源类型
- * @param status    请求状态
- * @param data      响应报文
- * @param info      请求报文
+ * @param res 信息
  */
-const agentApiTranslateCallback = (type, status, data, info): void => {
-  ipcRenderer.invoke('agent-api-translate-callback', type, status, data, info)
+const agentApiTranslateCallback = (res): void => {
+  ipcRenderer.invoke('agent-api-translate-callback', res)
 }
 
 // Custom APIs for renderer
@@ -521,24 +332,7 @@ const api = {
   winShowEvent,
   winShowByInputEvent,
   apiUniteTranslate,
-  ttimeApiTranslateCallbackEvent,
-  tencentcloudApiTranslateCallbackEvent,
-  baiduApiTranslateCallbackEvent,
-  aliyunApiTranslateCallbackEvent,
-  googleApiTranslateCallbackEvent,
-  googlebuiltinApiTranslateCallbackEvent,
-  openaiApiTranslateCallbackEvent,
-  youdaoApiTranslateCallbackEvent,
-  deeplApiTranslateCallbackEvent,
-  deeplbuiltinApiTranslateCallbackEvent,
-  volcanoApiTranslateCallbackEvent,
-  bingApiTranslateCallbackEvent,
-  bingdictApiTranslateCallbackEvent,
-  niutransApiTranslateCallbackEvent,
-  niutransbuiltinApiTranslateCallbackEvent,
-  caiyunApiTranslateCallbackEvent,
-  transmartApiTranslateCallbackEvent,
-  papagoApiTranslateCallbackEvent,
+  ...apiTranslateCallbackEventList,
   ttimeApiAppStart,
   showMsgEvent,
   updateTranslateServiceEvent,

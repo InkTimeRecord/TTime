@@ -18,7 +18,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { YesNoEnum } from '../../enums/YesNoEnum'
+import { YesNoEnum } from '../../../../common/enums/YesNoEnum'
 import { ref } from 'vue'
 import { cacheGetStr, cacheSetStr } from '../../utils/cacheUtil'
 

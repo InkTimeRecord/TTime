@@ -1,6 +1,8 @@
 import HttpMethodType from '../enums/HttpMethodTypeClassEnum'
 import request from '../utils/requestNotHandle'
-import { TranslateServiceEnum } from '../enums/TranslateServiceEnum'
+import R from '../../../common/class/R'
+import AgentTranslateCallbackVo from '../../../common/class/AgentTranslateCallbackVo'
+import TranslateServiceEnum from '../../../common/enums/TranslateServiceEnum'
 import { commonError } from '../utils/RequestUtil'
 
 class GoogleChannelRequest {
@@ -8,9 +10,8 @@ class GoogleChannelRequest {
    * Google翻译
    *
    * @param info 翻译信息
-   * @param isCheckRequest  是否校验翻译请求状态
    */
-  static apiTranslateByGoogle = (info, isCheckRequest): void => {
+  static apiTranslateByGoogle = (info): void => {
     const requestInfo = {
       baseURL: 'https://translation.googleapis.com',
       url: '/language/translate/v2?key=' + info.appKey,
@@ -22,19 +23,13 @@ class GoogleChannelRequest {
     }
     request(requestInfo).then(
       (data) => {
-        window.api['agentApiTranslateCallback'](
-          TranslateServiceEnum.GOOGLE,
-          true,
-          data,
-          isCheckRequest ? info : null
-        )
+        window.api['agentApiTranslateCallback'](R.okD(new AgentTranslateCallbackVo(info, data)))
       },
       (err) => {
         window.api['agentApiTranslateCallback'](
-          TranslateServiceEnum.GOOGLE,
-          false,
-          commonError(TranslateServiceEnum.GOOGLE, err),
-          isCheckRequest ? info : null
+          R.errorD(
+            new AgentTranslateCallbackVo(info, commonError(TranslateServiceEnum.GOOGLE, err))
+          )
         )
       }
     )
@@ -44,9 +39,8 @@ class GoogleChannelRequest {
    * Google翻译
    *
    * @param info 翻译信息
-   * @param isCheckRequest  是否校验翻译请求状态
    */
-  static apiTranslateByGoogleBuiltIn = (info, isCheckRequest): void => {
+  static apiTranslateByGoogleBuiltIn = (info): void => {
     const requestInfo = {
       baseURL: 'https://translate.google.com',
       // dt- 可以多次包含并指定在回复中返回的内容
@@ -69,19 +63,16 @@ class GoogleChannelRequest {
     }
     request(requestInfo).then(
       (data) => {
-        window.api['agentApiTranslateCallback'](
-          TranslateServiceEnum.GOOGLE_BUILT_IN,
-          true,
-          data,
-          isCheckRequest ? info : null
-        )
+        window.api['agentApiTranslateCallback'](R.okD(new AgentTranslateCallbackVo(info, data)))
       },
       (err) => {
         window.api['agentApiTranslateCallback'](
-          TranslateServiceEnum.GOOGLE_BUILT_IN,
-          false,
-          commonError(TranslateServiceEnum.GOOGLE_BUILT_IN, err),
-          isCheckRequest ? info : null
+          R.errorD(
+            new AgentTranslateCallbackVo(
+              info,
+              commonError(TranslateServiceEnum.GOOGLE_BUILT_IN, err)
+            )
+          )
         )
       }
     )

@@ -124,19 +124,19 @@ import {
   buildOcrService,
   getOcrServiceMap,
   getOcrServiceMapByUse,
+  OcrServiceBuilder,
   setOcrServiceMap
 } from '../../../../utils/ocrServiceUtil'
-import { OcrServiceEnum } from '../../../../enums/OcrServiceEnum'
+import OcrServiceEnum from '../../../../../../common/enums/OcrServiceEnum'
 import ElMessageExtend from '../../../../utils/messageExtend'
 import { REnum } from '../../../../enums/REnum'
 import draggable from 'vuedraggable'
 import { VolcanoOcrModelEnum } from '../../../../enums/VolcanoOcrModelEnum'
-import { isNull } from '../../../../utils/validate'
 
 // Ocr服务验证状态
 const checkIngStatus = ref(false)
 // 可添加的翻译源列表 先把 values 格式转换为数组
-const ocrServiceSelectMenuListTemp = Array.from(OcrServiceEnum.getServiceList().values())
+const ocrServiceSelectMenuListTemp = Array.from(OcrServiceBuilder.getServiceList().values())
 // 这里获取翻译源对应的内置翻译源状态
 ocrServiceSelectMenuListTemp.forEach((service) => {
   service['isBuiltIn'] = buildOcrService(service.type)?.['isBuiltIn']

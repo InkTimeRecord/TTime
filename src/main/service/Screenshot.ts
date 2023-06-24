@@ -5,12 +5,12 @@ import log from '../utils/log'
 import { Screenshots } from 'node-screenshots'
 import GlobalWin from './GlobalWin'
 import { GlobalShortcutEvent } from './GlobalShortcutEvent'
-import OcrServiceEnum from '../enums/OcrServiceEnum'
+import OcrServiceEnum from '../../common/enums/OcrServiceEnum'
 import OcrChannelFactory from './channel/factory/OcrChannelFactory'
-import { isNull } from '../utils/validate'
+import { isNull } from '../../common/utils/validate'
 import { WinEvent } from './Win'
 import OcrTypeEnum from '../enums/OcrTypeEnum'
-import { YesNoEnum } from '../enums/YesNoEnum'
+import { YesNoEnum } from '../../common/enums/YesNoEnum'
 
 let nullWin: BrowserWindow
 

@@ -1,7 +1,9 @@
-import { isNull } from '../utils/validate'
+import { isNull } from '../../../common/utils/validate'
 import HttpMethodType from '../enums/HttpMethodTypeClassEnum'
 import request from '../utils/requestNotHandle'
-import { TranslateServiceEnum } from '../enums/TranslateServiceEnum'
+import R from '../../../common/class/R'
+import AgentTranslateCallbackVo from '../../../common/class/AgentTranslateCallbackVo'
+import TranslateServiceEnum from '../../../common/enums/TranslateServiceEnum'
 import { commonError } from '../utils/RequestUtil'
 import { AxiosPromise } from 'axios'
 
@@ -90,14 +92,11 @@ class BingChannelRequest {
   static apiTranslateByBing = (info): void => {
     BingChannelRequest.apiTranslateByBingRequest(info).then(
       (data) => {
-        window.api['agentApiTranslateCallback'](TranslateServiceEnum.BING, true, data, info)
+        window.api['agentApiTranslateCallback'](R.okD(new AgentTranslateCallbackVo(info, data)))
       },
       (err) => {
         window.api['agentApiTranslateCallback'](
-          TranslateServiceEnum.BING,
-          false,
-          commonError(TranslateServiceEnum.BING, err),
-          info
+          R.errorD(new AgentTranslateCallbackVo(info, commonError(TranslateServiceEnum.BING, err)))
         )
       }
     )
@@ -115,22 +114,18 @@ class BingChannelRequest {
       .then((bingRes) => {
         window.api.logInfoEvent('[Bing翻译事件] - 响应报文：', JSON.stringify(bingRes))
         window.api['agentApiTranslateCallback'](
-          TranslateServiceEnum.BING_DICT,
-          true,
-          {
-            text: bingRes[0]['translations'][0]['text'],
-            ...info.dictResponse
-          },
-          info
+          R.okD(
+            new AgentTranslateCallbackVo(info, {
+              text: bingRes[0]['translations'][0]['text'],
+              ...info.dictResponse
+            })
+          )
         )
       })
       .catch((err) => {
         window.api.logInfoEvent('[Bing翻译事件] - 异常：', err)
         window.api['agentApiTranslateCallback'](
-          TranslateServiceEnum.BING_DICT,
-          true,
-          commonError('Bing翻译事件', err),
-          info
+          R.errorD(new AgentTranslateCallbackVo(info, commonError('Bing翻译事件', err)))
         )
       })
   }

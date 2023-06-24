@@ -1,12 +1,12 @@
 import log from '../../../../utils/log'
-import { paramsFilter } from '../../../../utils/logExtend'
-import R from '../../../../class/R'
+import R from '../../../../../common/class/R'
 import GlobalWin from '../../../GlobalWin'
 import ITranslateInterface from './ITranslateInterface'
-import TranslateServiceEnum from '../../../../enums/TranslateServiceEnum'
+import TranslateServiceEnum from '../../../../../common/enums/TranslateServiceEnum'
 import CaiYunRequest from '../../interfaces/CaiYunRequest'
 import { commonError } from '../../../../utils/RequestUtil'
-import { isNull } from '../../../../utils/validate'
+import { isNull } from '../../../../../common/utils/validate'
+import TranslateChannelFactory from '../../factory/TranslateChannelFactory'
 
 class CaiYunChannel implements ITranslateInterface {
   /**
@@ -15,22 +15,24 @@ class CaiYunChannel implements ITranslateInterface {
    * @param info 翻译信息
    */
   apiTranslate(info): void {
-    log.info('[彩云翻译事件] - 请求报文 : ', paramsFilter(info))
     CaiYunRequest.apiTranslate(info)
       .then((res) => {
         log.info('[彩云翻译事件] - 响应报文 : ', res)
         const target = res['target']
         const text = target[0]
         if (isNull(text)) {
-          GlobalWin.mainWinSend('caiyun-api-translate-callback-event', R.okT('翻译出现错误'))
+          GlobalWin.mainWinSend(
+            TranslateChannelFactory.callbackName(info.type),
+            R.okT('翻译出现错误')
+          )
           return
         }
-        GlobalWin.mainWinSend('caiyun-api-translate-callback-event', R.okT(text))
+        GlobalWin.mainWinSend(TranslateChannelFactory.callbackName(info.type), R.okT(text))
       })
       .catch((err) => {
         const errInfo = commonError('彩云翻译事件', err)
         GlobalWin.mainWinSend(
-          'caiyun-api-translate-callback-event',
+          TranslateChannelFactory.callbackName(info.type),
           R.okT(this.getMsgByErrorCode(errInfo?.['message']))
         )
       })
@@ -42,7 +44,6 @@ class CaiYunChannel implements ITranslateInterface {
    * @param info 翻译信息
    */
   apiTranslateCheck(info): void {
-    log.info('[彩云翻译校验密钥事件] - 请求报文 : ', paramsFilter(info))
     // 响应信息
     const responseData = {
       id: info.id,

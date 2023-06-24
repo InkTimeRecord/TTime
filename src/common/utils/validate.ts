@@ -4,7 +4,7 @@
  * @param date 数据
  * @returns {boolean}
  */
-export function isNull(date: string): boolean {
+export function isNull(date: string | object): boolean {
   return date === undefined || date === null || date === ''
 }
 

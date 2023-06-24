@@ -1,4 +1,4 @@
-import { isNotNull } from './validate'
+import { isNotNull } from '../../../common/utils/validate'
 
 /**
  * 获取
@@ -57,5 +57,5 @@ export const cacheGetByObj = (key, isObj) => {
  * @param isObj 是否为对象
  */
 export const cacheSetByObj = (key, val, isObj) => {
-  return localStorage[key] = isNotNull(val) && isObj ? JSON.stringify(val) : val
+  return (localStorage[key] = isNotNull(val) && isObj ? JSON.stringify(val) : val)
 }

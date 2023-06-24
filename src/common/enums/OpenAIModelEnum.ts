@@ -1,5 +1,5 @@
 /**
- * 翻译服务枚举
+ * OpenAI模型枚举
  */
 class OpenAIModelEnum {
   /**

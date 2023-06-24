@@ -1,11 +1,13 @@
-import { isNotNull, isNull } from '../utils/validate'
+import { isNotNull, isNull } from '../../../common/utils/validate'
 import HttpMethodType from '../enums/HttpMethodTypeClassEnum'
 import request from '../utils/requestNotHandle'
-import { TranslateServiceEnum } from '../enums/TranslateServiceEnum'
+import R from '../../../common/class/R'
+import AgentTranslateCallbackVo from '../../../common/class/AgentTranslateCallbackVo'
+import TranslateServiceEnum from '../../../common/enums/TranslateServiceEnum'
 import { commonError } from '../utils/RequestUtil'
-import { OpenAIStatusEnum } from '../enums/OpenAIStatusEnum'
+import { OpenAIStatusEnum } from '../../../common/enums/OpenAIStatusEnum'
 import { v4 as uuidv4 } from 'uuid'
-import { OpenAIModelEnum } from '../enums/OpenAIModelEnum'
+import { OpenAIModelEnum } from '../../../common/enums/OpenAIModelEnum'
 
 export class QuoteProcessor {
   private quote: string
@@ -196,10 +198,11 @@ class OpenAIChannelRequest {
     const isCheckRequest = false
     const { data, quoteProcessor } = OpenAIChannelRequest.buildOpenAIRequest(info, isCheckRequest)
     window.api['agentApiTranslateCallback'](
-      TranslateServiceEnum.OPEN_AI,
-      true,
-      { code: OpenAIStatusEnum.START },
-      isCheckRequest ? info : null
+      R.okD(
+        new AgentTranslateCallbackVo(info, {
+          code: OpenAIStatusEnum.START
+        })
+      )
     )
     if (isNull(info.requestUrl)) {
       info.requestUrl = OpenAIModelEnum.REQUEST_URL
@@ -230,13 +233,12 @@ class OpenAIChannelRequest {
               data = JSON.parse(data)
               if (isNotNull(data['error'])) {
                 window.api['agentApiTranslateCallback'](
-                  TranslateServiceEnum.OPEN_AI,
-                  true,
-                  {
-                    code: OpenAIStatusEnum.ERROR,
-                    error: data
-                  },
-                  isCheckRequest ? info : null
+                  R.errorD(
+                    new AgentTranslateCallbackVo(info, {
+                      code: OpenAIStatusEnum.ERROR,
+                      error: data
+                    })
+                  )
                 )
                 return
               }
@@ -247,13 +249,12 @@ class OpenAIChannelRequest {
               content = quoteProcessor.processText(content)
               text += content
               window.api['agentApiTranslateCallback'](
-                TranslateServiceEnum.OPEN_AI,
-                true,
-                {
-                  code: OpenAIStatusEnum.ING,
-                  content: content
-                },
-                isCheckRequest ? info : null
+                R.okD(
+                  new AgentTranslateCallbackVo(info, {
+                    code: OpenAIStatusEnum.ING,
+                    content: content
+                  })
+                )
               )
             })
           }
@@ -261,23 +262,23 @@ class OpenAIChannelRequest {
           reader.releaseLock()
         }
         window.api['agentApiTranslateCallback'](
-          TranslateServiceEnum.OPEN_AI,
-          true,
-          { code: OpenAIStatusEnum.END },
-          isCheckRequest ? info : null
+          R.okD(
+            new AgentTranslateCallbackVo(info, {
+              code: OpenAIStatusEnum.END
+            })
+          )
         )
         window.api.logInfoEvent('[OpenAI翻译事件] - 响应报文 : ', text)
       })
       .catch((error) => {
         window.api.logInfoEvent('[OpenAI翻译事件] - error : ', error)
         window.api['agentApiTranslateCallback'](
-          TranslateServiceEnum.OPEN_AI,
-          true,
-          {
-            code: OpenAIStatusEnum.ERROR,
-            error: error
-          },
-          isCheckRequest ? info : null
+          R.errorD(
+            new AgentTranslateCallbackVo(info, {
+              code: OpenAIStatusEnum.ERROR,
+              error: error
+            })
+          )
         )
       })
   }
@@ -305,19 +306,13 @@ class OpenAIChannelRequest {
     }
     request(requestInfo).then(
       (data) => {
-        window.api['agentApiTranslateCallback'](
-          TranslateServiceEnum.OPEN_AI,
-          true,
-          data,
-          isCheckRequest ? info : null
-        )
+        window.api['agentApiTranslateCallback'](R.okD(new AgentTranslateCallbackVo(info, data)))
       },
       (err) => {
         window.api['agentApiTranslateCallback'](
-          TranslateServiceEnum.OPEN_AI,
-          false,
-          commonError(TranslateServiceEnum.OPEN_AI, err),
-          isCheckRequest ? info : null
+          R.errorD(
+            new AgentTranslateCallbackVo(info, commonError(TranslateServiceEnum.OPEN_AI, err))
+          )
         )
       }
     )

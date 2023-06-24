@@ -1,9 +1,9 @@
 import log from '../../../../utils/log'
-import R from '../../../../class/R'
+import R from '../../../../../common/class/R'
 import GlobalWin from '../../../GlobalWin'
 import ITranslateInterface from './ITranslateInterface'
 import TTimeRequest from '../../interfaces/TTimeRequest'
-import { paramsFilter } from '../../../../utils/logExtend'
+import TranslateChannelFactory from '../../factory/TranslateChannelFactory'
 
 class TTimeChannel implements ITranslateInterface {
   /**
@@ -12,7 +12,6 @@ class TTimeChannel implements ITranslateInterface {
    * @param info 翻译信息
    */
   apiTranslate(info): void {
-    log.info('[TTime翻译事件] - 请求报文 : ', paramsFilter(info))
     TTimeRequest.apiTranslate(info)
       .then((res) => {
         log.info('[TTime翻译事件] - 响应报文 : ', res)
@@ -22,13 +21,14 @@ class TTimeChannel implements ITranslateInterface {
         } else {
           data = res['data']['translateList']
         }
-        GlobalWin.mainWinSend('ttime-api-translate-callback-event', R.okT(data))
+        GlobalWin.mainWinSend(TranslateChannelFactory.callbackName(info.type), R.okT(data))
       })
       .catch((error) => {
-        GlobalWin.mainWinSend('ttime-api-translate-callback-event', R.okT(error))
+        GlobalWin.mainWinSend(TranslateChannelFactory.callbackName(info.type), R.okT(error))
       })
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-empty-function,@typescript-eslint/no-unused-vars
   apiTranslateCheck(_info): void {}
 }
 

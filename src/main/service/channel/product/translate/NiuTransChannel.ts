@@ -1,11 +1,11 @@
 import log from '../../../../utils/log'
-import { paramsFilter } from '../../../../utils/logExtend'
-import R from '../../../../class/R'
+import R from '../../../../../common/class/R'
 import GlobalWin from '../../../GlobalWin'
 import ITranslateInterface from './ITranslateInterface'
 import NiuTransRequest from '../../interfaces/NiuTransRequest'
-import TranslateServiceEnum from '../../../../enums/TranslateServiceEnum'
-import { isNotNull } from '../../../../utils/validate'
+import TranslateServiceEnum from '../../../../../common/enums/TranslateServiceEnum'
+import { isNotNull } from '../../../../../common/utils/validate'
+import TranslateChannelFactory from '../../factory/TranslateChannelFactory'
 
 class NiuTransChannel implements ITranslateInterface {
   /**
@@ -14,11 +14,7 @@ class NiuTransChannel implements ITranslateInterface {
    * @param info 翻译信息
    */
   apiTranslate(info): void {
-    const key =
-      info.type === TranslateServiceEnum.NIU_TRANS
-        ? 'niutrans-api-translate-callback-event'
-        : 'niutransbuiltin-api-translate-callback-event'
-    log.info('[小牛翻译事件] - 请求报文 : ', paramsFilter(info))
+    const key = TranslateChannelFactory.callbackName(info.type)
     NiuTransRequest.apiTranslate(info)
       .then((res) => {
         log.info('[小牛翻译事件] - 响应报文 : ', res)
@@ -27,10 +23,6 @@ class NiuTransChannel implements ITranslateInterface {
           GlobalWin.mainWinSend(key, R.okT(this.getMsgByErrorCode(res)))
           return
         }
-        log.info('[小牛翻译事件] - 响应发送: ', {
-          key: key,
-          info
-        })
         GlobalWin.mainWinSend(key, R.okT(res['tgt_text']?.split('\\n')))
       })
       .catch((error) => {
@@ -44,7 +36,6 @@ class NiuTransChannel implements ITranslateInterface {
    * @param info 翻译信息
    */
   apiTranslateCheck(info): void {
-    log.info('[小牛翻译校验密钥事件] - 请求报文 : ', paramsFilter(info))
     // 响应信息
     const responseData = {
       id: info.id,

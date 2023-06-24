@@ -1,11 +1,11 @@
 import ITranslateInterface from './ITranslateInterface'
 import log from '../../../../utils/log'
-import { paramsFilter } from '../../../../utils/logExtend'
 import GlobalWin from '../../../GlobalWin'
-import TranslateServiceEnum from '../../../../enums/TranslateServiceEnum'
-import R from '../../../../class/R'
+import TranslateServiceEnum from '../../../../../common/enums/TranslateServiceEnum'
+import R from '../../../../../common/class/R'
 import VolcanoRequest from '../../interfaces/VolcanoRequest'
-import { isNotNull } from '../../../../utils/validate'
+import { isNotNull } from '../../../../../common/utils/validate'
+import TranslateChannelFactory from '../../factory/TranslateChannelFactory'
 
 class VolcanoChannel implements ITranslateInterface {
   /**
@@ -14,7 +14,6 @@ class VolcanoChannel implements ITranslateInterface {
    * @param info 翻译信息
    */
   apiTranslate(info): void {
-    log.info('[火山翻译事件] - 请求报文 : ', paramsFilter(info))
     VolcanoRequest.apiTranslate(info)
       .then((res) => {
         log.info('[火山翻译事件] - 响应报文 : ', res)
@@ -22,16 +21,19 @@ class VolcanoChannel implements ITranslateInterface {
         const errorInfo = (res['ResponseMetadata'] || res['ResponseMetaData'])?.Error
         if (isNotNull(errorInfo)) {
           GlobalWin.mainWinSend(
-            'volcano-api-translate-callback-event',
+            TranslateChannelFactory.callbackName(info.type),
             R.okT(this.getMsgByErrorCode(errorInfo))
           )
           return
         }
         const translationList = res['TranslationList'][0]['Translation']
-        GlobalWin.mainWinSend('volcano-api-translate-callback-event', R.okT(translationList))
+        GlobalWin.mainWinSend(
+          TranslateChannelFactory.callbackName(info.type),
+          R.okT(translationList)
+        )
       })
       .catch((error) => {
-        GlobalWin.mainWinSend('volcano-api-translate-callback-event', R.okT(error))
+        GlobalWin.mainWinSend(TranslateChannelFactory.callbackName(info.type), R.okT(error))
       })
   }
 
@@ -41,7 +43,6 @@ class VolcanoChannel implements ITranslateInterface {
    * @param info 翻译信息
    */
   apiTranslateCheck(info): void {
-    log.info('[火山翻译校验密钥事件] - 请求报文 : ', paramsFilter(info))
     // 响应信息
     const responseData = {
       id: info.id,

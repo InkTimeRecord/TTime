@@ -1,4 +1,4 @@
-import { isNotNull } from './validate'
+import { isNotNull } from '../../common/utils/validate'
 
 export const paramsFilter = (obj) => {
   const newObj = JSON.parse(JSON.stringify(obj))

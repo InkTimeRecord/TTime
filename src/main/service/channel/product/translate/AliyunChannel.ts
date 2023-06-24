@@ -1,10 +1,10 @@
 import log from '../../../../utils/log'
-import R from '../../../../class/R'
+import R from '../../../../../common/class/R'
 import GlobalWin from '../../../GlobalWin'
 import ITranslateInterface from './ITranslateInterface'
 import AliyunRequest from '../../interfaces/AliyunRequest'
-import TranslateServiceEnum from '../../../../enums/TranslateServiceEnum'
-import { paramsFilter } from '../../../../utils/logExtend'
+import TranslateServiceEnum from '../../../../../common/enums/TranslateServiceEnum'
+import TranslateChannelFactory from '../../factory/TranslateChannelFactory'
 
 class AliyunChannel implements ITranslateInterface {
   /**
@@ -13,7 +13,6 @@ class AliyunChannel implements ITranslateInterface {
    * @param info 翻译信息
    */
   apiTranslate(info): void {
-    log.info('[阿里云翻译事件] - 请求报文 : ', paramsFilter(info))
     AliyunRequest.apiTranslate(info).then(
       (response) => {
         const body = response.body
@@ -21,12 +20,13 @@ class AliyunChannel implements ITranslateInterface {
         const code = body.code
         let data = ''
         if (code === 200) {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
           data = body.data.translated.split('\\n')
         } else {
           data = this.getMsgByErrorCode(code, body.message)
         }
-        GlobalWin.mainWinSend('aliyun-api-translate-callback-event', R.okT(data))
+        GlobalWin.mainWinSend(TranslateChannelFactory.callbackName(info.type), R.okT(data))
       },
       (err) => {
         log.error('[阿里云翻译事件] - 异常响应报文 : ', err)
@@ -39,7 +39,7 @@ class AliyunChannel implements ITranslateInterface {
         } else {
           msg = '未知错误 , 如重复出现 , 请联系开发者'
         }
-        GlobalWin.mainWinSend('aliyun-api-translate-callback-event', R.okT(msg))
+        GlobalWin.mainWinSend(TranslateChannelFactory.callbackName(info.type), R.okT(msg))
       }
     )
   }
@@ -50,7 +50,6 @@ class AliyunChannel implements ITranslateInterface {
    * @param info 翻译信息
    */
   apiTranslateCheck(info): void {
-    log.info('[阿里云翻译校验密钥事件] - 请求报文 : ', paramsFilter(info))
     // 响应信息
     const responseData = {
       id: info.id,

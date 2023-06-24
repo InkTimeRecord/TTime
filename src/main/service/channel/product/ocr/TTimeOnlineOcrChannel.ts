@@ -3,7 +3,7 @@ import TTimeRequest from '../../interfaces/TTimeRequest'
 import GlobalWin from '../../../GlobalWin'
 import log from '../../../../utils/log'
 import { paramsFilter } from '../../../../utils/logExtend'
-import { YesNoEnum } from '../../../../enums/YesNoEnum'
+import { YesNoEnum } from '../../../../../common/enums/YesNoEnum'
 
 class TTimeOnlineOcrChannel implements IOcrInterface {
   /**

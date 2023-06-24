@@ -1,4 +1,4 @@
-import { isNotNull, isNull } from './validate'
+import { isNotNull, isNull } from '../../common/utils/validate'
 import log from './log'
 import createHttpsProxyAgent from 'https-proxy-agent'
 import GlobalWin from '../service/GlobalWin'

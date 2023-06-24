@@ -19,8 +19,13 @@
               >
                 <a class="translate-service-block none-select translate-service-expansion-block">
                   <div class="left">
-                    <img class="translate-service-logo none-select" :src="element.logo" />
-                    <span class="translate-service-name none-select">{{ element.name }}</span>
+                    <img
+                      class="translate-service-logo none-select"
+                      :src="element.serviceInfo.logo"
+                    />
+                    <span class="translate-service-name none-select">{{
+                      element.serviceInfo.name
+                    }}</span>
                   </div>
                   <div class="right">
                     <el-switch
@@ -88,14 +93,9 @@
 
           <el-form-item
             v-if="
-              translateServiceThis.type !== TranslateServiceEnum.GOOGLE &&
-              translateServiceThis.type !== TranslateServiceEnum.DEEP_L &&
-              translateServiceThis.type !== TranslateServiceEnum.OPEN_AI &&
-              translateServiceThis.type !== TranslateServiceEnum.NIU_TRANS &&
-              translateServiceThis.type !== TranslateServiceEnum.CAI_YUN &&
-              translateServiceThis.type !== TranslateServiceEnum.TRAN_SMART
+              !TranslateServiceBuilder.getServiceConfigInfo(translateServiceThis.type).isOneAppKey
             "
-            :label="'AppId'"
+            label="AppId"
           >
             <el-input
               v-model="translateServiceThis.appId"
@@ -105,7 +105,7 @@
               spellcheck="false"
             />
           </el-form-item>
-          <el-form-item :label="'AppKey'">
+          <el-form-item label="AppKey">
             <el-input
               v-model="translateServiceThis.appKey"
               type="password"
@@ -157,13 +157,14 @@ import { Minus, Plus } from '@element-plus/icons-vue'
 import {
   buildTranslateService,
   getTranslateServiceMap,
-  setTranslateServiceMap
+  setTranslateServiceMap,
+  TranslateServiceBuilder
 } from '../../../../utils/translateServiceUtil'
-import { isNotUrl, isNull } from '../../../../utils/validate'
-import { TranslateServiceEnum } from '../../../../enums/TranslateServiceEnum'
+import { isNotNull, isNotUrl, isNull } from '../../../../../../common/utils/validate'
+import TranslateServiceEnum from '../../../../../../common/enums/TranslateServiceEnum'
 import ElMessageExtend from '../../../../utils/messageExtend'
 import { REnum } from '../../../../enums/REnum'
-import { OpenAIModelEnum } from '../../../../enums/OpenAIModelEnum'
+import { OpenAIModelEnum } from '../../../../../../common/enums/OpenAIModelEnum'
 import draggable from 'vuedraggable'
 
 // 翻译服务验证状态
@@ -171,7 +172,7 @@ const checkIngStatus = ref(false)
 
 // 可添加的翻译源列表 先把 values 格式转换为数组
 const translateServiceSelectMenuListTemp = Array.from(
-  TranslateServiceEnum.getServiceList().values()
+  TranslateServiceBuilder.getServiceList().values()
 )
 // 这里获取翻译源对应的内置翻译源状态
 translateServiceSelectMenuListTemp.forEach((service) => {
@@ -233,15 +234,10 @@ const selectTranslateService = (translateService) => {
 const addTranslateService = (type) => {
   const insideTranslateServiceMap = getTranslateServiceMap()
   for (const translateService of insideTranslateServiceMap.values()) {
-    // 如果已经添加过了TTime翻译源 重复添加时提示
+    // 如果已经添加了内置翻译源 则不允许重复添加
     if (
-      (TranslateServiceEnum.TTIME === type && type === translateService.type) ||
-      (TranslateServiceEnum.BING === type && type === translateService.type) ||
-      (TranslateServiceEnum.BING_DICT === type && type === translateService.type) ||
-      (TranslateServiceEnum.GOOGLE_BUILT_IN === type && type === translateService.type) ||
-      (TranslateServiceEnum.DEEP_L_BUILT_IN === type && type === translateService.type) ||
-      (TranslateServiceEnum.NIU_TRANS_BUILT_IN === type && type === translateService.type) ||
-      (TranslateServiceEnum.TRAN_SMART === type && type === translateService.type)
+      !TranslateServiceBuilder.getServiceConfigInfo(type).isKey &&
+      type === translateService.type
     ) {
       ElMessageExtend.warning('此翻译源已存在了，请勿重复添加')
       return
@@ -259,7 +255,7 @@ const addTranslateService = (type) => {
 /**
  * 删除翻译服务
  */
-const deleteTranslateService = () => {
+const deleteTranslateService = (): void => {
   const insideTranslateServiceMap = getTranslateServiceMap()
   if (insideTranslateServiceMap.size <= 1) {
     return ElMessageExtend.warning('不能删除所有翻译源')
@@ -278,15 +274,11 @@ const deleteTranslateService = () => {
  * 当前选择的翻译服务验证
  * 验证结果会通过调用返回给 apiCheckTranslateCallbackEvent 方法
  */
-const translateServiceCheckAndSave = () => {
+const translateServiceCheckAndSave = (): void => {
   const value = translateServiceThis.value
   if (
     (isNull(value.appId) &&
-      TranslateServiceEnum.GOOGLE !== value.type &&
-      TranslateServiceEnum.DEEP_L !== value.type &&
-      TranslateServiceEnum.OPEN_AI !== value.type &&
-      TranslateServiceEnum.NIU_TRANS !== value.type &&
-      TranslateServiceEnum.CAI_YUN !== value.type) ||
+      !TranslateServiceBuilder.getServiceConfigInfo(value.type).isOneAppKey) ||
     isNull(value.appKey)
   ) {
     return ElMessageExtend.warning('请输入密钥信息后再进行验证')
@@ -339,9 +331,11 @@ window.api.apiCheckTranslateCallbackEvent((type, res) => {
   insideTranslateService.checkStatus = checkStatus
   insideTranslateService.appId = data.appId
   insideTranslateService.appKey = data.appKey
-  if (TranslateServiceEnum.OPEN_AI === type) {
-    insideTranslateService.requestUrl = data.requestUrl
-    insideTranslateService.model = data.model
+  const defaultInfo = TranslateServiceBuilder.getServiceConfigInfo(type).defaultInfo
+  if (isNotNull(defaultInfo)) {
+    Object.keys(defaultInfo).forEach((key) => {
+      insideTranslateService[key] = data[key]
+    })
   }
   saveTranslateService(insideTranslateService)
   if (translateServiceThis.value.id === insideTranslateService.id) {
