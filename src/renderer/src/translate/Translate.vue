@@ -108,10 +108,10 @@ if (undefined === cacheGetStr('choiceShortcutKey')) {
   cacheSetStr('choiceShortcutKey', 'Alt + E')
 }
 if (undefined === cacheGetStr('screenshotOcrShortcutKey')) {
-  cacheSetStr('screenshotOcrShortcutKey', 'Alt + Shift + S')
+  cacheSetStr('screenshotOcrShortcutKey', 'Alt + Shift + W')
 }
 if (undefined === cacheGetStr('screenshotSilenceOcrShortcutKey')) {
-  cacheSetStr('screenshotSilenceOcrShortcutKey', 'Alt + Shift + D')
+  cacheSetStr('screenshotSilenceOcrShortcutKey', 'Alt + Shift + E')
 }
 // 首次加载 - 代理配置初始化
 if (isNull(cacheGetStr('agentConfig'))) {
