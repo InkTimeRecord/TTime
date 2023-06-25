@@ -51,12 +51,6 @@ class YouDaoChannel implements ITranslateInterface {
    * @param info 翻译信息
    */
   apiTranslateCheck(info): void {
-    // 响应信息
-    const responseData = {
-      id: info.id,
-      appId: info.appId,
-      appKey: info.appKey
-    }
     YouDaoRequest.apiTranslate(info).then(
       (res) => {
         log.info('[有道翻译校验密钥事件] - 响应报文 : ', res)
@@ -65,7 +59,7 @@ class YouDaoChannel implements ITranslateInterface {
           GlobalWin.setWin.webContents.send(
             'api-check-translate-callback-event',
             TranslateServiceEnum.YOU_DAO,
-            R.okD(responseData)
+            R.okD(info.responseData)
           )
           return
         }
@@ -73,7 +67,7 @@ class YouDaoChannel implements ITranslateInterface {
         GlobalWin.setWin.webContents.send(
           'api-check-translate-callback-event',
           TranslateServiceEnum.YOU_DAO,
-          R.errorMD(msg, responseData)
+          R.errorMD(msg, info.responseData)
         )
       },
       (err) => {
@@ -81,7 +75,7 @@ class YouDaoChannel implements ITranslateInterface {
         GlobalWin.setWin.webContents.send(
           'api-check-translate-callback-event',
           TranslateServiceEnum.YOU_DAO,
-          R.errorD(responseData)
+          R.errorD(info.responseData)
         )
       }
     )

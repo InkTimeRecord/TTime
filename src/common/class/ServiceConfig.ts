@@ -2,16 +2,16 @@ import { random } from '../utils/strUtil'
 import { isNull } from '../utils/validate'
 
 /**
- * 翻译源信息
+ * 服务信息
  */
-class TranslateService {
+class ServiceConfig {
   /**
    * ID
    */
   id: string
 
   /**
-   * 翻译源类型
+   * 服务类型
    */
   type: string
 
@@ -44,7 +44,7 @@ class TranslateService {
     if (isNull(info)) {
       info = {}
     }
-    const translateService = new TranslateService()
+    const translateService = new ServiceConfig()
     translateService.id = random()
     translateService.useStatus = true
     translateService.isBuiltIn = true
@@ -59,7 +59,7 @@ class TranslateService {
     if (isNull(info)) {
       info = {}
     }
-    const translateService = new TranslateService()
+    const translateService = new ServiceConfig()
     translateService.id = random()
     translateService.useStatus = false
     translateService.isBuiltIn = false
@@ -73,4 +73,4 @@ class TranslateService {
   }
 }
 
-export default TranslateService
+export default ServiceConfig

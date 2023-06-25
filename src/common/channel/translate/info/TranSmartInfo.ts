@@ -1,5 +1,5 @@
 export default {
-  name: '腾讯交互翻译',
+  name: '腾讯交互翻译(内置)',
   // 是否需要秘钥
   isKey: false,
   // 是否单秘钥

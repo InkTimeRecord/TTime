@@ -43,17 +43,11 @@ class GoogleChannel extends TranslateAgent implements ITranslateAgentInterface {
     const dataObj = res.data
     const data = dataObj['response']
     const info = dataObj['request']
-    // 响应信息
-    const responseData = {
-      id: info.id,
-      appId: info.appId,
-      appKey: info.appKey
-    }
     if (res.code === R.ERROR) {
       GlobalWin.setWin.webContents.send(
         'api-check-translate-callback-event',
         TranslateServiceEnum.GOOGLE,
-        R.errorMD(GoogleChannel.commonErrorExpand(data), responseData)
+        R.errorMD(GoogleChannel.commonErrorExpand(data), info.responseData)
       )
       return
     }
@@ -61,7 +55,7 @@ class GoogleChannel extends TranslateAgent implements ITranslateAgentInterface {
     GlobalWin.setWin.webContents.send(
       'api-check-translate-callback-event',
       TranslateServiceEnum.GOOGLE,
-      R.okD(responseData)
+      R.okD(info.responseData)
     )
   }
 

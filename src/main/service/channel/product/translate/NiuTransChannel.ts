@@ -36,12 +36,6 @@ class NiuTransChannel implements ITranslateInterface {
    * @param info 翻译信息
    */
   apiTranslateCheck(info): void {
-    // 响应信息
-    const responseData = {
-      id: info.id,
-      appId: info.appId,
-      appKey: info.appKey
-    }
     NiuTransRequest.apiTranslate(info).then(
       (res) => {
         log.info('[小牛翻译校验密钥事件] - 响应报文 : ', res)
@@ -50,14 +44,14 @@ class NiuTransChannel implements ITranslateInterface {
           GlobalWin.setWin.webContents.send(
             'api-check-translate-callback-event',
             TranslateServiceEnum.NIU_TRANS,
-            R.errorMD(this.getMsgByErrorCode(res), responseData)
+            R.errorMD(this.getMsgByErrorCode(res), info.responseData)
           )
           return
         }
         GlobalWin.setWin.webContents.send(
           'api-check-translate-callback-event',
           TranslateServiceEnum.NIU_TRANS,
-          R.okD(responseData)
+          R.okD(info.responseData)
         )
       },
       (err) => {
@@ -65,7 +59,7 @@ class NiuTransChannel implements ITranslateInterface {
         GlobalWin.setWin.webContents.send(
           'api-check-translate-callback-event',
           TranslateServiceEnum.NIU_TRANS,
-          R.errorD(responseData)
+          R.errorD(info.responseData)
         )
       }
     )

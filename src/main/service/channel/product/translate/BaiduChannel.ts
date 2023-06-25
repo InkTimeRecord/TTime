@@ -41,12 +41,6 @@ class BaiduChannel implements ITranslateInterface {
    * @param info 翻译信息
    */
   apiTranslateCheck(info): void {
-    // 响应信息
-    const responseData = {
-      id: info.id,
-      appId: info.appId,
-      appKey: info.appKey
-    }
     BaiduRequest.apiTranslate(info).then(
       (res) => {
         log.info('[百度翻译校验密钥事件] - 响应报文 : ', res)
@@ -55,7 +49,7 @@ class BaiduChannel implements ITranslateInterface {
           GlobalWin.setWin.webContents.send(
             'api-check-translate-callback-event',
             TranslateServiceEnum.BAIDU,
-            R.okD(responseData)
+            R.okD(info.responseData)
           )
           return
         }
@@ -63,7 +57,7 @@ class BaiduChannel implements ITranslateInterface {
         GlobalWin.setWin.webContents.send(
           'api-check-translate-callback-event',
           TranslateServiceEnum.BAIDU,
-          R.errorMD(msg, responseData)
+          R.errorMD(msg, info.responseData)
         )
       },
       (err) => {
@@ -71,7 +65,7 @@ class BaiduChannel implements ITranslateInterface {
         GlobalWin.setWin.webContents.send(
           'api-check-translate-callback-event',
           TranslateServiceEnum.BAIDU,
-          R.errorD(responseData)
+          R.errorD(info.responseData)
         )
       }
     )

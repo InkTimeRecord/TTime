@@ -38,12 +38,6 @@ class PapagoChannel implements ITranslateInterface {
    * @param info 翻译信息
    */
   apiTranslateCheck(info): void {
-    // 响应信息
-    const responseData = {
-      id: info.id,
-      appId: info.appId,
-      appKey: info.appKey
-    }
     // 此翻译不支持输入文字自动识别语言 这里默认识别中文
     info.languageType = 'zh-CN'
     PapagoRequest.apiTranslate(info).then(
@@ -52,14 +46,14 @@ class PapagoChannel implements ITranslateInterface {
         GlobalWin.setWin.webContents.send(
           'api-check-translate-callback-event',
           TranslateServiceEnum.PAPAGO,
-          R.okD(responseData)
+          R.okD(info.responseData)
         )
       },
       (err) => {
         GlobalWin.setWin.webContents.send(
           'api-check-translate-callback-event',
           TranslateServiceEnum.PAPAGO,
-          R.errorMD(this.commonErrorExpand('Papago翻译校验密钥', err), responseData)
+          R.errorMD(this.commonErrorExpand('Papago翻译校验密钥', err), info.responseData)
         )
       }
     )

@@ -21,8 +21,8 @@
                   class="translate-service-block cursor-pointer none-select translate-service-expansion-block"
                 >
                   <div class="left">
-                    <img class="translate-service-logo" :src="element.logo" />
-                    <span class="translate-service-name">{{ element.name }}</span>
+                    <img class="translate-service-logo" :src="element.serviceInfo.logo" />
+                    <span class="translate-service-name">{{ element.serviceInfo.name }}</span>
                   </div>
                   <div class="right">
                     <el-switch
@@ -131,7 +131,9 @@ import OcrServiceEnum from '../../../../../../common/enums/OcrServiceEnum'
 import ElMessageExtend from '../../../../utils/messageExtend'
 import { REnum } from '../../../../enums/REnum'
 import draggable from 'vuedraggable'
-import { VolcanoOcrModelEnum } from '../../../../enums/VolcanoOcrModelEnum'
+import { VolcanoOcrModelEnum } from '../../../../../../common/enums/VolcanoOcrModelEnum'
+import { TranslateServiceBuilder } from '../../../../utils/translateServiceUtil'
+import { isNotNull, isNull } from '../../../../../../common/utils/validate'
 
 // Ocr服务验证状态
 const checkIngStatus = ref(false)
@@ -162,7 +164,7 @@ const VolcanoOcrModelList = VolcanoOcrModelEnum.MODEL_LIST
 /**
  * 设置当前选中项默认为第一个Ocr服务
  */
-const selectOneOcrServiceThis = () => {
+const selectOneOcrServiceThis = (): void => {
   ocrServiceThis.value = ocrServiceMap.value.get(ocrServiceMap.value.entries().next().value[0])
 }
 
@@ -180,7 +182,7 @@ selectOneOcrServiceThis()
  *
  * @param ocrService Ocr服务
  */
-const selectOcrService = (ocrService) => {
+const selectOcrService = (ocrService): void => {
   ocrServiceThis.value = ocrService
   // 开启Ocr服务验证加载状态
   checkIngStatus.value = false
@@ -191,16 +193,13 @@ const selectOcrService = (ocrService) => {
  *
  * @param type Ocr类型
  */
-const addOcrService = (type) => {
+const addOcrService = (type): void => {
   const insideOcrServiceMap = getOcrServiceMap()
+
   for (const ocrService of insideOcrServiceMap.values()) {
-    // 如果已经添加过了TTimeOcr源 重复添加时提示
-    if (OcrServiceEnum.TTIME === type && type === ocrService.type) {
-      ElMessageExtend.warning('TTime Ocr已存在了，请勿重复添加')
-      return
-    }
-    if (OcrServiceEnum.TTIME_ONLINE === type && type === ocrService.type) {
-      ElMessageExtend.warning('TTime在线Ocr已存在了，请勿重复添加')
+    // 如果已经添加了内置服务 则不允许重复添加
+    if (!OcrServiceBuilder.getServiceConfigInfo(type).isKey && type === ocrService.type) {
+      ElMessageExtend.warning('此服务已存在了，请勿重复添加')
       return
     }
   }
@@ -214,7 +213,7 @@ const addOcrService = (type) => {
 /**
  * 删除Ocr服务
  */
-const deleteOcrService = () => {
+const deleteOcrService = (): void => {
   const insideOcrServiceMap = getOcrServiceMap()
   if (insideOcrServiceMap.size <= 1) {
     return ElMessageExtend.warning('不能删除所有Ocr服务')
@@ -235,15 +234,26 @@ const deleteOcrService = () => {
  * 当前选择的Ocr服务验证
  * 验证结果会通过调用返回给 apiCheckOcrCallbackEvent 方法
  */
-const ocrServiceCheckAndSave = () => {
+const ocrServiceCheckAndSave = (): void => {
   const value = ocrServiceThis.value
-  window.api.apiUniteOcrCheck(value.type, {
+  if (
+    (isNull(value.appId) && !OcrServiceBuilder.getServiceConfigInfo(value.type).isOneAppKey) ||
+    isNull(value.appKey)
+  ) {
+    return ElMessageExtend.warning('请输入密钥信息后再进行验证')
+  }
+  const info = {
     id: value.id,
     appId: value.appId,
-    appKey: value.appKey,
-    // 此参数 OpenAI 使用
-    model: value.model
-  })
+    appKey: value.appKey
+  }
+  const defaultInfo = OcrServiceBuilder.getServiceConfigInfo(value.type).defaultInfo
+  if (isNotNull(defaultInfo)) {
+    Object.keys(defaultInfo).forEach((key) => {
+      info[key] = value[key]
+    })
+  }
+  window.api.apiUniteOcrCheck(value.type, info)
   // 开启Ocr服务验证加载状态
   checkIngStatus.value = true
 }
@@ -251,7 +261,7 @@ const ocrServiceCheckAndSave = () => {
 /**
  * Ocr服务验证回调 - ocrServiceCheckAndSave 触发后结果回调到这里
  */
-window.api.apiCheckOcrCallbackEvent((type, res) => {
+window.api.apiCheckOcrCallbackEvent((type, res): void => {
   // 关闭Ocr服务验证加载状态
   checkIngStatus.value = false
   let useStatus
@@ -272,8 +282,13 @@ window.api.apiCheckOcrCallbackEvent((type, res) => {
   insideOcrService.checkStatus = checkStatus
   insideOcrService.appId = data.appId
   insideOcrService.appKey = data.appKey
-  if (OcrServiceEnum.VOLCANO === type) {
-    insideOcrService.model = data.model
+  // 每个服务可能会有其他附带值 根据配置动态加载
+  // 例如：火山 会有模型选择
+  const defaultInfo = OcrServiceBuilder.getServiceConfigInfo(type).defaultInfo
+  if (isNotNull(defaultInfo)) {
+    Object.keys(defaultInfo).forEach((key) => {
+      insideOcrService[key] = data[key]
+    })
   }
   ocrServiceUseStatusChange(insideOcrService)
   if (ocrServiceThis.value.id === insideOcrService.id) {
@@ -286,7 +301,7 @@ window.api.apiCheckOcrCallbackEvent((type, res) => {
  *
  * @param ocrService 更改的Ocr源信息
  */
-const ocrServiceUseStatusChange = (ocrService) => {
+const ocrServiceUseStatusChange = (ocrService): void => {
   if (ocrService.useStatus && !ocrService.checkStatus) {
     ocrService.useStatus = false
     return ElMessageExtend.warning('未验证的服务无法使用')
@@ -322,7 +337,7 @@ const ocrServiceUseStatusChange = (ocrService) => {
  *
  * @param ocrService Ocr源
  */
-const saveOcrService = (ocrService) => {
+const saveOcrService = (ocrService): void => {
   const insideOcrServiceMap = getOcrServiceMap()
   insideOcrServiceMap.set(ocrService.id, ocrService)
   setOcrServiceMap(insideOcrServiceMap)
@@ -330,6 +345,9 @@ const saveOcrService = (ocrService) => {
   updateThisOcrServiceMap(insideOcrServiceMap)
 }
 
+/**
+ * 服务排序拖动更改
+ */
 const ocrServiceSortDragChange = (event): void => {
   const moved = event.moved
   // 将 Map 转换为数组

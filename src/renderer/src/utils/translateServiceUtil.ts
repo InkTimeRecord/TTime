@@ -1,7 +1,7 @@
 import TranslateServiceEnum from '../../../common/enums/TranslateServiceEnum'
 import { cacheGet, cacheSet } from './cacheUtil'
 import { isNull } from '../../../common/utils/validate'
-import TranslateService from '../../../common/class/TranslateService'
+import ServiceConfig from '../../../common/class/ServiceConfig'
 
 /**
  * 保存翻译服务Map
@@ -23,7 +23,7 @@ export const setTranslateServiceMap = (translateServiceMap): void => {
     })
   }
   cacheSet('translateServiceMap', Array.from(translateServiceMap.entries()))
-  // 此处设置渠道信息
+  // 上面移除完毕保存后重新设置渠道信息
   translateServiceMap.forEach((translateService) => {
     translateService['serviceInfo'] = TranslateServiceBuilder.getInfoByService(
       translateService['type']
@@ -88,7 +88,7 @@ export const getTranslateServiceMapByUse = (): Map<unknown, unknown> => {
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 // eslint-disable-next-line @typescript-eslint/ban-types
-export const buildTranslateService = (translateServiceEnum): {} => {
+export const buildTranslateService = (type): {} => {
   const info: {
     name: string
     // 是否需要秘钥
@@ -99,18 +99,18 @@ export const buildTranslateService = (translateServiceEnum): {} => {
     defaultInfo: object
     // 翻译语言
     languageList: []
-  } = TranslateServiceBuilder.getServiceConfigInfo(translateServiceEnum)
+  } = TranslateServiceBuilder.getServiceConfigInfo(type)
   if (isNull(info.defaultInfo)) {
     info.defaultInfo = {}
   }
   if (info?.isKey) {
-    return TranslateService.buildKeyService({
-      type: translateServiceEnum,
+    return ServiceConfig.buildKeyService({
+      type: type,
       ...info.defaultInfo
     })
   } else {
-    return TranslateService.buildIsBuiltInService({
-      type: translateServiceEnum,
+    return ServiceConfig.buildIsBuiltInService({
+      type: type,
       ...info.defaultInfo
     })
   }
@@ -134,9 +134,9 @@ export class TranslateServiceBuilder {
     if (TranslateServiceBuilder.translateServiceMap.size > 1) {
       return TranslateServiceBuilder.translateServiceMap
     }
-    // 动态加载翻译源logo
+    // 动态加载服务logo
     const channelLogos = Object.values(
-      import.meta.glob('../assets/*.(png|jpe?g|gif|svg)', { eager: true })
+      import.meta.glob('../assets/translate/*.(png|jpe?g|gif|svg)', { eager: true })
     )
     Object.keys(TranslateServiceEnum)
       .filter((key) => typeof TranslateServiceEnum[key] === 'string')
@@ -147,7 +147,11 @@ export class TranslateServiceBuilder {
         const logo = channelLogos.find((item) => item.default.includes(code + 'Logo')).default
         TranslateServiceBuilder.translateServiceMap.set(
           code,
-          TranslateServiceBuilder.buildServiceInfo(TranslateServiceEnum.getName(code), code, logo)
+          TranslateServiceBuilder.buildServiceInfo(
+            TranslateServiceBuilder.getServiceConfigInfo(code).name,
+            code,
+            logo
+          )
         )
       })
     return TranslateServiceBuilder.translateServiceMap

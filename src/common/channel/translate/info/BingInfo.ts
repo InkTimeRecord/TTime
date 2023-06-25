@@ -1,5 +1,5 @@
 export default {
-  name: 'Bing翻译',
+  name: 'Bing翻译(内置)',
   // 是否需要秘钥
   isKey: false,
   // 是否单秘钥

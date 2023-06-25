@@ -41,12 +41,15 @@
 
 <script setup lang="ts">
 import { nextTick, ref, watch } from 'vue'
-import { isNull } from '../../../../common/utils/validate'
+import { isNotNull, isNull } from '../../../../common/utils/validate'
 import LanguageEnum from '../../enums/LanguageEnum'
 
 import loadingImage from '../../assets/loading.gif'
 import translate from '../../utils/translate'
-import { getTranslateServiceMapByUse } from '../../utils/translateServiceUtil'
+import {
+  getTranslateServiceMapByUse,
+  TranslateServiceBuilder
+} from '../../utils/translateServiceUtil'
 import TranslateServiceEnum from '../../../../common/enums/TranslateServiceEnum'
 import { cacheGet, cacheGetStr } from '../../utils/cacheUtil'
 import ElMessageExtend from '../../utils/messageExtend'
@@ -264,16 +267,16 @@ const translateFun = (): void => {
       languageInputTypeRequest,
       languageResultTypeRequest
     )
-    if (TranslateServiceEnum.TTIME !== type) {
-      info = {
-        ...info,
-        appId: translateService.appId,
-        appKey: translateService.appKey,
-        // 此参数 OpenAI 使用
-        model: translateService.model,
-        // 此参数 OpenAI 使用
-        requestUrl: translateService.requestUrl
-      }
+    info = {
+      ...info,
+      appId: translateService.appId,
+      appKey: translateService.appKey
+    }
+    const defaultInfo = TranslateServiceBuilder.getServiceConfigInfo(type).defaultInfo
+    if (isNotNull(defaultInfo)) {
+      Object.keys(defaultInfo).forEach((key) => {
+        info[key] = translateService[key]
+      })
     }
     // 此处触发之后会异步回调到 *ApiTranslateCallbackEvent 方法中去执行
     window.api.apiUniteTranslate(type, info)

@@ -143,7 +143,7 @@
             <span class="translate-service-bing-msg-title">建议：</span>
             <span class="translate-service-bing-msg">开启了Bing字典翻译源就不用再开启Bing翻译</span>
             <span class="translate-service-bing-msg">Bing翻译 = Bing翻译</span>
-            <span class="translate-service-bing-msg">Bing字典翻译 = Bing翻译 + Bing字典</span>
+            <span class="translate-service-bing-msg">Bing字典 = Bing翻译 + Bing字典</span>
           </div>
         </div>
       </div>
@@ -200,7 +200,7 @@ const openAIModelList = OpenAIModelEnum.MODEL_LIST
 /**
  * 设置当前选中项默认为第一个翻译服务
  */
-const selectOneTranslateServiceThis = () => {
+const selectOneTranslateServiceThis = (): void => {
   translateServiceThis.value = translateServiceMap.value.get(
     translateServiceMap.value.entries().next().value[0]
   )
@@ -220,7 +220,7 @@ selectOneTranslateServiceThis()
  *
  * @param translateService 翻译服务
  */
-const selectTranslateService = (translateService) => {
+const selectTranslateService = (translateService): void => {
   translateServiceThis.value = translateService
   // 开启翻译服务验证加载状态
   checkIngStatus.value = false
@@ -231,15 +231,15 @@ const selectTranslateService = (translateService) => {
  *
  * @param type 翻译类型
  */
-const addTranslateService = (type) => {
+const addTranslateService = (type): void => {
   const insideTranslateServiceMap = getTranslateServiceMap()
   for (const translateService of insideTranslateServiceMap.values()) {
-    // 如果已经添加了内置翻译源 则不允许重复添加
+    // 如果已经添加了内置服务 则不允许重复添加
     if (
       !TranslateServiceBuilder.getServiceConfigInfo(type).isKey &&
       type === translateService.type
     ) {
-      ElMessageExtend.warning('此翻译源已存在了，请勿重复添加')
+      ElMessageExtend.warning('此服务已存在了，请勿重复添加')
       return
     }
   }
@@ -294,15 +294,19 @@ const translateServiceCheckAndSave = (): void => {
       }
     }
   }
-  window.api.apiUniteTranslateCheck(value.type, {
+
+  const info = {
     id: value.id,
     appId: value.appId,
-    appKey: value.appKey,
-    // 此参数 OpenAI 使用
-    model: value.model,
-    // 此参数 OpenAI 使用
-    requestUrl: value.requestUrl
-  })
+    appKey: value.appKey
+  }
+  const defaultInfo = TranslateServiceBuilder.getServiceConfigInfo(value.type).defaultInfo
+  if (isNotNull(defaultInfo)) {
+    Object.keys(defaultInfo).forEach((key) => {
+      info[key] = value[key]
+    })
+  }
+  window.api.apiUniteTranslateCheck(value.type, info)
   // 开启翻译服务验证加载状态
   checkIngStatus.value = true
 }
@@ -331,6 +335,8 @@ window.api.apiCheckTranslateCallbackEvent((type, res) => {
   insideTranslateService.checkStatus = checkStatus
   insideTranslateService.appId = data.appId
   insideTranslateService.appKey = data.appKey
+  // 每个服务可能会有其他附带值 根据配置动态加载
+  // 例如：OpenAI 会有模型选择
   const defaultInfo = TranslateServiceBuilder.getServiceConfigInfo(type).defaultInfo
   if (isNotNull(defaultInfo)) {
     Object.keys(defaultInfo).forEach((key) => {
@@ -350,7 +356,7 @@ window.api.apiCheckTranslateCallbackEvent((type, res) => {
  *
  * @param translateService 更改的翻译源信息
  */
-const translateServiceUseStatusChange = (translateService) => {
+const translateServiceUseStatusChange = (translateService): void => {
   if (translateService.useStatus && !translateService.checkStatus) {
     translateService.useStatus = false
     return ElMessageExtend.warning('未验证的服务无法使用')
@@ -378,7 +384,7 @@ const translateServiceUseStatusChange = (translateService) => {
  *
  * @param translateService 翻译源
  */
-const saveTranslateService = (translateService) => {
+const saveTranslateService = (translateService): void => {
   const insideTranslateServiceMap = getTranslateServiceMap()
   insideTranslateServiceMap.set(translateService.id, translateService)
   setTranslateServiceMap(insideTranslateServiceMap)
@@ -386,6 +392,9 @@ const saveTranslateService = (translateService) => {
   updateThisTranslateServiceMap(insideTranslateServiceMap)
 }
 
+/**
+ * 服务排序拖动更改
+ */
 const translateServiceSortDragChange = (event): void => {
   const moved = event.moved
   // 将 Map 转换为数组

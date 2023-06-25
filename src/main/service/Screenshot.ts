@@ -7,7 +7,7 @@ import GlobalWin from './GlobalWin'
 import { GlobalShortcutEvent } from './GlobalShortcutEvent'
 import OcrServiceEnum from '../../common/enums/OcrServiceEnum'
 import OcrChannelFactory from './channel/factory/OcrChannelFactory'
-import { isNull } from '../../common/utils/validate'
+import { isNotNull, isNull } from '../../common/utils/validate'
 import { WinEvent } from './Win'
 import OcrTypeEnum from '../enums/OcrTypeEnum'
 import { YesNoEnum } from '../../common/enums/YesNoEnum'
@@ -41,12 +41,20 @@ ipcMain.handle('handle-image-text-recognition-event', async (_event, imgByBase64
         // TTime类型则调用本地Ocr
         ScreenshotsMain.textOcrWin.webContents.send('local-ocr', imgByBase64)
       } else {
-        // 调用第三方Ocr
-        OcrChannelFactory.ocr(ocrService.type, {
+        const info = {
           appId: ocrService.appId,
           appKey: ocrService.appKey,
           img: imgByBase64
-        })
+        }
+        const defaultInfo = OcrChannelFactory.channelConfigs[type]?.defaultInfo
+        if (isNotNull(defaultInfo)) {
+          Object.keys(defaultInfo).forEach((key) => {
+            info[key] = ocrService[key]
+          })
+        }
+
+        // 调用第三方Ocr
+        OcrChannelFactory.ocr(ocrService.type, info)
       }
     })
 })

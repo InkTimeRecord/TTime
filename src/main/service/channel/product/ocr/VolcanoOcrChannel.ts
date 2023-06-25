@@ -1,5 +1,4 @@
 import log from '../../../../utils/log'
-import { paramsFilter } from '../../../../utils/logExtend'
 import R from '../../../../../common/class/R'
 import GlobalWin from '../../../GlobalWin'
 import IOcrInterface from './IOcrInterface'
@@ -16,12 +15,13 @@ class VolcanoOcrChannel implements IOcrInterface {
    * @param info OCR信息
    */
   async apiOcr(info): Promise<void> {
-    log.info('[火山Ocr事件] - 请求报文 : ', paramsFilter(info))
     VolcanoRequest.apiOcr(info)
       .then((res) => {
         log.info('[火山Ocr事件] - 响应报文 : ', res)
         // 火山接口报错时，接口参数时而为 ResponseMetadata 时而为 ResponseMetaData 很奇怪的操作 这里兼容处理
         const errorInfo = (res['ResponseMetadata'] || res['ResponseMetaData'])?.Error
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         if (isNotNull(errorInfo)) {
           GlobalWin.ocrUpdateContent(YesNoEnum.N, this.getMsgByErrorCode(errorInfo))
           return
@@ -59,24 +59,18 @@ class VolcanoOcrChannel implements IOcrInterface {
    * @param info 翻译信息
    */
   async apiOcrCheck(info): Promise<void> {
-    // 响应信息
-    const responseData = {
-      id: info.id,
-      appId: info.appId,
-      appKey: info.appKey,
-      model: info.model
-    }
-    log.info('[火山Ocr校验密钥事件] - 请求报文 : ', paramsFilter(info))
     VolcanoRequest.apiOcr(info).then(
       (res) => {
         log.info('[火山Ocr校验密钥事件] - 响应报文 : ', res)
         // 火山接口报错时，接口参数时而为 ResponseMetadata 时而为 ResponseMetaData 很奇怪的操作 这里兼容处理
         const errorInfo = (res['ResponseMetadata'] || res['ResponseMetaData'])?.Error
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         if (isNotNull(errorInfo)) {
           GlobalWin.setWin.webContents.send(
             'api-check-ocr-callback-event',
             TranslateServiceEnum.VOLCANO,
-            R.errorMD(this.getMsgByErrorCode(errorInfo), responseData)
+            R.errorMD(this.getMsgByErrorCode(errorInfo), info.responseData)
           )
           return
         }
@@ -87,16 +81,17 @@ class VolcanoOcrChannel implements IOcrInterface {
           GlobalWin.setWin.webContents.send(
             'api-check-ocr-callback-event',
             TranslateServiceEnum.VOLCANO,
-            R.errorMD(errorMsg, responseData)
+            R.errorMD(errorMsg, info.responseData)
           )
           return
         }
         GlobalWin.setWin.webContents.send(
           'api-check-ocr-callback-event',
           TranslateServiceEnum.VOLCANO,
-          R.okD(responseData)
+          R.okD(info.responseData)
         )
       },
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       (_err) => {}
     )
   }

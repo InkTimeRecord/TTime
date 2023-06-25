@@ -72,7 +72,6 @@ class BaiduOcrChannel implements IOcrInterface {
       return
     }
     info.token = BaiduOcrChannel.token
-    log.info('[百度Ocr事件] - 请求报文 : ', paramsFilter(info))
     BaiduRequest.apiOcr(info)
       .then((res) => {
         log.info('[百度Ocr事件] - 响应报文 : ', res)
@@ -100,23 +99,16 @@ class BaiduOcrChannel implements IOcrInterface {
    */
   async apiOcrCheck(info): Promise<void> {
     await this.injectionToken(info, true)
-    // 响应信息
-    const responseData = {
-      id: info.id,
-      appId: info.appId,
-      appKey: info.appKey
-    }
     if (isNull(BaiduOcrChannel.token)) {
       log.info('[百度Ocr校验密钥事件] - 获取Token失败 :', BaiduOcrChannel.tokenErrMsg)
       GlobalWin.setWin.webContents.send(
         'api-check-ocr-callback-event',
         TranslateServiceEnum.BAIDU,
-        R.errorMD(BaiduOcrChannel.tokenErrMsg, responseData)
+        R.errorMD(BaiduOcrChannel.tokenErrMsg, info.responseData)
       )
       return
     }
     info.token = BaiduOcrChannel.token
-    log.info('[百度Ocr校验密钥事件] - 请求报文 : ', paramsFilter(info))
     BaiduRequest.apiOcr(info).then(
       (res) => {
         log.info('[百度Ocr校验密钥事件] - 响应报文 : ', res)
@@ -127,16 +119,17 @@ class BaiduOcrChannel implements IOcrInterface {
           GlobalWin.setWin.webContents.send(
             'api-check-ocr-callback-event',
             TranslateServiceEnum.BAIDU,
-            R.errorMD(errorMsg, responseData)
+            R.errorMD(errorMsg, info.responseData)
           )
           return
         }
         GlobalWin.setWin.webContents.send(
           'api-check-ocr-callback-event',
           TranslateServiceEnum.BAIDU,
-          R.okD(responseData)
+          R.okD(info.responseData)
         )
       },
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       (_err) => {}
     )
   }

@@ -50,12 +50,6 @@ class AliyunChannel implements ITranslateInterface {
    * @param info 翻译信息
    */
   apiTranslateCheck(info): void {
-    // 响应信息
-    const responseData = {
-      id: info.id,
-      appId: info.appId,
-      appKey: info.appKey
-    }
     AliyunRequest.apiTranslate(info).then(
       (response) => {
         const body = response.body
@@ -65,13 +59,13 @@ class AliyunChannel implements ITranslateInterface {
           GlobalWin.setWin.webContents.send(
             'api-check-translate-callback-event',
             TranslateServiceEnum.ALIYUN,
-            R.okD(responseData)
+            R.okD(info.responseData)
           )
         } else {
           GlobalWin.setWin.webContents.send(
             'api-check-translate-callback-event',
             TranslateServiceEnum.ALIYUN,
-            R.errorMD(this.getMsgByErrorCode(code, body.message), responseData)
+            R.errorMD(this.getMsgByErrorCode(code, body.message), info.responseData)
           )
         }
       },
@@ -87,7 +81,7 @@ class AliyunChannel implements ITranslateInterface {
         GlobalWin.setWin.webContents.send(
           'api-check-translate-callback-event',
           TranslateServiceEnum.ALIYUN,
-          R.errorMD(msg, responseData)
+          R.errorMD(msg, info.responseData)
         )
       }
     )

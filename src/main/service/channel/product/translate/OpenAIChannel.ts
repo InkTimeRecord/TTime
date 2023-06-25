@@ -92,19 +92,11 @@ class OpenAIChannel extends TranslateAgent implements ITranslateAgentInterface {
     const dataObj = res.data
     const data = dataObj['response']
     const info = dataObj['request']
-    // 响应信息
-    const responseData = {
-      id: info.id,
-      appId: info.appId,
-      appKey: info.appKey,
-      requestUrl: info.requestUrl,
-      model: info.model
-    }
     if (res.code === R.ERROR) {
       GlobalWin.setWin.webContents.send(
         'api-check-translate-callback-event',
         TranslateServiceEnum.OPEN_AI,
-        R.errorMD(this.commonErrorExpand(data), responseData)
+        R.errorMD(this.commonErrorExpand(data), info.responseData)
       )
       return
     }
@@ -112,7 +104,7 @@ class OpenAIChannel extends TranslateAgent implements ITranslateAgentInterface {
     GlobalWin.setWin.webContents.send(
       'api-check-translate-callback-event',
       TranslateServiceEnum.OPEN_AI,
-      R.okD(responseData)
+      R.okD(info.responseData)
     )
   }
 

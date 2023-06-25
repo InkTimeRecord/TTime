@@ -43,19 +43,13 @@ class TencentCloudChannel implements ITranslateInterface {
    * @param info 翻译信息
    */
   apiTranslateCheck(info): void {
-    // 响应信息
-    const responseData = {
-      id: info.id,
-      appId: info.appId,
-      appKey: info.appKey
-    }
     TencentCloudRequest.apiTranslate(info).then(
       (data) => {
         log.info('[腾讯云翻译校验密钥事件] - 响应报文 : ', data)
         GlobalWin.setWin.webContents.send(
           'api-check-translate-callback-event',
           TranslateServiceEnum.TENCENT_CLOUD,
-          R.okD(responseData)
+          R.okD(info.responseData)
         )
       },
       (err) => {
@@ -74,7 +68,7 @@ class TencentCloudChannel implements ITranslateInterface {
         GlobalWin.setWin.webContents.send(
           'api-check-translate-callback-event',
           TranslateServiceEnum.TENCENT_CLOUD,
-          R.errorMD(msg, responseData)
+          R.errorMD(msg, info.responseData)
         )
       }
     )

@@ -91,55 +91,6 @@ class TranslateServiceEnum {
    * Papago翻译
    */
   static PAPAGO = 'Papago'
-
-  /**
-   * 根据 code 获取翻译名称
-   *
-   * @param {string} code - 翻译服务的 code
-   * @returns {string} - 翻译名称
-   */
-  static getName(code): string {
-    switch (code) {
-      case TranslateServiceEnum.TTIME:
-        return 'TTime翻译'
-      case TranslateServiceEnum.TENCENT_CLOUD:
-        return '腾讯翻译君'
-      case TranslateServiceEnum.BAIDU:
-        return '百度翻译'
-      case TranslateServiceEnum.ALIYUN:
-        return '阿里云翻译'
-      case TranslateServiceEnum.GOOGLE:
-        return 'Google翻译'
-      case TranslateServiceEnum.GOOGLE_BUILT_IN:
-        return 'Google翻译(内置)'
-      case TranslateServiceEnum.OPEN_AI:
-        return 'OpenAI翻译'
-      case TranslateServiceEnum.YOU_DAO:
-        return '有道翻译'
-      case TranslateServiceEnum.DEEP_L:
-        return 'DeepL翻译'
-      case TranslateServiceEnum.DEEP_L_BUILT_IN:
-        return 'DeepL翻译(内置)'
-      case TranslateServiceEnum.VOLCANO:
-        return '火山翻译'
-      case TranslateServiceEnum.BING:
-        return 'Bing翻译'
-      case TranslateServiceEnum.BING_DICT:
-        return 'Bing词典翻译'
-      case TranslateServiceEnum.NIU_TRANS:
-        return '小牛翻译'
-      case TranslateServiceEnum.NIU_TRANS_BUILT_IN:
-        return '小牛翻译(内置)'
-      case TranslateServiceEnum.CAI_YUN:
-        return '彩云翻译'
-      case TranslateServiceEnum.TRAN_SMART:
-        return '腾讯交互翻译(内置)'
-      case TranslateServiceEnum.PAPAGO:
-        return 'Papago翻译'
-      default:
-        return ''
-    }
-  }
 }
 
 export default TranslateServiceEnum

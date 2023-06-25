@@ -2,7 +2,6 @@ import IOcrInterface from './IOcrInterface'
 import TTimeRequest from '../../interfaces/TTimeRequest'
 import GlobalWin from '../../../GlobalWin'
 import log from '../../../../utils/log'
-import { paramsFilter } from '../../../../utils/logExtend'
 import { YesNoEnum } from '../../../../../common/enums/YesNoEnum'
 
 class TTimeOnlineOcrChannel implements IOcrInterface {
@@ -12,7 +11,6 @@ class TTimeOnlineOcrChannel implements IOcrInterface {
    * @param info OCR信息
    */
   async apiOcr(info): Promise<void> {
-    log.info('[TTime在线Ocr事件] - 请求报文 : ', paramsFilter(info))
     TTimeRequest.apiOcr(info)
       .then((res) => {
         log.info('[TTime在线Ocr事件] - 响应报文 : ', JSON.stringify(res))
@@ -35,6 +33,7 @@ class TTimeOnlineOcrChannel implements IOcrInterface {
   /**
    * Ocr校验
    */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars,@typescript-eslint/no-empty-function
   async apiOcrCheck(_info): Promise<void> {}
 }
 
