@@ -7,7 +7,7 @@ export default {
   // 翻译语言
   languageList: [
     {
-      languageName: '中文',
+      languageName: '中文(简体)',
       languageType: 'zh'
     },
     {

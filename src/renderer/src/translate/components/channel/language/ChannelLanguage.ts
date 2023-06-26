@@ -76,6 +76,8 @@ const mergeLanguageList = (listArray): never[] => {
   return Object.values(merged)
 }
 
+let languageList
+
 /**
  * 加载翻译支持的语言列表
  */
@@ -85,7 +87,19 @@ const initLanguageList = (): never[] => {
   for (const translateService of translateServiceMapData.values()) {
     languageArray.push(languageMap.get(translateService['type']))
   }
-  return mergeLanguageList(languageArray)
+  languageList = mergeLanguageList(languageArray)
+  return languageList
 }
 
-export { initLanguageList }
+/**
+ * 根据语言名称查询语言信息
+ *
+ * @param languageName 语言名称
+ */
+const findLanguageByLanguageName = (languageName): object => {
+  return languageList.find((language) => {
+    return language.languageName === languageName
+  })
+}
+
+export { initLanguageList, findLanguageByLanguageName }

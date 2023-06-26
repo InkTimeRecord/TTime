@@ -7,6 +7,22 @@ export default {
   // 翻译语言
   languageList: [
     {
+      languageName: '中文(简体)',
+      languageType: 'zh'
+    },
+    {
+      languageName: '中文(繁体)',
+      languageType: 'zh-tw'
+    },
+    {
+      languageName: '中文(粤语)',
+      languageType: 'yue'
+    },
+    {
+      languageName: '英语',
+      languageType: 'en'
+    },
+    {
       languageName: '阿布哈兹语',
       languageType: 'ab'
     },
@@ -827,10 +843,6 @@ export default {
       languageType: 'inh'
     },
     {
-      languageName: '英语',
-      languageType: 'en'
-    },
-    {
       languageName: '约鲁巴语',
       languageType: 'yo'
     },
@@ -845,18 +857,6 @@ export default {
     {
       languageName: '爪哇语',
       languageType: 'jv'
-    },
-    {
-      languageName: '中文(简体)',
-      languageType: 'zh'
-    },
-    {
-      languageName: '中文(繁体)',
-      languageType: 'zh-tw'
-    },
-    {
-      languageName: '中文(粤语)',
-      languageType: 'yue'
     },
     {
       languageName: '祖鲁语',

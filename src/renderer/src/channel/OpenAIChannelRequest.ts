@@ -226,7 +226,7 @@ class OpenAIChannelRequest {
             }
             const dataArray = value.split('data: ')
             dataArray.forEach((data) => {
-              data = data.trim()
+              data = data.trim().replace(/data:/g, '')
               if (isNull(data) || data === '[DONE]') {
                 return
               }
