@@ -100,9 +100,25 @@ uIOhook.on('mouseup', async (e: UiohookMouseEvent) => {
   }
 })
 
+let oneClick
+let oneClickIsMouseSelectTextStatus
+
 uIOhook.on('click', async (e: UiohookMouseEvent) => {
+  if (e.clicks === 1 && e.button === 1) {
+    oneClick = e
+    oneClickIsMouseSelectTextStatus = await isMouseSelectTextStatus()
+  }
   if (e.clicks === 2 && e.button === 1) {
-    if (!(await isMouseSelectTextStatus())) {
+    // 部分应用/页面当鼠标双击事件时
+    // 鼠标第一击光标状态会变成文字选中模式
+    // 鼠标第二击时光标会变回正常模式
+    // 这种也属于正常状态 最终也可以选中内容
+    // 所以在第一击时就需要先存储鼠标模式状态 在第二击时进行判断
+    if (!oneClickIsMouseSelectTextStatus) {
+      return
+    }
+    // 计算第一击和第二击时的X轴和Y轴的位移量 判断鼠标是否移动
+    if (Math.abs(oneClick.x - e.x) > 5 || Math.abs(oneClick.y - e.y) > 5) {
       return
     }
     GlobalWin.hoverBallWin.webContents
