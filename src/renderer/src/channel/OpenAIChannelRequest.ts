@@ -306,6 +306,15 @@ class OpenAIChannelRequest {
     }
     request(requestInfo).then(
       (data) => {
+        const error = data['error']
+        if (error) {
+          window.api['agentApiTranslateCallback'](
+            R.errorD(
+              new AgentTranslateCallbackVo(info, commonError(TranslateServiceEnum.OPEN_AI, error))
+            )
+          )
+          return
+        }
         window.api['agentApiTranslateCallback'](R.okD(new AgentTranslateCallbackVo(info, data)))
       },
       (err) => {
