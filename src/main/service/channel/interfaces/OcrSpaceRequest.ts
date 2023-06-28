@@ -10,8 +10,9 @@ import HttpMethodType from '../../../enums/HttpMethodTypeClassEnum'
 const apiOcr = (info): Promise<AxiosPromise> => {
   const data = {
     apikey: info.appKey,
+    OCREngine: info.model,
     base64Image: info.img,
-    language: 'eng',
+    language: info.languageType,
     scale: true
   }
   return request({

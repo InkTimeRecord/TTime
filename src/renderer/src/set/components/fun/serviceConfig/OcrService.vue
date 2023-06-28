@@ -76,6 +76,38 @@
               />
             </el-select>
           </el-form-item>
+          <el-form-item v-if="ocrServiceThis.type === OcrServiceEnum.OCR_SPACE" label="类型">
+            <el-select
+              v-model="ocrServiceThis.model"
+              size="small"
+              :placeholder="OcrSpaceModelList[0].label"
+              @change="ocrSpaceModelUpdate"
+            >
+              <el-option
+                v-for="model in OcrSpaceModelList"
+                :key="model.value"
+                :label="model.label"
+                :value="model.value"
+              />
+            </el-select>
+          </el-form-item>
+
+          <el-form-item v-if="ocrServiceThis.type === OcrServiceEnum.OCR_SPACE" label="识别语言">
+            <el-select
+              v-model="ocrServiceThis.languageType"
+              size="small"
+              :default-first-option="true"
+            >
+              <el-option
+                v-for="model in OcrSpaceModelList.find(
+                  (mode) => mode.value === ocrServiceThis.model
+                ).languageList"
+                :key="model.languageType"
+                :label="model.languageName"
+                :value="model.languageType"
+              />
+            </el-select>
+          </el-form-item>
 
           <el-form-item
             v-if="!OcrServiceBuilder.getServiceConfigInfo(ocrServiceThis.type).isOneAppKey"
@@ -135,8 +167,8 @@ import ElMessageExtend from '../../../../utils/messageExtend'
 import { REnum } from '../../../../enums/REnum'
 import draggable from 'vuedraggable'
 import { VolcanoOcrModelEnum } from '../../../../../../common/enums/VolcanoOcrModelEnum'
-import { TranslateServiceBuilder } from '../../../../utils/translateServiceUtil'
 import { isNotNull, isNull } from '../../../../../../common/utils/validate'
+import { OcrSpaceModelEnum } from '../../../../../../common/enums/OcrSpaceModelEnum'
 
 // Ocr服务验证状态
 const checkIngStatus = ref(false)
@@ -163,6 +195,7 @@ for (let i = 1; i < ocrServiceSelectMenuListTemp.length; i++) {
 const ocrServiceSelectMenuList = ref(ocrServiceSelectMenuListTemp)
 
 const VolcanoOcrModelList = VolcanoOcrModelEnum.MODEL_LIST
+const OcrSpaceModelList = OcrSpaceModelEnum.MODEL_LIST
 
 /**
  * 设置当前选中项默认为第一个Ocr服务
@@ -179,6 +212,12 @@ const ocrServiceList = ref([...ocrServiceMap.value.values()])
 const ocrServiceThis = ref()
 // 设置当前选择的Ocr服务默认为第一个
 selectOneOcrServiceThis()
+
+console.log('ocrServiceThis.value = ', ocrServiceThis.value)
+console.log(
+  'OcrSpaceModelList.find((mode) => mode === ocrServiceThis.model).languageList = ',
+  OcrSpaceModelList.find((mode) => mode.value === '1')
+)
 
 /**
  * 选择Ocr服务
@@ -375,6 +414,18 @@ const ocrServiceSortDragChange = (event): void => {
 const updateThisOcrServiceMap = (newOcrServiceMap): void => {
   ocrServiceMap.value = newOcrServiceMap
   ocrServiceList.value = [...ocrServiceMap.value.values()]
+}
+
+/**
+ * ocrSpace 模型更新事件
+ *
+ * 防止选择了某个语言后，切换的模型不支持此语言不存在问题
+ */
+const ocrSpaceModelUpdate = (): void => {
+  // 当模型更新后默认语言设置为英文
+  // eng 为 ocrSpace 中的 英语 语言代码
+  // 英语在所有三个模型中都存在的
+  ocrServiceThis.value['languageType'] = 'eng'
 }
 </script>
 

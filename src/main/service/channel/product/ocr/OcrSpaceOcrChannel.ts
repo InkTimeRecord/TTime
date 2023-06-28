@@ -39,6 +39,8 @@ class OcrSpaceOcrChannel implements IOcrInterface {
    * @param info 翻译信息
    */
   async apiOcrCheck(info): Promise<void> {
+    // 因为图片是英文的 设置其他语言此文本识别源可能会失败
+    info.language = 'eng'
     OcrSpaceRequest.apiOcr(info).then(
       (res) => {
         log.info('[OcrSpace校验密钥事件] - 响应报文 : ', res)
@@ -84,6 +86,8 @@ class OcrSpaceOcrChannel implements IOcrInterface {
       errorMsg === 'Searchable PDF not generated as it was not requested.'
     ) {
       errorMsg = '图片解析错误: 没有获取到图片或解析失败'
+    } else if (errorMsg.indexOf("E201: Value for parameter 'language' is invalid") != -1) {
+      errorMsg = '验证失败，不支持当前语言'
     }
     return errorMsg
   }
