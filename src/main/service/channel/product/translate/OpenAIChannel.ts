@@ -18,24 +18,15 @@ class OpenAIChannel extends TranslateAgent implements ITranslateAgentInterface {
     const dataObj = res.data
     const data = dataObj['response']
     const info = dataObj['request']
-    if (res.code === R.ERROR) {
-      OpenAIChannel.callbackEvent(info, OpenAIStatusEnum.END, this.commonErrorExpand(data))
-      return
-    }
     const code = data.code
     // 错误状态处理
     if (OpenAIStatusEnum.ERROR === code) {
       const error = data.error
       // 如果error中带有error则表示为openai返回的异常
       if (isNotNull(error.error)) {
-        const errorMsg = data['error'].message
-        if ('The server had an error while processing your request'.indexOf(errorMsg) !== -1) {
-          OpenAIChannel.callbackEvent(info, OpenAIStatusEnum.END, '服务器请求时出错，请重试')
-          return
-        } else {
-          OpenAIChannel.callbackEvent(info, OpenAIStatusEnum.END, errorMsg)
-          return
-        }
+        const errorMsg = error.error.message
+        OpenAIChannel.callbackEvent(info, OpenAIStatusEnum.END, this.commonErrorExpand(errorMsg))
+        return
       }
       // 请求异常处理
       if (isNotNull(error)) {
@@ -117,6 +108,10 @@ class OpenAIChannel extends TranslateAgent implements ITranslateAgentInterface {
   commonErrorExpand(msg): string {
     if (msg.indexOf('Incorrect API key provided') !== -1 || msg.indexOf('invalid_api_key') !== -1) {
       msg = 'API密钥无效 , 请检查是否输入错误'
+    } else if (msg.indexOf('requests per min. Limit') !== 1) {
+      msg = '请求达到速度限制，请稍后再试'
+    } else if (msg.indexOf('The server had an error while processing your request') !== -1) {
+      msg = '服务器请求时出错，请重试'
     }
     return msg
   }

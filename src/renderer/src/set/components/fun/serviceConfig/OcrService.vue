@@ -77,7 +77,10 @@
             </el-select>
           </el-form-item>
 
-          <el-form-item :label="'AppId'">
+          <el-form-item
+            v-if="!OcrServiceBuilder.getServiceConfigInfo(ocrServiceThis.type).isOneAppKey"
+            label="AppId"
+          >
             <el-input
               v-model="ocrServiceThis.appId"
               type="password"
@@ -86,7 +89,7 @@
               spellcheck="false"
             />
           </el-form-item>
-          <el-form-item :label="'AppKey'">
+          <el-form-item label="AppKey">
             <el-input
               v-model="ocrServiceThis.appKey"
               type="password"
