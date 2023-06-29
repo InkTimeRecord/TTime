@@ -26,6 +26,11 @@ class OcrServiceEnum {
    * OcrSpace
    */
   static OCR_SPACE = 'OcrSpace'
+
+  /**
+   * 讯飞OCR
+   */
+  static XFYUN = 'Xfyun'
 }
 
 export default OcrServiceEnum

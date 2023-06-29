@@ -121,6 +121,15 @@
               spellcheck="false"
             />
           </el-form-item>
+          <el-form-item v-if="ocrServiceThis.type === OcrServiceEnum.XFYUN" label="AppSecret">
+            <el-input
+              v-model="ocrServiceThis.appSecret"
+              type="password"
+              show-password
+              placeholder="请输入AppSecret"
+              spellcheck="false"
+            />
+          </el-form-item>
           <el-form-item label="AppKey">
             <el-input
               v-model="ocrServiceThis.appKey"
@@ -212,12 +221,6 @@ const ocrServiceList = ref([...ocrServiceMap.value.values()])
 const ocrServiceThis = ref()
 // 设置当前选择的Ocr服务默认为第一个
 selectOneOcrServiceThis()
-
-console.log('ocrServiceThis.value = ', ocrServiceThis.value)
-console.log(
-  'OcrSpaceModelList.find((mode) => mode === ocrServiceThis.model).languageList = ',
-  OcrSpaceModelList.find((mode) => mode.value === '1')
-)
 
 /**
  * 选择Ocr服务
