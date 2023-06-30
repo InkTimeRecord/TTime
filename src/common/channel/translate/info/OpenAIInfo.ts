@@ -1,5 +1,3 @@
-import { OpenAIModelEnum } from '../../../enums/OpenAIModelEnum'
-
 export default {
   name: 'OpenAI翻译',
   // 是否需要秘钥
@@ -8,8 +6,8 @@ export default {
   isOneAppKey: true,
   // 构建时默认信息
   defaultInfo: {
-    model: OpenAIModelEnum.GPT_TURBO_35,
-    requestUrl: OpenAIModelEnum.REQUEST_URL
+    model: 'gpt-3.5-turbo',
+    requestUrl: 'https://api.openai.com'
   },
   // 翻译语言
   languageList: [
