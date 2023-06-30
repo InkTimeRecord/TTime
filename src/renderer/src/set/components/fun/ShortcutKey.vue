@@ -76,9 +76,9 @@
 import { ref } from 'vue'
 import { getNameByCode } from '@/utils/keyboard'
 import ElMessageExtend from '../../../utils/messageExtend'
-import { ShortcutKeyEnum } from '../../../enums/ShortcutKeyEnum'
+import { ShortcutKeyEnum } from '../../../../../common/enums/ShortcutKeyEnum'
 import { cacheGetStr, cacheSetStr } from '../../../utils/cacheUtil'
-import { isNull } from '../../../utils/validate'
+import { isNull } from '../../../../../common/utils/validate'
 
 const shortcutKeyInfo = ref({
   inputShortcutKey: cacheGetStr('inputShortcutKey'),

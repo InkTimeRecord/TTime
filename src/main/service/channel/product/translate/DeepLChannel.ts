@@ -1,75 +1,58 @@
-import ITranslateInterface from './ITranslateInterface'
+import ITranslateAgentInterface from './ITranslateAgentInterface'
 import log from '../../../../utils/log'
-import { paramsFilter } from '../../../../utils/logExtend'
 import GlobalWin from '../../../GlobalWin'
-import R from '../../../../class/R'
-import TranslateServiceEnum from '../../../../enums/TranslateServiceEnum'
+import R from '../../../../../common/class/R'
+import TranslateServiceEnum from '../../../../../common/enums/TranslateServiceEnum'
+import TranslateChannelFactory from '../../factory/TranslateChannelFactory'
+import TranslateAgent from './TranslateAgent'
 
-class DeepLChannel implements ITranslateInterface {
+class DeepLChannel extends TranslateAgent implements ITranslateAgentInterface {
   /**
    * 翻译
    *
-   * @param info 翻译信息
+   * @param res 信息
    */
-  apiTranslate(info): void {
-    log.info('[DeepL翻译事件] - 请求报文 : ', paramsFilter(info))
-    GlobalWin.mainWinSend('agent-api-translate', TranslateServiceEnum.DEEP_L, info, false)
-  }
-
-  apiTranslateCheck(info): void {
-    log.info('[DeepL翻译事件] - 请求报文 : ', paramsFilter(info))
-    GlobalWin.mainWinSend('agent-api-translate', TranslateServiceEnum.DEEP_L, info, true)
-  }
-
-  /**
-   * 翻译
-   *
-   * @param status 状态
-   * @param data   数据
-   */
-  static apiTranslateCallback(status, data): void {
-    if (status) {
-      log.info('[DeepL翻译事件] - 响应报文 : ', data)
+  apiTranslateCallback(res: R): void {
+    const dataObj = res.data
+    const data = dataObj['response']
+    const info = dataObj['request']
+    if (res.code === R.ERROR) {
       GlobalWin.mainWinSend(
-        'deepl-api-translate-callback-event',
-        R.okT(data['translations'].map((translation) => translation.text))
-      )
-    } else {
-      GlobalWin.mainWinSend(
-        'deepl-api-translate-callback-event',
+        TranslateChannelFactory.callbackName(info.type),
         R.okT(DeepLChannel.commonErrorExpand(data))
       )
+      return
     }
+    log.info('[DeepL翻译事件] - 响应报文 : ', data)
+    GlobalWin.mainWinSend(
+      TranslateChannelFactory.callbackName(info.type),
+      R.okT(data['translations'].map((translation) => translation.text))
+    )
   }
 
   /**
    * 翻译
    *
-   * @param status 状态
-   * @param data   数据
-   * @param info   数据
+   * @param res 信息
    */
-  static apiTranslateCheckCallback(status, data, info): void {
-    // 响应信息
-    const responseData = {
-      id: info.id,
-      appId: info.appId,
-      appKey: info.appKey
-    }
-    if (status) {
-      log.info('[DeepL翻译校验密钥事件] - 响应报文 : ', data)
+  apiTranslateCheckCallback(res): void {
+    const dataObj = res.data
+    const data = dataObj['response']
+    const info = dataObj['request']
+    if (res.code === R.ERROR) {
       GlobalWin.setWin.webContents.send(
         'api-check-translate-callback-event',
         TranslateServiceEnum.DEEP_L,
-        R.okD(responseData)
+        R.errorMD(DeepLChannel.commonErrorExpand(data), info.responseData)
       )
-    } else {
-      GlobalWin.setWin.webContents.send(
-        'api-check-translate-callback-event',
-        TranslateServiceEnum.DEEP_L,
-        R.errorMD(DeepLChannel.commonErrorExpand(data), responseData)
-      )
+      return
     }
+    log.info('[DeepL翻译校验密钥事件] - 响应报文 : ', data)
+    GlobalWin.setWin.webContents.send(
+      'api-check-translate-callback-event',
+      TranslateServiceEnum.DEEP_L,
+      R.okD(info.responseData)
+    )
   }
 
   /**

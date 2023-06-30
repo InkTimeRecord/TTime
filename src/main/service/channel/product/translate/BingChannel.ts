@@ -1,42 +1,33 @@
-import ITranslateInterface from './ITranslateInterface'
+import ITranslateAgentInterface from './ITranslateAgentInterface'
 import log from '../../../../utils/log'
 import GlobalWin from '../../../GlobalWin'
-import { paramsFilter } from '../../../../utils/logExtend'
-import TranslateServiceEnum from '../../../../enums/TranslateServiceEnum'
-import R from '../../../../class/R'
+import R from '../../../../../common/class/R'
+import TranslateChannelFactory from '../../factory/TranslateChannelFactory'
+import TranslateAgent from './TranslateAgent'
 
-class BingChannel implements ITranslateInterface {
-  static BING_TOKEN = ''
-
+class BingChannel extends TranslateAgent implements ITranslateAgentInterface {
   /**
    * 翻译
    *
-   * @param info 翻译信息
+   * @param res 信息
    */
-  apiTranslate(info): void {
-    log.info('[Bing翻译事件] - 请求报文 : ', paramsFilter(info))
-    GlobalWin.mainWinSend('agent-api-translate', TranslateServiceEnum.BING, info, false)
-  }
-
-  /**
-   * 翻译
-   *
-   * @param status 状态
-   * @param data   数据
-   */
-  static apiTranslateCallback(status, data): void {
-    log.info('[Bing翻译事件] - 响应报文 : ', JSON.stringify(data))
-    if (!status) {
-      GlobalWin.mainWinSend('bing-api-translate-callback-event', R.okT(data))
+  apiTranslateCallback(res: R): void {
+    const dataObj = res.data
+    const data = dataObj['response']
+    const info = dataObj['request']
+    if (res.code === R.ERROR) {
+      log.info('[Bing翻译事件] - 响应报文 : ', JSON.stringify(data))
+      GlobalWin.mainWinSend(TranslateChannelFactory.callbackName(info.type), R.okT(data))
       return
     }
     GlobalWin.mainWinSend(
-      'bing-api-translate-callback-event',
+      TranslateChannelFactory.callbackName(info.type),
       R.okT(data[0]['translations'][0]['text'])
     )
   }
 
-  apiTranslateCheck(_info): void {}
+  // eslint-disable-next-line @typescript-eslint/no-empty-function,@typescript-eslint/no-unused-vars
+  apiTranslateCheckCallback(_res): void {}
 }
 
 export default BingChannel

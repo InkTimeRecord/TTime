@@ -6,8 +6,9 @@ import { SystemTypeEnum } from '../enums/SystemTypeEnum'
 import path from 'path'
 import { is } from '@electron-toolkit/utils'
 import GlobalWin from './GlobalWin'
-import { YesNoEnum } from '../enums/YesNoEnum'
-import { isNotNull } from '../utils/validate'
+import { YesNoEnum } from '../../common/enums/YesNoEnum'
+import { isNotNull } from '../../common/utils/validate'
+import { spawn } from 'child_process'
 
 // 窗口加载完毕后执行
 app.whenReady().then(() => {
@@ -37,7 +38,7 @@ function createHoverBallWin(): void {
     autoHideMenuBar: true,
     focusable: false,
     type: SystemTypeEnum.isMac() ? 'panel' : 'toolbar',
-    // alwaysOnTop: true,
+    alwaysOnTop: true,
     webPreferences: {
       preload: path.join(__dirname, '../preload/hoverBall.js'),
       sandbox: false,
@@ -64,10 +65,13 @@ uIOhook.start()
 
 let mousedownInfo: UiohookMouseEvent
 
+let selectTextStatus
+
 /**
  * 鼠标单击按下事件
  */
-uIOhook.on('mousedown', (e: UiohookMouseEvent) => {
+uIOhook.on('mousedown', async (e: UiohookMouseEvent) => {
+  selectTextStatus = await isMouseSelectTextStatus()
   // 鼠标左键单机
   if (e.button === 1) {
     mousedownInfo = e
@@ -77,9 +81,12 @@ uIOhook.on('mousedown', (e: UiohookMouseEvent) => {
 /**
  * 鼠标单击放开事件
  */
-uIOhook.on('mouseup', (e: UiohookMouseEvent) => {
+uIOhook.on('mouseup', async (e: UiohookMouseEvent) => {
+  if (!selectTextStatus) {
+    selectTextStatus = await isMouseSelectTextStatus()
+  }
   // 鼠标左键单机
-  if (e.button === 1) {
+  if (e.button === 1 && selectTextStatus) {
     if (mousedownInfo.x !== e.x || mousedownInfo.y !== e.y) {
       GlobalWin.hoverBallWin.webContents
         .executeJavaScript('localStorage.hoverBallStatus')
@@ -93,8 +100,27 @@ uIOhook.on('mouseup', (e: UiohookMouseEvent) => {
   }
 })
 
-uIOhook.on('click', (e: UiohookMouseEvent) => {
+let oneClick
+let oneClickIsMouseSelectTextStatus
+
+uIOhook.on('click', async (e: UiohookMouseEvent) => {
+  if (e.clicks === 1 && e.button === 1) {
+    oneClick = e
+    oneClickIsMouseSelectTextStatus = await isMouseSelectTextStatus()
+  }
   if (e.clicks === 2 && e.button === 1) {
+    // 部分应用/页面当鼠标双击事件时
+    // 鼠标第一击光标状态会变成文字选中模式
+    // 鼠标第二击时光标会变回正常模式
+    // 这种也属于正常状态 最终也可以选中内容
+    // 所以在第一击时就需要先存储鼠标模式状态 在第二击时进行判断
+    if (!oneClickIsMouseSelectTextStatus) {
+      return
+    }
+    // 计算第一击和第二击时的X轴和Y轴的位移量 判断鼠标是否移动
+    if (Math.abs(oneClick.x - e.x) > 5 || Math.abs(oneClick.y - e.y) > 5) {
+      return
+    }
     GlobalWin.hoverBallWin.webContents
       .executeJavaScript('localStorage.hoverBallStatus')
       .then((val) => {
@@ -185,4 +211,51 @@ const hoverBallWinHide = (): void => {
     hoverBallWinHideTask = null
   }
   GlobalWin.hoverBallWinHide()
+}
+
+/**
+ * 鼠标指针是否选中文本状态
+ */
+const isMouseSelectTextStatus = async (): Promise<boolean> => {
+  let response = false
+  // 悬浮球增强模式
+  await GlobalWin.hoverBallWin.webContents
+    .executeJavaScript('localStorage.hoverBallEnhanceStatus')
+    .then((val) => {
+      response = YesNoEnum.Y === val
+    })
+  if (!SystemTypeEnum.isWin() || !response) {
+    // 如果不为Win环境下这块默认不进行获取状态 直接返回取词
+    return true
+  }
+  const promise = new Promise((resolve, reject) => {
+    let mouseSelectTextStatusPath
+    if (app.isPackaged) {
+      mouseSelectTextStatusPath = path.join(
+        __dirname,
+        '../../../app.asar.unpacked/plugins/mouse-select-text-status.exe'
+      )
+    } else {
+      mouseSelectTextStatusPath = path.join(__dirname, '../../plugins/mouse-select-text-status.exe')
+    }
+    const selectStatusSpawn = spawn(mouseSelectTextStatusPath)
+    // 执行成功回调
+    selectStatusSpawn.stdout.on('data', (data) => {
+      resolve(data.toString())
+    })
+    // 执行失败回调
+    selectStatusSpawn.stderr.on('data', (data) => {
+      reject(data)
+    })
+  })
+  //
+  await promise
+    .then((status) => {
+      response = status === '1'
+    })
+    .catch((error) => {
+      log.error('获取鼠标指针是否选中文本状态异常 = ', error)
+      response = false
+    })
+  return response
 }

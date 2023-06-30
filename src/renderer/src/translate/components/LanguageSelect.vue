@@ -1,46 +1,48 @@
 <template>
-  <div class='language-select-block'>
-    <div class='language-select'>
-
-      <a class='language-block language-block-left none-select' @click='clickSelectInputFun'>
+  <div class="language-select-block">
+    <div class="language-select">
+      <a class="language-block language-block-left none-select" @click="clickSelectInputFun">
         <div>
           {{ inputLanguageSelect.languageName }}
         </div>
-        <el-icon class='language-select-icon'>
-          <ArrowDown v-if='showLanguageInput' />
+        <el-icon class="language-select-icon">
+          <ArrowDown v-if="showLanguageInput" />
           <ArrowLeft v-else />
         </el-icon>
       </a>
 
-      <div class='function-tools-block language-exchange-block language-block'>
-        <a class='function-tools language-icon' @click='clickLanguageExchange'>
-          <svg-icon icon-class='substitution' class='function-tools-icon' />
+      <div class="function-tools-block language-exchange-block language-block">
+        <a class="function-tools language-icon" @click="clickLanguageExchange">
+          <svg-icon icon-class="substitution" class="function-tools-icon" />
         </a>
       </div>
 
-      <a class='language-block language-block-right none-select' @click='clickSelectResultFun'>
+      <a class="language-block language-block-right none-select" @click="clickSelectResultFun">
         <div>
           {{ resultLanguageSelect.languageName }}
         </div>
-        <el-icon class='language-select-icon'>
-          <ArrowDown v-if='showLanguageResult' />
+        <el-icon class="language-select-icon">
+          <ArrowDown v-if="showLanguageResult" />
           <ArrowLeft v-else />
         </el-icon>
       </a>
-
     </div>
 
     <el-collapse-transition>
-      <div v-show='showLanguageInput'>
-        <div class='language-list-block none-select function-tools-block'>
-          <template v-for='language in languageList'>
-            <a class='language-block none-select function-tools'
-               :class='{"language-active" : inputLanguageSelect.languageName === language.languageName}'
-               @click='inputLanguageSelectClick(language)'>
-              <div class='language-name none-select'>{{ language.languageName }}</div>
-              <div class='language-logo-block none-select'>
-                <template v-for='service in language.serviceList'>
-                  <img class='language-logo none-select' :src='service.logo' />
+      <div v-show="showLanguageInput">
+        <div class="language-list-block none-select function-tools-block">
+          <template v-for="(language, index) in languageList" :key="index">
+            <a
+              class="language-block none-select function-tools"
+              :class="{
+                'language-active': inputLanguageSelect.languageName === language.languageName
+              }"
+              @click="inputLanguageSelectClick(language)"
+            >
+              <div class="language-name none-select">{{ language.languageName }}</div>
+              <div class="language-logo-block none-select">
+                <template v-for="(service, indexTwo) in language.serviceList" :key="indexTwo">
+                  <img class="language-logo none-select" :src="service.logo" />
                 </template>
               </div>
             </a>
@@ -50,16 +52,20 @@
     </el-collapse-transition>
 
     <el-collapse-transition>
-      <div v-show='showLanguageResult'>
-        <div class='language-list-block none-select function-tools-block'>
-          <template v-for='language in languageList'>
-            <a class='language-block none-select function-tools'
-               :class='{"language-active" : resultLanguageSelect.languageName === language.languageName}'
-               @click='resultLanguageSelectClick(language)'>
-              <div class='language-name none-select'>{{ language.languageName }}</div>
-              <div class='language-logo-block none-select'>
-                <template v-for='service in language.serviceList'>
-                  <img class='language-logo none-select' :src='service.logo' />
+      <div v-show="showLanguageResult">
+        <div class="language-list-block none-select function-tools-block">
+          <template v-for="(language, index) in languageList" :key="index">
+            <a
+              class="language-block none-select function-tools"
+              :class="{
+                'language-active': resultLanguageSelect.languageName === language.languageName
+              }"
+              @click="resultLanguageSelectClick(language)"
+            >
+              <div class="language-name none-select">{{ language.languageName }}</div>
+              <div class="language-logo-block none-select">
+                <template v-for="(service, indexTwo) in language.serviceList" :key="indexTwo">
+                  <img class="language-logo none-select" :src="service.logo" />
                 </template>
               </div>
             </a>
@@ -67,11 +73,10 @@
         </div>
       </div>
     </el-collapse-transition>
-
   </div>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 import { initLanguageList } from './channel/language/ChannelLanguage'
 import { ref } from 'vue'
 import { cacheGet, cacheSet } from '../../utils/cacheUtil'
@@ -101,7 +106,7 @@ const resultLanguageSelect = ref(cacheGet('resultLanguage'))
 /**
  * 翻译语言转换点击事件
  */
-const insideInitLanguageList = () => {
+const insideInitLanguageList = (): void => {
   languageList.value = [languageAuto, ...initLanguageList()]
 }
 
@@ -131,7 +136,7 @@ const clickSelectResultFun = (): void => {
 /**
  * 输入 - 翻译语言选择点击事件
  */
-const inputLanguageSelectClick = (language: object) => {
+const inputLanguageSelectClick = (language: object): void => {
   cacheSet('inputLanguage', language)
   inputLanguageSelect.value = language
 }
@@ -139,7 +144,7 @@ const inputLanguageSelectClick = (language: object) => {
 /**
  * 结果 - 翻译语言选择点击事件
  */
-const resultLanguageSelectClick = (language: object) => {
+const resultLanguageSelectClick = (language: object): void => {
   cacheSet('resultLanguage', language)
   resultLanguageSelect.value = language
 }
@@ -147,7 +152,7 @@ const resultLanguageSelectClick = (language: object) => {
 /**
  * 翻译语言转换点击事件
  */
-const clickLanguageExchange = () => {
+const clickLanguageExchange = (): void => {
   const inputLanguageSelect = cacheGet('inputLanguage')
   const resultLanguageSelect = cacheGet('resultLanguage')
   inputLanguageSelectClick(resultLanguageSelect)
@@ -166,7 +171,7 @@ window.api.updateTranslateServiceEvent(() => {
 })
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 @import '../../css/translate.scss';
 
 .language-select-block {
@@ -175,7 +180,6 @@ window.api.updateTranslateServiceEvent(() => {
   border-radius: 7px;
   background: var(--ttime-translate-input-color-background);
   text-align: center;
-
 
   .language-select {
     display: flex;
@@ -234,6 +238,7 @@ window.api.updateTranslateServiceEvent(() => {
 
     .language-name {
       padding: 5px;
+      min-width: 80px;
     }
 
     .language-logo-block {
@@ -267,5 +272,4 @@ window.api.updateTranslateServiceEvent(() => {
 .language-list-block::-webkit-scrollbar-track {
   background-color: transparent;
 }
-
 </style>

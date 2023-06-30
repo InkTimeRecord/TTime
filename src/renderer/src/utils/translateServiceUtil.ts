@@ -1,15 +1,14 @@
-import { random } from './strUtil'
-import { TranslateServiceEnum } from '../enums/TranslateServiceEnum'
-import { OpenAIModelEnum } from '../enums/OpenAIModelEnum'
+import TranslateServiceEnum from '../../../common/enums/TranslateServiceEnum'
 import { cacheGet, cacheSet } from './cacheUtil'
-import { isNull } from './validate'
+import { isNull } from '../../../common/utils/validate'
+import ServiceConfig from '../../../common/class/ServiceConfig'
 
 /**
  * 保存翻译服务Map
  *
  * @param translateServiceMap 翻译服务Map
  */
-export const setTranslateServiceMap = (translateServiceMap) => {
+export const setTranslateServiceMap = (translateServiceMap): void => {
   if (translateServiceMap.size > 0) {
     const translateServiceOne = translateServiceMap.entries().next().value[0]
     if (isNull(translateServiceOne['index'])) {
@@ -19,20 +18,41 @@ export const setTranslateServiceMap = (translateServiceMap) => {
         index++
       })
     }
+    translateServiceMap.forEach((translateService) => {
+      delete translateService.serviceInfo
+    })
   }
   cacheSet('translateServiceMap', Array.from(translateServiceMap.entries()))
+  // 上面移除完毕保存后重新设置渠道信息
+  translateServiceMap.forEach((translateService) => {
+    translateService['serviceInfo'] = TranslateServiceBuilder.getInfoByService(
+      translateService['type']
+    )
+  })
 }
 
 /**
  * 获取翻译服务list
  */
-export const getTranslateServiceMap = () => {
+export const getTranslateServiceMap = (): Map<unknown, unknown> => {
   let map = new Map(cacheGet('translateServiceMap'))
   if (map.size > 0) {
     // 因为之前的版本中的数据没有 index 所以这里默认获取第一条翻译源
     // 看是否有设置 index 如果没有默认赋值一遍
     const translateServiceOne = map.entries().next().value[0]
     if (isNull(translateServiceOne['index'])) {
+      setTranslateServiceMap(map)
+    }
+
+    // 修复 Papago 翻译源类型配置为 PAPAGO 问题 改为 Papago 否则会因为大小写问题导致部分代码无法匹配
+    let updatePapago = false
+    map.forEach((translateService) => {
+      if (translateService['type'] === 'PAPAGO') {
+        translateService['type'] = TranslateServiceEnum.PAPAGO
+        updatePapago = true
+      }
+    })
+    if (updatePapago) {
       setTranslateServiceMap(map)
     }
   }
@@ -43,10 +63,11 @@ export const getTranslateServiceMap = () => {
   entries.sort((a, b) => a[1]['index'] - b[1]['index'])
   // 创建一个新的有序 Map
   map = new Map(entries)
-  // 此处重新更新一下logo 防止当在缓存中存储后 如果应用修改了文件路径 会导致读取logo图片失败
+  // 此处设置渠道信息
   map.forEach((translateService) => {
-    console.log(translateService)
-    translateService['logo'] = TranslateServiceEnum.getInfoByService(translateService['type']).logo
+    translateService['serviceInfo'] = TranslateServiceBuilder.getInfoByService(
+      translateService['type']
+    )
   })
   return map
 }
@@ -54,7 +75,7 @@ export const getTranslateServiceMap = () => {
 /**
  * 获取翻译服务 - 只获取出可使用的
  */
-export const getTranslateServiceMapByUse = () => {
+export const getTranslateServiceMapByUse = (): Map<unknown, unknown> => {
   const translateServiceMapData = getTranslateServiceMap()
   for (const [key, translateService] of translateServiceMapData.entries()) {
     if (!translateService['useStatus'] || !translateService['checkStatus']) {
@@ -64,163 +85,128 @@ export const getTranslateServiceMapByUse = () => {
   return translateServiceMapData
 }
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-export const buildTranslateService = (translateServiceEnum): {} => {
-  const service = TranslateServiceEnum.getInfoByService(translateServiceEnum)
-  const translateService = {
-    id: random(),
-    ...service
+// eslint-disable-next-line @typescript-eslint/ban-types
+export const buildTranslateService = (type): {} => {
+  const info: {
+    name: string
+    // 是否需要秘钥
+    isKey: boolean
+    // 是否单秘钥
+    isOneAppKey: boolean
+    // 构建时默认信息
+    defaultInfo: object
+    // 翻译语言
+    languageList: []
+  } = TranslateServiceBuilder.getServiceConfigInfo(type)
+  if (isNull(info.defaultInfo)) {
+    info.defaultInfo = {}
   }
-  switch (translateServiceEnum) {
-    case TranslateServiceEnum.TTIME:
-      return {
-        ...translateService,
-        useStatus: true,
-        isBuiltIn: true,
-        checkStatus: true
-      }
-    case TranslateServiceEnum.TENCENT_CLOUD:
-      return {
-        ...translateService,
-        useStatus: false,
-        isBuiltIn: false,
-        appId: '',
-        appKey: '',
-        checkStatus: false
-      }
-    case TranslateServiceEnum.BAIDU:
-      return {
-        ...translateService,
-        useStatus: false,
-        isBuiltIn: false,
-        appId: '',
-        appKey: '',
-        checkStatus: false
-      }
-    case TranslateServiceEnum.ALIYUN:
-      return {
-        ...translateService,
-        useStatus: false,
-        isBuiltIn: false,
-        appId: '',
-        appKey: '',
-        checkStatus: false
-      }
-    case TranslateServiceEnum.GOOGLE:
-      return {
-        ...translateService,
-        useStatus: false,
-        isBuiltIn: false,
-        appId: '',
-        appKey: '',
-        checkStatus: false
-      }
-    case TranslateServiceEnum.GOOGLE_BUILT_IN:
-      return {
-        ...translateService,
-        useStatus: true,
-        isBuiltIn: true,
-        checkStatus: true
-      }
-    case TranslateServiceEnum.OPEN_AI:
-      return {
-        ...translateService,
-        useStatus: false,
-        isBuiltIn: false,
-        appId: '',
-        appKey: '',
-        checkStatus: false,
-        model: OpenAIModelEnum.GPT_TURBO_35,
-        requestUrl: OpenAIModelEnum.REQUEST_URL
-      }
-    case TranslateServiceEnum.YOU_DAO:
-      return {
-        ...translateService,
-        useStatus: false,
-        isBuiltIn: false,
-        appId: '',
-        appKey: '',
-        checkStatus: false
-      }
-    case TranslateServiceEnum.DEEP_L:
-      return {
-        ...translateService,
-        useStatus: false,
-        isBuiltIn: false,
-        appId: '',
-        appKey: '',
-        checkStatus: false
-      }
-    case TranslateServiceEnum.DEEP_L_BUILT_IN:
-      return {
-        ...translateService,
-        useStatus: true,
-        isBuiltIn: true,
-        checkStatus: true
-      }
-    case TranslateServiceEnum.VOLCANO:
-      return {
-        ...translateService,
-        useStatus: false,
-        isBuiltIn: false,
-        appId: '',
-        appKey: '',
-        checkStatus: false
-      }
-    case TranslateServiceEnum.BING:
-      return {
-        ...translateService,
-        useStatus: true,
-        isBuiltIn: true,
-        checkStatus: true
-      }
-    case TranslateServiceEnum.BING_DICT:
-      return {
-        ...translateService,
-        useStatus: true,
-        isBuiltIn: true,
-        checkStatus: true
-      }
-    case TranslateServiceEnum.NIU_TRANS:
-      return {
-        ...translateService,
-        useStatus: false,
-        isBuiltIn: false,
-        appId: '',
-        appKey: '',
-        checkStatus: false
-      }
-    case TranslateServiceEnum.NIU_TRANS_BUILT_IN:
-      return {
-        ...translateService,
-        useStatus: true,
-        isBuiltIn: true,
-        checkStatus: true
-      }
-    case TranslateServiceEnum.CAI_YUN:
-      return {
-        ...translateService,
-        useStatus: false,
-        isBuiltIn: false,
-        appId: '',
-        appKey: '',
-        checkStatus: false
-      }
-    case TranslateServiceEnum.TRAN_SMART:
-      return {
-        ...translateService,
-        useStatus: true,
-        isBuiltIn: true,
-        checkStatus: true
-      }
-    case TranslateServiceEnum.PAPAGO:
-      return {
-        ...translateService,
-        useStatus: false,
-        isBuiltIn: false,
-        appId: '',
-        appKey: '',
-        checkStatus: false
-      }
+  if (info?.isKey) {
+    return ServiceConfig.buildKeyService({
+      type: type,
+      ...info.defaultInfo
+    })
+  } else {
+    return ServiceConfig.buildIsBuiltInService({
+      type: type,
+      ...info.defaultInfo
+    })
   }
 }
+
+export class TranslateServiceBuilder {
+  /**
+   * 翻译服务信息Map
+   */
+  static translateServiceMap = new Map()
+
+  /**
+   * 翻译服务配置信息Map
+   */
+  static translateServiceConfigInfoMap = new Map()
+
+  /**
+   * 获取服务信息
+   */
+  static getServiceList(): Map<string, { name; type; logo }> {
+    if (TranslateServiceBuilder.translateServiceMap.size > 1) {
+      return TranslateServiceBuilder.translateServiceMap
+    }
+    // 动态加载服务logo
+    const channelLogos = import.meta.glob('@assets/translate/*.(png|jpe?g|gif|svg)', {
+      eager: true
+    })
+    Object.keys(TranslateServiceEnum)
+      .filter((key) => typeof TranslateServiceEnum[key] === 'string')
+      .map((key) => TranslateServiceEnum[key])
+      .forEach((code) => {
+        const channelLogoKey = Object.keys(channelLogos).find((channelLogoKey) =>
+          channelLogoKey.includes(code + 'Logo')
+        )
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        const logo = channelLogos[channelLogoKey].default
+        TranslateServiceBuilder.translateServiceMap.set(
+          code,
+          TranslateServiceBuilder.buildServiceInfo(
+            TranslateServiceBuilder.getServiceConfigInfo(code).name,
+            code,
+            logo
+          )
+        )
+      })
+    return TranslateServiceBuilder.translateServiceMap
+  }
+
+  /**
+   * 获取服务信息
+   *
+   * @param serviceEnum 服务枚举
+   */
+  static getInfoByService(serviceEnum): { name; type; logo } {
+    return TranslateServiceBuilder.translateServiceMap.get(serviceEnum)
+  }
+
+  /**
+   * 构建服务信息对象
+   *
+   * @param name 服务名称
+   * @param type 服务类型
+   * @param logo 服务logo
+   */
+  static buildServiceInfo(name, type, logo): { name: string; type: string; logo: string } {
+    return { name, type, logo }
+  }
+
+  /**
+   * 获取服务配置信息
+   */
+  static getServiceConfigInfo(serviceEnum): {
+    name: string
+    // 是否需要秘钥
+    isKey: boolean
+    // 是否单秘钥
+    isOneAppKey: boolean
+    // 构建时默认信息
+    defaultInfo: object
+    // 翻译语言
+    languageList: []
+  } {
+    return TranslateServiceBuilder.translateServiceConfigInfoMap.get(serviceEnum)
+  }
+}
+// 获取所有翻译源配置信息 此处是异步加载 所以直接写在这里了 没有构建在方法 / 类中
+const channelConfigModules = import.meta.glob('../../../common/channel/translate/info/*.ts')
+// 构建翻译语言
+for (const modulePath in channelConfigModules) {
+  const moduleName = modulePath.split('/').pop().split('.')[0]
+  const channelCode = moduleName.charAt(0).toUpperCase() + moduleName.slice(1).replace('Info', '')
+  const module = (await channelConfigModules[modulePath]()) as { default: { languageList: [] } }
+  const infoList = module.default
+  TranslateServiceBuilder.translateServiceConfigInfoMap.set(channelCode, infoList)
+}
+
+// 首次加载获取一下 用作数据初始化预加载
+TranslateServiceBuilder.getServiceList()

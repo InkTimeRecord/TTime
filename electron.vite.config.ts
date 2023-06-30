@@ -1,6 +1,6 @@
 import { resolve } from 'path'
 // @ts-ignore 抑制错误校验问题
-import { bytecodePlugin, defineConfig } from 'electron-vite'
+import { externalizeDepsPlugin, defineConfig } from 'electron-vite'
 import vue from '@vitejs/plugin-vue'
 // @ts-ignore 抑制错误校验问题
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
@@ -9,22 +9,10 @@ const BASE_API = 'https://timerecord.cn/apis/'
 
 export default defineConfig({
   main: {
-    plugins: [bytecodePlugin()],
-    build: {
-      rollupOptions: {
-        external: [
-          '@jitsi/robotjs',
-          'node-screenshots',
-          'axios',
-          'tencentcloud-sdk-nodejs-tmt',
-          'uiohook-napi',
-          '@volcengine/openapi'
-        ]
-      }
-    }
+    plugins: [externalizeDepsPlugin()],
   },
   preload: {
-    plugins: [bytecodePlugin()],
+    plugins: [externalizeDepsPlugin()],
     build: {
       rollupOptions: {
         input: {
@@ -67,6 +55,8 @@ export default defineConfig({
       })
     ],
     build: {
+      // 禁用资源内联限制，确保图片以原始路径进行加载
+      assetsInlineLimit: 0,
       rollupOptions: {
         input: {
           index: resolve(__dirname, 'src/renderer/index.html'),

@@ -1,5 +1,5 @@
 import { app, Menu, nativeImage, shell, Tray } from 'electron'
-import { isNotNull } from '../utils/validate'
+import { isNotNull } from '../../common/utils/validate'
 import * as path from 'path'
 import { SystemTypeEnum } from '../enums/SystemTypeEnum'
 import createSetWindow from './Set'

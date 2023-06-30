@@ -2,35 +2,12 @@
  * 语言类型
  */
 class LanguageEnum {
-  static languageMap = new Map([
-    ['cmn', { languageType: 'zh' }],
-    ['eng', { languageType: 'en' }]
-  ])
-  static languageOpenAIMap = new Map([
+  static languageConversionMap = new Map([
     ['cmn', { languageType: '中文(简体)' }],
-    ['eng', { languageType: 'English' }],
-    ['jpn', { languageType: 'Japanese' }],
-    ['rus', { languageType: 'Русский' }],
-    ['kor', { languageType: 'Korean' }]
-  ])
-  static languageVolcanoMap = new Map([
-    ['cmn', { languageType: 'zh' }],
-    ['eng', { languageType: 'en' }],
-    ['jpn', { languageType: 'ja' }],
-    ['rus', { languageType: 'ru' }],
-    ['kor', { languageType: 'ko' }]
-  ])
-  static languageCaiYunMap = new Map([
-    ['cmn', { languageType: 'zh' }],
-    ['eng', { languageType: 'en' }],
-    ['jpn', { languageType: 'ja' }]
-  ])
-  static languagePapagoMap = new Map([
-    ['cmn', { languageType: 'zh-CN' }],
-    ['eng', { languageType: 'en' }],
-    ['jpn', { languageType: 'ja' }],
-    ['rus', { languageType: 'ru' }],
-    ['kor', { languageType: 'ko' }]
+    ['eng', { languageType: '英语' }],
+    ['jpn', { languageType: '日语' }],
+    ['rus', { languageType: '俄语' }],
+    ['kor', { languageType: '韩语' }]
   ])
   /**
    * 自动识别
@@ -51,6 +28,16 @@ class LanguageEnum {
    * 未知的
    */
   static NO = 'und'
+
+  /**
+   * 中文
+   */
+  static CHINESE_CONVERSION = '中文(简体)'
+
+  /**
+   * 英文
+   */
+  static ENGLISH_CONVERSION = '英语'
 }
 
 export default LanguageEnum

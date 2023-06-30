@@ -1,13 +1,13 @@
-import ITranslateInterface from './ITranslateInterface'
+import ITranslateAgentInterface from './ITranslateAgentInterface'
 import log from '../../../../utils/log'
-import { paramsFilter } from '../../../../utils/logExtend'
 import GlobalWin from '../../../GlobalWin'
-import R from '../../../../class/R'
-import TranslateVo from '../../../../class/TranslateVo'
-import TranslateServiceEnum from '../../../../enums/TranslateServiceEnum'
+import R from '../../../../../common/class/R'
+import TranslateVo from '../../../../../common/class/TranslateVo'
 import BingDictRequest from '../../interfaces/BingDictRequest'
+import TranslateChannelFactory from '../../factory/TranslateChannelFactory'
+import TranslateAgent from './TranslateAgent'
 
-class BingDictChannel implements ITranslateInterface {
+class BingDictChannel extends TranslateAgent implements ITranslateAgentInterface {
   /**
    * 翻译
    *
@@ -27,7 +27,7 @@ class BingDictChannel implements ITranslateInterface {
    * @param info 翻译信息
    */
   async apiTranslate(info): Promise<void> {
-    log.info('[BingDict翻译事件] - 请求报文 : ', paramsFilter(info))
+    info.isTranslateCheckType = false
     BingDictRequest.apiTranslate(info)
       .then(async (res) => {
         // 字典响应报文太多 这里就不做日志输出了
@@ -89,11 +89,11 @@ class BingDictChannel implements ITranslateInterface {
         }
         // 这里内部处理Bing字典数据 PS: 尝试通过浏览器环境进行请求时Bing字典接口时不知道为什么一直无法获取正确数据
         // 初步怀疑是Bing字典有跨域检测机制
-        GlobalWin.mainWinSend('agent-api-translate', TranslateServiceEnum.BING_DICT, info, false)
+        GlobalWin.mainWinSend('agent-api-translate', info)
       })
       .catch((err) => {
         log.info('[BingDict翻译事件] - 异常 : ', err)
-        GlobalWin.mainWinSend('bingdict-api-translate-callback-event', R.okT(err))
+        GlobalWin.mainWinSend(TranslateChannelFactory.callbackName(info.type), R.okT(err))
       })
   }
 
@@ -121,13 +121,15 @@ class BingDictChannel implements ITranslateInterface {
   /**
    * 翻译
    *
-   * @param status 状态
-   * @param data   数据
+   * @param res 信息
    */
-  static apiTranslateCallback(status, data): void {
+  apiTranslateCallback(res: R): void {
+    const dataObj = res.data
+    const data = dataObj['response']
+    const info = dataObj['request']
     log.info('[BingDict翻译事件] - 响应报文 : ', JSON.stringify(data))
-    if (!status) {
-      GlobalWin.mainWinSend('openai-api-translate-callback-event', R.okT(data))
+    if (res.code === R.ERROR) {
+      GlobalWin.mainWinSend(TranslateChannelFactory.callbackName(info.type), R.okT(data))
       return
     }
     const vo = new TranslateVo([data['text']])
@@ -139,10 +141,11 @@ class BingDictChannel implements ITranslateInterface {
       data.explains,
       data.wfs
     )
-    GlobalWin.mainWinSend('bingdict-api-translate-callback-event', R.okD(vo))
+    GlobalWin.mainWinSend(TranslateChannelFactory.callbackName(info.type), R.okD(vo))
   }
 
-  apiTranslateCheck(_info): void {}
+  // eslint-disable-next-line @typescript-eslint/no-empty-function,@typescript-eslint/no-unused-vars
+  apiTranslateCheckCallback(_res): void {}
 }
 
 export default BingDictChannel

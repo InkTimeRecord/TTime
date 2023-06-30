@@ -1,7 +1,7 @@
 import { Service } from '@volcengine/openapi'
 import { OpenApiResponse } from '@volcengine/openapi/lib/base/types'
 import { VolcanoOcrModelEnum } from '../../../enums/VolcanoOcrModelEnum'
-import { isNull } from '../../../utils/validate'
+import { isNull } from '../../../../common/utils/validate'
 
 /**
  * 翻译

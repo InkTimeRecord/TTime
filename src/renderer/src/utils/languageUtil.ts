@@ -15,60 +15,44 @@ const only = [
   'jpn'
 ]
 
-export const getLanguageTypeByOpenAI = (translateContent) => {
-  let language = franc(translateContent, {
-    // 检测最短字符
-    minLength: 1,
-    // 识别的语种范围
-    only: only
-  })
+export const getLanguageNameConversion = (translateContent) => {
+  let language
+  if (countChineseCharacters(translateContent) > 2) {
+    language = LanguageEnum.CHINESE
+  } else {
+    language = franc(translateContent, {
+      // 检测最短字符
+      minLength: 1,
+      // 识别的语种范围
+      only: only
+    })
+  }
   if (LanguageEnum.NO === language) {
     language = LanguageEnum.ENGLISH
   }
-  return LanguageEnum.languageOpenAIMap.get(language).languageType
+  // 转换为翻译结果的语种类型
+  const languageInputType = LanguageEnum.languageConversionMap.get(language).languageType
+  window.api.logInfoEvent(
+    '[翻译事件] - 输入内容语种识别结果 : ',
+    language,
+    ' , 输入文本语种 : ',
+    languageInputType
+  )
+  return languageInputType
 }
 
-export const getLanguageTypeByVolcano = (translateContent) => {
-  let language = franc(translateContent, {
-    // 检测最短字符
-    minLength: 1,
-    // 识别的语种范围
-    only: only
-  })
-  if (LanguageEnum.NO === language) {
-    language = LanguageEnum.ENGLISH
+export const getLanguageResultNameConversion = (translateContent) => {
+  let language
+  if (countChineseCharacters(translateContent) > 2) {
+    language = LanguageEnum.CHINESE
+  } else {
+    language = franc(translateContent, {
+      // 检测最短字符
+      minLength: 1,
+      // 识别的语种范围
+      only: only
+    })
   }
-  return LanguageEnum.languageVolcanoMap.get(language).languageType
-}
-
-export const getLanguageTypeByPapago = (translateContent) => {
-  let language = franc(translateContent, {
-    // 检测最短字符
-    minLength: 1,
-    // 识别的语种范围
-    only: only
-  })
-  if (LanguageEnum.NO === language) {
-    language = LanguageEnum.ENGLISH
-  }
-  return LanguageEnum.languagePapagoMap.get(language).languageType
-}
-
-export const getLanguageResultTypeByOpenAI = (translateContent) => {
-  return getLanguageResultTypeByMap(LanguageEnum.languageOpenAIMap, translateContent)
-}
-
-export const getLanguageResultType = (translateContent) => {
-  return getLanguageResultTypeByMap(LanguageEnum.languageMap, translateContent)
-}
-
-export const getLanguageResultTypeByMap = (languageMap, translateContent) => {
-  const language = franc(translateContent, {
-    // 检测最短字符
-    minLength: 1,
-    // 识别的语种范围
-    only: only
-  })
   let languageResultType = LanguageEnum.CHINESE
   if (language !== LanguageEnum.NO) {
     if (language === LanguageEnum.CHINESE) {
@@ -83,7 +67,7 @@ export const getLanguageResultTypeByMap = (languageMap, translateContent) => {
     }
   }
   // 转换为翻译结果的语种类型
-  languageResultType = languageMap.get(languageResultType).languageType
+  languageResultType = LanguageEnum.languageConversionMap.get(languageResultType).languageType
   window.api.logInfoEvent(
     '[翻译事件] - 翻译内容语种识别结果 : ',
     language,
@@ -91,4 +75,19 @@ export const getLanguageResultTypeByMap = (languageMap, translateContent) => {
     languageResultType
   )
   return languageResultType
+}
+
+/**
+ * 统计中文数
+ *
+ * @param str 字符
+ * @return 中文数
+ */
+const countChineseCharacters = (str): number => {
+  // 匹配中文字符的正则表达式
+  const pattern = /[\u4e00-\u9fa5]/g
+  // 使用match方法获取所有匹配项
+  const matches = str.match(pattern)
+  // 返回匹配项的数量
+  return matches ? matches.length : 0
 }

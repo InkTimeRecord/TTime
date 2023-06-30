@@ -41,7 +41,7 @@ class TranslateVo {
     this.translateList = translateList
   }
 
-  dictBuild(usPhonetic, ukPhonetic, usSpeech, ukSpeech, explains, wfs) {
+  dictBuild(usPhonetic, ukPhonetic, usSpeech, ukSpeech, explains, wfs): void {
     this.usPhonetic = usPhonetic
     this.ukPhonetic = ukPhonetic
     this.usSpeech = usSpeech

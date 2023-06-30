@@ -1,7 +1,7 @@
 import { ipcMain } from 'electron'
-import TranslateChannelFactory from './factory/TranslateChannelFactory'
 import GlobalWin from '../GlobalWin'
-import R from '../../class/R'
+import R from '../../../common/class/R'
+import TranslateChannelFactory from './factory/TranslateChannelFactory'
 import OcrChannelFactory from './factory/OcrChannelFactory'
 
 /**
@@ -22,6 +22,17 @@ ipcMain.handle('api-unite-translate', (_event, channel, info) => {
  */
 ipcMain.handle('api-unite-translate-check', (_event, channel, info) => {
   TranslateChannelFactory.translateCheck(channel, info)
+})
+
+/**
+ * 代理翻译 - 调用翻译结果回调
+ */
+ipcMain.handle('agent-api-translate-callback', (_event, res) => {
+  const info = res.data.request
+  const channel = TranslateChannelFactory.channels[info.type + 'Channel']
+  info.isTranslateCheckType
+    ? channel.apiTranslateCheckCallback(res)
+    : channel.apiTranslateCallback(res)
 })
 
 /**

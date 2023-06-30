@@ -1,24 +1,25 @@
 <template>
-  <div class='about-layer'>
-
-    <div class='about-layer-up'>
-      <img class='about-logo none-select' :src='logo' />
-      <span class='app-name none-select'>
+  <div class="about-layer">
+    <div class="about-layer-up">
+      <img class="about-logo none-select" :src="logo" />
+      <span class="app-name none-select">
         TTime
-        <span class='app-version none-select'>{{ version }}</span>
+        <span class="app-version none-select">{{ version }}</span>
       </span>
-      <span class='app-introduce none-select'>🚀 一款简洁、高效、高颜值的输入、截图、划词翻译软件</span>
+      <span class="app-introduce none-select"
+        >🚀 一款简洁、高效、高颜值的输入、截图、划词翻译软件</span
+      >
     </div>
 
-    <div class='about-layer-down'>
+    <div class="about-layer-down">
       <el-divider />
-      <template v-for='(info, key) in list' :key='key'>
-            <span class='about-info-url cursor-pointer' @click='toPage(info.url)'>{{ info.val }}</span>
-        </template>
+      <template v-for="(info, key) in list" :key="key">
+        <span class="about-info-url cursor-pointer" @click="toPage(info.url)">{{ info.val }}</span>
+      </template>
     </div>
   </div>
 </template>
-<script setup lang='ts'>
+<script setup lang="ts">
 import logo from '../../../assets/logo.png'
 
 import { ref } from 'vue'
@@ -27,7 +28,10 @@ const version = ref(window.api.getVersionEvent())
 
 const list = ref([
   { url: 'https://ttime.timerecord.cn', val: '官网网站 ：https://ttime.timerecord.cn' },
-  { url: 'https://github.com/InkTimeRecord/TTime', val: 'GitHub : https://github.com/InkTimeRecord/TTime' },
+  {
+    url: 'https://github.com/InkTimeRecord/TTime',
+    val: 'GitHub : https://github.com/InkTimeRecord/TTime'
+  }
 ])
 
 /**
@@ -36,10 +40,9 @@ const list = ref([
 const toPage = (url): void => {
   window.api.jumpToPage(url)
 }
-
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 @import '../../../css/set.scss';
 
 .about-layer {
@@ -95,9 +98,6 @@ const toPage = (url): void => {
       font-size: 14px;
       padding: 3px;
     }
-
   }
-
 }
-
 </style>

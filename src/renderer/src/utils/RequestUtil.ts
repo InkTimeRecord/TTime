@@ -1,4 +1,4 @@
-import { isNull } from './validate'
+import { isNull } from '../../../common/utils/validate'
 
 /**
  * 公共错误处理

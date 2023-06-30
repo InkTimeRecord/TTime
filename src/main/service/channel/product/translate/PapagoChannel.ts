@@ -1,12 +1,12 @@
 import log from '../../../../utils/log'
-import { paramsFilter } from '../../../../utils/logExtend'
-import R from '../../../../class/R'
+import R from '../../../../../common/class/R'
 import GlobalWin from '../../../GlobalWin'
 import ITranslateInterface from './ITranslateInterface'
 import PapagoRequest from '../../interfaces/PapagoRequest'
-import TranslateServiceEnum from '../../../../enums/TranslateServiceEnum'
-import { isNull } from '../../../../utils/validate'
+import TranslateServiceEnum from '../../../../../common/enums/TranslateServiceEnum'
+import { isNull } from '../../../../../common/utils/validate'
 import { commonError } from '../../../../utils/RequestUtil'
+import TranslateChannelFactory from '../../factory/TranslateChannelFactory'
 
 class PapagoChannel implements ITranslateInterface {
   /**
@@ -15,16 +15,18 @@ class PapagoChannel implements ITranslateInterface {
    * @param info 翻译信息
    */
   apiTranslate(info): void {
-    log.info('[Papago翻译事件] - 请求报文 : ', paramsFilter(info))
     PapagoRequest.apiTranslate(info)
       .then((res) => {
         log.info('[Papago翻译事件] - 响应报文 : ', res)
         const data = res['message']['result']['translatedText']
-        GlobalWin.mainWinSend('papago-api-translate-callback-event', R.okT(data.split('\\n')))
+        GlobalWin.mainWinSend(
+          TranslateChannelFactory.callbackName(info.type),
+          R.okT(data.split('\\n'))
+        )
       })
       .catch((err) => {
         GlobalWin.mainWinSend(
-          'papago-api-translate-callback-event',
+          TranslateChannelFactory.callbackName(info.type),
           R.okT(this.commonErrorExpand('Papago翻译事件', err))
         )
       })
@@ -36,13 +38,6 @@ class PapagoChannel implements ITranslateInterface {
    * @param info 翻译信息
    */
   apiTranslateCheck(info): void {
-    log.info('[Papago翻译校验密钥事件] - 请求报文 : ', paramsFilter(info))
-    // 响应信息
-    const responseData = {
-      id: info.id,
-      appId: info.appId,
-      appKey: info.appKey
-    }
     // 此翻译不支持输入文字自动识别语言 这里默认识别中文
     info.languageType = 'zh-CN'
     PapagoRequest.apiTranslate(info).then(
@@ -51,14 +46,14 @@ class PapagoChannel implements ITranslateInterface {
         GlobalWin.setWin.webContents.send(
           'api-check-translate-callback-event',
           TranslateServiceEnum.PAPAGO,
-          R.okD(responseData)
+          R.okD(info.responseData)
         )
       },
       (err) => {
         GlobalWin.setWin.webContents.send(
           'api-check-translate-callback-event',
           TranslateServiceEnum.PAPAGO,
-          R.errorMD(this.commonErrorExpand('Papago翻译校验密钥', err), responseData)
+          R.errorMD(this.commonErrorExpand('Papago翻译校验密钥', err), info.responseData)
         )
       }
     )

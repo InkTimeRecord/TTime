@@ -24,17 +24,17 @@ import InputResultContent from './components/InputResultContent.vue'
 import { nextTick, ref } from 'vue'
 import ElMessageExtend from '../utils/messageExtend'
 
-import { ShortcutKeyEnum } from '../enums/ShortcutKeyEnum'
-import { YesNoEnum } from '../enums/YesNoEnum'
-import { isNull } from '../utils/validate'
+import { ShortcutKeyEnum } from '../../../common/enums/ShortcutKeyEnum'
+import { YesNoEnum } from '../../../common/enums/YesNoEnum'
+import { isNull } from '../../../common/utils/validate'
 import { buildTranslateService, setTranslateServiceMap } from '../utils/translateServiceUtil'
 import { buildOcrService, setOcrServiceMap } from '../utils/ocrServiceUtil'
 import { initTheme } from '../utils/themeUtil'
 import { cacheGetStr, cacheSet, cacheSetStr } from '../utils/cacheUtil'
 import { PlaySpeechServiceEnum } from '../enums/PlaySpeechServiceEnum'
 import '../channel/ChannelRequest'
-import { TranslateServiceEnum } from '../enums/TranslateServiceEnum'
-import { OcrServiceEnum } from '../enums/OcrServiceEnum'
+import TranslateServiceEnum from '../../../common/enums/TranslateServiceEnum'
+import OcrServiceEnum from '../../../common/enums/OcrServiceEnum'
 
 initTheme()
 
@@ -108,10 +108,10 @@ if (undefined === cacheGetStr('choiceShortcutKey')) {
   cacheSetStr('choiceShortcutKey', 'Alt + E')
 }
 if (undefined === cacheGetStr('screenshotOcrShortcutKey')) {
-  cacheSetStr('screenshotOcrShortcutKey', 'Alt + Shift + S')
+  cacheSetStr('screenshotOcrShortcutKey', 'Alt + Shift + W')
 }
 if (undefined === cacheGetStr('screenshotSilenceOcrShortcutKey')) {
-  cacheSetStr('screenshotSilenceOcrShortcutKey', 'Alt + Shift + D')
+  cacheSetStr('screenshotSilenceOcrShortcutKey', 'Alt + Shift + E')
 }
 // 首次加载 - 代理配置初始化
 if (isNull(cacheGetStr('agentConfig'))) {
@@ -160,9 +160,19 @@ if (undefined === cacheGetStr('alwaysOnTopAllowEscStatus')) {
 if (undefined === cacheGetStr('wrapReplaceSpaceStatus')) {
   cacheSetStr('wrapReplaceSpaceStatus', YesNoEnum.N)
 }
+const hoverBallStatus = cacheGetStr('hoverBallStatus')
 // 初始化鼠标悬浮球取词状态
-if (undefined === cacheGetStr('hoverBallStatus')) {
+if (undefined === hoverBallStatus) {
   cacheSetStr('hoverBallStatus', YesNoEnum.N)
+  // 悬浮球增强模式
+  cacheSetStr('hoverBallEnhanceStatus', YesNoEnum.N)
+} else {
+  const hoverBallEnhanceStatus = cacheGetStr('hoverBallEnhanceStatus')
+  // 因为新增了悬浮球增强模式 所以此处主要用于兼容之前开启了悬浮球的 但是没有开启增强的 默认赋值开启
+  if (hoverBallStatus === YesNoEnum.Y && undefined === hoverBallEnhanceStatus) {
+    // 悬浮球增强模式
+    cacheSetStr('hoverBallEnhanceStatus', YesNoEnum.Y)
+  }
 }
 // 初始化OCR结果写入剪切板状态
 if (undefined === cacheGetStr('ocrWriteClipboardStatus')) {

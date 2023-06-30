@@ -1,84 +1,84 @@
 <template>
-  <div class='content'>
-    <div class='content-input-block'>
-      <div class='function-tools-block content-header-block'>
-        <div class='content-tools-category'>
-          <img class='content-translate-logo none-select' :src='translateLogoSrc' />
-          <span class='content-translate-name none-select'>{{ translateName }}</span>
-          <img v-show='isResultLoading' class='content-translate-loading' :src='loadingImageSrc' />
+  <div class="content">
+    <div class="content-input-block">
+      <div class="function-tools-block content-header-block">
+        <div class="content-tools-category">
+          <img class="content-translate-logo none-select" :src="translateLogoSrc" />
+          <span class="content-translate-name none-select">{{ translateName }}</span>
+          <img v-show="isResultLoading" class="content-translate-loading" :src="loadingImageSrc" />
         </div>
-        <div class='function-tools-category content-tools-category'>
-          <a class='function-tools content-tools' @click='showResultFun'>
+        <div class="function-tools-category content-tools-category">
+          <a class="function-tools content-tools" @click="showResultFun">
             <el-icon>
-              <ArrowDown v-if='showResult' />
+              <ArrowDown v-if="showResult" />
               <ArrowLeft v-else />
             </el-icon>
           </a>
         </div>
       </div>
       <el-collapse-transition>
-        <div v-show='showResult'>
+        <div v-show="showResult">
           <el-input
-            v-model='translatedResultContent'
-            class='content-input content-input-zero-padding-top'
-            :readonly='true'
-            spellcheck='false'
-            type='textarea'
-            :autosize='{ minRows: 1, maxRows: 10 }'
+            v-model="translatedResultContent"
+            class="content-input content-input-zero-padding-top"
+            :readonly="true"
+            spellcheck="false"
+            type="textarea"
+            :autosize="{ minRows: 1, maxRows: 10 }"
           />
 
-          <div class='phonetic-layer'>
-            <div v-show='dictTranslatedResultExpand.isUs' class='phonetic-block'>
-              <span class='phonetic-type'>美 </span>
-              <span class='phonetic'>[{{ dictTranslatedResultExpand.usPhonetic }}]</span>
+          <div class="phonetic-layer">
+            <div v-show="dictTranslatedResultExpand.isUs" class="phonetic-block">
+              <span class="phonetic-type">美 </span>
+              <span class="phonetic">[{{ dictTranslatedResultExpand.usPhonetic }}]</span>
               <a
-                class='phonetic-function-play cursor-pointer'
-                @click='playSpeechByUrl(dictTranslatedResultExpand.usSpeech)'
+                class="phonetic-function-play cursor-pointer"
+                @click="playSpeechByUrl(dictTranslatedResultExpand.usSpeech)"
               >
-                <svg-icon icon-class='play' class='phonetic-function-tools-icon' />
+                <svg-icon icon-class="play" class="phonetic-function-tools-icon" />
               </a>
             </div>
-            <div v-show='dictTranslatedResultExpand.isUk' class='phonetic-block'>
-              <span class='phonetic-type'>英 </span>
-              <span class='phonetic'>[{{ dictTranslatedResultExpand.ukPhonetic }}]</span>
+            <div v-show="dictTranslatedResultExpand.isUk" class="phonetic-block">
+              <span class="phonetic-type">英 </span>
+              <span class="phonetic">[{{ dictTranslatedResultExpand.ukPhonetic }}]</span>
               <a
-                class='phonetic-function-play cursor-pointer'
-                @click='playSpeechByUrl(dictTranslatedResultExpand.ukSpeech)'
+                class="phonetic-function-play cursor-pointer"
+                @click="playSpeechByUrl(dictTranslatedResultExpand.ukSpeech)"
               >
-                <svg-icon icon-class='play' class='phonetic-function-tools-icon' />
+                <svg-icon icon-class="play" class="phonetic-function-tools-icon" />
               </a>
             </div>
           </div>
 
-          <div v-show='dictTranslatedResultExpand.isExplainList' class='explain-layer'>
-            <span class='explain-title'>其他释义</span>
+          <div v-show="dictTranslatedResultExpand.isExplainList" class="explain-layer">
+            <span class="explain-title">其他释义</span>
             <div
-              v-for='(explain, key) in dictTranslatedResultExpand.explainList'
-              :key='key'
-              class='explain-block'
+              v-for="(explain, key) in dictTranslatedResultExpand.explainList"
+              :key="key"
+              class="explain-block"
             >
-              <span class='explain-type'>{{ explain.type }}</span>
-              <span class='explain-content'>{{ explain.content }}</span>
+              <span class="explain-type">{{ explain.type }}</span>
+              <span class="explain-content">{{ explain.content }}</span>
             </div>
           </div>
 
-          <div v-show='dictTranslatedResultExpand.isWfs' class='explain-layer'>
+          <div v-show="dictTranslatedResultExpand.isWfs" class="explain-layer">
             <div
-              v-for='(wfs, key) in dictTranslatedResultExpand.wfsList'
-              :key='key'
-              class='explain-block'
+              v-for="(wfs, key) in dictTranslatedResultExpand.wfsList"
+              :key="key"
+              class="explain-block"
             >
-              <span class='explain-type'>{{ wfs.wf.name + ' ' }}</span>
-              <span class='explain-content'>{{ wfs.wf.value }}</span>
+              <span class="explain-type">{{ wfs.wf.name + ' ' }}</span>
+              <span class="explain-content">{{ wfs.wf.value }}</span>
             </div>
           </div>
 
-          <div class='function-tools-block'>
-            <a class='function-tools' @click='playSpeech(translatedResultContent)'>
-              <svg-icon icon-class='play' class='function-tools-icon' />
+          <div class="function-tools-block">
+            <a class="function-tools" @click="playSpeech(translatedResultContent)">
+              <svg-icon icon-class="play" class="function-tools-icon" />
             </a>
-            <a class='function-tools' @click='textWriteShearPlate(translatedResultContent)'>
-              <svg-icon icon-class='copy' class='function-tools-icon' />
+            <a class="function-tools" @click="textWriteShearPlate(translatedResultContent)">
+              <svg-icon icon-class="copy" class="function-tools-icon" />
             </a>
           </div>
         </div>
@@ -87,13 +87,14 @@
   </div>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 import { ref } from 'vue'
 import loadingImage from '../../../assets/loading.gif'
 import translate from '../../../utils/translate'
-import { TranslateServiceEnum } from '../../../enums/TranslateServiceEnum'
-import { isNull } from '../../../utils/validate'
-import { OpenAIStatusEnum } from '../../../enums/OpenAIStatusEnum'
+import TranslateServiceEnum from '../../../../../common/enums/TranslateServiceEnum'
+import { isNull } from '../../../../../common/utils/validate'
+import { OpenAIStatusEnum } from '../../../../../common/enums/OpenAIStatusEnum'
+import { TranslateServiceBuilder } from '../../../utils/translateServiceUtil'
 
 // 翻译内容框内容
 const props = defineProps<{
@@ -111,10 +112,8 @@ const getTranslateServiceBackEventName = (translateService) => {
 
 // 加载loading
 const loadingImageSrc = ref(loadingImage)
-const translateLogoSrc = ref(
-  TranslateServiceEnum.getInfoByService(props.translateService.type).logo
-)
-const translateName = ref(props.translateService.name)
+const translateLogoSrc = ref(props.translateService.serviceInfo.logo)
+const translateName = ref(props.translateService.serviceInfo.name)
 
 // 翻译结果
 const translatedResultContent = ref('')
@@ -273,7 +272,7 @@ defineExpose({
 })
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 @import '../../../css/translate.scss';
 @import '../../../css/translate-input.scss';
 

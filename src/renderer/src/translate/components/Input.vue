@@ -41,23 +41,24 @@
 
 <script setup lang="ts">
 import { nextTick, ref, watch } from 'vue'
-import { isNull } from '../../utils/validate'
+import { isNotNull, isNull } from '../../../../common/utils/validate'
 import LanguageEnum from '../../enums/LanguageEnum'
 
 import loadingImage from '../../assets/loading.gif'
 import translate from '../../utils/translate'
-import { getTranslateServiceMapByUse } from '../../utils/translateServiceUtil'
-import { TranslateServiceEnum } from '../../enums/TranslateServiceEnum'
+import {
+  getTranslateServiceMapByUse,
+  TranslateServiceBuilder
+} from '../../utils/translateServiceUtil'
+import TranslateServiceEnum from '../../../../common/enums/TranslateServiceEnum'
 import { cacheGet, cacheGetStr } from '../../utils/cacheUtil'
 import ElMessageExtend from '../../utils/messageExtend'
 import {
-  getLanguageTypeByOpenAI,
-  getLanguageResultTypeByOpenAI,
-  getLanguageResultType,
-  getLanguageTypeByVolcano,
-  getLanguageTypeByPapago
+  getLanguageResultNameConversion,
+  getLanguageNameConversion
 } from '../../utils/languageUtil'
-import { YesNoEnum } from '../../enums/YesNoEnum'
+import { YesNoEnum } from '../../../../common/enums/YesNoEnum'
+import { findLanguageByLanguageName } from './channel/language/ChannelLanguage'
 
 // 加载loading
 const loadingImageSrc = ref(loadingImage)
@@ -182,26 +183,23 @@ const translateFun = (): void => {
     translateContentDealWith = translateContentDealWith.replaceAll('\n', ' ')
   }
   // 获取当前默认输入文字语言
-  const inputLanguage = cacheGet('inputLanguage')
-  // 是否自动检测输入文字语言
-  let isInputAuto = false
+  let inputLanguage = cacheGet('inputLanguage')
   // 获取当前默认输入文字语言类型
   const languageInputType = inputLanguage.languageType
   if (languageInputType === LanguageEnum.AUTO) {
     // 自动检测输入文字的语言
-    isInputAuto = true
+    const languageName = getLanguageNameConversion(translateContentDealWith)
+    inputLanguage = findLanguageByLanguageName(languageName)
   }
   // 获取当前默认翻译结果文字语言
-  const resultLanguage = cacheGet('resultLanguage')
-  // 是否自动检测翻译结果文字语言
-  let isResultAuto = false
+  let resultLanguage = cacheGet('resultLanguage')
   // 获取当前默认翻译结果文字语言类型
-  let languageResultType = resultLanguage.languageType
+  const languageResultType = resultLanguage.languageType
   if (languageResultType === LanguageEnum.AUTO) {
     // 自动检测翻译结果文字语言
-    isResultAuto = true
     // 根据输入的语言类型获取翻译结果的语言
-    languageResultType = getLanguageResultType(translateContentDealWith)
+    const languageName = getLanguageResultNameConversion(translateContentDealWith)
+    resultLanguage = findLanguageByLanguageName(languageName)
   }
   // 设置显示翻译加载中状态
   emit('is-result-loading-event', true)
@@ -213,67 +211,43 @@ const translateFun = (): void => {
   for (const translateService of translateServiceMapData.values()) {
     // 翻译源类型
     const type = translateService.type
+    // 如果不为自动识别 则从翻译源对应的文字语言中找到对应的语言代码
+    const inputServiceLanguage = inputLanguage?.serviceList?.find((service) => {
+      return service.type === translateService.type
+    })
+    if (isNull(inputServiceLanguage)) {
+      // 此处校验是用于用户在使用多翻译源情况下 部分翻译源支持某种语言 而部分翻译源不支持
+      window.api.apiTranslateResultMsgCallbackEvent(translateService.type, '不支持翻译当前语言')
+      continue
+    }
     // 输入文字语言类型
-    let languageInputTypeRequest = languageInputType
+    const languageInputTypeRequest = inputServiceLanguage.languageType
+
+    const resultServiceLanguage = resultLanguage?.serviceList?.find((service) => {
+      return service.type === translateService.type
+    })
+    if (isNull(resultServiceLanguage)) {
+      window.api.apiTranslateResultMsgCallbackEvent(translateService.type, '不支持翻译当前语言结果')
+      continue
+    }
     // 翻译结果语言类型
-    let languageResultTypeRequest = languageResultType
-    if (!isInputAuto) {
-      // 如果不为自动识别 则从翻译源对应的文字语言中找到对应的语言代码
-      const language = inputLanguage.serviceList.find((service) => {
-        return service.type === translateService.type
-      })
-      if (isNull(language)) {
-        // 此处校验是用于用户在使用多翻译源情况下 部分翻译源支持某种语言 而部分翻译源不支持
-        window.api.apiTranslateResultMsgCallbackEvent(translateService.type, '不支持翻译当前语言')
-        continue
-      }
-      // 输入文字语言类型
-      languageInputTypeRequest = language.languageType
-    } else {
-      // 当 输入文字语言类型 为 自动识别 时 由于部分翻译源不支持 自动识别 所以此处做特殊处理 内部自己识别一下
-      // 之后可以考虑都使用本地识别 不使用翻译源对应的自动识别类型
-      if (TranslateServiceEnum.OPEN_AI === type) {
-        languageInputTypeRequest = getLanguageTypeByOpenAI(translateContentDealWith)
-      }
-      if (TranslateServiceEnum.VOLCANO === type) {
-        languageInputTypeRequest = getLanguageTypeByVolcano(translateContentDealWith)
-      }
-      if (TranslateServiceEnum.PAPAGO === type) {
-        languageInputTypeRequest = getLanguageTypeByPapago(translateContentDealWith)
-      }
-    }
-    if (!isResultAuto) {
-      const language = resultLanguage.serviceList.find((service) => {
-        return service.type === translateService.type
-      })
-      if (isNull(language)) {
-        window.api.apiTranslateResultMsgCallbackEvent(
-          translateService.type,
-          '不支持翻译当前语言结果'
-        )
-        continue
-      }
-      languageResultTypeRequest = language.languageType
-    } else {
-      if (TranslateServiceEnum.OPEN_AI === type) {
-        languageResultTypeRequest = getLanguageResultTypeByOpenAI(translateContentDealWith)
-      }
-    }
+    const languageResultTypeRequest = resultServiceLanguage.languageType
+
     let info = buildTranslateRequestInfo(
       translateContentDealWith,
       languageInputTypeRequest,
       languageResultTypeRequest
     )
-    if (TranslateServiceEnum.TTIME !== type) {
-      info = {
-        ...info,
-        appId: translateService.appId,
-        appKey: translateService.appKey,
-        // 此参数 OpenAI 使用
-        model: translateService.model,
-        // 此参数 OpenAI 使用
-        requestUrl: translateService.requestUrl
-      }
+    info = {
+      ...info,
+      appId: translateService.appId,
+      appKey: translateService.appKey
+    }
+    const defaultInfo = TranslateServiceBuilder.getServiceConfigInfo(type).defaultInfo
+    if (isNotNull(defaultInfo)) {
+      Object.keys(defaultInfo).forEach((key) => {
+        info[key] = translateService[key]
+      })
     }
     // 此处触发之后会异步回调到 *ApiTranslateCallbackEvent 方法中去执行
     window.api.apiUniteTranslate(type, info)

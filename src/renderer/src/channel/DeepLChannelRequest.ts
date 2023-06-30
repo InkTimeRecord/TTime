@@ -1,17 +1,18 @@
 import HttpMethodType from '../enums/HttpMethodTypeClassEnum'
 import request from '../utils/requestNotHandle'
-import { TranslateServiceEnum } from '../enums/TranslateServiceEnum'
+import R from '../../../common/class/R'
+import AgentTranslateCallbackVo from '../../../common/class/AgentTranslateCallbackVo'
+import TranslateServiceEnum from '../../../common/enums/TranslateServiceEnum'
 import { commonError } from '../utils/RequestUtil'
-import { isNotNull } from '../utils/validate'
+import { isNotNull } from '../../../common/utils/validate'
 
 class DeepLChannelRequest {
   /**
    * DeepL翻译
    *
    * @param info 翻译信息
-   * @param isCheckRequest  是否校验翻译请求状态
    */
-  static apiTranslateByDeepL = (info, isCheckRequest): void => {
+  static apiTranslateByDeepL = (info): void => {
     const data = {
       text: info.translateContent.split('\n'),
       target_lang: info.languageResultType
@@ -30,19 +31,13 @@ class DeepLChannelRequest {
     }
     request(requestInfo).then(
       (data) => {
-        window.api['agentApiTranslateCallback'](
-          TranslateServiceEnum.DEEP_L,
-          true,
-          data,
-          isCheckRequest ? info : null
-        )
+        window.api['agentApiTranslateCallback'](R.okD(new AgentTranslateCallbackVo(info, data)))
       },
       (err) => {
         window.api['agentApiTranslateCallback'](
-          TranslateServiceEnum.DEEP_L,
-          false,
-          commonError(TranslateServiceEnum.DEEP_L, err),
-          isCheckRequest ? info : null
+          R.errorD(
+            new AgentTranslateCallbackVo(info, commonError(TranslateServiceEnum.DEEP_L, err))
+          )
         )
       }
     )
@@ -52,9 +47,8 @@ class DeepLChannelRequest {
    * DeepL翻译
    *
    * @param info 翻译信息
-   * @param isCheckRequest  是否校验翻译请求状态
    */
-  static apiTranslateByDeepLBuiltIn = (info, isCheckRequest): void => {
+  static apiTranslateByDeepLBuiltIn = (info): void => {
     const content = info.translateContent
     const id = 1000 * (Math.floor(Math.random() * 99999) + 8300000) + 1
     let ts = Date.now()
@@ -106,19 +100,16 @@ class DeepLChannelRequest {
       data: data
     })
       .then((res) => {
-        window.api['agentApiTranslateCallback'](
-          TranslateServiceEnum.DEEP_L_BUILT_IN,
-          true,
-          res,
-          isCheckRequest ? info : null
-        )
+        window.api['agentApiTranslateCallback'](R.okD(new AgentTranslateCallbackVo(info, res)))
       })
       .catch((error) => {
         window.api['agentApiTranslateCallback'](
-          TranslateServiceEnum.DEEP_L_BUILT_IN,
-          false,
-          commonError('DeepL(内置)', error),
-          isCheckRequest ? info : null
+          R.errorD(
+            new AgentTranslateCallbackVo(
+              info,
+              commonError(TranslateServiceEnum.DEEP_L_BUILT_IN, error)
+            )
+          )
         )
       })
   }

@@ -8,7 +8,7 @@ class TranslateServiceEnum {
   static TTIME = 'TTime'
 
   /**
-   * 腾讯云翻译 - 腾讯翻译君
+   * 腾讯翻译君
    */
   static TENCENT_CLOUD = 'TencentCloud'
 
@@ -90,7 +90,7 @@ class TranslateServiceEnum {
   /**
    * Papago翻译
    */
-  static PAPAGO = 'PAPAGO'
+  static PAPAGO = 'Papago'
 }
 
 export default TranslateServiceEnum

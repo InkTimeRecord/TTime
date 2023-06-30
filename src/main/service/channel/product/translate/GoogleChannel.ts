@@ -1,84 +1,62 @@
+import ITranslateAgentInterface from './ITranslateAgentInterface'
 import log from '../../../../utils/log'
-import R from '../../../../class/R'
+import R from '../../../../../common/class/R'
 import GlobalWin from '../../../GlobalWin'
-import ITranslateInterface from './ITranslateInterface'
-import TranslateServiceEnum from '../../../../enums/TranslateServiceEnum'
-import { paramsFilter } from '../../../../utils/logExtend'
+import TranslateServiceEnum from '../../../../../common/enums/TranslateServiceEnum'
+import TranslateChannelFactory from '../../factory/TranslateChannelFactory'
+import TranslateAgent from './TranslateAgent'
 
-class GoogleChannel implements ITranslateInterface {
+class GoogleChannel extends TranslateAgent implements ITranslateAgentInterface {
   /**
    * 翻译
    *
-   * @param info 翻译信息
+   * @param res 信息
    */
-  apiTranslate(info): void {
-    log.info('[Google翻译事件] - 请求报文 : ', paramsFilter(info))
-    GlobalWin.mainWinSend('agent-api-translate', TranslateServiceEnum.GOOGLE, info, false)
-  }
-
-  /**
-   * 翻译校验
-   *
-   * @param info 翻译信息
-   */
-  apiTranslateCheck(info): void {
-    log.info('[Google翻译校验密钥事件] - 请求报文 : ', paramsFilter(info))
-    GlobalWin.mainWinSend('agent-api-translate', TranslateServiceEnum.GOOGLE, info, true)
-  }
-
-  /**
-   * 翻译
-   *
-   * @param status 状态
-   * @param data   数据
-   */
-  static apiTranslateCallback(status, data): void {
-    if (status) {
-      log.info('[Google翻译事件] - 响应报文 : ', JSON.stringify(data))
+  apiTranslateCallback(res: R): void {
+    const dataObj = res.data
+    const data = dataObj['response']
+    const info = dataObj['request']
+    if (res.code === R.ERROR) {
       GlobalWin.mainWinSend(
-        'google-api-translate-callback-event',
-        R.okT(
-          data.data['translations'].map((translation) =>
-            translation.translatedText.replaceAll('&#39;', "'")
-          )
-        )
-      )
-    } else {
-      GlobalWin.mainWinSend(
-        'google-api-translate-callback-event',
+        TranslateChannelFactory.callbackName(info.type),
         R.okT(GoogleChannel.commonErrorExpand(data))
       )
+      return
     }
+    log.info('[Google翻译事件] - 响应报文 : ', JSON.stringify(data))
+    GlobalWin.mainWinSend(
+      TranslateChannelFactory.callbackName(info.type),
+      R.okT(
+        data.data['translations'].map((translation) =>
+          translation.translatedText.replaceAll('&#39;', "'")
+        )
+      )
+    )
   }
 
   /**
    * 翻译
    *
-   * @param status 状态
-   * @param data   数据
-   * @param info   数据
+   * @param res 信息
    */
-  static apiTranslateCheckCallback(status, data, info): void {
-    // 响应信息
-    const responseData = {
-      id: info.id,
-      appId: info.appId,
-      appKey: info.appKey
-    }
-    if (status) {
-      log.info('[Google翻译校验密钥事件] - 响应报文 : ', JSON.stringify(data))
+  apiTranslateCheckCallback(res): void {
+    const dataObj = res.data
+    const data = dataObj['response']
+    const info = dataObj['request']
+    if (res.code === R.ERROR) {
       GlobalWin.setWin.webContents.send(
         'api-check-translate-callback-event',
         TranslateServiceEnum.GOOGLE,
-        R.okD(responseData)
+        R.errorMD(GoogleChannel.commonErrorExpand(data), info.responseData)
       )
-    } else {
-      GlobalWin.setWin.webContents.send(
-        'api-check-translate-callback-event',
-        TranslateServiceEnum.GOOGLE,
-        R.errorMD(GoogleChannel.commonErrorExpand(data), responseData)
-      )
+      return
     }
+    log.info('[Google翻译校验密钥事件] - 响应报文 : ', JSON.stringify(data))
+    GlobalWin.setWin.webContents.send(
+      'api-check-translate-callback-event',
+      TranslateServiceEnum.GOOGLE,
+      R.okD(info.responseData)
+    )
   }
 
   /**

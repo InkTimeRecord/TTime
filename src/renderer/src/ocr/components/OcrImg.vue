@@ -18,7 +18,7 @@
 import { nextTick, ref, watch } from 'vue'
 
 import loadingImage from '../../assets/loading.gif'
-import { isNull } from '../../utils/validate'
+import { isNull } from '../../../../common/utils/validate'
 import ElMessageExtend from '../../utils/messageExtend'
 const emit = defineEmits(['is-result-loading-event'])
 
@@ -59,9 +59,9 @@ window.api.updateImg((img) => {
   flex-direction: column;
 
   .img {
-    border-radius: 7px;
-    max-width: 100%;
-    max-height: 98%;
+    border-radius: 5px;
+    max-width: 95%;
+    max-height: 95%;
     width: auto;
     height: auto;
     object-fit: contain;

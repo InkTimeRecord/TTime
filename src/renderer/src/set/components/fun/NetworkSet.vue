@@ -1,22 +1,36 @@
 <template>
   <div>
-    <div class='network-layer'>
-      <el-form label-width='120px'>
-
-        <el-form-item label='代理设置'>
-          <el-select v-model='agentConfig.type'>
-            <el-option v-for='model in agentSelectList' :key='model.value' :label='model.label' :value='model.value' />
+    <div class="network-layer">
+      <el-form label-width="120px">
+        <el-form-item label="代理设置">
+          <el-select v-model="agentConfig.type">
+            <el-option
+              v-for="model in agentSelectList"
+              :key="model.value"
+              :label="model.label"
+              :value="model.value"
+            />
           </el-select>
         </el-form-item>
 
-        <div v-if='agentConfig.type === 1'>
-          <el-form-item label='服务器'>
-            <el-input v-model='agentConfig.host' class='network-input' type='text' placeholder='请输入地址IP'
-                      spellcheck='false' />
+        <div v-if="agentConfig.type === 1">
+          <el-form-item label="服务器">
+            <el-input
+              v-model="agentConfig.host"
+              class="network-input"
+              type="text"
+              placeholder="请输入地址IP"
+              spellcheck="false"
+            />
           </el-form-item>
-          <el-form-item label='端口'>
-            <el-input v-model='agentConfig.port' class='network-input' type='text' placeholder='请输入端口'
-                      spellcheck='false' />
+          <el-form-item label="端口">
+            <el-input
+              v-model="agentConfig.port"
+              class="network-input"
+              type="text"
+              placeholder="请输入端口"
+              spellcheck="false"
+            />
           </el-form-item>
           <!--          <el-form-item label='用户名'>-->
           <!--            <el-input v-model='agentConfig.userName' class='network-input' type='text' placeholder='请输入用户名'-->
@@ -30,19 +44,18 @@
           <!--          </el-form-item>-->
         </div>
         <el-form-item>
-          <el-button plain @click='save'>保存</el-button>
-          <span
-            class='form-switch-span form-switch-button-span'> {{ agentConfig.type === 0 ? '' : '配置后TTime默认所有请求通过代理执行'
-            }} </span>
+          <el-button plain @click="save">保存</el-button>
+          <span class="form-switch-span form-switch-button-span">
+            {{ agentConfig.type === 0 ? '' : '配置后TTime默认所有请求通过代理执行' }}
+          </span>
         </el-form-item>
       </el-form>
     </div>
   </div>
 </template>
-<script setup lang='ts'>
-
+<script setup lang="ts">
 import { ref } from 'vue'
-import { isNull } from '../../../utils/validate'
+import { isNull } from '../../../../../common/utils/validate'
 import ElMessageExtend from '../../../utils/messageExtend'
 import { cacheGet, cacheSet } from '../../../utils/cacheUtil'
 
@@ -67,10 +80,9 @@ const save = () => {
   ElMessageExtend.success('保存成功')
   setTimeout(window.api.agentUpdateEvent(cacheGet('agentConfig')), 500)
 }
-
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 @import '../../../css/set.scss';
 
 .network-layer {
@@ -81,11 +93,9 @@ const save = () => {
   .form-switch-button-span {
     margin-left: 15px;
   }
-
 }
 
 .network-input {
   //width: 70%;
 }
-
 </style>

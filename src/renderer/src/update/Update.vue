@@ -144,7 +144,7 @@ import { nextTick, ref } from 'vue'
 import { AutoUpdaterEnum } from '../enums/AutoUpdaterEnum'
 import { UpdateDownloadTypeEnum } from '../enums/UpdateDownloadTypeEnum'
 import { ElLoading } from 'element-plus'
-import { isNotNull, isNull } from '../utils/validate'
+import { isNotNull, isNull } from '../../../common/utils/validate'
 import { initTheme } from '../utils/themeUtil'
 import { SystemTypeEnum } from '../enums/SystemTypeEnum'
 

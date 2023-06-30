@@ -1,26 +1,36 @@
 /**
- * Ocr服务枚举
+ * OCR服务枚举
  */
 class OcrServiceEnum {
   /**
-   * TTime
+   * TTime OCR
    */
   static TTIME = 'TTime'
 
   /**
-   * TTime在线
+   * TTime在线OCR
    */
   static TTIME_ONLINE = 'TTimeOnline'
 
   /**
-   * 百度
+   * 百度智能云OCR
    */
   static BAIDU = 'Baidu'
 
   /**
-   * 火山翻译
+   * 火山OCR
    */
   static VOLCANO = 'Volcano'
+
+  /**
+   * OcrSpace
+   */
+  static OCR_SPACE = 'OcrSpace'
+
+  /**
+   * 讯飞OCR
+   */
+  static XFYUN = 'Xfyun'
 }
 
 export default OcrServiceEnum
