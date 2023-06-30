@@ -93,7 +93,7 @@ class BingDictChannel extends TranslateAgent implements ITranslateAgentInterface
       })
       .catch((err) => {
         log.info('[BingDict翻译事件] - 异常 : ', err)
-        GlobalWin.mainWinSend('bingdict-api-translate-callback-event', R.okT(err))
+        GlobalWin.mainWinSend(TranslateChannelFactory.callbackName(info.type), R.okT(err))
       })
   }
 
