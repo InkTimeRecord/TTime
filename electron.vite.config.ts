@@ -67,6 +67,8 @@ export default defineConfig({
       })
     ],
     build: {
+      // 禁用资源内联限制，确保图片以原始路径进行加载
+      assetsInlineLimit: 0,
       rollupOptions: {
         input: {
           index: resolve(__dirname, 'src/renderer/index.html'),

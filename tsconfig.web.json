@@ -8,7 +8,8 @@
     "src/common/enums/*.ts",
     "src/common/class/*.ts",
     "src/common/utils/*.ts",
-    "src/common/channel/translate/info/*.ts"
+    "src/common/channel/translate/info/*.ts",
+    "src/common/channel/ocr/info/*.ts"
   ],
   "compilerOptions": {
     "composite": true,

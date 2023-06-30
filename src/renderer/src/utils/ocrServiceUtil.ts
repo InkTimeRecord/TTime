@@ -114,16 +114,17 @@ export class OcrServiceBuilder {
       return OcrServiceBuilder.ocrServiceMap
     }
     // 动态加载服务logo
-    const channelLogos = Object.values(
-      import.meta.glob('../assets/ocr/*.(png|jpe?g|gif|svg)', { eager: true })
-    )
+    const channelLogos = import.meta.glob('@assets/ocr/*.(png|jpe?g|gif|svg)', { eager: true })
     Object.keys(OcrServiceEnum)
       .filter((key) => typeof OcrServiceEnum[key] === 'string')
       .map((key) => OcrServiceEnum[key])
       .forEach((code) => {
+        const channelLogoKey = Object.keys(channelLogos).find((channelLogoKey) =>
+          channelLogoKey.includes(code + 'Logo')
+        )
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        const logo = channelLogos.find((item) => item.default.includes(code + 'Logo')).default
+        const logo = channelLogos[channelLogoKey].default
         OcrServiceBuilder.ocrServiceMap.set(
           code,
           OcrServiceBuilder.buildServiceInfo(

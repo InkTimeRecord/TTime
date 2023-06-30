@@ -135,16 +135,19 @@ export class TranslateServiceBuilder {
       return TranslateServiceBuilder.translateServiceMap
     }
     // 动态加载服务logo
-    const channelLogos = Object.values(
-      import.meta.glob('../assets/translate/*.(png|jpe?g|gif|svg)', { eager: true })
-    )
+    const channelLogos = import.meta.glob('@assets/translate/*.(png|jpe?g|gif|svg)', {
+      eager: true
+    })
     Object.keys(TranslateServiceEnum)
       .filter((key) => typeof TranslateServiceEnum[key] === 'string')
       .map((key) => TranslateServiceEnum[key])
       .forEach((code) => {
+        const channelLogoKey = Object.keys(channelLogos).find((channelLogoKey) =>
+          channelLogoKey.includes(code + 'Logo')
+        )
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        const logo = channelLogos.find((item) => item.default.includes(code + 'Logo')).default
+        const logo = channelLogos[channelLogoKey].default
         TranslateServiceBuilder.translateServiceMap.set(
           code,
           TranslateServiceBuilder.buildServiceInfo(
