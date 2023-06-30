@@ -59,9 +59,9 @@ window.api.updateImg((img) => {
   flex-direction: column;
 
   .img {
-    border-radius: 7px;
-    max-width: 100%;
-    max-height: 98%;
+    border-radius: 5px;
+    max-width: 95%;
+    max-height: 95%;
     width: auto;
     height: auto;
     object-fit: contain;
