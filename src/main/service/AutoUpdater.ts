@@ -8,7 +8,6 @@ import { is } from '@electron-toolkit/utils'
 import TTimeRequest from './channel/interfaces/TTimeRequest'
 import { TrayEvent } from './TrayEvent'
 import GlobalWin from './GlobalWin'
-import { EnvEnum } from '../enums/EnvEnum'
 import { spawn } from 'child_process'
 import { YesNoEnum } from '../../common/enums/YesNoEnum'
 import fs from 'fs'
@@ -392,10 +391,11 @@ class AutoUpdater {
           return
         }
         // elevate.exe 主要用于解决运行权限问题
-        let elevatePath = './resources/elevate.exe'
-        if (EnvEnum.isDev()) {
-          elevatePath = './dist/win-unpacked/resources/elevate.exe'
+        let elevatePath = '../../plugins/elevate.exe'
+        if (app.isPackaged) {
+          elevatePath = '../../../app.asar.unpacked/plugins/elevate.exe'
         }
+        elevatePath = path.join(__dirname, elevatePath)
         log.info('[新版本安装] 开始提权安装')
         AutoUpdater.spawnExpandFun(elevatePath, [exePath].concat(args))
           .then(() => {
