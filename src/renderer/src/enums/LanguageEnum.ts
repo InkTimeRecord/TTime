@@ -25,6 +25,11 @@ class LanguageEnum {
   static ENGLISH = 'eng'
 
   /**
+   * 日语
+   */
+  static JAPANESE = 'jpn'
+
+  /**
    * 未知的
    */
   static NO = 'und'
