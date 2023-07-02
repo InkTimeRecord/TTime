@@ -72,7 +72,7 @@ class WinEvent {
      */
     ipcMain.handle('auto-launch-init-event', (_event) => {
       log.info('开机自启初始化事件')
-      this.updateAutoLaunch(null, (isEnabled) => {
+      WinEvent.updateAutoLaunch(null, (isEnabled) => {
         GlobalWin.mainWinSend(
           'update-cache-event',
           'autoLaunch',
@@ -86,7 +86,7 @@ class WinEvent {
      */
     ipcMain.handle('auto-launch-event', (_event, status) => {
       log.info('开机自启事件 : ', status)
-      this.updateAutoLaunch(status, () => {
+      WinEvent.updateAutoLaunch(status, () => {
         return status
       })
     })
@@ -138,7 +138,7 @@ class WinEvent {
    * @param status    设置自启状态
    * @param callback    设置自启状态
    */
-  updateAutoLaunch(status, callback): void {
+  static updateAutoLaunch(status, callback): void {
     if (EnvEnum.isDev()) {
       log.info('开发环境不设置开机自启')
       return
