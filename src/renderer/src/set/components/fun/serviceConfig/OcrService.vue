@@ -508,8 +508,13 @@ const ocrSpaceModelUpdate = (): void => {
           }
 
           .translate-service-name {
+            max-width: 110px;
             font-size: 13px;
             padding-left: 5px;
+            overflow: hidden;
+            -webkit-line-clamp: 1;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
           }
         }
 
