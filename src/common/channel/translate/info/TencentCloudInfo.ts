@@ -1,5 +1,5 @@
 export default {
-  name: '腾讯云翻译',
+  name: '腾讯翻译君',
   // 是否需要秘钥
   isKey: true,
   // 是否单秘钥
