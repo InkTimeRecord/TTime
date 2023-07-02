@@ -71,10 +71,15 @@ let selectTextStatus
  * 鼠标单击按下事件
  */
 uIOhook.on('mousedown', async (e: UiohookMouseEvent) => {
-  selectTextStatus = await isMouseSelectTextStatus()
   // 鼠标左键单机
   if (e.button === 1) {
+    selectTextStatus = await isMouseSelectTextStatus()
     mousedownInfo = e
+    setTimeout(async () => {
+      // 定时任务再检测一遍，防止有时执行过快，获取到的状态不对
+      // 例如划词百度或Google搜索结果的标题或链接地址时会出现
+      selectTextStatus = await isMouseSelectTextStatus()
+    }, 100)
   }
 })
 

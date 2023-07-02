@@ -8,10 +8,10 @@ import { is } from '@electron-toolkit/utils'
 import TTimeRequest from './channel/interfaces/TTimeRequest'
 import { TrayEvent } from './TrayEvent'
 import GlobalWin from './GlobalWin'
-import { EnvEnum } from '../enums/EnvEnum'
 import { spawn } from 'child_process'
 import { YesNoEnum } from '../../common/enums/YesNoEnum'
 import fs from 'fs'
+import { WinEvent } from './Win'
 
 let nullWin: BrowserWindow
 
@@ -59,26 +59,54 @@ class AutoUpdater {
   static newVersionDownloadUrl = ''
 
   constructor() {
-    log.info('[检测安装包事件] 检测 - 开始')
-    // 检测之前下载的包是否存在 存在则进行删除
-    fs.exists(AutoUpdater.newVersionPath, (exists) => {
-      if (!exists) {
-        log.info('[检测安装包事件] 检测 - 结束')
-        return
-      }
-      log.info('[检测安装包事件] 存在旧版本安装包，开始清理')
-      fs.unlink(AutoUpdater.newVersionPath, (e) => {
-        // 移除成功后 e 回调为 null
-        if (e) {
-          log.error('[检测安装包事件] 旧版本安装包清理异常', e)
-          return
-        }
-        log.info('[检测安装包事件] 旧版本安装包清理成功')
-      })
-    })
-
     // 启动后自动检测一次
     setTimeout(() => {
+      log.info('[检测安装包事件] 检测 - 开始')
+      // 检测之前下载的包是否存在 存在则进行删除
+      fs.exists(AutoUpdater.newVersionPath, (exists) => {
+        if (!exists) {
+          log.info('[检测安装包事件] 检测 - 结束')
+          return
+        }
+        log.info('[检测安装包事件] 存在旧版本安装包，开始清理')
+        setTimeout(() => {
+          // 此处的逻辑是因为由于在手动安装时是默认勾选开机自启的
+          // 而当自动更新时，直接跳过了勾选开启自启的那个选项，导致开启自启功能被关闭了
+          // 所以在自动更新安装时会先获取当前开启自启的状态
+          // 然后在安装完毕后启动时读取之前存储的状态再次进行设置开启自启状态
+          GlobalWin.mainWin.webContents
+            .executeJavaScript('localStorage.autoLaunchFront')
+            .then((autoLaunchFront) => {
+              // 校验是否不为空
+              // 因为有的时候删除安装包失败的情况下 这里会重复触发 所以可能会出现为空的情况
+              if (isNotNull(autoLaunchFront)) {
+                const isEnabled = autoLaunchFront === YesNoEnum.Y
+                // 设置开启自启状态
+                WinEvent.updateAutoLaunch(isEnabled, () => {
+                  return isEnabled
+                })
+                // 更新存储库的状态
+                GlobalWin.mainWinSend(
+                  'update-cache-event',
+                  'autoLaunch',
+                  isEnabled ? YesNoEnum.Y : YesNoEnum.N
+                )
+                // 移除自动更新安装时临时存储的开机自启状态
+                GlobalWin.mainWin.webContents.executeJavaScript(
+                  "localStorage.removeItem('autoLaunchFront')"
+                )
+              }
+            })
+        }, 1000)
+        fs.unlink(AutoUpdater.newVersionPath, (e) => {
+          // 移除成功后 e 回调为 null
+          if (e) {
+            log.error('[检测安装包事件] 旧版本安装包清理异常', e)
+            return
+          }
+          log.info('[检测安装包事件] 旧版本安装包清理成功')
+        })
+      })
       AutoUpdater.autoUpdaterStartCheck()
     }, 1000 * 10)
     // 每12小时检测一次
@@ -392,15 +420,29 @@ class AutoUpdater {
           return
         }
         // elevate.exe 主要用于解决运行权限问题
-        let elevatePath = './resources/elevate.exe'
-        if (EnvEnum.isDev()) {
-          elevatePath = './dist/win-unpacked/resources/elevate.exe'
+        let elevatePath = '../../plugins/elevate.exe'
+        if (app.isPackaged) {
+          elevatePath = '../../../app.asar.unpacked/plugins/elevate.exe'
         }
+        elevatePath = path.join(__dirname, elevatePath)
         log.info('[新版本安装] 开始提权安装')
         AutoUpdater.spawnExpandFun(elevatePath, [exePath].concat(args))
           .then(() => {
             log.info('[新版本安装] 调起安装命令成功')
-            resolve()
+            // 此处的逻辑是因为由于在手动安装时是默认勾选开机自启的
+            // 而当自动更新时，直接跳过了勾选开启自启的那个选项，导致开启自启功能被关闭了
+            // 所以在自动更新安装时会先获取当前开启自启的状态
+            // 然后在安装完毕后启动时读取之前存储的状态再次进行设置开启自启状态
+            GlobalWin.mainWin.webContents
+              .executeJavaScript('localStorage.autoLaunch')
+              .then((autoLaunch) => {
+                GlobalWin.mainWinSend(
+                  'update-cache-event',
+                  'autoLaunchFront',
+                  autoLaunch === YesNoEnum.Y ? YesNoEnum.Y : YesNoEnum.N
+                )
+                resolve()
+              })
           })
           .catch((e) => {
             log.error('[新版本安装] 提权安装异常', e)

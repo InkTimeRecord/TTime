@@ -15,17 +15,15 @@ const only = [
   'jpn'
 ]
 
-export const getLanguageNameConversion = (translateContent) => {
-  let language
+export const getLanguageNameConversion = (translateContent): string => {
+  let language = franc(translateContent, {
+    // 检测最短字符
+    minLength: 1,
+    // 识别的语种范围
+    only: only
+  })
   if (countChineseCharacters(translateContent) > 2) {
-    language = LanguageEnum.CHINESE
-  } else {
-    language = franc(translateContent, {
-      // 检测最短字符
-      minLength: 1,
-      // 识别的语种范围
-      only: only
-    })
+    language = language === LanguageEnum.JAPANESE ? language : LanguageEnum.CHINESE
   }
   if (LanguageEnum.NO === language) {
     language = LanguageEnum.ENGLISH
@@ -41,17 +39,15 @@ export const getLanguageNameConversion = (translateContent) => {
   return languageInputType
 }
 
-export const getLanguageResultNameConversion = (translateContent) => {
-  let language
+export const getLanguageResultNameConversion = (translateContent): string => {
+  let language = franc(translateContent, {
+    // 检测最短字符
+    minLength: 1,
+    // 识别的语种范围
+    only: only
+  })
   if (countChineseCharacters(translateContent) > 2) {
-    language = LanguageEnum.CHINESE
-  } else {
-    language = franc(translateContent, {
-      // 检测最短字符
-      minLength: 1,
-      // 识别的语种范围
-      only: only
-    })
+    language = language === LanguageEnum.JAPANESE ? language : LanguageEnum.CHINESE
   }
   let languageResultType = LanguageEnum.CHINESE
   if (language !== LanguageEnum.NO) {

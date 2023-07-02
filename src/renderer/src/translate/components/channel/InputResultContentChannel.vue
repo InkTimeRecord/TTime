@@ -3,8 +3,13 @@
     <div class="content-input-block">
       <div class="function-tools-block content-header-block">
         <div class="content-tools-category">
-          <img class="content-translate-logo none-select" :src="translateLogoSrc" />
-          <span class="content-translate-name none-select">{{ translateName }}</span>
+          <img
+            class="content-translate-logo none-select"
+            :src="translateServiceThis.serviceInfo.logo"
+          />
+          <span class="content-translate-name none-select">{{
+            translateServiceThis.serviceName
+          }}</span>
           <img v-show="isResultLoading" class="content-translate-loading" :src="loadingImageSrc" />
         </div>
         <div class="function-tools-category content-tools-category">
@@ -88,13 +93,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import loadingImage from '../../../assets/loading.gif'
 import translate from '../../../utils/translate'
 import TranslateServiceEnum from '../../../../../common/enums/TranslateServiceEnum'
 import { isNull } from '../../../../../common/utils/validate'
 import { OpenAIStatusEnum } from '../../../../../common/enums/OpenAIStatusEnum'
-import { TranslateServiceBuilder } from '../../../utils/translateServiceUtil'
 
 // 翻译内容框内容
 const props = defineProps<{
@@ -106,14 +110,24 @@ const props = defineProps<{
  *
  * @param translateService 翻译服务信息
  */
-const getTranslateServiceBackEventName = (translateService) => {
+const getTranslateServiceBackEventName = (translateService): string => {
   return translateService.type.toLowerCase() + 'ApiTranslateCallbackEvent'
 }
 
+/**
+ * 监听 props.translateService 数据变化
+ *
+ * 此处不监听的情况下 translateServiceThis 不会更新
+ */
+watch(
+  () => props.translateService,
+  (newTranslateService) => {
+    translateServiceThis.value = newTranslateService
+  }
+)
 // 加载loading
 const loadingImageSrc = ref(loadingImage)
-const translateLogoSrc = ref(props.translateService.serviceInfo.logo)
-const translateName = ref(props.translateService.serviceInfo.name)
+const translateServiceThis = ref(props.translateService)
 
 // 翻译结果
 const translatedResultContent = ref('')

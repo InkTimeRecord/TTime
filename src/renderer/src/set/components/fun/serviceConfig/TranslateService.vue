@@ -24,7 +24,7 @@
                       :src="element.serviceInfo.logo"
                     />
                     <span class="translate-service-name none-select">{{
-                      element.serviceInfo.name
+                      element.serviceName
                     }}</span>
                   </div>
                   <div class="right">
@@ -65,6 +65,15 @@
     <div class="translate-service-set-block">
       <div class="translate-service-set">
         <el-form v-if="!translateServiceThis.isBuiltIn" label-width="80px" label-position="left">
+          <el-form-item label="名称">
+            <el-input
+              v-model="translateServiceThis.serviceName"
+              type="text"
+              spellcheck="false"
+              @input="serviceNameInput"
+            />
+          </el-form-item>
+
           <el-form-item
             v-if="translateServiceThis.type === TranslateServiceEnum.OPEN_AI"
             label="请求地址"
@@ -151,7 +160,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { Minus, Plus } from '@element-plus/icons-vue'
 
 import {
@@ -343,6 +352,11 @@ window.api.apiCheckTranslateCallbackEvent((type, res) => {
       insideTranslateService[key] = data[key]
     })
   }
+  // 验证成功后处理
+  if (useStatus && checkStatus) {
+    // 关闭其他已开启的相同类型翻译服务
+    translateServiceCloseOtherSameTypesInUse(insideTranslateService)
+  }
   saveTranslateService(insideTranslateService)
   if (translateServiceThis.value.id === insideTranslateService.id) {
     translateServiceThis.value = insideTranslateService
@@ -361,6 +375,20 @@ const translateServiceUseStatusChange = (translateService): void => {
     translateService.useStatus = false
     return ElMessageExtend.warning('未验证的服务无法使用')
   }
+  // 关闭其他已开启的相同类型翻译服务
+  translateServiceCloseOtherSameTypesInUse(translateService)
+  // 保存翻译源更新的信息
+  saveTranslateService(translateService)
+  // 更新翻译源通知
+  window.api.updateTranslateServiceEvent()
+}
+
+/**
+ * 关闭其他已开启的相同类型翻译服务
+ *
+ * @param translateService 当前开启的服务
+ */
+const translateServiceCloseOtherSameTypesInUse = (translateService): void => {
   for (const insideTranslateService of getTranslateServiceMap().values()) {
     if (
       insideTranslateService.type === translateService.type &&
@@ -372,11 +400,6 @@ const translateServiceUseStatusChange = (translateService): void => {
       break
     }
   }
-
-  // 保存翻译源更新的信息
-  saveTranslateService(translateService)
-  // 更新翻译源通知
-  window.api.updateTranslateServiceEvent()
 }
 
 /**
@@ -421,6 +444,16 @@ const translateServiceSortDragChange = (event): void => {
 const updateThisTranslateServiceMap = (newTranslateServiceMap): void => {
   translateServiceMap.value = newTranslateServiceMap
   translateServiceList.value = [...translateServiceMap.value.values()]
+}
+
+/**
+ * 服务名称输入监听
+ */
+const serviceNameInput = (): void => {
+  // 保存翻译源更新的信息
+  saveTranslateService(translateServiceThis.value)
+  // 更新翻译源通知
+  window.api.updateTranslateServiceEvent()
 }
 </script>
 
@@ -489,8 +522,13 @@ const updateThisTranslateServiceMap = (newTranslateServiceMap): void => {
           }
 
           .translate-service-name {
+            max-width: 110px;
             font-size: 13px;
             padding-left: 5px;
+            overflow: hidden;
+            -webkit-line-clamp: 1;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
           }
         }
 

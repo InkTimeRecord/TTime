@@ -31,6 +31,11 @@ class OcrServiceEnum {
    * 讯飞OCR
    */
   static XFYUN = 'Xfyun'
+
+  /**
+   * 腾讯云
+   */
+  static TENCENT_CLOUD = 'TencentCloud'
 }
 
 export default OcrServiceEnum

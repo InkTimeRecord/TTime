@@ -30,8 +30,11 @@
 
     <el-collapse-transition>
       <div v-show="showLanguageInput">
+        <div class="language-search">
+          <el-input v-model="languageSearchInput" placeholder="输入语言名称" />
+        </div>
         <div class="language-list-block none-select function-tools-block">
-          <template v-for="(language, index) in languageList" :key="index">
+          <template v-for="(language, index) in languageInputList" :key="index">
             <a
               class="language-block none-select function-tools"
               :class="{
@@ -53,8 +56,11 @@
 
     <el-collapse-transition>
       <div v-show="showLanguageResult">
+        <div class="language-search">
+          <el-input v-model="languageSearchResult" placeholder="输入语言名称" />
+        </div>
         <div class="language-list-block none-select function-tools-block">
-          <template v-for="(language, index) in languageList" :key="index">
+          <template v-for="(language, index) in languageResultList" :key="index">
             <a
               class="language-block none-select function-tools"
               :class="{
@@ -78,9 +84,10 @@
 
 <script setup lang="ts">
 import { initLanguageList } from './channel/language/ChannelLanguage'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { cacheGet, cacheSet } from '../../utils/cacheUtil'
 import LanguageEnum from '../../enums/LanguageEnum'
+import { isNull } from '../../../../common/utils/validate'
 
 const languageAuto = {
   languageType: LanguageEnum.AUTO,
@@ -95,8 +102,12 @@ if (undefined === cacheGet('resultLanguage')) {
 }
 
 const languageList = ref([])
+const languageInputList = ref([])
+const languageResultList = ref([])
 const showLanguageInput = ref(false)
 const showLanguageResult = ref(false)
+const languageSearchInput = ref('')
+const languageSearchResult = ref('')
 
 // 输入框当前选择的语言 默认为自动识别
 const inputLanguageSelect = ref(cacheGet('inputLanguage'))
@@ -108,6 +119,8 @@ const resultLanguageSelect = ref(cacheGet('resultLanguage'))
  */
 const insideInitLanguageList = (): void => {
   languageList.value = [languageAuto, ...initLanguageList()]
+  languageInputList.value = languageList.value
+  languageResultList.value = languageList.value
 }
 
 // 初始化翻译语言加载
@@ -169,6 +182,35 @@ window.api.updateTranslateServiceEvent(() => {
   inputLanguageSelectClick(languageAuto)
   resultLanguageSelectClick(languageAuto)
 })
+
+/**
+ * 语言搜索输入监听
+ */
+watch(languageSearchInput, (newVal) => {
+  languageInputList.value = languageSearch(newVal)
+})
+
+/**
+ * 结果语言搜索输入监听
+ */
+watch(languageSearchResult, (newVal) => {
+  languageResultList.value = languageSearch(newVal)
+})
+
+/**
+ * 语言搜索
+ *
+ * @param searchLanguageName 语言名称
+ * @return 搜索到的语言
+ */
+const languageSearch = (searchLanguageName): any[] => {
+  if (isNull(searchLanguageName)) {
+    return languageList.value
+  }
+  return languageList.value.filter(
+    (obj) => obj.languageName && obj.languageName.includes(searchLanguageName)
+  )
+}
 </script>
 
 <style lang="scss" scoped>
@@ -216,12 +258,40 @@ window.api.updateTranslateServiceEvent(() => {
   }
 }
 
+:deep(.language-search) {
+  margin: 5px;
+  padding-top: 5px;
+  border-top: 1px solid var(--ttime-translate-language-list-block-border-top);
+
+  .el-input__inner {
+    background-color: var(--ttime-translate-input-color-background);
+    box-shadow: 0 0 0 0;
+    border: 0;
+    resize: none;
+    padding: 5px;
+    width: 98%;
+  }
+
+  .el-input__wrapper {
+    display: inline-flex;
+    flex-grow: 1;
+    align-items: center;
+    justify-content: center;
+    padding: 1px 11px;
+    background-color: var(--ttime-translate-input-color-background, var(--el-fill-color-blank));
+    background-image: none;
+    border-radius: var(--el-input-border-radius, var(--el-border-radius-base));
+    transition: var(--el-transition-box-shadow);
+    box-shadow: 0 0 0 1px var(--ttime-translate-input-color-background, var(--el-border-color))
+      inset;
+  }
+}
+
 .language-list-block {
   display: flex;
   flex-wrap: wrap;
   overflow-x: hidden;
   max-height: 150px;
-  border-top: 1px solid var(--ttime-translate-language-list-block-border-top);
 
   padding: 0;
   line-height: 0;

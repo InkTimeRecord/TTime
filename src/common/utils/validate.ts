@@ -14,7 +14,7 @@ export function isNull(date: string | object): boolean {
  * @param date 数据
  * @returns {boolean}
  */
-export function isNotNull(date: string): boolean {
+export function isNotNull(date: string | object): boolean {
   return !isNull(date)
 }
 

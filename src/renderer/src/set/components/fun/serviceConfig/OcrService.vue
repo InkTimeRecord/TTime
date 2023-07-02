@@ -93,11 +93,7 @@
           </el-form-item>
 
           <el-form-item v-if="ocrServiceThis.type === OcrServiceEnum.OCR_SPACE" label="识别语言">
-            <el-select
-              v-model="ocrServiceThis.languageType"
-              size="small"
-              :default-first-option="true"
-            >
+            <el-select v-model="ocrServiceThis.languageType" size="small">
               <el-option
                 v-for="model in OcrSpaceModelList.find(
                   (mode) => mode.value === ocrServiceThis.model
@@ -105,6 +101,20 @@
                 :key="model.languageType"
                 :label="model.languageName"
                 :value="model.languageType"
+              />
+            </el-select>
+          </el-form-item>
+
+          <el-form-item
+            v-if="ocrServiceThis.type === OcrServiceEnum.TENCENT_CLOUD"
+            label="识别语言"
+          >
+            <el-select v-model="ocrServiceThis.languageType" size="small">
+              <el-option
+                v-for="model in TencentCloudOcrLanguageList"
+                :key="model.value"
+                :label="model.label"
+                :value="model.value"
               />
             </el-select>
           </el-form-item>
@@ -178,6 +188,7 @@ import draggable from 'vuedraggable'
 import { VolcanoOcrModelEnum } from '../../../../../../common/enums/VolcanoOcrModelEnum'
 import { isNotNull, isNull } from '../../../../../../common/utils/validate'
 import { OcrSpaceModelEnum } from '../../../../../../common/enums/OcrSpaceModelEnum'
+import { TencentCloudOcrLanguageEnum } from '../../../../../../common/enums/TencentCloudOcrLanguageEnum'
 
 // Ocr服务验证状态
 const checkIngStatus = ref(false)
@@ -205,6 +216,7 @@ const ocrServiceSelectMenuList = ref(ocrServiceSelectMenuListTemp)
 
 const VolcanoOcrModelList = VolcanoOcrModelEnum.MODEL_LIST
 const OcrSpaceModelList = OcrSpaceModelEnum.MODEL_LIST
+const TencentCloudOcrLanguageList = TencentCloudOcrLanguageEnum.OCR_LANGUAGE_LIST
 
 /**
  * 设置当前选中项默认为第一个Ocr服务
@@ -496,8 +508,13 @@ const ocrSpaceModelUpdate = (): void => {
           }
 
           .translate-service-name {
+            max-width: 110px;
             font-size: 13px;
             padding-left: 5px;
+            overflow: hidden;
+            -webkit-line-clamp: 1;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
           }
         }
 

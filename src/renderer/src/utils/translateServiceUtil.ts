@@ -68,6 +68,9 @@ export const getTranslateServiceMap = (): Map<unknown, unknown> => {
     translateService['serviceInfo'] = TranslateServiceBuilder.getInfoByService(
       translateService['type']
     )
+    translateService['serviceName'] = isNull(translateService['serviceName'])
+      ? translateService['serviceInfo']?.name
+      : translateService['serviceName']
   })
   return map
 }

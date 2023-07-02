@@ -16,6 +16,11 @@ class ServiceConfig {
   type: string
 
   /**
+   * 服务名称 - 自定义
+   */
+  serviceName: string
+
+  /**
    * 使用状态
    */
   useStatus: boolean
