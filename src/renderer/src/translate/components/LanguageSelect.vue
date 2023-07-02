@@ -106,7 +106,6 @@ const languageInputList = ref([])
 const languageResultList = ref([])
 const showLanguageInput = ref(false)
 const showLanguageResult = ref(false)
-
 const languageSearchInput = ref('')
 const languageSearchResult = ref('')
 
@@ -204,7 +203,7 @@ watch(languageSearchResult, (newVal) => {
  * @param searchLanguageName 语言名称
  * @return 搜索到的语言
  */
-const languageSearch = (searchLanguageName): [] => {
+const languageSearch = (searchLanguageName): any[] => {
   if (isNull(searchLanguageName)) {
     return languageList.value
   }
