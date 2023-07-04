@@ -64,14 +64,39 @@
   - [x] DeepL翻译
   - [x] 火山翻译
   - [x] 小牛翻译
-  - [x] 彩云翻译
+  - [x] Papago翻译
 
 - [x] 文字识别
   - [x] TTime
   - [x] TTime在线
   - [x] 百度OCR
   - [x] 火山OCR
+  - [x] Ocr Space
+  - [x] 讯飞OCR
+  - [x] 腾讯云OCR
 
+## 开发指南
+
+开发环境：
+  NodeJs Version >= 16
+  Npm Version >= 8
+
+依赖下载
+```
+npm run npm-i-extend-modules-update
+```
+
+项目启动
+```
+npm run dev
+```
+
+项目打包
+```
+npm run build:win
+npm run build:win:portable
+npm run build:mac
+```
 
 ## 感谢
 * 感谢 [electron-vite](https://github.com/alex8088/electron-vite) 提供的electron框架 节省了我很多的时间成本
