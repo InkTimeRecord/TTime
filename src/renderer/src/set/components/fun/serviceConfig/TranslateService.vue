@@ -87,7 +87,10 @@
             <span class="form-switch-span"> 留空默认：https://api.openai.com </span>
           </el-form-item>
           <el-form-item
-            v-if="translateServiceThis.type === TranslateServiceEnum.OPEN_AI"
+            v-if="
+              translateServiceThis.type === TranslateServiceEnum.OPEN_AI ||
+              translateServiceThis.type === TranslateServiceEnum.AZURE_OPEN_AI
+            "
             label="模型"
           >
             <el-select v-model="translateServiceThis.model" size="small">
@@ -123,6 +126,24 @@
               spellcheck="false"
             />
           </el-form-item>
+
+          <el-form-item
+            v-if="translateServiceThis.type === TranslateServiceEnum.AZURE_OPEN_AI"
+            label="请求地址"
+          >
+            <el-input v-model="translateServiceThis.endpoint" type="text" spellcheck="false" />
+          </el-form-item>
+          <el-form-item
+            v-if="translateServiceThis.type === TranslateServiceEnum.AZURE_OPEN_AI"
+            label="部署名称"
+          >
+            <el-input
+              v-model="translateServiceThis.deploymentName"
+              type="text"
+              spellcheck="false"
+            />
+          </el-form-item>
+
           <div class="translate-service-set-fun">
             <div class="translate-service-use-text">
               <el-tag v-if="checkIngStatus" type="info" effect="dark"> 验证中...</el-tag>

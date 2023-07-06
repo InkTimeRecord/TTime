@@ -8,7 +8,7 @@ import { OpenAIStatusEnum } from '../../../../../common/enums/OpenAIStatusEnum'
 import TranslateChannelFactory from '../../factory/TranslateChannelFactory'
 import TranslateAgent from './TranslateAgent'
 
-class OpenAIChannel extends TranslateAgent implements ITranslateAgentInterface {
+class AzureOpenAIChannel extends TranslateAgent implements ITranslateAgentInterface {
   /**
    * 翻译
    *
@@ -25,24 +25,28 @@ class OpenAIChannel extends TranslateAgent implements ITranslateAgentInterface {
       // 如果error中带有error则表示为openai返回的异常
       if (isNotNull(error.error)) {
         const errorMsg = error.error.message
-        OpenAIChannel.callbackEvent(info, OpenAIStatusEnum.END, this.commonErrorExpand(errorMsg))
+        AzureOpenAIChannel.callbackEvent(
+          info,
+          OpenAIStatusEnum.END,
+          this.commonErrorExpand(errorMsg)
+        )
         return
       }
       // 请求异常处理
       if (isNotNull(error)) {
         if ('Error: Failed to fetch'.indexOf(error) !== -1) {
           // 此处一般是代理不可用问题造成的
-          OpenAIChannel.callbackEvent(
+          AzureOpenAIChannel.callbackEvent(
             info,
             OpenAIStatusEnum.END,
             '当前网络异常，请检查代理是否可用'
           )
           return
         }
-        OpenAIChannel.callbackEvent(info, OpenAIStatusEnum.END, error)
+        AzureOpenAIChannel.callbackEvent(info, OpenAIStatusEnum.END, error)
         return
       }
-      OpenAIChannel.callbackEvent(
+      AzureOpenAIChannel.callbackEvent(
         info,
         OpenAIStatusEnum.END,
         '发生未知错误，如重复出现请查看日志或联系作者解决'
@@ -51,7 +55,7 @@ class OpenAIChannel extends TranslateAgent implements ITranslateAgentInterface {
     }
     // 开始或结束状态
     if (OpenAIStatusEnum.START === code || OpenAIStatusEnum.END === code) {
-      OpenAIChannel.callbackEvent(info, code, '')
+      AzureOpenAIChannel.callbackEvent(info, code, '')
       return
     }
     const text = data.content
@@ -59,7 +63,7 @@ class OpenAIChannel extends TranslateAgent implements ITranslateAgentInterface {
       return
     }
     // 正常回调结果
-    OpenAIChannel.callbackEvent(info, OpenAIStatusEnum.ING, text)
+    AzureOpenAIChannel.callbackEvent(info, OpenAIStatusEnum.ING, text)
     return
   }
 
@@ -86,15 +90,15 @@ class OpenAIChannel extends TranslateAgent implements ITranslateAgentInterface {
     if (res.code === R.ERROR) {
       GlobalWin.setWin.webContents.send(
         'api-check-translate-callback-event',
-        TranslateServiceEnum.OPEN_AI,
+        TranslateServiceEnum.AZURE_OPEN_AI,
         R.errorMD(this.commonErrorExpand(data), info.responseData)
       )
       return
     }
-    log.info('[OpenAI翻译校验密钥事件] - 响应报文 : ', JSON.stringify(data))
+    log.info('[AzureOpenAI翻译校验密钥事件] - 响应报文 : ', JSON.stringify(data))
     GlobalWin.setWin.webContents.send(
       'api-check-translate-callback-event',
-      TranslateServiceEnum.OPEN_AI,
+      TranslateServiceEnum.AZURE_OPEN_AI,
       R.okD(info.responseData)
     )
   }
@@ -117,4 +121,4 @@ class OpenAIChannel extends TranslateAgent implements ITranslateAgentInterface {
   }
 }
 
-export default OpenAIChannel
+export default AzureOpenAIChannel

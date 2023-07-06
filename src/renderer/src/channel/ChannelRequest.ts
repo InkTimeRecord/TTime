@@ -2,6 +2,7 @@ import { OpenAIChannelRequest } from './OpenAIChannelRequest'
 import { BingChannelRequest } from './BingChannelRequest'
 import { GoogleChannelRequest } from './GoogleChannelRequest'
 import { DeepLChannelRequest } from './DeepLChannelRequest'
+import { AzureOpenAIChannelRequest } from './AzureOpenAIChannelRequest'
 
 class ChannelRequest {
   /**
@@ -50,6 +51,19 @@ class ChannelRequest {
       OpenAIChannelRequest.openaiCheck(info)
     } else {
       OpenAIChannelRequest.openaiTranslate(info)
+    }
+  }
+
+  /**
+   * OpenAI - 翻译
+   *
+   * @param info            翻译信息
+   */
+  static azureopenaiTranslate = (info): void => {
+    if (info.isTranslateCheckType) {
+      AzureOpenAIChannelRequest.openaiCheck(info)
+    } else {
+      AzureOpenAIChannelRequest.openaiTranslate(info)
     }
   }
 
