@@ -177,10 +177,7 @@ const textWriteShearPlate = (text): void => {
  * 翻译回调 - 异步处理
  */
 window.api[getTranslateServiceBackEventName(props.translateService)]((res) => {
-  if (
-    TranslateServiceEnum.OPEN_AI === props.translateService['type'] ||
-    TranslateServiceEnum.AZURE_OPEN_AI === props.translateService['type']
-  ) {
+  if (TranslateServiceEnum.OPEN_AI === props.translateService['type']) {
     if (res.code === OpenAIStatusEnum.START) {
       translatedResultContent.value = ''
       return

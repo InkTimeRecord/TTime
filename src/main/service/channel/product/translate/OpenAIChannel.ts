@@ -108,7 +108,7 @@ class OpenAIChannel extends TranslateAgent implements ITranslateAgentInterface {
   commonErrorExpand(msg): string {
     if (msg.indexOf('Incorrect API key provided') !== -1 || msg.indexOf('invalid_api_key') !== -1) {
       msg = 'API密钥无效 , 请检查是否输入错误'
-    } else if (msg.indexOf('requests per min. Limit') !== -1) {
+    } else if (msg.indexOf('requests per min. Limit') !== 1) {
       msg = '请求达到速度限制，请稍后再试'
     } else if (msg.indexOf('The server had an error while processing your request') !== -1) {
       msg = '服务器请求时出错，请重试'

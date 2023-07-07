@@ -38,11 +38,6 @@ class TranslateServiceEnum {
   static OPEN_AI = 'OpenAI'
 
   /**
-   * AzureOpenAI翻译
-   */
-  static AZURE_OPEN_AI = 'AzureOpenAI'
-
-  /**
    * 有道翻译
    */
   static YOU_DAO = 'YouDao'
