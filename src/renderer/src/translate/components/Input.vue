@@ -52,6 +52,8 @@ import {
 } from '../../utils/translateServiceUtil'
 import TranslateServiceEnum from '../../../../common/enums/TranslateServiceEnum'
 import { cacheGet, cacheGetStr } from '../../utils/cacheUtil'
+import store from '../../utils/storeUtil';
+
 import ElMessageExtend from '../../utils/messageExtend'
 import {
   getLanguageResultNameConversion,
@@ -135,6 +137,7 @@ const translateChange = async (event): Promise<void> => {
   if (event.keyCode === 13 && event.ctrlKey) {
     // 换行
     translateContent.value += '\n'
+    // todo 存储输入内容
     return
   }
 
@@ -249,6 +252,8 @@ const translateFun = (): void => {
         info[key] = translateService[key]
       })
     }
+    // 输入的文本 同一个文本可能有多次查询，所以加时间戳
+    store.setObj(new Map().set("translateContent", translateContent.value));
     // 此处触发之后会异步回调到 *ApiTranslateCallbackEvent 方法中去执行
     window.api.apiUniteTranslate(type, info)
   }

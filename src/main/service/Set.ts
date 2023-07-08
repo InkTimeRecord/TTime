@@ -40,7 +40,9 @@ function createSetWindow(): void {
     icon: path.join(__dirname, '../../public/icon-1024x1024.png'),
     webPreferences: {
       preload: path.join(__dirname, '../preload/set.js'),
-      sandbox: false
+      sandbox: false,
+      nodeIntegration: true,
+      contextIsolation: false
     }
   }
 

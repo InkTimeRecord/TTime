@@ -99,6 +99,7 @@ import translate from '../../../utils/translate'
 import TranslateServiceEnum from '../../../../../common/enums/TranslateServiceEnum'
 import { isNull } from '../../../../../common/utils/validate'
 import { OpenAIStatusEnum } from '../../../../../common/enums/OpenAIStatusEnum'
+import store from "../../../utils/storeUtil";
 
 // 翻译内容框内容
 const props = defineProps<{
@@ -228,7 +229,7 @@ window.api[getTranslateServiceBackEventName(props.translateService)]((res) => {
   const isUk = !isNull(data?.['ukPhonetic'])
   const isExplainList = explainListDeal?.length > 0
   const isWfs = !isNull(data?.['wfs']) && data['wfs']?.length > 0
-  dictTranslatedResultExpand.value = {
+  let result = {
     isUs,
     isUk,
     isExplainList,
@@ -239,8 +240,51 @@ window.api[getTranslateServiceBackEventName(props.translateService)]((res) => {
     ukSpeech: data['ukSpeech'],
     wfsList: data['wfs'],
     explainList: explainListDeal
+  };
+  dictTranslatedResultExpand.value = result;
+  if (result.explainList.length === 0){
+    return;
   }
-})
+  const translateContent = store.getObjByKey("translateContent");
+  let translateHistories = store.getObjByKey("translate");
+  result = Object.assign(result, {
+    translatedResultContent: translatedResultContent.value,
+    translateLogoSrc:  translateServiceThis.value.serviceInfo.logo,
+    translateName: translateServiceThis.value.serviceName,
+    collection: false
+  });
+  if (translateHistories !== undefined && translateHistories.length > 0 ) {
+    let translateValues = translateHistories.filter(f => f.translateValue === translateContent);
+    if (translateValues !== undefined && translateValues.length > 0) {
+      let translateContent1 = translateValues[0].translateContent;
+      let translateContents = translateContent1.filter(e => e.translateName === result.serviceName);
+      // 此类别翻译已存在则跳过
+      if (translateContents !== undefined && translateContents.length > 0) {
+        return;
+      }
+      translateContent1.push(result);
+      store.setObj(new Map().set("translate", translateHistories));
+      return;
+    }
+  }
+  let translateValues = [];
+  translateValues.push(result);
+  let obj = {
+    translateValue: translateContent,
+    translateContent: translateValues,
+    collection: false
+  };
+  translateHistories.push(obj);
+  store.setObj(new Map().set("translate", translateHistories));
+});
+
+const objToMap = (obj) => {
+  let map = new Map();
+  for (let key in obj) {
+    map.set(key, obj[key]);
+  }
+  return map;
+};
 
 /**
  * 设置翻译内容

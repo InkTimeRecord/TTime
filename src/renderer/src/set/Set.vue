@@ -22,6 +22,9 @@
             <el-menu-item index="translateServiceConfig">
               <span class="none-select">翻译源设置</span>
             </el-menu-item>
+            <el-menu-item index="translateHistory">
+              <span class="none-select">翻译记录</span>
+            </el-menu-item>
             <el-menu-item index="networkSet">
               <span class="none-select">网络设置</span>
             </el-menu-item>
@@ -39,6 +42,7 @@
             <advanced-info v-show="menuIndex === 'advancedInfo'" />
             <shortcut-key v-show="menuIndex === 'shortcutKey'" />
             <translate-service-config v-show="menuIndex === 'translateServiceConfig'" />
+            <translate-history v-show="menuIndex === 'translateHistory'" />
             <network-set v-show="menuIndex === 'networkSet'" />
             <about v-show="menuIndex === 'about'" />
           </el-scrollbar>
@@ -54,6 +58,7 @@ import BasiInfo from './components/fun/BasiInfo.vue'
 import AdvancedInfo from './components/fun/AdvancedInfo.vue'
 import ShortcutKey from './components/fun/ShortcutKey.vue'
 import TranslateServiceConfig from './components/fun/TranslateServiceConfig.vue'
+import TranslateHistory from './components/fun/TranslateHistory.vue'
 import NetworkSet from './components/fun/NetworkSet.vue'
 import About from './components/fun/About.vue'
 

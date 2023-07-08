@@ -25,6 +25,9 @@ if (!SystemTypeEnum.isMac()) {
   app.disableHardwareAcceleration()
 }
 
+const ElectronStore = require('electron-store');
+ElectronStore.initRenderer();
+
 // 当前软件版本
 const version = app.getVersion()
 
@@ -79,7 +82,10 @@ function createWindow(): void {
       preload: path.join(__dirname, '../preload/index.js'),
       sandbox: false,
       // 关闭检测同源策略
-      webSecurity: false
+      webSecurity: false,
+      nodeIntegration: true,
+      contextIsolation: false
+
     }
   })
   // 禁用按下F11全屏事件
