@@ -62,6 +62,12 @@ class TencentCloudChannel implements ITranslateInterface {
           msg = '请输入正确的 SecretId 后再试'
         } else if (errMessage.indexOf('The provided credentials could not be validated') !== -1) {
           msg = '输入的密钥信息不匹配，请检查后再试'
+        } else if (
+          errMessage.indexOf(
+            'Service has not been opened, please open service at Tencent Cloud console'
+          ) !== -1
+        ) {
+          msg = '服务尚未开通，请在腾讯云控制台开通服务'
         } else {
           msg = '未知错误 , 如重复出现 , 请联系开发者'
         }
