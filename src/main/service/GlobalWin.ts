@@ -1,9 +1,8 @@
 import { isNull } from '../../common/utils/validate'
 import { GlobalShortcutEvent } from './GlobalShortcutEvent'
-import { app, screen } from 'electron'
+import { app, clipboard, screen } from 'electron'
 import { WinEvent } from './Win'
 import { YesNoEnum } from '../../common/enums/YesNoEnum'
-import { clipboard } from 'electron'
 import { ScreenshotsMain } from './Screenshot'
 import OcrTypeEnum from '../enums/OcrTypeEnum'
 import WebShowMsgEnum from '../enums/WebShowMsgEnum'
@@ -75,6 +74,15 @@ class GlobalWin {
    */
   static ocrSilenceTempImg
 
+  static calculateOffsetCoordinates(xCoord, yCoord): { x; y } {
+    console.log({ xCoord, yCoord })
+    const centerX = xCoord
+    const centerY = yCoord
+    const offset = 0.3 * centerY
+    const yOffset = centerY - offset
+    return { x: centerX, y: yOffset }
+  }
+
   /**
    * 显示窗口
    */
@@ -82,7 +90,18 @@ class GlobalWin {
     if (isNull(win)) {
       return
     }
-    win.show()
+    win.webContents
+      .executeJavaScript('JSON.stringify({width:screen.width,height: screen.height})')
+      .then((value) => {
+        // 设置坐标的同时设置宽高 否则在多显示器且显示器之间缩放比例不一致的情况下来回切换会导致悬浮球显示错位
+        const res = JSON.parse(value)
+        const { width, height } = res
+        const center_x = Math.floor(width / 2)
+        const center_y = Math.floor(height / 2)
+        const offset_y = Math.floor(center_y * 0.3)
+        win.setBounds({ x: center_x, y: center_y - offset_y })
+        win.show()
+      })
   }
 
   /**
