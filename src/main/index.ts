@@ -16,6 +16,7 @@ import './service/Ocr'
 import './service/OcrSilence'
 import { isNull } from '../common/utils/validate'
 import { injectWinAgent } from './utils/RequestUtil'
+import StoreService from './service/StoreService'
 
 // 解决使用 win.hide() 后再使用 win.show() 会引起窗口闪烁问题
 app.commandLine.appendSwitch('wm-window-animations-disabled')
@@ -24,6 +25,8 @@ if (!SystemTypeEnum.isMac()) {
   // 禁用硬件加速
   app.disableHardwareAcceleration()
 }
+
+new StoreService()
 
 // 当前软件版本
 const version = app.getVersion()
