@@ -20,6 +20,28 @@
       <el-switch v-model="basiInfo.autoUpdater" @change="autoUpdaterEvent" />
       <span class="form-switch-span none-select"> 会在软件启动时检测新版本 </span>
     </el-form-item>
+    <el-form-item class="none-select" label="翻译窗口显示位置">
+      <el-select
+        v-model="basiInfo.translateShowPositionType"
+        @change="translateShowPositionTypeSelectChange"
+      >
+        <el-option label="上一次位置" :value="TranslateShowPositionEnum.LAST_TIME + ''" />
+        <el-option label="跟随鼠标" :value="TranslateShowPositionEnum.FOLLOW_MOUSE + ''" />
+        <el-option label="距顶部模式" :value="TranslateShowPositionEnum.FROM_TOP + ''" />
+      </el-select>
+    </el-form-item>
+    <el-form-item
+      v-show="basiInfo.translateShowPositionType === TranslateShowPositionEnum.FROM_TOP + ''"
+      class="none-select"
+      label="距顶部百分比"
+    >
+      <el-input-number
+        v-model="basiInfo.fromTopOfWindowPercentage"
+        :min="1"
+        :max="200"
+        @change="fromTopOfWindowPercentageChange"
+      />
+    </el-form-item>
   </el-form>
 </template>
 <script setup lang="ts">
@@ -27,6 +49,7 @@
 import { ref } from 'vue'
 import { YesNoEnum } from '../../../../../common/enums/YesNoEnum'
 import { ThemeTypeEnum } from '../../../enums/ThemeTypeEnum'
+import TranslateShowPositionEnum from '../../../../../common/enums/TranslateShowPositionEnum'
 import { initTheme } from '../../../utils/themeUtil'
 import { cacheGetStr, cacheSetStr } from '../../../utils/cacheUtil'
 
@@ -46,7 +69,9 @@ const basiInfo = ref({
   theme: cacheGetStr('useTheme'),
   language: 'zh',
   autoLaunch: cacheGetStr('autoLaunch') === YesNoEnum.Y,
-  autoUpdater: cacheGetStr('autoUpdater') === YesNoEnum.Y
+  autoUpdater: cacheGetStr('autoUpdater') === YesNoEnum.Y,
+  translateShowPositionType: cacheGetStr('translateShowPositionType'),
+  fromTopOfWindowPercentage: cacheGetStr('fromTopOfWindowPercentage')
 })
 
 /**
@@ -71,6 +96,25 @@ const autoUpdaterEvent = (autoUpdater): void => {
   if (autoUpdater) {
     window.api.autoUpdaterSilenceStartCheckEvent()
   }
+}
+
+/**
+ * 翻译窗口显示位置类型 - 事件
+ *
+ * @param translateShowPositionType 翻译窗口显示位置类型
+ */
+const translateShowPositionTypeSelectChange = (translateShowPositionType): void => {
+  cacheSetStr('translateShowPositionType', translateShowPositionType)
+  basiInfo.value.translateShowPositionType = translateShowPositionType
+}
+/**
+ * 翻译距离窗口顶部位置 - 事件
+ *
+ * @param fromTopOfWindowPercentage 翻译距离窗口顶部位置
+ */
+const fromTopOfWindowPercentageChange = (fromTopOfWindowPercentage): void => {
+  cacheSetStr('fromTopOfWindowPercentage', fromTopOfWindowPercentage)
+  basiInfo.value.fromTopOfWindowPercentage = fromTopOfWindowPercentage
 }
 </script>
 

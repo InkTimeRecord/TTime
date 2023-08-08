@@ -7,6 +7,8 @@ import { ScreenshotsMain } from './Screenshot'
 import OcrTypeEnum from '../enums/OcrTypeEnum'
 import WebShowMsgEnum from '../enums/WebShowMsgEnum'
 import { SystemTypeEnum } from '../enums/SystemTypeEnum'
+import TranslateShowPositionEnum from '../../common/enums/TranslateShowPositionEnum'
+import log from '../utils/log'
 
 /**
  * 全局窗口
@@ -74,15 +76,6 @@ class GlobalWin {
    */
   static ocrSilenceTempImg
 
-  static calculateOffsetCoordinates(xCoord, yCoord): { x; y } {
-    console.log({ xCoord, yCoord })
-    const centerX = xCoord
-    const centerY = yCoord
-    const offset = 0.3 * centerY
-    const yOffset = centerY - offset
-    return { x: centerX, y: yOffset }
-  }
-
   /**
    * 显示窗口
    */
@@ -90,18 +83,7 @@ class GlobalWin {
     if (isNull(win)) {
       return
     }
-    win.webContents
-      .executeJavaScript('JSON.stringify({width:screen.width,height: screen.height})')
-      .then((value) => {
-        // 设置坐标的同时设置宽高 否则在多显示器且显示器之间缩放比例不一致的情况下来回切换会导致悬浮球显示错位
-        const res = JSON.parse(value)
-        const { width, height } = res
-        const center_x = Math.floor(width / 2)
-        const center_y = Math.floor(height / 2)
-        const offset_y = Math.floor(center_y * 0.3)
-        win.setBounds({ x: center_x, y: center_y - offset_y })
-        win.show()
-      })
+    win.show()
   }
 
   /**
@@ -135,12 +117,67 @@ class GlobalWin {
     GlobalWin.winHide(GlobalWin.mainWin)
   }
 
+  static mainWinSize
+
   /**
    * 显示主窗口
    */
   static mainWinShow(): void {
-    GlobalWin.winShow(GlobalWin.mainWin)
-    this.mainOrOcrWinShowCallback()
+    GlobalWin.mainWin.webContents
+      .executeJavaScript('localStorage.translateShowPositionType')
+      .then((translateShowPositionType) => {
+        translateShowPositionType = translateShowPositionType * 1
+        log.info('translateShowPositionType = ', translateShowPositionType)
+        if (TranslateShowPositionEnum.LAST_TIME === translateShowPositionType) {
+          GlobalWin.winShow(GlobalWin.mainWin)
+          this.mainOrOcrWinShowCallback()
+        } else if (TranslateShowPositionEnum.FOLLOW_MOUSE === translateShowPositionType) {
+          // 获取到鼠标的横坐标和纵坐标
+          const { x, y } = screen.getCursorScreenPoint()
+          // 设置坐标的同时设置宽高 否则在多显示器且显示器之间缩放比例不一致的情况下来回切换会导致悬浮球显示错位
+          GlobalWin.mainWin.setBounds({ x: x, y: y + 11 })
+          GlobalWin.winShow(GlobalWin.mainWin)
+          this.mainOrOcrWinShowCallback()
+        } else if (TranslateShowPositionEnum.FROM_TOP === translateShowPositionType) {
+          log.info('FROM_TOP模式执行 = ', translateShowPositionType)
+          GlobalWin.mainWin.webContents
+            .executeJavaScript('localStorage.fromTopOfWindowPercentage')
+            .then((fromTopOfWindowPercentage) => {
+              log.info('FROM_TOP模式执行 fromTopOfWindowPercentage = ', fromTopOfWindowPercentage)
+              const currentMousePosition = screen.getCursorScreenPoint()
+              const display = screen.getDisplayNearestPoint(currentMousePosition)
+              log.info('FROM_TOP模式执行 display = ', display)
+              const activeBounds = display.bounds
+              log.info('FROM_TOP模式执行 activeBounds = ', activeBounds)
+              const winWidth = GlobalWin.mainWinSize[0]
+              const winHeight = GlobalWin.mainWinSize[1]
+              const x = activeBounds.x + (activeBounds.width - winWidth) / 2
+              const y = activeBounds.y + (activeBounds.height - winHeight) / 2
+              log.error('显示窗口设置位置', {
+                winWidth,
+                winHeight,
+                x,
+                y,
+                fromTopOfWindowPercentage
+              })
+              try {
+                GlobalWin.mainWin.setPosition(
+                  Math.floor(x),
+                  Math.floor(y * (fromTopOfWindowPercentage / 100))
+                )
+              } catch (e) {
+                log.error('显示窗口设置位置异常', {
+                  x,
+                  y,
+                  fromTopOfWindowPercentage,
+                  e
+                })
+              }
+              GlobalWin.winShow(GlobalWin.mainWin)
+              this.mainOrOcrWinShowCallback()
+            })
+        }
+      })
   }
 
   /**

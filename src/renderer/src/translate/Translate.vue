@@ -35,6 +35,7 @@ import { PlaySpeechServiceEnum } from '../enums/PlaySpeechServiceEnum'
 import '../channel/ChannelRequest'
 import TranslateServiceEnum from '../../../common/enums/TranslateServiceEnum'
 import OcrServiceEnum from '../../../common/enums/OcrServiceEnum'
+import TranslateShowPositionEnum from '../../../common/enums/TranslateShowPositionEnum'
 
 initTheme()
 
@@ -113,6 +114,13 @@ if (undefined === cacheGetStr('screenshotOcrShortcutKey')) {
 if (undefined === cacheGetStr('screenshotSilenceOcrShortcutKey')) {
   cacheSetStr('screenshotSilenceOcrShortcutKey', 'Alt + Shift + E')
 }
+if (undefined === cacheGetStr('translateShowPositionType')) {
+  cacheSetStr('translateShowPositionType', TranslateShowPositionEnum.LAST_TIME)
+}
+if (undefined === cacheGetStr('fromTopOfWindowPercentage')) {
+  cacheSetStr('fromTopOfWindowPercentage', 40)
+}
+
 // 首次加载 - 代理配置初始化
 if (isNull(cacheGetStr('agentConfig'))) {
   cacheSet('agentConfig', {
