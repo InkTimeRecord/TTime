@@ -138,7 +138,6 @@ class GlobalShortcutEvent {
    * 显示翻译窗口快捷键
    */
   static translateInput(): void {
-    GlobalWin.mainWinSize = GlobalWin.mainWin.getSize()
     GlobalWin.mainWinShow()
     GlobalWin.mainWinSend('clear-all-translated-content')
     GlobalWin.mainWinSend('win-show-input-event')
@@ -148,7 +147,6 @@ class GlobalShortcutEvent {
    * 截图翻译快捷键
    */
   static translateScreenshot(): void {
-    GlobalWin.mainWinSize = GlobalWin.mainWin.getSize()
     log.info('[截图翻译] - 开始截图')
     GlobalWin.mainWinSend('clear-all-translated-content')
     // 隐藏窗口
@@ -192,7 +190,6 @@ class GlobalShortcutEvent {
     if (GlobalShortcutEvent.isChoice) {
       return
     }
-    GlobalWin.mainWinSize = GlobalWin.mainWin.getSize()
     // 先释放按键
     uIOhook.keyToggle(UiohookKey.Ctrl, 'up')
     uIOhook.keyToggle(UiohookKey.CtrlRight, 'up')

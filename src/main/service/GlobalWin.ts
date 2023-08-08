@@ -117,8 +117,6 @@ class GlobalWin {
     GlobalWin.winHide(GlobalWin.mainWin)
   }
 
-  static mainWinSize
-
   /**
    * 显示主窗口
    */
@@ -127,7 +125,6 @@ class GlobalWin {
       .executeJavaScript('localStorage.translateShowPositionType')
       .then((translateShowPositionType) => {
         translateShowPositionType = translateShowPositionType * 1
-        log.info('translateShowPositionType = ', translateShowPositionType)
         if (TranslateShowPositionEnum.LAST_TIME === translateShowPositionType) {
           GlobalWin.winShow(GlobalWin.mainWin)
           this.mainOrOcrWinShowCallback()
@@ -139,31 +136,19 @@ class GlobalWin {
           GlobalWin.winShow(GlobalWin.mainWin)
           this.mainOrOcrWinShowCallback()
         } else if (TranslateShowPositionEnum.FROM_TOP === translateShowPositionType) {
-          log.info('FROM_TOP模式执行 = ', translateShowPositionType)
           GlobalWin.mainWin.webContents
             .executeJavaScript('localStorage.fromTopOfWindowPercentage')
             .then((fromTopOfWindowPercentage) => {
-              log.info('FROM_TOP模式执行 fromTopOfWindowPercentage = ', fromTopOfWindowPercentage)
               const currentMousePosition = screen.getCursorScreenPoint()
               const display = screen.getDisplayNearestPoint(currentMousePosition)
-              log.info('FROM_TOP模式执行 display = ', display)
               const activeBounds = display.bounds
-              log.info('FROM_TOP模式执行 activeBounds = ', activeBounds)
-              const winWidth = GlobalWin.mainWinSize[0]
-              const winHeight = GlobalWin.mainWinSize[1]
+              const winWidth = GlobalWin.mainWin.getSize()[0]
               const x = activeBounds.x + (activeBounds.width - winWidth) / 2
-              const y = activeBounds.y + (activeBounds.height - winHeight) / 2
-              log.error('显示窗口设置位置', {
-                winWidth,
-                winHeight,
-                x,
-                y,
-                fromTopOfWindowPercentage
-              })
+              const y = activeBounds.y + (activeBounds.height - 339) / 2
               try {
                 GlobalWin.mainWin.setPosition(
                   Math.floor(x),
-                  Math.floor(y * (fromTopOfWindowPercentage / 100))
+                  Math.floor(y * ((fromTopOfWindowPercentage * 2) / 100))
                 )
               } catch (e) {
                 log.error('显示窗口设置位置异常', {

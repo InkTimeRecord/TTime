@@ -118,7 +118,7 @@ if (undefined === cacheGetStr('translateShowPositionType')) {
   cacheSetStr('translateShowPositionType', TranslateShowPositionEnum.LAST_TIME)
 }
 if (undefined === cacheGetStr('fromTopOfWindowPercentage')) {
-  cacheSetStr('fromTopOfWindowPercentage', 40)
+  cacheSetStr('fromTopOfWindowPercentage', 30)
 }
 
 // 首次加载 - 代理配置初始化
