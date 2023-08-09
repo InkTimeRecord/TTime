@@ -11,6 +11,7 @@ import { isNotNull, isNull } from '../../common/utils/validate'
 import { WinEvent } from './Win'
 import OcrTypeEnum from '../enums/OcrTypeEnum'
 import { YesNoEnum } from '../../common/enums/YesNoEnum'
+import StoreService from './StoreService'
 
 let nullWin: BrowserWindow
 
@@ -26,37 +27,34 @@ app.whenReady().then(() => {
  * 处理图片文字识别
  */
 ipcMain.handle('handle-image-text-recognition-event', async (_event, imgByBase64) => {
-  // 执行前端脚本获取当前设置的Ocr服务
-  await GlobalWin.mainWin.webContents
-    .executeJavaScript(
-      'JSON.parse(localStorage.ocrServiceMap).filter(ocrService => ocrService[1].useStatus)[0][1]'
-    )
-    .then((ocrService) => {
-      if (isNull(ocrService)) {
-        return
-      }
-      // 获取Ocr服务类型
-      const type = ocrService.type
-      if (OcrServiceEnum.TTIME === type) {
-        // TTime类型则调用本地Ocr
-        ScreenshotsMain.textOcrWin.webContents.send('local-ocr', imgByBase64)
-      } else {
-        const info = {
-          appId: ocrService.appId,
-          appKey: ocrService.appKey,
-          img: imgByBase64
-        }
-        const defaultInfo = OcrChannelFactory.channelConfigs[type]?.defaultInfo
-        if (isNotNull(defaultInfo)) {
-          Object.keys(defaultInfo).forEach((key) => {
-            info[key] = ocrService[key]
-          })
-        }
+  // @ts-ignore
+  const ocrService = StoreService.configGet('ocrServiceMap').filter(
+    (ocrService) => ocrService[1].useStatus
+  )[0][1]
+  if (isNull(ocrService)) {
+    return
+  }
+  // 获取Ocr服务类型
+  const type = ocrService.type
+  if (OcrServiceEnum.TTIME === type) {
+    // TTime类型则调用本地Ocr
+    ScreenshotsMain.textOcrWin.webContents.send('local-ocr', imgByBase64)
+  } else {
+    const info = {
+      appId: ocrService.appId,
+      appKey: ocrService.appKey,
+      img: imgByBase64
+    }
+    const defaultInfo = OcrChannelFactory.channelConfigs[type]?.defaultInfo
+    if (isNotNull(defaultInfo)) {
+      Object.keys(defaultInfo).forEach((key) => {
+        info[key] = ocrService[key]
+      })
+    }
 
-        // 调用第三方Ocr
-        OcrChannelFactory.ocr(ocrService.type, info)
-      }
-    })
+    // 调用第三方Ocr
+    OcrChannelFactory.ocr(ocrService.type, info)
+  }
 })
 
 /**

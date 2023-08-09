@@ -26,7 +26,8 @@ if (!SystemTypeEnum.isMac()) {
   app.disableHardwareAcceleration()
 }
 
-new StoreService()
+StoreService.init()
+StoreService.initConfig()
 
 // 当前软件版本
 const version = app.getVersion()
@@ -95,11 +96,7 @@ function createWindow(): void {
     mainWin.loadFile(path.join(__dirname, '../renderer/index.html'))
   }
 
-  mainWin.webContents
-    .executeJavaScript('JSON.parse(localStorage.agentConfig)')
-    .then((agentConfig) => {
-      injectWinAgent(agentConfig, mainWin.webContents.session)
-    })
+  injectWinAgent(StoreService.configGet('agentConfig'), mainWin.webContents.session)
 
   // mainWin.webContents.openDevTools({ mode: 'detach' })
   GlobalWin.setMainWin(mainWin)

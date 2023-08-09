@@ -313,6 +313,46 @@ const agentApiTranslateCallback = (res): void => {
   ipcRenderer.invoke('agent-api-translate-callback', res)
 }
 
+/**
+ * 数据是否存在
+ *
+ * @param storeTypeEnum 存储类型
+ * @param key key
+ */
+const cacheHas = (storeTypeEnum, key): boolean => {
+  return ipcRenderer.sendSync('cache-has', storeTypeEnum, key)
+}
+
+/**
+ * 数据获取
+ *
+ * @param storeTypeEnum 存储类型
+ * @param key key
+ */
+const cacheGet = (storeTypeEnum, key): object => {
+  return ipcRenderer.sendSync('cache-get', storeTypeEnum, key)
+}
+
+/**
+ * 数据存储
+ *
+ * @param storeTypeEnum 存储类型
+ * @param key key
+ * @param obj 数据
+ */
+const cacheSet = (storeTypeEnum, key, obj): void => {
+  ipcRenderer.invoke('cache-set', storeTypeEnum, key, obj)
+}
+
+/**
+ * 数据删除
+ *
+ * @param storeTypeEnum 存储类型
+ * @param key key
+ */
+const cacheDelete = (storeTypeEnum, key): void => {
+  ipcRenderer.invoke('cache-delete', storeTypeEnum, key)
+}
 // Custom APIs for renderer
 const api = {
   windowHeightChangeEvent,
@@ -340,7 +380,11 @@ const api = {
   apiTranslateResultMsgCallbackEvent,
   agentApiTranslate,
   agentApiTranslateCallback,
-  updateCacheEvent
+  updateCacheEvent,
+  cacheHas,
+  cacheGet,
+  cacheSet,
+  cacheDelete
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

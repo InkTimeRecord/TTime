@@ -12,6 +12,7 @@ import { spawn } from 'child_process'
 import { YesNoEnum } from '../../common/enums/YesNoEnum'
 import fs from 'fs'
 import { WinEvent } from './Win'
+import StoreService from './StoreService'
 
 let nullWin: BrowserWindow
 
@@ -74,29 +75,24 @@ class AutoUpdater {
           // 而当自动更新时，直接跳过了勾选开启自启的那个选项，导致开启自启功能被关闭了
           // 所以在自动更新安装时会先获取当前开启自启的状态
           // 然后在安装完毕后启动时读取之前存储的状态再次进行设置开启自启状态
-          GlobalWin.mainWin.webContents
-            .executeJavaScript('localStorage.autoLaunchFront')
-            .then((autoLaunchFront) => {
-              // 校验是否不为空
-              // 因为有的时候删除安装包失败的情况下 这里会重复触发 所以可能会出现为空的情况
-              if (isNotNull(autoLaunchFront)) {
-                const isEnabled = autoLaunchFront === YesNoEnum.Y
-                // 设置开启自启状态
-                WinEvent.updateAutoLaunch(isEnabled, () => {
-                  return isEnabled
-                })
-                // 更新存储库的状态
-                GlobalWin.mainWinSend(
-                  'update-cache-event',
-                  'autoLaunch',
-                  isEnabled ? YesNoEnum.Y : YesNoEnum.N
-                )
-                // 移除自动更新安装时临时存储的开机自启状态
-                GlobalWin.mainWin.webContents.executeJavaScript(
-                  "localStorage.removeItem('autoLaunchFront')"
-                )
-              }
+          const autoLaunchFront = StoreService.configGet('autoLaunchFront')
+          // 校验是否不为空
+          // 因为有的时候删除安装包失败的情况下 这里会重复触发 所以可能会出现为空的情况
+          if (isNotNull(autoLaunchFront)) {
+            const isEnabled = autoLaunchFront === YesNoEnum.Y
+            // 设置开启自启状态
+            WinEvent.updateAutoLaunch(isEnabled, () => {
+              return isEnabled
             })
+            // 更新存储库的状态
+            GlobalWin.mainWinSend(
+              'update-cache-event',
+              'autoLaunch',
+              isEnabled ? YesNoEnum.Y : YesNoEnum.N
+            )
+            // 移除自动更新安装时临时存储的开机自启状态
+            StoreService.configDeleteByKey('autoLaunchFront')
+          }
         }, 1000)
         fs.unlink(AutoUpdater.newVersionPath, (e) => {
           // 移除成功后 e 回调为 null
@@ -331,12 +327,11 @@ class AutoUpdater {
    * 自动更新检测
    */
   static autoUpdaterStartCheck(): void {
-    GlobalWin.mainWin.webContents.executeJavaScript('localStorage.autoUpdater').then((status) => {
-      if (YesNoEnum.Y === status) {
-        // 静默更新检测
-        AutoUpdater.startCheck(true)
-      }
-    })
+    const autoUpdater = StoreService.configGet('autoUpdater')
+    if (YesNoEnum.Y === autoUpdater) {
+      // 静默更新检测
+      AutoUpdater.startCheck(true)
+    }
   }
 
   /**
@@ -433,16 +428,13 @@ class AutoUpdater {
             // 而当自动更新时，直接跳过了勾选开启自启的那个选项，导致开启自启功能被关闭了
             // 所以在自动更新安装时会先获取当前开启自启的状态
             // 然后在安装完毕后启动时读取之前存储的状态再次进行设置开启自启状态
-            GlobalWin.mainWin.webContents
-              .executeJavaScript('localStorage.autoLaunch')
-              .then((autoLaunch) => {
-                GlobalWin.mainWinSend(
-                  'update-cache-event',
-                  'autoLaunchFront',
-                  autoLaunch === YesNoEnum.Y ? YesNoEnum.Y : YesNoEnum.N
-                )
-                resolve()
-              })
+            const autoLaunch = StoreService.configGet('autoLaunch')
+            GlobalWin.mainWinSend(
+              'update-cache-event',
+              'autoLaunchFront',
+              autoLaunch === YesNoEnum.Y ? YesNoEnum.Y : YesNoEnum.N
+            )
+            resolve()
           })
           .catch((e) => {
             log.error('[新版本安装] 提权安装异常', e)

@@ -25,13 +25,13 @@
         v-model="basiInfo.translateShowPositionType"
         @change="translateShowPositionTypeSelectChange"
       >
-        <el-option label="上一次位置" :value="TranslateShowPositionEnum.LAST_TIME + ''" />
-        <el-option label="跟随鼠标" :value="TranslateShowPositionEnum.FOLLOW_MOUSE + ''" />
-        <el-option label="距顶部模式" :value="TranslateShowPositionEnum.FROM_TOP + ''" />
+        <el-option label="上一次位置" :value="TranslateShowPositionEnum.LAST_TIME" />
+        <el-option label="跟随鼠标" :value="TranslateShowPositionEnum.FOLLOW_MOUSE" />
+        <el-option label="距顶部模式" :value="TranslateShowPositionEnum.FROM_TOP" />
       </el-select>
     </el-form-item>
     <el-form-item
-      v-show="basiInfo.translateShowPositionType === TranslateShowPositionEnum.FROM_TOP + ''"
+      v-show="basiInfo.translateShowPositionType === TranslateShowPositionEnum.FROM_TOP"
       class="none-select"
       label="距顶部百分比"
     >
@@ -66,7 +66,7 @@ const toggleTheme = (themeType) => {
 }
 
 const basiInfo = ref({
-  theme: cacheGetStr('useTheme'),
+  theme: localStorage['useTheme'],
   language: 'zh',
   autoLaunch: cacheGetStr('autoLaunch') === YesNoEnum.Y,
   autoUpdater: cacheGetStr('autoUpdater') === YesNoEnum.Y,

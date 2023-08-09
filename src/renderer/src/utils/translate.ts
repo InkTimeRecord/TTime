@@ -1,7 +1,7 @@
 import { isNull } from '../../../common/utils/validate'
 import ElMessageExtend from './messageExtend'
 import { cacheGetStr } from './cacheUtil'
-import { PlaySpeechServiceEnum } from '../enums/PlaySpeechServiceEnum'
+import { PlaySpeechServiceEnum } from '../../../common/enums/PlaySpeechServiceEnum'
 
 /**
  * 文字写入到剪切板

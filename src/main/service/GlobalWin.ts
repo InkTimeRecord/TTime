@@ -9,6 +9,7 @@ import WebShowMsgEnum from '../enums/WebShowMsgEnum'
 import { SystemTypeEnum } from '../enums/SystemTypeEnum'
 import TranslateShowPositionEnum from '../../common/enums/TranslateShowPositionEnum'
 import log from '../utils/log'
+import StoreService from './StoreService'
 
 /**
  * 全局窗口
@@ -121,48 +122,41 @@ class GlobalWin {
    * 显示主窗口
    */
   static mainWinShow(): void {
-    GlobalWin.mainWin.webContents
-      .executeJavaScript('localStorage.translateShowPositionType')
-      .then((translateShowPositionType) => {
-        translateShowPositionType = translateShowPositionType * 1
-        if (TranslateShowPositionEnum.LAST_TIME === translateShowPositionType) {
-          GlobalWin.winShow(GlobalWin.mainWin)
-          this.mainOrOcrWinShowCallback()
-        } else if (TranslateShowPositionEnum.FOLLOW_MOUSE === translateShowPositionType) {
-          // 获取到鼠标的横坐标和纵坐标
-          const { x, y } = screen.getCursorScreenPoint()
-          // 设置坐标的同时设置宽高 否则在多显示器且显示器之间缩放比例不一致的情况下来回切换会导致悬浮球显示错位
-          GlobalWin.mainWin.setBounds({ x: x, y: y + 11 })
-          GlobalWin.winShow(GlobalWin.mainWin)
-          this.mainOrOcrWinShowCallback()
-        } else if (TranslateShowPositionEnum.FROM_TOP === translateShowPositionType) {
-          GlobalWin.mainWin.webContents
-            .executeJavaScript('localStorage.fromTopOfWindowPercentage')
-            .then((fromTopOfWindowPercentage) => {
-              const currentMousePosition = screen.getCursorScreenPoint()
-              const display = screen.getDisplayNearestPoint(currentMousePosition)
-              const activeBounds = display.bounds
-              const winWidth = GlobalWin.mainWin.getSize()[0]
-              const x = activeBounds.x + (activeBounds.width - winWidth) / 2
-              const y = activeBounds.y + (activeBounds.height - 339) / 2
-              try {
-                GlobalWin.mainWin.setPosition(
-                  Math.floor(x),
-                  Math.floor(y * ((fromTopOfWindowPercentage * 2) / 100))
-                )
-              } catch (e) {
-                log.error('显示窗口设置位置异常', {
-                  x,
-                  y,
-                  fromTopOfWindowPercentage,
-                  e
-                })
-              }
-              GlobalWin.winShow(GlobalWin.mainWin)
-              this.mainOrOcrWinShowCallback()
-            })
-        }
-      })
+    const translateShowPositionType = StoreService.configGet('translateShowPositionType')
+    if (TranslateShowPositionEnum.LAST_TIME === translateShowPositionType) {
+      GlobalWin.winShow(GlobalWin.mainWin)
+      this.mainOrOcrWinShowCallback()
+    } else if (TranslateShowPositionEnum.FOLLOW_MOUSE === translateShowPositionType) {
+      // 获取到鼠标的横坐标和纵坐标
+      const { x, y } = screen.getCursorScreenPoint()
+      // 设置坐标的同时设置宽高 否则在多显示器且显示器之间缩放比例不一致的情况下来回切换会导致悬浮球显示错位
+      GlobalWin.mainWin.setBounds({ x: x, y: y + 11 })
+      GlobalWin.winShow(GlobalWin.mainWin)
+      this.mainOrOcrWinShowCallback()
+    } else if (TranslateShowPositionEnum.FROM_TOP === translateShowPositionType) {
+      const fromTopOfWindowPercentage = StoreService.configGet('fromTopOfWindowPercentage')
+      const currentMousePosition = screen.getCursorScreenPoint()
+      const display = screen.getDisplayNearestPoint(currentMousePosition)
+      const activeBounds = display.bounds
+      const winWidth = GlobalWin.mainWin.getSize()[0]
+      const x = activeBounds.x + (activeBounds.width - winWidth) / 2
+      const y = activeBounds.y + (activeBounds.height - 339) / 2
+      try {
+        GlobalWin.mainWin.setPosition(
+          Math.floor(x),
+          Math.floor(y * ((fromTopOfWindowPercentage * 2) / 100))
+        )
+      } catch (e) {
+        log.error('显示窗口设置位置异常', {
+          x,
+          y,
+          fromTopOfWindowPercentage,
+          e
+        })
+      }
+      GlobalWin.winShow(GlobalWin.mainWin)
+      this.mainOrOcrWinShowCallback()
+    }
   }
 
   /**
@@ -183,19 +177,16 @@ class GlobalWin {
     GlobalShortcutEvent.unregisterEsc()
     // TODO 这里暂时这么写 之后数据存储需要重构 不能继续放在 localStorage 中
     // alwaysOnTopAllowEscStatus 开启后，当翻译窗口置顶时，按ESC键依旧可隐藏窗口
-    GlobalWin.mainWin.webContents
-      .executeJavaScript('localStorage.alwaysOnTopAllowEscStatus')
-      .then((alwaysOnTopAllowEscStatus) => {
-        // 当窗口置顶时不注册Esc快捷键
-        if (
-          (!GlobalWin.isMainAlwaysOnTop && !GlobalWin.isOcrAlwaysOnTop) ||
-          YesNoEnum.Y === alwaysOnTopAllowEscStatus
-        ) {
-          // 当显示窗口时注册快捷键
-          // 按下 Esc 隐藏窗口
-          WinEvent.translateWinRegisterEsc()
-        }
-      })
+    const alwaysOnTopAllowEscStatus = StoreService.configGet('alwaysOnTopAllowEscStatus')
+    // 当窗口置顶时不注册Esc快捷键
+    if (
+      (!GlobalWin.isMainAlwaysOnTop && !GlobalWin.isOcrAlwaysOnTop) ||
+      YesNoEnum.Y === alwaysOnTopAllowEscStatus
+    ) {
+      // 当显示窗口时注册快捷键
+      // 按下 Esc 隐藏窗口
+      WinEvent.translateWinRegisterEsc()
+    }
   }
 
   /**
@@ -223,21 +214,15 @@ class GlobalWin {
       // 不为空的情况下默认去掉文本内容前后的换行符
       text = text === undefined || text === null ? '' : text.replace(/^\n+|\n+$/g, '')
       // 换行符替换为空格状态
-      await GlobalWin.mainWin.webContents
-        .executeJavaScript('localStorage.ocrWrapReplaceSpaceStatus')
-        .then((ocrWrapReplaceSpaceStatus) => {
-          if (YesNoEnum.Y === ocrWrapReplaceSpaceStatus) {
-            text = text.replaceAll('\n', ' ')
-          }
-        })
+      const ocrWrapReplaceSpaceStatus = StoreService.configGet('ocrWrapReplaceSpaceStatus')
+      if (YesNoEnum.Y === ocrWrapReplaceSpaceStatus) {
+        text = text.replaceAll('\n', ' ')
+      }
       // OCR结果写入剪切板
-      GlobalWin.mainWin.webContents
-        .executeJavaScript('localStorage.ocrWriteClipboardStatus')
-        .then((ocrWriteClipboardStatus) => {
-          if (YesNoEnum.Y === ocrWriteClipboardStatus) {
-            clipboard.writeText(text)
-          }
-        })
+      const ocrWriteClipboardStatus = StoreService.configGet('ocrWriteClipboardStatus')
+      if (YesNoEnum.Y === ocrWriteClipboardStatus) {
+        clipboard.writeText(text)
+      }
       if (ScreenshotsMain.ocrType === OcrTypeEnum.OCR) {
         GlobalWin.ocrWin.webContents.send('update-text', text)
       } else if (ScreenshotsMain.ocrType === OcrTypeEnum.OCR_TRANSLATE) {

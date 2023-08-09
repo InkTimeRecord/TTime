@@ -1,4 +1,4 @@
-import { isNotNull } from '../../../common/utils/validate'
+import { StoreTypeEnum } from '../../../common/enums/StoreTypeEnum'
 
 /**
  * 获取
@@ -45,8 +45,9 @@ export const cacheSetStr = (key, val) => {
  * @param isObj 是否为对象
  */
 export const cacheGetByObj = (key, isObj) => {
-  const res = localStorage[key]
-  return isNotNull(res) && isObj ? JSON.parse(res) : res
+  return window.api['cacheGet'](StoreTypeEnum.CONFIG, key)
+  // const res = localStorage[key]
+  // return isNotNull(res) && isObj ? JSON.parse(res) : res
 }
 
 /**
@@ -57,5 +58,6 @@ export const cacheGetByObj = (key, isObj) => {
  * @param isObj 是否为对象
  */
 export const cacheSetByObj = (key, val, isObj) => {
-  return (localStorage[key] = isNotNull(val) && isObj ? JSON.stringify(val) : val)
+  return window.api['cacheSet'](StoreTypeEnum.CONFIG, key, val)
+  // return (localStorage[key] = isNotNull(val) && isObj ? JSON.stringify(val) : val)
 }

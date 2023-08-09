@@ -31,7 +31,7 @@ import { buildTranslateService, setTranslateServiceMap } from '../utils/translat
 import { buildOcrService, setOcrServiceMap } from '../utils/ocrServiceUtil'
 import { initTheme } from '../utils/themeUtil'
 import { cacheGetStr, cacheSet, cacheSetStr } from '../utils/cacheUtil'
-import { PlaySpeechServiceEnum } from '../enums/PlaySpeechServiceEnum'
+import { PlaySpeechServiceEnum } from '../../../common/enums/PlaySpeechServiceEnum'
 import '../channel/ChannelRequest'
 import TranslateServiceEnum from '../../../common/enums/TranslateServiceEnum'
 import OcrServiceEnum from '../../../common/enums/OcrServiceEnum'

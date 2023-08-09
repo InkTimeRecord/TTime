@@ -9,6 +9,7 @@ import GlobalWin from './GlobalWin'
 import { YesNoEnum } from '../../common/enums/YesNoEnum'
 import { isNotNull } from '../../common/utils/validate'
 import { spawn } from 'child_process'
+import StoreService from './StoreService'
 
 // 窗口加载完毕后执行
 app.whenReady().then(() => {
@@ -93,14 +94,11 @@ uIOhook.on('mouseup', async (e: UiohookMouseEvent) => {
   // 鼠标左键单机
   if (e.button === 1 && selectTextStatus) {
     if (mousedownInfo.x !== e.x || mousedownInfo.y !== e.y) {
-      GlobalWin.hoverBallWin.webContents
-        .executeJavaScript('localStorage.hoverBallStatus')
-        .then((val) => {
-          if (YesNoEnum.Y === val) {
-            hoverBallWinShow()
-            return
-          }
-        })
+      const hoverBallStatus = StoreService.configGet('hoverBallStatus')
+      if (YesNoEnum.Y === hoverBallStatus) {
+        hoverBallWinShow()
+        return
+      }
     }
   }
 })
@@ -126,16 +124,13 @@ uIOhook.on('click', async (e: UiohookMouseEvent) => {
     if (Math.abs(oneClick.x - e.x) > 5 || Math.abs(oneClick.y - e.y) > 5) {
       return
     }
-    GlobalWin.hoverBallWin.webContents
-      .executeJavaScript('localStorage.hoverBallStatus')
-      .then((val) => {
-        if (YesNoEnum.Y === val) {
-          // log.info(e, '触发了双击')
-          // log.info('触发了双击')
-          hoverBallWinShow()
-          return
-        }
-      })
+    const hoverBallStatus = StoreService.configGet('hoverBallStatus')
+    if (YesNoEnum.Y === hoverBallStatus) {
+      // log.info(e, '触发了双击')
+      // log.info('触发了双击')
+      hoverBallWinShow()
+      return
+    }
   }
   if (GlobalWin.isHoverBall) {
     const position = GlobalWin.hoverBallWin.getPosition()
@@ -223,12 +218,9 @@ const hoverBallWinHide = (): void => {
  */
 const isMouseSelectTextStatus = async (): Promise<boolean> => {
   let response = false
+  const hoverBallEnhanceStatus = StoreService.configGet('hoverBallEnhanceStatus')
   // 悬浮球增强模式
-  await GlobalWin.hoverBallWin.webContents
-    .executeJavaScript('localStorage.hoverBallEnhanceStatus')
-    .then((val) => {
-      response = YesNoEnum.Y === val
-    })
+  response = YesNoEnum.Y === hoverBallEnhanceStatus
   if (!SystemTypeEnum.isWin() || !response) {
     // 如果不为Win环境下这块默认不进行获取状态 直接返回取词
     return true

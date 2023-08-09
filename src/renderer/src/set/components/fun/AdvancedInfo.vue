@@ -82,7 +82,7 @@
 // 翻译内容框内容
 import { h, ref } from 'vue'
 import { YesNoEnum } from '../../../../../common/enums/YesNoEnum'
-import { PlaySpeechServiceEnum } from '../../../enums/PlaySpeechServiceEnum'
+import { PlaySpeechServiceEnum } from '../../../../../common/enums/PlaySpeechServiceEnum'
 import { cacheGetStr, cacheSetStr } from '../../../utils/cacheUtil'
 import { ElMessageBox } from 'element-plus'
 
