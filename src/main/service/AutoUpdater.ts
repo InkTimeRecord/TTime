@@ -429,8 +429,7 @@ class AutoUpdater {
             // 所以在自动更新安装时会先获取当前开启自启的状态
             // 然后在安装完毕后启动时读取之前存储的状态再次进行设置开启自启状态
             const autoLaunch = StoreService.configGet('autoLaunch')
-            GlobalWin.mainWinSend(
-              'update-cache-event',
+            StoreService.configSet(
               'autoLaunchFront',
               autoLaunch === YesNoEnum.Y ? YesNoEnum.Y : YesNoEnum.N
             )
