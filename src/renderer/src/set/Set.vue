@@ -25,6 +25,9 @@
             <el-menu-item index="networkSet">
               <span class="none-select">网络设置</span>
             </el-menu-item>
+            <el-menu-item index="configFile">
+              <span class="none-select">配置文件设置</span>
+            </el-menu-item>
             <el-menu-item index="about">
               <span class="none-select">关于</span>
             </el-menu-item>
@@ -40,6 +43,7 @@
             <shortcut-key v-show="menuIndex === 'shortcutKey'" />
             <translate-service-config v-show="menuIndex === 'translateServiceConfig'" />
             <network-set v-show="menuIndex === 'networkSet'" />
+            <config-file v-show="menuIndex === 'configFile'" />
             <about v-show="menuIndex === 'about'" />
           </el-scrollbar>
         </el-main>
@@ -55,6 +59,7 @@ import AdvancedInfo from './components/fun/AdvancedInfo.vue'
 import ShortcutKey from './components/fun/ShortcutKey.vue'
 import TranslateServiceConfig from './components/fun/TranslateServiceConfig.vue'
 import NetworkSet from './components/fun/NetworkSet.vue'
+import ConfigFile from './components/fun/ConfigFile.vue'
 import About from './components/fun/About.vue'
 
 import { ref } from 'vue'
