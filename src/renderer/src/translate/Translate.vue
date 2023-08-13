@@ -30,7 +30,7 @@ import { isNull } from '../../../common/utils/validate'
 import { buildTranslateService, setTranslateServiceMap } from '../utils/translateServiceUtil'
 import { buildOcrService, setOcrServiceMap } from '../utils/ocrServiceUtil'
 import { initTheme } from '../utils/themeUtil'
-import { cacheGet, cacheSet } from '../utils/cacheUtil'
+import { cacheGet, cacheSet, oldCacheGet } from '../utils/cacheUtil'
 import { PlaySpeechServiceEnum } from '../../../common/enums/PlaySpeechServiceEnum'
 import '../channel/ChannelRequest'
 import TranslateServiceEnum from '../../../common/enums/TranslateServiceEnum'
@@ -69,22 +69,28 @@ window.api.winShowByInputEvent(() => {
  * 初始化默认翻译服务
  */
 if (isNull(cacheGet('translateServiceMap'))) {
-  const map = new Map()
-  const ttimeService = buildTranslateService(TranslateServiceEnum.TTIME)
-  map.set(ttimeService.id, ttimeService)
-  setTranslateServiceMap(map)
+  const translateServiceMap = oldCacheGet('translateServiceMap')
+  if (undefined !== translateServiceMap) {
+    // 兼容浏览器存储方式的数据 导入到文件存储里去
+    setTranslateServiceMap(new Map(translateServiceMap))
+  } else {
+    const map = new Map()
+    const ttimeService = buildTranslateService(TranslateServiceEnum.TTIME)
+    map.set(ttimeService.id, ttimeService)
+    setTranslateServiceMap(map)
 
-  const bingDictService = buildTranslateService(TranslateServiceEnum.BING_DICT)
-  map.set(bingDictService.id, bingDictService)
-  setTranslateServiceMap(map)
+    const bingDictService = buildTranslateService(TranslateServiceEnum.BING_DICT)
+    map.set(bingDictService.id, bingDictService)
+    setTranslateServiceMap(map)
 
-  const deepLBuiltInService = buildTranslateService(TranslateServiceEnum.DEEP_L_BUILT_IN)
-  map.set(deepLBuiltInService.id, deepLBuiltInService)
-  setTranslateServiceMap(map)
+    const deepLBuiltInService = buildTranslateService(TranslateServiceEnum.DEEP_L_BUILT_IN)
+    map.set(deepLBuiltInService.id, deepLBuiltInService)
+    setTranslateServiceMap(map)
 
-  const niuTransBuiltInService = buildTranslateService(TranslateServiceEnum.NIU_TRANS_BUILT_IN)
-  map.set(niuTransBuiltInService.id, niuTransBuiltInService)
-  setTranslateServiceMap(map)
+    const niuTransBuiltInService = buildTranslateService(TranslateServiceEnum.NIU_TRANS_BUILT_IN)
+    map.set(niuTransBuiltInService.id, niuTransBuiltInService)
+    setTranslateServiceMap(map)
+  }
 }
 
 /**
@@ -92,10 +98,16 @@ if (isNull(cacheGet('translateServiceMap'))) {
  * 初始化默认Ocr服务
  */
 if (isNull(cacheGet('ocrServiceMap'))) {
-  const map = new Map()
-  const ttimeService = buildOcrService(OcrServiceEnum.TTIME)
-  map.set(ttimeService.id, ttimeService)
-  setOcrServiceMap(map)
+  const ocrServiceMap = oldCacheGet('ocrServiceMap')
+  if (undefined !== ocrServiceMap) {
+    // 兼容浏览器存储方式的数据 导入到文件存储里去
+    setOcrServiceMap(new Map(ocrServiceMap))
+  } else {
+    const map = new Map()
+    const ttimeService = buildOcrService(OcrServiceEnum.TTIME)
+    map.set(ttimeService.id, ttimeService)
+    setOcrServiceMap(map)
+  }
 }
 
 // 首次打开时设置默认快捷键
@@ -106,7 +118,7 @@ if (undefined === cacheGet('screenshotShortcutKey')) {
   cacheSet('screenshotShortcutKey', 'Alt + W')
 }
 if (undefined === cacheGet('choiceShortcutKey')) {
-  cacheSet('choiceShortcutKey', 'Alt + E')
+  cacheSet('screenshotShortcutKey', 'Alt + W')
 }
 if (undefined === cacheGet('screenshotOcrShortcutKey')) {
   cacheSet('screenshotOcrShortcutKey', 'Alt + Shift + W')
