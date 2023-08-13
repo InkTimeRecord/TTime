@@ -118,7 +118,7 @@ if (undefined === cacheGet('screenshotShortcutKey')) {
   cacheSet('screenshotShortcutKey', 'Alt + W')
 }
 if (undefined === cacheGet('choiceShortcutKey')) {
-  cacheSet('screenshotShortcutKey', 'Alt + W')
+  cacheSet('choiceShortcutKey', 'Alt + E')
 }
 if (undefined === cacheGet('screenshotOcrShortcutKey')) {
   cacheSet('screenshotOcrShortcutKey', 'Alt + Shift + W')
