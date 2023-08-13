@@ -18,7 +18,7 @@
 <script type='module' src='/src/ocr/main.ts'></script>
 <script>
   window.addEventListener('error', function (event) {
-    window.api.logInfoEvent('[OCR窗口异常]', event.error)
+    window.api.logErrorEvent('[OCR窗口异常]', event.error)
   });
 </script>
 </body>

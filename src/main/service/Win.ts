@@ -7,6 +7,7 @@ import log from '../utils/log'
 import { EnvEnum } from '../enums/EnvEnum'
 import GlobalWin from './GlobalWin'
 import { YesNoEnum } from '../../common/enums/YesNoEnum'
+import StoreService from './StoreService'
 
 class WinEvent {
   constructor(mainWinInfo) {
@@ -73,11 +74,7 @@ class WinEvent {
     ipcMain.handle('auto-launch-init-event', (_event) => {
       log.info('开机自启初始化事件')
       WinEvent.updateAutoLaunch(null, (isEnabled) => {
-        GlobalWin.mainWinSend(
-          'update-cache-event',
-          'autoLaunch',
-          isEnabled ? YesNoEnum.Y : YesNoEnum.N
-        )
+        StoreService.configSet('autoLaunch', isEnabled ? YesNoEnum.Y : YesNoEnum.N)
         return isEnabled
       })
     })

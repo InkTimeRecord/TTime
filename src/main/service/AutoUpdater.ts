@@ -85,11 +85,7 @@ class AutoUpdater {
               return isEnabled
             })
             // 更新存储库的状态
-            GlobalWin.mainWinSend(
-              'update-cache-event',
-              'autoLaunch',
-              isEnabled ? YesNoEnum.Y : YesNoEnum.N
-            )
+            StoreService.configSet('autoLaunch', isEnabled ? YesNoEnum.Y : YesNoEnum.N)
             // 移除自动更新安装时临时存储的开机自启状态
             StoreService.configDeleteByKey('autoLaunchFront')
           }

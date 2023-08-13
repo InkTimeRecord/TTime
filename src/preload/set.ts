@@ -1,5 +1,6 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
+import common from './common'
 
 const updateTranslateShortcutKeyEvent = (type, oldShortcutKey, shortcutKey, callback): void => {
   const res = ipcRenderer.sendSync(
@@ -9,20 +10,6 @@ const updateTranslateShortcutKeyEvent = (type, oldShortcutKey, shortcutKey, call
     shortcutKey
   )
   callback(res)
-}
-
-/**
- * 获取系统类型
- */
-const getSystemTypeEvent = (): string => {
-  return ipcRenderer.sendSync('get-system-type-event')
-}
-
-/**
- * 跳转页面
- */
-const jumpToPage = (url) => {
-  ipcRenderer.send('jump-to-page-event', url)
 }
 
 /**
@@ -97,15 +84,6 @@ const apiCheckOcrCallbackEvent = (callback): void => {
 }
 
 /**
- * 获取版本号
- *
- * @return 版本号
- */
-const getVersionEvent = (): string => {
-  return ipcRenderer.sendSync('get-version-event')
-}
-
-/**
  * 代理更新事件
  *
  * @param agentConfig 代理配置
@@ -121,50 +99,9 @@ const alwaysOnTopAllowEscStatusNotify = (): void => {
   ipcRenderer.invoke('always-onTop-allow-esc-status-notify')
 }
 
-/**
- * 数据是否存在
- *
- * @param storeTypeEnum 存储类型
- * @param key key
- */
-const cacheHas = (storeTypeEnum, key): boolean => {
-  return ipcRenderer.sendSync('cache-has', storeTypeEnum, key)
-}
-
-/**
- * 数据获取
- *
- * @param storeTypeEnum 存储类型
- * @param key key
- */
-const cacheGet = (storeTypeEnum, key): object => {
-  return ipcRenderer.sendSync('cache-get', storeTypeEnum, key)
-}
-
-/**
- * 数据存储
- *
- * @param storeTypeEnum 存储类型
- * @param key key
- * @param obj 数据
- */
-const cacheSet = (storeTypeEnum, key, obj): void => {
-  ipcRenderer.invoke('cache-set', storeTypeEnum, key, obj)
-}
-
-/**
- * 数据删除
- *
- * @param storeTypeEnum 存储类型
- * @param key key
- */
-const cacheDelete = (storeTypeEnum, key): void => {
-  ipcRenderer.invoke('cache-delete', storeTypeEnum, key)
-}
 const api = {
+  ...common,
   updateTranslateShortcutKeyEvent,
-  getSystemTypeEvent,
-  jumpToPage,
   closeSetWinEvent,
   autoLaunchEvent,
   autoUpdaterEvent,
@@ -174,13 +111,8 @@ const api = {
   apiCheckTranslateCallbackEvent,
   apiUniteOcrCheck,
   apiCheckOcrCallbackEvent,
-  getVersionEvent,
   agentUpdateEvent,
-  alwaysOnTopAllowEscStatusNotify,
-  cacheHas,
-  cacheGet,
-  cacheSet,
-  cacheDelete
+  alwaysOnTopAllowEscStatusNotify
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

@@ -4,60 +4,23 @@ import { StoreTypeEnum } from '../../../common/enums/StoreTypeEnum'
  * 获取
  *
  * @param key key
+ * @return any
  */
-export const cacheGet = (key) => {
-  return cacheGetByObj(key, true)
-}
-
-/**
- * 设置
- *
- * @param key key
- * @param val val
- */
-export const cacheSet = (key, val) => {
-  return cacheSetByObj(key, val, true)
-}
-
-/**
- * 获取
- *
- * @param key key
- */
-export const cacheGetStr = (key) => {
-  return cacheGetByObj(key, false)
-}
-
-/**
- * 设置
- *
- * @param key key
- * @param val val
- */
-export const cacheSetStr = (key, val) => {
-  return cacheSetByObj(key, val, false)
-}
-
-/**
- * 获取
- *
- * @param key key
- * @param isObj 是否为对象
- */
-export const cacheGetByObj = (key, isObj) => {
+export const cacheGet = (key): any => {
   return window.api['cacheGet'](StoreTypeEnum.CONFIG, key)
-  // const res = localStorage[key]
-  // return isNotNull(res) && isObj ? JSON.parse(res) : res
 }
 
 /**
  * 设置
  *
- * @param key   key
- * @param val   val
- * @param isObj 是否为对象
+ * @param key key
+ * @param val val
+ * @return any
  */
-export const cacheSetByObj = (key, val, isObj) => {
-  return window.api['cacheSet'](StoreTypeEnum.CONFIG, key, val)
-  // return (localStorage[key] = isNotNull(val) && isObj ? JSON.stringify(val) : val)
+export const cacheSet = (key, val): any => {
+  const type = Object.prototype.toString.call(val)
+  if (type === '[object Object]' || type === '[object Array]') {
+    val = JSON.parse(JSON.stringify(val))
+  }
+  window.api['cacheSet'](StoreTypeEnum.CONFIG, key, val)
 }

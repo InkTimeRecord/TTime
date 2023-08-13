@@ -1,6 +1,6 @@
 import { isNull } from '../../../common/utils/validate'
 import ElMessageExtend from './messageExtend'
-import { cacheGetStr } from './cacheUtil'
+import { cacheGet } from './cacheUtil'
 import { PlaySpeechServiceEnum } from '../../../common/enums/PlaySpeechServiceEnum'
 
 /**
@@ -21,7 +21,7 @@ const textWriteShearPlate = (text): void => {
  * @param text 播放的文字
  */
 const playSpeech = (text): void => {
-  const playSpeechService = cacheGetStr('playSpeechService')
+  const playSpeechService = cacheGet('playSpeechService')
   if (playSpeechService === PlaySpeechServiceEnum.TTIME) {
     const synth = window.speechSynthesis
     const msg = new SpeechSynthesisUtterance(text)

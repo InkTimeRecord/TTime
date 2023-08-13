@@ -15,6 +15,11 @@
 
 <body>
 <div id='app'></div>
-<script type='module' src='/src/set/main.ts'></script>
 </body>
+<script type='module' src='/src/set/main.ts'></script>
+<script>
+  window.addEventListener('error', function (event) {
+    window.api.logErrorEvent('[设置窗口异常]', event.error)
+  });
+</script>
 </html>

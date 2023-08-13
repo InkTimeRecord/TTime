@@ -1,5 +1,6 @@
 import { contextBridge, nativeImage } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
+import common from './common'
 
 const ipcRenderer = electronAPI.ipcRenderer
 
@@ -385,6 +386,7 @@ const screenScaleFactorEvent = (screenId): void => {
 
 // Custom APIs for renderer
 const api = {
+  ...common,
   screenScaleFactorNoticeEvent,
   screenScaleFactorEvent,
   screenshotEndEvent

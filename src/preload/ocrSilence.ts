@@ -1,5 +1,6 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
+import common from './common'
 
 const hoverBallEvents = (): void => {
   ipcRenderer.invoke('hover-ball-events')
@@ -18,6 +19,7 @@ const hoverBallHideEvents = (callback): void => {
 }
 
 const api = {
+  ...common,
   hoverBallEvents,
   hoverBallShowEvents,
   hoverBallHideEvents

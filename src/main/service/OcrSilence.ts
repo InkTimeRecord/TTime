@@ -59,7 +59,7 @@ function createOcrSilenceWin(): void {
 uIOhook.start()
 
 /**
- * 滚动鼠标时关闭悬浮球
+ * 滚动鼠标时关闭加载窗口
  */
 uIOhook.on('wheel', (_e: UiohookWheelEvent) => {
   if (GlobalWin.isOcrSilence) {
@@ -81,7 +81,7 @@ uIOhook.on('mousemove', () => {
         const height = res.height
         // 获取到鼠标的横坐标和纵坐标
         const { x, y } = screen.getCursorScreenPoint()
-        // 设置坐标的同时设置宽高 否则在多显示器且显示器之间缩放比例不一致的情况下来回切换会导致悬浮球显示错位
+        // 设置坐标的同时设置宽高 否则在多显示器且显示器之间缩放比例不一致的情况下来回切换会导致加载窗口显示错位
         GlobalWin.ocrSilenceWin.setBounds({ x: x, y: y + 11, width: width, height: height })
       })
   }

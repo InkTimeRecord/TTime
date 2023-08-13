@@ -20,15 +20,15 @@
 <script setup lang="ts">
 import { YesNoEnum } from '../../../../common/enums/YesNoEnum'
 import { ref } from 'vue'
-import { cacheGetStr, cacheSetStr } from '../../utils/cacheUtil'
+import { cacheGet, cacheSet } from '../../utils/cacheUtil'
 
 // 首次打开时设置默认图钉状态
-if (undefined === cacheGetStr('thumbtackStatus')) {
-  cacheSetStr('thumbtackStatus', YesNoEnum.N)
+if (undefined === cacheGet('thumbtackStatus')) {
+  cacheSet('thumbtackStatus', YesNoEnum.N)
 }
 
 // 窗口固定状态
-const thumbtackStatus = ref(cacheGetStr('thumbtackStatus'))
+const thumbtackStatus = ref(cacheGet('thumbtackStatus'))
 
 // 根据固定状态设置窗口是否置于最前面
 window.api.alwaysOnTopEvent(thumbtackStatus.value === YesNoEnum.Y)
@@ -37,8 +37,8 @@ window.api.alwaysOnTopEvent(thumbtackStatus.value === YesNoEnum.Y)
  * 窗口固定
  */
 const thumbtackFun = (): void => {
-  const thumbtackStatusCache = cacheGetStr('thumbtackStatus')
-  cacheSetStr(
+  const thumbtackStatusCache = cacheGet('thumbtackStatus')
+  cacheSet(
     'thumbtackStatus',
     undefined === thumbtackStatusCache
       ? YesNoEnum.N
@@ -46,8 +46,8 @@ const thumbtackFun = (): void => {
       ? YesNoEnum.Y
       : YesNoEnum.N
   )
-  thumbtackStatus.value = cacheGetStr('thumbtackStatus')
-  window.api.alwaysOnTopEvent(cacheGetStr('thumbtackStatus') === YesNoEnum.Y)
+  thumbtackStatus.value = cacheGet('thumbtackStatus')
+  window.api.alwaysOnTopEvent(cacheGet('thumbtackStatus') === YesNoEnum.Y)
 }
 
 /**

@@ -1,36 +1,12 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
+import common from './common'
 
 /**
  * 关闭窗口事件
  */
 const closeOcrWinEvent = (): void => {
   ipcRenderer.invoke('close-ocr-win-event')
-}
-
-/**
- * 获取系统类型
- */
-const getSystemTypeEvent = (): string => {
-  return ipcRenderer.sendSync('get-system-type-event')
-}
-
-/**
- * 打开设置页面事件
- */
-const openSetPageEvent = (): void => {
-  ipcRenderer.invoke('open-set-page-event')
-}
-
-/**
- * 窗口显示消息提示
- *
- * @param callback 回调方法
- */
-const showMsgEvent = (callback): void => {
-  ipcRenderer.on('show-msg-event', (_event, type, msg) => {
-    callback(type, msg)
-  })
 }
 
 /**
@@ -94,10 +70,8 @@ const updateTranslatedContentEvent = (text): void => {
 
 // Custom APIs for renderer
 const api = {
+  ...common,
   closeOcrWinEvent,
-  getSystemTypeEvent,
-  openSetPageEvent,
-  showMsgEvent,
   ocrAlwaysOnTopEvent,
   updateImg,
   updateText,

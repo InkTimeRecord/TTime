@@ -34,6 +34,9 @@
   <img id='imgLogoSign' class='img-logo' src='src/assets/logo.png' onclick='hoverBall()'/>
 </body>
 <script>
+  window.addEventListener('error', function (event) {
+    window.api.logErrorEvent('[悬浮球窗口异常]', event.error)
+  });
 
   function hoverBall() {
     /* 点击时添加隐藏类 */

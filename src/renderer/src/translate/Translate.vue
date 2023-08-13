@@ -30,7 +30,7 @@ import { isNull } from '../../../common/utils/validate'
 import { buildTranslateService, setTranslateServiceMap } from '../utils/translateServiceUtil'
 import { buildOcrService, setOcrServiceMap } from '../utils/ocrServiceUtil'
 import { initTheme } from '../utils/themeUtil'
-import { cacheGetStr, cacheSet, cacheSetStr } from '../utils/cacheUtil'
+import { cacheGet, cacheSet } from '../utils/cacheUtil'
 import { PlaySpeechServiceEnum } from '../../../common/enums/PlaySpeechServiceEnum'
 import '../channel/ChannelRequest'
 import TranslateServiceEnum from '../../../common/enums/TranslateServiceEnum'
@@ -68,7 +68,7 @@ window.api.winShowByInputEvent(() => {
  * 翻译服务list 如果不存在则说明第一次打开
  * 初始化默认翻译服务
  */
-if (isNull(cacheGetStr('translateServiceMap'))) {
+if (isNull(cacheGet('translateServiceMap'))) {
   const map = new Map()
   const ttimeService = buildTranslateService(TranslateServiceEnum.TTIME)
   map.set(ttimeService.id, ttimeService)
@@ -91,7 +91,7 @@ if (isNull(cacheGetStr('translateServiceMap'))) {
  * Ocr服务list 如果不存在则说明第一次打开
  * 初始化默认Ocr服务
  */
-if (isNull(cacheGetStr('ocrServiceMap'))) {
+if (isNull(cacheGet('ocrServiceMap'))) {
   const map = new Map()
   const ttimeService = buildOcrService(OcrServiceEnum.TTIME)
   map.set(ttimeService.id, ttimeService)
@@ -99,30 +99,30 @@ if (isNull(cacheGetStr('ocrServiceMap'))) {
 }
 
 // 首次打开时设置默认快捷键
-if (undefined === cacheGetStr('inputShortcutKey')) {
-  cacheSetStr('inputShortcutKey', 'Alt + Q')
+if (undefined === cacheGet('inputShortcutKey')) {
+  cacheSet('inputShortcutKey', 'Alt + Q')
 }
-if (undefined === cacheGetStr('screenshotShortcutKey')) {
-  cacheSetStr('screenshotShortcutKey', 'Alt + W')
+if (undefined === cacheGet('screenshotShortcutKey')) {
+  cacheSet('screenshotShortcutKey', 'Alt + W')
 }
-if (undefined === cacheGetStr('choiceShortcutKey')) {
-  cacheSetStr('choiceShortcutKey', 'Alt + E')
+if (undefined === cacheGet('choiceShortcutKey')) {
+  cacheSet('choiceShortcutKey', 'Alt + E')
 }
-if (undefined === cacheGetStr('screenshotOcrShortcutKey')) {
-  cacheSetStr('screenshotOcrShortcutKey', 'Alt + Shift + W')
+if (undefined === cacheGet('screenshotOcrShortcutKey')) {
+  cacheSet('screenshotOcrShortcutKey', 'Alt + Shift + W')
 }
-if (undefined === cacheGetStr('screenshotSilenceOcrShortcutKey')) {
-  cacheSetStr('screenshotSilenceOcrShortcutKey', 'Alt + Shift + E')
+if (undefined === cacheGet('screenshotSilenceOcrShortcutKey')) {
+  cacheSet('screenshotSilenceOcrShortcutKey', 'Alt + Shift + E')
 }
-if (undefined === cacheGetStr('translateShowPositionType')) {
-  cacheSetStr('translateShowPositionType', TranslateShowPositionEnum.LAST_TIME)
+if (undefined === cacheGet('translateShowPositionType')) {
+  cacheSet('translateShowPositionType', TranslateShowPositionEnum.LAST_TIME)
 }
-if (undefined === cacheGetStr('fromTopOfWindowPercentage')) {
-  cacheSetStr('fromTopOfWindowPercentage', 30)
+if (undefined === cacheGet('fromTopOfWindowPercentage')) {
+  cacheSet('fromTopOfWindowPercentage', 30)
 }
 
 // 首次加载 - 代理配置初始化
-if (isNull(cacheGetStr('agentConfig'))) {
+if (isNull(cacheGet('agentConfig'))) {
   cacheSet('agentConfig', {
     type: 0,
     checkStatus: false,
@@ -134,13 +134,13 @@ if (isNull(cacheGetStr('agentConfig'))) {
 }
 
 const translateShortcutKeyList = [
-  { type: ShortcutKeyEnum.INPUT, shortcutKey: cacheGetStr('inputShortcutKey') },
-  { type: ShortcutKeyEnum.SCREENSHOT, shortcutKey: cacheGetStr('screenshotShortcutKey') },
-  { type: ShortcutKeyEnum.CHOICE, shortcutKey: cacheGetStr('choiceShortcutKey') },
-  { type: ShortcutKeyEnum.SCREENSHOT_OCR, shortcutKey: cacheGetStr('screenshotOcrShortcutKey') },
+  { type: ShortcutKeyEnum.INPUT, shortcutKey: cacheGet('inputShortcutKey') },
+  { type: ShortcutKeyEnum.SCREENSHOT, shortcutKey: cacheGet('screenshotShortcutKey') },
+  { type: ShortcutKeyEnum.CHOICE, shortcutKey: cacheGet('choiceShortcutKey') },
+  { type: ShortcutKeyEnum.SCREENSHOT_OCR, shortcutKey: cacheGet('screenshotOcrShortcutKey') },
   {
     type: ShortcutKeyEnum.SCREENSHOT_SILENCE_OCR,
-    shortcutKey: cacheGetStr('screenshotSilenceOcrShortcutKey')
+    shortcutKey: cacheGet('screenshotSilenceOcrShortcutKey')
   }
 ]
 window.api.logInfoEvent(
@@ -153,46 +153,43 @@ window.api.logInfoEvent('[初始加载翻译快捷键事件] - 结束')
 // 初始化开机自启事件
 window.api.autoLaunchInitEvent()
 // 初始化自动更新事件
-if (undefined === cacheGetStr('autoUpdater')) {
-  cacheSetStr('autoUpdater', YesNoEnum.Y)
+if (undefined === cacheGet('autoUpdater')) {
+  cacheSet('autoUpdater', YesNoEnum.Y)
 }
 // 语音播放源
-if (undefined === cacheGetStr('playSpeechService')) {
-  cacheSetStr('playSpeechService', PlaySpeechServiceEnum.TTIME)
+if (undefined === cacheGet('playSpeechService')) {
+  cacheSet('playSpeechService', PlaySpeechServiceEnum.TTIME)
 }
 // 初始化置顶时允许隐藏窗口状态
-if (undefined === cacheGetStr('alwaysOnTopAllowEscStatus')) {
-  cacheSetStr('alwaysOnTopAllowEscStatus', YesNoEnum.N)
+if (undefined === cacheGet('alwaysOnTopAllowEscStatus')) {
+  cacheSet('alwaysOnTopAllowEscStatus', YesNoEnum.N)
 }
 // 初始化换行符替换为空格状态
-if (undefined === cacheGetStr('wrapReplaceSpaceStatus')) {
-  cacheSetStr('wrapReplaceSpaceStatus', YesNoEnum.N)
+if (undefined === cacheGet('wrapReplaceSpaceStatus')) {
+  cacheSet('wrapReplaceSpaceStatus', YesNoEnum.N)
 }
-const hoverBallStatus = cacheGetStr('hoverBallStatus')
+const hoverBallStatus = cacheGet('hoverBallStatus')
 // 初始化鼠标悬浮球取词状态
 if (undefined === hoverBallStatus) {
-  cacheSetStr('hoverBallStatus', YesNoEnum.N)
+  cacheSet('hoverBallStatus', YesNoEnum.N)
   // 悬浮球增强模式
-  cacheSetStr('hoverBallEnhanceStatus', YesNoEnum.N)
+  cacheSet('hoverBallEnhanceStatus', YesNoEnum.N)
 } else {
-  const hoverBallEnhanceStatus = cacheGetStr('hoverBallEnhanceStatus')
+  const hoverBallEnhanceStatus = cacheGet('hoverBallEnhanceStatus')
   // 因为新增了悬浮球增强模式 所以此处主要用于兼容之前开启了悬浮球的 但是没有开启增强的 默认赋值开启
   if (hoverBallStatus === YesNoEnum.Y && undefined === hoverBallEnhanceStatus) {
     // 悬浮球增强模式
-    cacheSetStr('hoverBallEnhanceStatus', YesNoEnum.Y)
+    cacheSet('hoverBallEnhanceStatus', YesNoEnum.Y)
   }
 }
 // 初始化OCR结果写入剪切板状态
-if (undefined === cacheGetStr('ocrWriteClipboardStatus')) {
-  cacheSetStr('ocrWriteClipboardStatus', YesNoEnum.N)
+if (undefined === cacheGet('ocrWriteClipboardStatus')) {
+  cacheSet('ocrWriteClipboardStatus', YesNoEnum.N)
 }
 // 初始化OCR结果换行符替换为空格状态
-if (undefined === cacheGetStr('ocrWrapReplaceSpaceStatus')) {
-  cacheSetStr('ocrWrapReplaceSpaceStatus', YesNoEnum.N)
+if (undefined === cacheGet('ocrWrapReplaceSpaceStatus')) {
+  cacheSet('ocrWrapReplaceSpaceStatus', YesNoEnum.N)
 }
-window.api.updateCacheEvent((key, value) => {
-  cacheSetStr(key, value)
-})
 
 /**
  * 调起消息弹层提示事件

@@ -51,7 +51,7 @@ import { YesNoEnum } from '../../../../../common/enums/YesNoEnum'
 import { ThemeTypeEnum } from '../../../enums/ThemeTypeEnum'
 import TranslateShowPositionEnum from '../../../../../common/enums/TranslateShowPositionEnum'
 import { initTheme } from '../../../utils/themeUtil'
-import { cacheGetStr, cacheSetStr } from '../../../utils/cacheUtil'
+import { cacheGet, cacheSet } from '../../../utils/cacheUtil'
 
 // 初始化主题
 const useThemeMode = initTheme()
@@ -68,10 +68,10 @@ const toggleTheme = (themeType) => {
 const basiInfo = ref({
   theme: localStorage['useTheme'],
   language: 'zh',
-  autoLaunch: cacheGetStr('autoLaunch') === YesNoEnum.Y,
-  autoUpdater: cacheGetStr('autoUpdater') === YesNoEnum.Y,
-  translateShowPositionType: cacheGetStr('translateShowPositionType'),
-  fromTopOfWindowPercentage: cacheGetStr('fromTopOfWindowPercentage')
+  autoLaunch: cacheGet('autoLaunch') === YesNoEnum.Y,
+  autoUpdater: cacheGet('autoUpdater') === YesNoEnum.Y,
+  translateShowPositionType: cacheGet('translateShowPositionType'),
+  fromTopOfWindowPercentage: cacheGet('fromTopOfWindowPercentage')
 })
 
 /**
@@ -80,7 +80,7 @@ const basiInfo = ref({
  * @param autoLaunch 开机自启状态
  */
 const autoLaunchEvent = (autoLaunch): void => {
-  cacheSetStr('autoLaunch', autoLaunch ? YesNoEnum.Y : YesNoEnum.N)
+  cacheSet('autoLaunch', autoLaunch ? YesNoEnum.Y : YesNoEnum.N)
   basiInfo.value.autoLaunch = autoLaunch
   window.api.autoLaunchEvent(autoLaunch)
 }
@@ -91,7 +91,7 @@ const autoLaunchEvent = (autoLaunch): void => {
  * @param autoUpdater 自动更新状态
  */
 const autoUpdaterEvent = (autoUpdater): void => {
-  cacheSetStr('autoUpdater', autoUpdater ? YesNoEnum.Y : YesNoEnum.N)
+  cacheSet('autoUpdater', autoUpdater ? YesNoEnum.Y : YesNoEnum.N)
   basiInfo.value.autoUpdater = autoUpdater
   if (autoUpdater) {
     window.api.autoUpdaterSilenceStartCheckEvent()
@@ -104,7 +104,7 @@ const autoUpdaterEvent = (autoUpdater): void => {
  * @param translateShowPositionType 翻译窗口显示位置类型
  */
 const translateShowPositionTypeSelectChange = (translateShowPositionType): void => {
-  cacheSetStr('translateShowPositionType', translateShowPositionType)
+  cacheSet('translateShowPositionType', translateShowPositionType)
   basiInfo.value.translateShowPositionType = translateShowPositionType
 }
 /**
@@ -113,7 +113,7 @@ const translateShowPositionTypeSelectChange = (translateShowPositionType): void 
  * @param fromTopOfWindowPercentage 翻译距离窗口顶部位置
  */
 const fromTopOfWindowPercentageChange = (fromTopOfWindowPercentage): void => {
-  cacheSetStr('fromTopOfWindowPercentage', fromTopOfWindowPercentage)
+  cacheSet('fromTopOfWindowPercentage', fromTopOfWindowPercentage)
   basiInfo.value.fromTopOfWindowPercentage = fromTopOfWindowPercentage
 }
 </script>
