@@ -8,7 +8,7 @@ import { isNotNull } from '../../../common/utils/validate'
  * @return any
  */
 export const cacheGet = (key): any => {
-  return window.api['cacheGet'](StoreTypeEnum.CONFIG, key)
+  return cacheGetByType(StoreTypeEnum.CONFIG, key)
 }
 
 /**
@@ -16,14 +16,35 @@ export const cacheGet = (key): any => {
  *
  * @param key key
  * @param val val
+ */
+export const cacheSet = (key, val): void => {
+  cacheSetByType(StoreTypeEnum.CONFIG, key, val)
+}
+
+/**
+ * 设置
+ *
+ * @param storeType 存储类型
+ * @param key key
  * @return any
  */
-export const cacheSet = (key, val): any => {
+export const cacheGetByType = (storeType, key): any => {
+  return window.api['cacheGet'](storeType, key)
+}
+
+/**
+ * 设置
+ *
+ * @param storeType 存储类型
+ * @param key key
+ * @param val val
+ */
+export const cacheSetByType = (storeType, key, val): void => {
   const type = Object.prototype.toString.call(val)
   if (type === '[object Object]' || type === '[object Array]') {
     val = JSON.parse(JSON.stringify(val))
   }
-  window.api['cacheSet'](StoreTypeEnum.CONFIG, key, val)
+  window.api['cacheSet'](storeType, key, val)
 }
 
 /**

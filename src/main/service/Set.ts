@@ -1,5 +1,6 @@
-import { BrowserWindow, ipcMain } from 'electron'
+import { app, BrowserWindow, ipcMain } from 'electron'
 import path from 'path'
+import * as fs from 'fs'
 import { is } from '@electron-toolkit/utils'
 import { GlobalShortcutEvent } from './GlobalShortcutEvent'
 import R from '../../common/class/R'
@@ -8,6 +9,8 @@ import { isNotNull, isNull } from '../../common/utils/validate'
 import GlobalWin from './GlobalWin'
 import { SystemTypeEnum } from '../enums/SystemTypeEnum'
 import BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions
+import { StoreTypeEnum } from '../../common/enums/StoreTypeEnum'
+import StoreService from './StoreService'
 
 let nullWin: BrowserWindow
 
@@ -132,6 +135,25 @@ ipcMain.handle('update-translate-service-event', (_event, _args) => {
  */
 ipcMain.handle('always-onTop-allow-esc-status-notify', (_event, _args) => {
   GlobalWin.mainOrOcrWinShowCallback()
+})
+
+/**
+ * 更新配置信息路径
+ */
+ipcMain.handle('update-config-info-path', (_event, storeType, directoryPath) => {
+  if (storeType === StoreTypeEnum.CONFIG) {
+    const configPath = StoreService.systemGet('configPath')
+    directoryPath = path.join(
+      directoryPath,
+      StoreService.configStore.path.replaceAll(configPath, '')
+    )
+    console.log('directoryPath = ', directoryPath)
+  } else if (storeType === StoreTypeEnum.HISTORY_RECORD) {
+  }
+  // fs.rename('/data/file1.txt', '/backup/file1.txt', (err) => {
+  //   if (err) throw err;
+  //   console.log('File moved to backup folder');
+  // });
 })
 
 export default createSetWindow

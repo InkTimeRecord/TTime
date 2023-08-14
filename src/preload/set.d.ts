@@ -20,6 +20,9 @@ declare global {
     getVersionEvent
     agentUpdateEvent
     alwaysOnTopAllowEscStatusNotify
+    openDirectoryDialog
+    openDirectoryDialogCallback
+    updateConfigInfoPath
   }
 
   interface Window {

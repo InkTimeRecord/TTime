@@ -1,9 +1,6 @@
-import { app } from 'electron'
+import path from 'path'
 import log from 'electron-log'
-
-// /Users/用户账号名称/Library/Application Support/time-translate/logs/
-// C:\Users\用户账号名称\AppData\Roaming\time-translate/logs/
-const userDataPath = app.getPath('userData') + '/logs/'
+import StoreService from '../service/StoreService'
 
 log.transports.file.level = 'debug'
 // 文件最大不超过 1M
@@ -19,6 +16,5 @@ const zeroExpand = (num): string => {
 const dateName =
   date.getFullYear() + '-' + zeroExpand(date.getMonth() + 1) + '-' + zeroExpand(date.getDate())
 // 输出路径 : /Users/用户账号名称/Library/Application Support/time-translate/logs/年-月-日.log
-log.transports.file.resolvePath = () => userDataPath + dateName + '.log'
-
+log.transports.file.resolvePath = () => path.join(StoreService.logsPath, dateName + '.log')
 export default log

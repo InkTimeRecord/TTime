@@ -3,14 +3,14 @@
  */
 class StoreTypeEnum {
   /**
+   * 系統配置
+   */
+  static SYSTEM = 'system'
+
+  /**
    * 配置
    */
   static CONFIG = 'config'
-
-  /**
-   * 服务
-   */
-  static SERVICE = 'service'
 
   /**
    * 历史记录

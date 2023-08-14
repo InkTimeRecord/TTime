@@ -99,6 +99,29 @@ const alwaysOnTopAllowEscStatusNotify = (): void => {
   ipcRenderer.invoke('always-onTop-allow-esc-status-notify')
 }
 
+/**
+ * 打开目录对话框
+ */
+const openDirectoryDialog = (storeType): void => {
+  ipcRenderer.send('open-directory-dialog', storeType)
+}
+
+/**
+ * 打开目录对话框回调
+ */
+const openDirectoryDialogCallback = (callback): void => {
+  ipcRenderer.on('open-directory-dialog-callback', (_event, storeType, directoryPath) => {
+    callback(storeType, directoryPath)
+  })
+}
+
+/**
+ * 更新配置信息路径
+ */
+const updateConfigInfoPath = (storeType, directoryPath): void => {
+  ipcRenderer.invoke('update-config-info-path', storeType, directoryPath)
+}
+
 const api = {
   ...common,
   updateTranslateShortcutKeyEvent,
@@ -112,7 +135,10 @@ const api = {
   apiUniteOcrCheck,
   apiCheckOcrCallbackEvent,
   agentUpdateEvent,
-  alwaysOnTopAllowEscStatusNotify
+  alwaysOnTopAllowEscStatusNotify,
+  openDirectoryDialog,
+  openDirectoryDialogCallback,
+  updateConfigInfoPath
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

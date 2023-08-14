@@ -160,22 +160,6 @@ const alwaysOnTopEvent = (status): void => {
 }
 
 /**
- * 初始加载翻译快捷键事件
- * @param list
- */
-const initLoadTranslateShortcutKeyEvent = (list): void => {
-  ipcRenderer.invoke('init-load-translate-shortcut-key-event', list)
-}
-
-/**
- * 开机自启事件
- */
-const autoLaunchInitEvent = (): void => {
-  // 初始化默认传递true
-  ipcRenderer.invoke('auto-launch-init-event')
-}
-
-/**
  * 更新消息事件
  *
  * @param callback 回调方法
@@ -281,8 +265,6 @@ const api = {
   pageHeightChangeEvent,
   textWriteShearPlateEvent,
   alwaysOnTopEvent,
-  initLoadTranslateShortcutKeyEvent,
-  autoLaunchInitEvent,
   updateMessageEvent,
   windowHeightChangeMaxEvent,
   screenshotEndNotifyEvent,

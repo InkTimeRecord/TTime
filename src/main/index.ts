@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, shell } from 'electron'
+import { app, BrowserWindow, dialog, ipcMain, shell } from 'electron'
 import * as path from 'path'
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 import { GlobalShortcutEvent } from './service/GlobalShortcutEvent'
@@ -235,4 +235,22 @@ ipcMain.on('get-version-event', (event) => {
  */
 ipcMain.handle('agent-update-event', (_event, agentConfig) => {
   injectWinAgent(agentConfig, mainWin.webContents.session)
+})
+
+/**
+ * 打开目录对话框
+ */
+ipcMain.on('open-directory-dialog', (event, storeType) => {
+  dialog
+    .showOpenDialog({
+      properties: ['openDirectory'],
+      title: '请选择文件夹',
+      buttonLabel: '选择文件夹'
+    })
+    .then((result) => {
+      if (result.canceled) {
+        return
+      }
+      event.sender.send('open-directory-dialog-callback', storeType, result.filePaths[0])
+    })
 })
