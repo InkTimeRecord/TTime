@@ -36,6 +36,9 @@
 import { ref } from 'vue'
 import { cacheGetByType } from '../../../utils/cacheUtil'
 import { StoreTypeEnum } from '../../../../../common/enums/StoreTypeEnum'
+import R from '../../../../../common/class/R'
+import ElMessageExtend from '../../../utils/messageExtend'
+
 const StoreType = ref(StoreTypeEnum)
 
 // 配置路徑
@@ -47,8 +50,14 @@ const openFileSelection = (openFileSelectType): void => {
   window.api.openDirectoryDialog(openFileSelectType)
 }
 window.api.openDirectoryDialogCallback((storeType, directoryPath) => {
+  const res = window.api.updateConfigInfoPath(storeType, directoryPath)
+  console.log(res)
+  if (res.code === R.ERROR) {
+    ElMessageExtend.warning(res.msg)
+    return
+  }
+  directoryPath = res.data
   if (storeType === StoreTypeEnum.CONFIG) {
-    window.api.updateConfigInfoPath(storeType, directoryPath)
     configPath.value = directoryPath
   } else if (storeType === StoreTypeEnum.HISTORY_RECORD) {
     historyRecordPath.value = directoryPath

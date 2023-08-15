@@ -1,6 +1,7 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
 import common from './common'
+import R from '../common/class/R'
 
 const updateTranslateShortcutKeyEvent = (type, oldShortcutKey, shortcutKey, callback): void => {
   const res = ipcRenderer.sendSync(
@@ -118,8 +119,8 @@ const openDirectoryDialogCallback = (callback): void => {
 /**
  * 更新配置信息路径
  */
-const updateConfigInfoPath = (storeType, directoryPath): void => {
-  ipcRenderer.invoke('update-config-info-path', storeType, directoryPath)
+const updateConfigInfoPath = (storeType, directoryPath): R => {
+  return ipcRenderer.sendSync('update-config-info-path', storeType, directoryPath)
 }
 
 const api = {

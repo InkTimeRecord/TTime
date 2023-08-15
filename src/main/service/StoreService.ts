@@ -22,8 +22,25 @@ class StoreService {
    * 用户数据默认路径
    */
   static userDataPath = app.getPath('userData')
-  // 配置路径
-  static userDataConfigPath = path.join(StoreService.userDataPath, 'userDataConfig')
+  /**
+   * 用户数据存放文件夹名称
+   */
+  static configName = 'configPath'
+  /**
+   * 用户数据存放文件夹名称
+   */
+  static historyRecordName = 'historyRecordPath'
+  /**
+   * 用户数据存放文件夹名称
+   */
+  static userDataConfigFolderName = 'userDataConfig'
+  /**
+   * 配置路径
+   */
+  static userDataConfigPath = path.join(
+    StoreService.userDataPath,
+    StoreService.userDataConfigFolderName
+  )
   // 日志存储路径
   static logsPath = path.join(StoreService.userDataPath, 'logs')
   // 系统存储
@@ -39,11 +56,11 @@ class StoreService {
       // 文件位置
       cwd: path.join(app.getPath('userData'))
     })
-    if (!StoreService.systemStore.has('configPath')) {
+    if (!StoreService.systemStore.has(StoreService.configName)) {
       // 配置路径
-      StoreService.systemStore.set('configPath', StoreService.userDataConfigPath)
+      StoreService.systemStore.set(StoreService.configName, StoreService.userDataConfigPath)
       // 历史记录路径
-      StoreService.systemStore.set('historyRecordPath', StoreService.userDataConfigPath)
+      StoreService.systemStore.set(StoreService.historyRecordName, StoreService.userDataConfigPath)
     }
 
     // 配置相关
@@ -52,7 +69,7 @@ class StoreService {
       // 文件位置
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      cwd: StoreService.systemGet('configPath')
+      cwd: StoreService.systemGet(StoreService.configName)
     })
     console.log('StoreService.configStore.path = ', StoreService.configStore.path)
 
@@ -62,7 +79,7 @@ class StoreService {
       // 文件位置
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      cwd: StoreService.systemGet('historyRecordPath')
+      cwd: StoreService.systemGet(StoreService.historyRecordName)
     })
     console.log('StoreService.historyRecordStore.path = ', StoreService.historyRecordStore.path)
   }

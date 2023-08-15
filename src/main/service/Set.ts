@@ -1,6 +1,6 @@
-import { app, BrowserWindow, ipcMain } from 'electron'
+import { BrowserWindow, ipcMain } from 'electron'
 import path from 'path'
-import * as fs from 'fs'
+import * as fse from 'fs-extra'
 import { is } from '@electron-toolkit/utils'
 import { GlobalShortcutEvent } from './GlobalShortcutEvent'
 import R from '../../common/class/R'
@@ -8,9 +8,9 @@ import log from '../utils/log'
 import { isNotNull, isNull } from '../../common/utils/validate'
 import GlobalWin from './GlobalWin'
 import { SystemTypeEnum } from '../enums/SystemTypeEnum'
-import BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions
 import { StoreTypeEnum } from '../../common/enums/StoreTypeEnum'
 import StoreService from './StoreService'
+import BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions
 
 let nullWin: BrowserWindow
 
@@ -140,20 +140,48 @@ ipcMain.handle('always-onTop-allow-esc-status-notify', (_event, _args) => {
 /**
  * 更新配置信息路径
  */
-ipcMain.handle('update-config-info-path', (_event, storeType, directoryPath) => {
+ipcMain.on('update-config-info-path', (event, storeType, directoryPath) => {
+  directoryPath = path.join(directoryPath, StoreService.userDataConfigFolderName)
+  let oldFilePath, oldPath
   if (storeType === StoreTypeEnum.CONFIG) {
-    const configPath = StoreService.systemGet('configPath')
-    directoryPath = path.join(
-      directoryPath,
-      StoreService.configStore.path.replaceAll(configPath, '')
-    )
-    console.log('directoryPath = ', directoryPath)
+    oldFilePath = StoreService.configStore.path
+    oldPath = StoreService.systemGet(StoreService.configName)
   } else if (storeType === StoreTypeEnum.HISTORY_RECORD) {
+    oldFilePath = StoreService.historyRecordStore.path
+    oldPath = StoreService.systemGet(StoreService.historyRecordName)
   }
-  // fs.rename('/data/file1.txt', '/backup/file1.txt', (err) => {
-  //   if (err) throw err;
-  //   console.log('File moved to backup folder');
-  // });
+  const fileName = oldFilePath.replaceAll(oldPath, '')
+  const newFilePath = path.join(directoryPath, fileName)
+  console.log('newFilePath = ', newFilePath)
+  if (oldFilePath === newFilePath) {
+    event.returnValue = R.error('文件路径未修改')
+    return
+  }
+  fse
+    .move(oldFilePath, newFilePath)
+    .then(() => {
+      updateStoreConfig(storeType, directoryPath)
+      event.returnValue = R.ok()
+    })
+    .catch((err) => {
+      log.error(err)
+      if (err.message.indexOf('no such file or directory, lstat') != -1) {
+        log.info('directoryPath =', directoryPath)
+        updateStoreConfig(storeType, directoryPath)
+        event.returnValue = R.okD(directoryPath)
+        return
+      }
+      event.returnValue = R.error('修改失败')
+    })
 })
+
+const updateStoreConfig = (storeType, directoryPath): void => {
+  if (storeType === StoreTypeEnum.CONFIG) {
+    StoreService.systemSet(StoreService.configName, directoryPath)
+  } else if (storeType === StoreTypeEnum.HISTORY_RECORD) {
+    StoreService.systemSet(StoreService.historyRecordName, directoryPath)
+  }
+  StoreService.init()
+}
 
 export default createSetWindow
