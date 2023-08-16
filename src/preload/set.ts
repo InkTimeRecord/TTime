@@ -103,24 +103,32 @@ const alwaysOnTopAllowEscStatusNotify = (): void => {
 /**
  * 打开目录对话框
  */
-const openDirectoryDialog = (storeType): void => {
-  ipcRenderer.send('open-directory-dialog', storeType)
+const openDirectoryDialog = (storeConfigFunType, storeType): void => {
+  ipcRenderer.send('open-directory-dialog', storeConfigFunType, storeType)
 }
 
 /**
  * 打开目录对话框回调
  */
 const openDirectoryDialogCallback = (callback): void => {
-  ipcRenderer.on('open-directory-dialog-callback', (_event, storeType, directoryPath) => {
-    callback(storeType, directoryPath)
-  })
+  ipcRenderer.on(
+    'open-directory-dialog-callback',
+    (_event, storeConfigFunType, storeType, directoryPath) => {
+      callback(storeConfigFunType, storeType, directoryPath)
+    }
+  )
 }
 
 /**
  * 更新配置信息路径
  */
-const updateConfigInfoPath = (storeType, directoryPath): R => {
-  return ipcRenderer.sendSync('update-config-info-path', storeType, directoryPath)
+const updateConfigInfoPath = (storeConfigFunType, storeType, directoryPath): R => {
+  return ipcRenderer.sendSync(
+    'update-config-info-path',
+    storeConfigFunType,
+    storeType,
+    directoryPath
+  )
 }
 
 const api = {

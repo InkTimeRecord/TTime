@@ -10,6 +10,7 @@ import GlobalWin from './GlobalWin'
 import { SystemTypeEnum } from '../enums/SystemTypeEnum'
 import { StoreTypeEnum } from '../../common/enums/StoreTypeEnum'
 import StoreService from './StoreService'
+import { StoreConfigFunTypeEnum } from '../../common/enums/StoreConfigFunTypeEnum'
 import BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions
 
 let nullWin: BrowserWindow
@@ -140,7 +141,7 @@ ipcMain.handle('always-onTop-allow-esc-status-notify', (_event, _args) => {
 /**
  * 更新配置信息路径
  */
-ipcMain.on('update-config-info-path', (event, storeType, directoryPath) => {
+ipcMain.on('update-config-info-path', (event, storeConfigFunType, storeType, directoryPath) => {
   directoryPath = path.join(directoryPath, StoreService.userDataConfigFolderName)
   let oldFilePath, oldPath
   if (storeType === StoreTypeEnum.CONFIG) {
@@ -152,27 +153,36 @@ ipcMain.on('update-config-info-path', (event, storeType, directoryPath) => {
   }
   const fileName = oldFilePath.replaceAll(oldPath, '')
   const newFilePath = path.join(directoryPath, fileName)
-  console.log('newFilePath = ', newFilePath)
   if (oldFilePath === newFilePath) {
     event.returnValue = R.error('文件路径未修改')
     return
   }
-  fse
-    .move(oldFilePath, newFilePath)
-    .then(() => {
-      updateStoreConfig(storeType, directoryPath)
-      event.returnValue = R.ok()
-    })
-    .catch((err) => {
-      log.error(err)
-      if (err.message.indexOf('no such file or directory, lstat') != -1) {
-        log.info('directoryPath =', directoryPath)
+
+  if (StoreConfigFunTypeEnum.MOVE === storeConfigFunType) {
+    fse
+      .move(oldFilePath, newFilePath)
+      .then(() => {
         updateStoreConfig(storeType, directoryPath)
         event.returnValue = R.okD(directoryPath)
-        return
-      }
-      event.returnValue = R.error('修改失败')
-    })
+      })
+      .catch((err) => {
+        log.error(err)
+        // 当修改翻译记录的路径时 如果新安装还未翻译过将会导致没有生成翻译记录文件
+        // 这里校验一下 如果没有的话则进行迁移
+        if (err.message.indexOf('no such file or directory') != -1) {
+          updateStoreConfig(storeType, directoryPath)
+          event.returnValue = R.okD(directoryPath)
+          return
+        } else if (err.message.indexOf('dest already exists') != -1) {
+          event.returnValue = R.error('移动失败，移动的路径下已经存在配置')
+          return
+        }
+        event.returnValue = R.error('修改失败，未知错误，如重复出现请联系作者')
+      })
+  } else if (StoreConfigFunTypeEnum.SWITCH === storeConfigFunType) {
+    updateStoreConfig(storeType, directoryPath)
+    event.returnValue = R.okD(directoryPath)
+  }
 })
 
 const updateStoreConfig = (storeType, directoryPath): void => {

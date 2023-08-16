@@ -240,7 +240,7 @@ ipcMain.handle('agent-update-event', (_event, agentConfig) => {
 /**
  * 打开目录对话框
  */
-ipcMain.on('open-directory-dialog', (event, storeType) => {
+ipcMain.on('open-directory-dialog', (event, storeConfigFunType, storeType) => {
   dialog
     .showOpenDialog({
       properties: ['openDirectory'],
@@ -251,6 +251,11 @@ ipcMain.on('open-directory-dialog', (event, storeType) => {
       if (result.canceled) {
         return
       }
-      event.sender.send('open-directory-dialog-callback', storeType, result.filePaths[0])
+      event.sender.send(
+        'open-directory-dialog-callback',
+        storeConfigFunType,
+        storeType,
+        result.filePaths[0]
+      )
     })
 })

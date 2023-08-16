@@ -71,7 +71,6 @@ class StoreService {
       // @ts-ignore
       cwd: StoreService.systemGet(StoreService.configName)
     })
-    console.log('StoreService.configStore.path = ', StoreService.configStore.path)
 
     // 翻译记录
     StoreService.historyRecordStore = new Store({
@@ -81,7 +80,6 @@ class StoreService {
       // @ts-ignore
       cwd: StoreService.systemGet(StoreService.historyRecordName)
     })
-    console.log('StoreService.historyRecordStore.path = ', StoreService.historyRecordStore.path)
   }
 
   static initConfig = (): void => {
