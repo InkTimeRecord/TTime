@@ -150,6 +150,10 @@ class StoreService {
     if (!StoreService.configHas('ocrWrapReplaceSpaceStatus')) {
       StoreService.configSet('ocrWrapReplaceSpaceStatus', YesNoEnum.N)
     }
+    // 初始化默认划词延迟
+    if (!StoreService.configHas('translateChoiceDelay')) {
+      StoreService.configSet('translateChoiceDelay', 600)
+    }
 
     app.whenReady().then(() => {
       const translateShortcutKeyList = [

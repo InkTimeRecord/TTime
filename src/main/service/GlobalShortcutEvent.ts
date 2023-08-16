@@ -8,6 +8,7 @@ import { SystemTypeEnum } from '../enums/SystemTypeEnum'
 import GlobalWin from './GlobalWin'
 import { uIOhook, UiohookKey } from 'uiohook-napi'
 import OcrTypeEnum from '../enums/OcrTypeEnum'
+import StoreService from './StoreService'
 
 uIOhook.start()
 
@@ -243,14 +244,15 @@ class GlobalShortcutEvent {
   }
 
   static getSelectedText = async () => {
+    const translateChoiceDelay = Math.floor(StoreService.configGet('translateChoiceDelay') / 2)
     GlobalWin.mainWinSend('clear-all-translated-content')
     const currentClipboardContent = clipboard.readText()
     log.info('[划词翻译] - 读取剪切板原文本 : ', currentClipboardContent)
     clipboard.clear()
-    await new Promise((resolve) => setTimeout(resolve, 300))
+    await new Promise((resolve) => setTimeout(resolve, translateChoiceDelay))
     log.info('[划词翻译] - 执行复制操作')
     robot.keyToggle('c', 'down', isMac ? 'command' : 'control')
-    await new Promise((resolve) => setTimeout(resolve, 300))
+    await new Promise((resolve) => setTimeout(resolve, translateChoiceDelay))
     robot.keyToggle('c', 'up', isMac ? 'command' : 'control')
     const selectedText = clipboard.readText()
     log.info('[划词翻译] - 读取新复制的内容 : ', selectedText)

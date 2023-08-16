@@ -42,6 +42,15 @@
         @change="fromTopOfWindowPercentageChange"
       />
     </el-form-item>
+    <el-form-item class="none-select" label="划词默认前后延迟">
+      <el-input-number
+        v-model="basiInfo.translateChoiceDelay"
+        :min="100"
+        :max="1000"
+        @change="translateChoiceDelayChange"
+      />
+      <span class="form-switch-span none-select"> 划词触发后等待延迟（数字越小速度越快） </span>
+    </el-form-item>
   </el-form>
 </template>
 <script setup lang="ts">
@@ -71,7 +80,8 @@ const basiInfo = ref({
   autoLaunch: cacheGet('autoLaunch') === YesNoEnum.Y,
   autoUpdater: cacheGet('autoUpdater') === YesNoEnum.Y,
   translateShowPositionType: cacheGet('translateShowPositionType'),
-  fromTopOfWindowPercentage: cacheGet('fromTopOfWindowPercentage')
+  fromTopOfWindowPercentage: cacheGet('fromTopOfWindowPercentage'),
+  translateChoiceDelay: cacheGet('translateChoiceDelay')
 })
 
 /**
@@ -115,6 +125,15 @@ const translateShowPositionTypeSelectChange = (translateShowPositionType): void 
 const fromTopOfWindowPercentageChange = (fromTopOfWindowPercentage): void => {
   cacheSet('fromTopOfWindowPercentage', fromTopOfWindowPercentage)
   basiInfo.value.fromTopOfWindowPercentage = fromTopOfWindowPercentage
+}
+/**
+ * 划词默认前后延迟 - 事件
+ *
+ * @param translateChoiceDelay 划词默认前后延迟
+ */
+const translateChoiceDelayChange = (translateChoiceDelay): void => {
+  cacheSet('translateChoiceDelay', translateChoiceDelay)
+  basiInfo.value.translateChoiceDelay = translateChoiceDelay
 }
 </script>
 
