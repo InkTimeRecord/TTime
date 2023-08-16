@@ -60,18 +60,96 @@
   - [x] 阿里翻译
   - [x] Google翻译
   - [x] OpenAI翻译(ChatGPT)
+  - [x] AzureOpenAI翻译
   - [x] 有道翻译
   - [x] DeepL翻译
   - [x] 火山翻译
   - [x] 小牛翻译
   - [x] 彩云翻译
+  - [x] Papago翻译
 
 - [x] 文字识别
   - [x] TTime
   - [x] TTime在线
   - [x] 百度OCR
   - [x] 火山OCR
+  - [x] Ocr Space
+  - [x] 讯飞OCR
+  - [x] 腾讯云OCR
 
+## 开发指南
+
+开发环境
+```
+NodeJs Version >= 16
+
+Npm Version >= 8
+```
+
+依赖下载
+```
+npm run npm-i-extend-modules-update
+```
+
+项目启动
+```
+npm run dev
+```
+
+项目打包
+```
+npm run build:win
+npm run build:win:portable
+npm run build:mac
+```
+
+## 简单快速新增翻译/OCR源
+
+新增翻译/OCR源新增很简单，你只需要有一些JS/TS基础和接口联调能力就可以集成 ，以下以小牛翻译为例
+
+### 1.新增类型
+
+编辑文件添加一个翻译源枚举
+
+```
+src/common/enums/TranslateServiceEnum.ts
+```
+
+`此处需要注意：当翻译源枚举定义后，后续的文件名称都需要按照枚举名称方式命名，具体参照如下步骤的命名规则`
+
+```
+static NIU_TRANS = 'NiuTrans'
+```
+
+### 2.新增Logo
+
+把Logo文件复制到此文件路径下
+
+```
+src/renderer/src/assets/translate/NiuTransLogo.png
+```
+
+### 3.新增翻译/OCR源信息
+
+新增翻译/OCR源信息文件
+
+```
+src/common/channel/translate/NiuTransInfo.ts
+```
+
+### 4.新增翻译/OCR源实现
+
+新增翻译/OCR源接口实现
+
+```
+src/main/service/channel/interfaces/NiuTransRequest.ts
+```
+
+新增翻译/OCR源接口调用回调页面结果
+
+```
+src/main/service/channel/product/translate/NiuTransChannel.ts
+```
 
 ## 感谢
 * 感谢 [electron-vite](https://github.com/alex8088/electron-vite) 提供的electron框架 节省了我很多的时间成本

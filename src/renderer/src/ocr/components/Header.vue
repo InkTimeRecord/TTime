@@ -20,15 +20,15 @@
 <script setup lang="ts">
 import { YesNoEnum } from '../../../../common/enums/YesNoEnum'
 import { ref } from 'vue'
-import { cacheGetStr, cacheSetStr } from '../../utils/cacheUtil'
+import { cacheGet, cacheSet } from '../../utils/cacheUtil'
 
 // 首次打开时设置默认图钉状态
-if (undefined === cacheGetStr('ocrThumbtackStatus')) {
-  cacheSetStr('ocrThumbtackStatus', YesNoEnum.N)
+if (undefined === cacheGet('ocrThumbtackStatus')) {
+  cacheSet('ocrThumbtackStatus', YesNoEnum.N)
 }
 
 // 窗口固定状态
-const thumbtackStatus = ref(cacheGetStr('ocrThumbtackStatus'))
+const thumbtackStatus = ref(cacheGet('ocrThumbtackStatus'))
 
 // 根据固定状态设置窗口是否置于最前面
 window.api.ocrAlwaysOnTopEvent(thumbtackStatus.value === YesNoEnum.Y)
@@ -37,8 +37,8 @@ window.api.ocrAlwaysOnTopEvent(thumbtackStatus.value === YesNoEnum.Y)
  * 窗口固定
  */
 const thumbtackFun = (): void => {
-  const thumbtackStatusCache = cacheGetStr('ocrThumbtackStatus')
-  cacheSetStr(
+  const thumbtackStatusCache = cacheGet('ocrThumbtackStatus')
+  cacheSet(
     'ocrThumbtackStatus',
     undefined === thumbtackStatusCache
       ? YesNoEnum.N
@@ -46,8 +46,8 @@ const thumbtackFun = (): void => {
       ? YesNoEnum.Y
       : YesNoEnum.N
   )
-  thumbtackStatus.value = cacheGetStr('ocrThumbtackStatus')
-  window.api.ocrAlwaysOnTopEvent(cacheGetStr('ocrThumbtackStatus') === YesNoEnum.Y)
+  thumbtackStatus.value = cacheGet('ocrThumbtackStatus')
+  window.api.ocrAlwaysOnTopEvent(cacheGet('ocrThumbtackStatus') === YesNoEnum.Y)
 }
 
 /**

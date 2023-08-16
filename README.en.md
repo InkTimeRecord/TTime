@@ -65,13 +65,90 @@ The main functions are `input translation`, `screenshot translation`, `selected 
   - [x] Volcano Translation
   - [x] NiuTrans
   - [x] CaiYun Translation
+  - [x] Papago Translation
 
 - [x] OCR
   - [x] TTime
   - [x] TTime Online OCR
   - [x] Baidu OCR
   - [x] Volcano OCR
+  - [x] Ocr Space
+  - [x] Iflytek OCR
+  - [x] Tencent OCR
 
+## Development Guide
+
+development environment
+```
+NodeJs Version >= 16
+
+Npm Version >= 8
+```
+
+Dependent download
+```
+npm run npm-i-extend-modules-update
+```
+
+Project Run
+```
+npm run dev
+```
+
+Projects Build
+```
+npm run build:win
+npm run build:win:portable
+npm run build:mac
+```
+
+## 简单快速新增翻译/OCR源
+
+Adding translation/OCR sources is very simple. You only need some JS/TS basics and interface debugging capabilities to integrate. Take Maverick Translation as an example
+
+### 1.Add Type
+
+Edit file to add a translation source enumeration
+
+```
+src/common/enums/TranslateServiceEnum.ts
+```
+
+`Note here: After the source enumeration definition is translated, subsequent file names need to be named according to the enumeration name method. For details, refer to the naming rules in the following steps`
+
+```
+static NIU_TRANS = 'NiuTrans'
+```
+
+### 2.Add Logo
+
+Copy the logo file to this file path
+
+```
+src/renderer/src/assets/translate/NiuTransLogo.png
+```
+
+### 3.Add Translation/OCR Source Information
+
+Add translation/OCR source information file
+
+```
+src/common/channel/translate/NiuTransInfo.ts
+```
+
+### 4.Add translation/OCR source implementation
+
+Add translation/OCR source interface implementation
+
+```
+src/main/service/channel/interfaces/NiuTransRequest.ts
+```
+
+Add translation/OCR source interface call callback page results
+
+```
+src/main/service/channel/product/translate/NiuTransChannel.ts
+```
 
 ## Thanks
 * Thanks [electron-vite](https://github.com/alex8088/electron-vite) The provided electron framework saved me a lot of time and cost

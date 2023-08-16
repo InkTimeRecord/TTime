@@ -17,4 +17,9 @@
 <div id='app'></div>
 <script type='module' src='/src/update/main.ts'></script>
 </body>
+<script>
+  window.addEventListener('error', function (event) {
+    window.api.logErrorEvent('[更新窗口异常]', event.error)
+  });
+</script>
 </html>

@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, shell } from 'electron'
+import { app, BrowserWindow, dialog, ipcMain, shell } from 'electron'
 import * as path from 'path'
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 import { GlobalShortcutEvent } from './service/GlobalShortcutEvent'
@@ -16,6 +16,7 @@ import './service/Ocr'
 import './service/OcrSilence'
 import { isNull } from '../common/utils/validate'
 import { injectWinAgent } from './utils/RequestUtil'
+import StoreService from './service/StoreService'
 
 // 解决使用 win.hide() 后再使用 win.show() 会引起窗口闪烁问题
 app.commandLine.appendSwitch('wm-window-animations-disabled')
@@ -24,6 +25,9 @@ if (!SystemTypeEnum.isMac()) {
   // 禁用硬件加速
   app.disableHardwareAcceleration()
 }
+
+StoreService.init()
+StoreService.initConfig()
 
 // 当前软件版本
 const version = app.getVersion()
@@ -92,11 +96,7 @@ function createWindow(): void {
     mainWin.loadFile(path.join(__dirname, '../renderer/index.html'))
   }
 
-  mainWin.webContents
-    .executeJavaScript('JSON.parse(localStorage.agentConfig)')
-    .then((agentConfig) => {
-      injectWinAgent(agentConfig, mainWin.webContents.session)
-    })
+  injectWinAgent(StoreService.configGet('agentConfig'), mainWin.webContents.session)
 
   // mainWin.webContents.openDevTools({ mode: 'detach' })
   GlobalWin.setMainWin(mainWin)
@@ -235,4 +235,27 @@ ipcMain.on('get-version-event', (event) => {
  */
 ipcMain.handle('agent-update-event', (_event, agentConfig) => {
   injectWinAgent(agentConfig, mainWin.webContents.session)
+})
+
+/**
+ * 打开目录对话框
+ */
+ipcMain.on('open-directory-dialog', (event, storeConfigFunType, storeType) => {
+  dialog
+    .showOpenDialog({
+      properties: ['openDirectory'],
+      title: '请选择文件夹',
+      buttonLabel: '选择文件夹'
+    })
+    .then((result) => {
+      if (result.canceled) {
+        return
+      }
+      event.sender.send(
+        'open-directory-dialog-callback',
+        storeConfigFunType,
+        storeType,
+        result.filePaths[0]
+      )
+    })
 })

@@ -1,5 +1,6 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
+import common from './common'
 import TranslateServiceEnum from '../common/enums/TranslateServiceEnum'
 
 let windowHeightList = []
@@ -145,13 +146,6 @@ const winShowByInputEvent = (callback): void => {
 }
 
 /**
- * 打开设置页面事件
- */
-const openSetPageEvent = (): void => {
-  ipcRenderer.invoke('open-set-page-event')
-}
-
-/**
  * 文本写入剪切板事件
  */
 const textWriteShearPlateEvent = (text): void => {
@@ -166,22 +160,6 @@ const alwaysOnTopEvent = (status): void => {
 }
 
 /**
- * 初始加载翻译快捷键事件
- * @param list
- */
-const initLoadTranslateShortcutKeyEvent = (list): void => {
-  ipcRenderer.invoke('init-load-translate-shortcut-key-event', list)
-}
-
-/**
- * 开机自启事件
- */
-const autoLaunchInitEvent = (): void => {
-  // 初始化默认传递true
-  ipcRenderer.invoke('auto-launch-init-event')
-}
-
-/**
  * 更新消息事件
  *
  * @param callback 回调方法
@@ -190,31 +168,6 @@ const updateMessageEvent = (callback): void => {
   ipcRenderer.on('update-message-event', (_event, { type, text }) => {
     callback(type, text)
   })
-}
-
-/**
- * 更新缓存事件
- *
- * @param callback 回调方法
- */
-const updateCacheEvent = (callback): void => {
-  ipcRenderer.on('update-cache-event', (_event, key, value) => {
-    callback(key, value)
-  })
-}
-
-/**
- * 日志 - info级别
- */
-const logInfoEvent = (...text): void => {
-  ipcRenderer.invoke('log-info-event', ...text)
-}
-
-/**
- * 日志 - error级别
- */
-const logErrorEvent = (...text): void => {
-  ipcRenderer.invoke('log-error-event', ...text)
 }
 
 /**
@@ -272,17 +225,6 @@ const ttimeApiTranslateUse = (): void => {
 }
 
 /**
- * 窗口显示消息提示
- *
- * @param callback 回调方法
- */
-const showMsgEvent = (callback): void => {
-  ipcRenderer.on('show-msg-event', (_event, type, msg) => {
-    callback(type, msg)
-  })
-}
-
-/**
  * 更新翻译源通知
  *
  * @param callback 回调方法 用于主进程内部触发时推送到Vue页面执行
@@ -315,32 +257,26 @@ const agentApiTranslateCallback = (res): void => {
 
 // Custom APIs for renderer
 const api = {
+  ...common,
+  ...apiTranslateCallbackEventList,
   windowHeightChangeEvent,
   updateTranslateContentEvent,
   clearAllTranslateContentEvent,
   pageHeightChangeEvent,
-  openSetPageEvent,
   textWriteShearPlateEvent,
   alwaysOnTopEvent,
-  initLoadTranslateShortcutKeyEvent,
-  autoLaunchInitEvent,
   updateMessageEvent,
   windowHeightChangeMaxEvent,
-  logInfoEvent,
-  logErrorEvent,
   screenshotEndNotifyEvent,
   winShowEvent,
   winShowByInputEvent,
   apiUniteTranslate,
-  ...apiTranslateCallbackEventList,
   ttimeApiAppStart,
-  showMsgEvent,
   updateTranslateServiceEvent,
   ttimeApiTranslateUse,
   apiTranslateResultMsgCallbackEvent,
   agentApiTranslate,
-  agentApiTranslateCallback,
-  updateCacheEvent
+  agentApiTranslateCallback
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

@@ -1,7 +1,7 @@
 import { isNotNull, isNull } from '../../common/utils/validate'
 import log from './log'
 import createHttpsProxyAgent from 'https-proxy-agent'
-import GlobalWin from '../service/GlobalWin'
+import StoreService from '../service/StoreService'
 
 /**
  * 公共错误处理
@@ -66,27 +66,24 @@ export const injectAgentBySetAgentFieldName = async (
   requestInfo,
   agentFieldName
 ): Promise<void> => {
-  await GlobalWin.mainWin.webContents
-    .executeJavaScript('JSON.parse(localStorage.agentConfig)')
-    .then((agentConfig) => {
-      if (
-        isNotNull(agentConfig) &&
-        isNotNull(agentConfig.host) &&
-        isNotNull(agentConfig.port) &&
-        agentConfig.type === 1
-      ) {
-        requestInfo[agentFieldName] = createHttpsProxyAgent({
-          host: agentConfig.host,
-          port: agentConfig.port
-        })
-        // if (isNotNull(agentConfig.userName) && isNotNull(agentConfig.passWord)) {
-        //   requestInfo.auth = {
-        //     username: agentConfig.userName,
-        //     password: agentConfig.passWord
-        //   }
-        // }
-      }
+  const agentConfig = StoreService.configGet('agentConfig')
+  if (
+    isNotNull(agentConfig) &&
+    isNotNull(agentConfig.host) &&
+    isNotNull(agentConfig.port) &&
+    agentConfig.type === 1
+  ) {
+    requestInfo[agentFieldName] = createHttpsProxyAgent({
+      host: agentConfig.host,
+      port: agentConfig.port
     })
+    // if (isNotNull(agentConfig.userName) && isNotNull(agentConfig.passWord)) {
+    //   requestInfo.auth = {
+    //     username: agentConfig.userName,
+    //     password: agentConfig.passWord
+    //   }
+    // }
+  }
 }
 
 /**

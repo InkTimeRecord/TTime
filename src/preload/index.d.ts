@@ -10,8 +10,6 @@ declare global {
     openSetPageEvent
     textWriteShearPlateEvent
     alwaysOnTopEvent
-    initLoadTranslateShortcutKeyEvent
-    autoLaunchInitEvent
     windowHeightChangeMaxEvent
     logInfoEvent
     logErrorEvent
@@ -19,25 +17,6 @@ declare global {
     winShowEvent
     winShowByInputEvent
     apiUniteTranslate
-    ttimeApiTranslateCallbackEvent
-    tencentcloudApiTranslateCallbackEvent
-    baiduApiTranslateCallbackEvent
-    aliyunApiTranslateCallbackEvent
-    googleApiTranslateCallbackEvent
-    googlebuiltinApiTranslateCallbackEvent
-    openaiApiTranslateCallbackEvent
-    youdaoApiTranslateCallbackEvent
-    deeplApiTranslateCallbackEvent
-    deeplbuiltinApiTranslateCallbackEvent
-    volcanoApiTranslateCallbackEvent
-    bingApiTranslateCallbackEvent
-    bingdictApiTranslateCallbackEvent
-    niutransApiTranslateCallbackEvent
-    caiyunApiTranslateCallbackEvent
-    transmartApiTranslateCallbackEvent
-    papagoApiTranslateCallbackEvent
-    ttimeApiAppStart
-    ttimeApiTranslateUse
     showMsgEvent
     updateTranslateServiceEvent
     apiTranslateResultMsgCallbackEvent

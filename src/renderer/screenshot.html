@@ -76,6 +76,9 @@
 <canvas class='rect'></canvas>
 <div class='size-info'></div>
 <script>
+  window.addEventListener('error', function (event) {
+    window.api.logErrorEvent('[截图窗口异常]', event.error)
+  });
   // 放大镜尺寸
   const magnifierDivSize = 120
   // 放大镜放大倍数

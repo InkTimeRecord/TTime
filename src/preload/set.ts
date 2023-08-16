@@ -1,5 +1,7 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
+import common from './common'
+import R from '../common/class/R'
 
 const updateTranslateShortcutKeyEvent = (type, oldShortcutKey, shortcutKey, callback): void => {
   const res = ipcRenderer.sendSync(
@@ -9,20 +11,6 @@ const updateTranslateShortcutKeyEvent = (type, oldShortcutKey, shortcutKey, call
     shortcutKey
   )
   callback(res)
-}
-
-/**
- * 获取系统类型
- */
-const getSystemTypeEvent = (): string => {
-  return ipcRenderer.sendSync('get-system-type-event')
-}
-
-/**
- * 跳转页面
- */
-const jumpToPage = (url) => {
-  ipcRenderer.send('jump-to-page-event', url)
 }
 
 /**
@@ -97,15 +85,6 @@ const apiCheckOcrCallbackEvent = (callback): void => {
 }
 
 /**
- * 获取版本号
- *
- * @return 版本号
- */
-const getVersionEvent = (): string => {
-  return ipcRenderer.sendSync('get-version-event')
-}
-
-/**
  * 代理更新事件
  *
  * @param agentConfig 代理配置
@@ -121,10 +100,40 @@ const alwaysOnTopAllowEscStatusNotify = (): void => {
   ipcRenderer.invoke('always-onTop-allow-esc-status-notify')
 }
 
+/**
+ * 打开目录对话框
+ */
+const openDirectoryDialog = (storeConfigFunType, storeType): void => {
+  ipcRenderer.send('open-directory-dialog', storeConfigFunType, storeType)
+}
+
+/**
+ * 打开目录对话框回调
+ */
+const openDirectoryDialogCallback = (callback): void => {
+  ipcRenderer.on(
+    'open-directory-dialog-callback',
+    (_event, storeConfigFunType, storeType, directoryPath) => {
+      callback(storeConfigFunType, storeType, directoryPath)
+    }
+  )
+}
+
+/**
+ * 更新配置信息路径
+ */
+const updateConfigInfoPath = (storeConfigFunType, storeType, directoryPath): R => {
+  return ipcRenderer.sendSync(
+    'update-config-info-path',
+    storeConfigFunType,
+    storeType,
+    directoryPath
+  )
+}
+
 const api = {
+  ...common,
   updateTranslateShortcutKeyEvent,
-  getSystemTypeEvent,
-  jumpToPage,
   closeSetWinEvent,
   autoLaunchEvent,
   autoUpdaterEvent,
@@ -134,9 +143,11 @@ const api = {
   apiCheckTranslateCallbackEvent,
   apiUniteOcrCheck,
   apiCheckOcrCallbackEvent,
-  getVersionEvent,
   agentUpdateEvent,
-  alwaysOnTopAllowEscStatusNotify
+  alwaysOnTopAllowEscStatusNotify,
+  openDirectoryDialog,
+  openDirectoryDialogCallback,
+  updateConfigInfoPath
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

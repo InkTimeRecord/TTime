@@ -1,6 +1,5 @@
 import { useColorMode } from '@vueuse/core'
 import { ThemeTypeEnum } from '../enums/ThemeTypeEnum'
-import { cacheGetStr } from './cacheUtil'
 
 /**
  * 初始化主题
@@ -15,6 +14,6 @@ export const initTheme = () => {
     // 默认模式为跟随系统
     initialValue: ThemeTypeEnum.AUTO
   })
-  useThemeMode.value = cacheGetStr('useTheme')
+  useThemeMode.value = localStorage['useTheme']
   return useThemeMode
 }

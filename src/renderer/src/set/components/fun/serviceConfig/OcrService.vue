@@ -151,17 +151,17 @@
           </el-form-item>
           <div class="translate-service-set-fun">
             <div class="translate-service-use-text">
-              <el-tag v-if="checkIngStatus" type="info" effect="dark"> 验证中... </el-tag>
-              <el-tag v-else-if="ocrServiceThis.checkStatus" type="success" effect="dark"
-                >验证成功</el-tag
-              >
-              <el-tag v-else-if="!ocrServiceThis.checkStatus" type="warning" effect="dark"
-                >待验证</el-tag
-              >
+              <el-tag v-if="checkIngStatus" type="info" effect="dark"> 验证中...</el-tag>
+              <el-tag v-else-if="ocrServiceThis.checkStatus" type="success" effect="dark">
+                验证成功
+              </el-tag>
+              <el-tag v-else-if="!ocrServiceThis.checkStatus" type="warning" effect="dark">
+                待验证
+              </el-tag>
             </div>
-            <el-button plain :disabled="checkIngStatus" @click="ocrServiceCheckAndSave"
-              >验证</el-button
-            >
+            <el-button plain :disabled="checkIngStatus" @click="ocrServiceCheckAndSave">
+              验证
+            </el-button>
           </div>
           <span class="form-switch-span"> 验证成功后将会保存配置信息 </span>
         </el-form>
@@ -261,6 +261,18 @@ const addOcrService = (type): void => {
     }
   }
   const service = buildOcrService(type)
+  for (const ocrService of insideOcrServiceMap.values()) {
+    if (
+      ocrService.type === OcrServiceEnum.TTIME &&
+      ocrService.useStatus &&
+      service.type === OcrServiceEnum.TTIME_ONLINE &&
+      service.useStatus
+    ) {
+      ocrService.useStatus = false
+      saveOcrService(ocrService)
+      break
+    }
+  }
   if (null !== service) {
     saveOcrService(service)
     ocrServiceThis.value = service

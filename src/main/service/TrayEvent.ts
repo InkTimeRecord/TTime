@@ -26,11 +26,30 @@ class TrayEvent {
       },
       { type: 'separator' },
       {
-        label: '显示翻译窗口',
+        label: '输入翻译',
         click: (): void => {
           GlobalShortcutEvent.translateInput()
         }
       },
+      {
+        label: '截图翻译',
+        click: (): void => {
+          GlobalShortcutEvent.translateScreenshot()
+        }
+      },
+      {
+        label: '截图OCR',
+        click: (): void => {
+          GlobalShortcutEvent.ocrScreenshot()
+        }
+      },
+      {
+        label: '静默截图OCR',
+        click: (): void => {
+          GlobalShortcutEvent.ocrSilenceScreenshot()
+        }
+      },
+      { type: 'separator' },
       {
         label: '使用教程',
         click: (): void => {

@@ -22,4 +22,9 @@
 <body>
   <img id='imgLogoSign' class='img-loading' src='src/assets/loading.gif'/>
 </body>
+<script>
+  window.addEventListener('error', function (event) {
+    window.api.logErrorEvent('[静默OCR窗口异常]', event.error)
+  });
+</script>
 </html>

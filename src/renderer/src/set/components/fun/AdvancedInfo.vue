@@ -82,12 +82,12 @@
 // 翻译内容框内容
 import { h, ref } from 'vue'
 import { YesNoEnum } from '../../../../../common/enums/YesNoEnum'
-import { PlaySpeechServiceEnum } from '../../../enums/PlaySpeechServiceEnum'
-import { cacheGetStr, cacheSetStr } from '../../../utils/cacheUtil'
+import { PlaySpeechServiceEnum } from '../../../../../common/enums/PlaySpeechServiceEnum'
+import { cacheGet, cacheSet } from '../../../utils/cacheUtil'
 import { ElMessageBox } from 'element-plus'
 
 const basiInfo = ref({
-  playSpeechService: cacheGetStr('playSpeechService')
+  playSpeechService: cacheGet('playSpeechService')
 })
 
 /**
@@ -96,7 +96,7 @@ const basiInfo = ref({
  * @param playSpeechService 播放服务类型
  */
 const playSpeechServiceEvent = (playSpeechService): void => {
-  cacheSetStr('playSpeechService', playSpeechService)
+  cacheSet('playSpeechService', playSpeechService)
   basiInfo.value.playSpeechService = playSpeechService
 }
 
@@ -104,12 +104,12 @@ const playSpeechServiceEvent = (playSpeechService): void => {
  * 翻译相关设置
  */
 const advancedSettingInfo = ref({
-  alwaysOnTopAllowEscStatus: cacheGetStr('alwaysOnTopAllowEscStatus') === YesNoEnum.Y,
-  wrapReplaceSpaceStatus: cacheGetStr('wrapReplaceSpaceStatus') === YesNoEnum.Y,
-  hoverBallStatus: cacheGetStr('hoverBallStatus') === YesNoEnum.Y,
-  hoverBallEnhanceStatus: cacheGetStr('hoverBallEnhanceStatus') === YesNoEnum.Y,
-  ocrWriteClipboardStatus: cacheGetStr('ocrWriteClipboardStatus') === YesNoEnum.Y,
-  ocrWrapReplaceSpaceStatus: cacheGetStr('ocrWrapReplaceSpaceStatus') === YesNoEnum.Y
+  alwaysOnTopAllowEscStatus: cacheGet('alwaysOnTopAllowEscStatus') === YesNoEnum.Y,
+  wrapReplaceSpaceStatus: cacheGet('wrapReplaceSpaceStatus') === YesNoEnum.Y,
+  hoverBallStatus: cacheGet('hoverBallStatus') === YesNoEnum.Y,
+  hoverBallEnhanceStatus: cacheGet('hoverBallEnhanceStatus') === YesNoEnum.Y,
+  ocrWriteClipboardStatus: cacheGet('ocrWriteClipboardStatus') === YesNoEnum.Y,
+  ocrWrapReplaceSpaceStatus: cacheGet('ocrWrapReplaceSpaceStatus') === YesNoEnum.Y
 })
 
 /**
@@ -118,7 +118,7 @@ const advancedSettingInfo = ref({
  * @param val 置顶时允许隐藏窗口状态
  */
 const alwaysOnTopAllowEscStatusEvent = (val): void => {
-  cacheSetStr('alwaysOnTopAllowEscStatus', val ? YesNoEnum.Y : YesNoEnum.N)
+  cacheSet('alwaysOnTopAllowEscStatus', val ? YesNoEnum.Y : YesNoEnum.N)
   advancedSettingInfo.value.alwaysOnTopAllowEscStatus = val
   // 更新置顶时允许隐藏窗口选择事件通知
   window.api.alwaysOnTopAllowEscStatusNotify()
@@ -130,7 +130,7 @@ const alwaysOnTopAllowEscStatusEvent = (val): void => {
  * @param val 换行符替换为空格状态
  */
 const wrapReplaceSpaceStatusEvent = (val): void => {
-  cacheSetStr('wrapReplaceSpaceStatus', val ? YesNoEnum.Y : YesNoEnum.N)
+  cacheSet('wrapReplaceSpaceStatus', val ? YesNoEnum.Y : YesNoEnum.N)
   advancedSettingInfo.value.wrapReplaceSpaceStatus = val
 }
 
@@ -140,7 +140,7 @@ const wrapReplaceSpaceStatusEvent = (val): void => {
  * @param val 换行符替换为空格状态
  */
 const ocrWrapReplaceSpaceStatusEvent = (val): void => {
-  cacheSetStr('ocrWrapReplaceSpaceStatus', val ? YesNoEnum.Y : YesNoEnum.N)
+  cacheSet('ocrWrapReplaceSpaceStatus', val ? YesNoEnum.Y : YesNoEnum.N)
   advancedSettingInfo.value.ocrWrapReplaceSpaceStatus = val
 }
 
@@ -150,7 +150,7 @@ const ocrWrapReplaceSpaceStatusEvent = (val): void => {
  * @param val OCR结果写入剪切板状态
  */
 const ocrWriteClipboardStatusEvent = (val): void => {
-  cacheSetStr('ocrWriteClipboardStatus', val ? YesNoEnum.Y : YesNoEnum.N)
+  cacheSet('ocrWriteClipboardStatus', val ? YesNoEnum.Y : YesNoEnum.N)
   advancedSettingInfo.value.ocrWriteClipboardStatus = val
 }
 
@@ -184,7 +184,7 @@ const hoverBallStatusEvent = (val): void => {
     }
   }
   hoverBallEnhanceStatusEvent(val)
-  cacheSetStr('hoverBallStatus', val ? YesNoEnum.Y : YesNoEnum.N)
+  cacheSet('hoverBallStatus', val ? YesNoEnum.Y : YesNoEnum.N)
   advancedSettingInfo.value.hoverBallStatus = val
 }
 
@@ -194,7 +194,7 @@ const hoverBallStatusEvent = (val): void => {
  * @param val 状态
  */
 const hoverBallEnhanceStatusEvent = (val): void => {
-  cacheSetStr('hoverBallEnhanceStatus', val ? YesNoEnum.Y : YesNoEnum.N)
+  cacheSet('hoverBallEnhanceStatus', val ? YesNoEnum.Y : YesNoEnum.N)
   advancedSettingInfo.value.hoverBallEnhanceStatus = val
 }
 </script>

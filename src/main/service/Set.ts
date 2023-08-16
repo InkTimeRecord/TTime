@@ -1,5 +1,6 @@
 import { BrowserWindow, ipcMain } from 'electron'
 import path from 'path'
+import * as fse from 'fs-extra'
 import { is } from '@electron-toolkit/utils'
 import { GlobalShortcutEvent } from './GlobalShortcutEvent'
 import R from '../../common/class/R'
@@ -7,6 +8,9 @@ import log from '../utils/log'
 import { isNotNull, isNull } from '../../common/utils/validate'
 import GlobalWin from './GlobalWin'
 import { SystemTypeEnum } from '../enums/SystemTypeEnum'
+import { StoreTypeEnum } from '../../common/enums/StoreTypeEnum'
+import StoreService from './StoreService'
+import { StoreConfigFunTypeEnum } from '../../common/enums/StoreConfigFunTypeEnum'
 import BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions
 
 let nullWin: BrowserWindow
@@ -133,5 +137,61 @@ ipcMain.handle('update-translate-service-event', (_event, _args) => {
 ipcMain.handle('always-onTop-allow-esc-status-notify', (_event, _args) => {
   GlobalWin.mainOrOcrWinShowCallback()
 })
+
+/**
+ * 更新配置信息路径
+ */
+ipcMain.on('update-config-info-path', (event, storeConfigFunType, storeType, directoryPath) => {
+  directoryPath = path.join(directoryPath, StoreService.userDataConfigFolderName)
+  let oldFilePath, oldPath
+  if (storeType === StoreTypeEnum.CONFIG) {
+    oldFilePath = StoreService.configStore.path
+    oldPath = StoreService.systemGet(StoreService.configName)
+  } else if (storeType === StoreTypeEnum.HISTORY_RECORD) {
+    oldFilePath = StoreService.historyRecordStore.path
+    oldPath = StoreService.systemGet(StoreService.historyRecordName)
+  }
+  const fileName = oldFilePath.replaceAll(oldPath, '')
+  const newFilePath = path.join(directoryPath, fileName)
+  if (oldFilePath === newFilePath) {
+    event.returnValue = R.error('文件路径未修改')
+    return
+  }
+
+  if (StoreConfigFunTypeEnum.MOVE === storeConfigFunType) {
+    fse
+      .move(oldFilePath, newFilePath)
+      .then(() => {
+        updateStoreConfig(storeType, directoryPath)
+        event.returnValue = R.okD(directoryPath)
+      })
+      .catch((err) => {
+        log.error(err)
+        // 当修改翻译记录的路径时 如果新安装还未翻译过将会导致没有生成翻译记录文件
+        // 这里校验一下 如果没有的话则进行迁移
+        if (err.message.indexOf('no such file or directory') != -1) {
+          updateStoreConfig(storeType, directoryPath)
+          event.returnValue = R.okD(directoryPath)
+          return
+        } else if (err.message.indexOf('dest already exists') != -1) {
+          event.returnValue = R.error('移动失败，移动的路径下已经存在配置')
+          return
+        }
+        event.returnValue = R.error('修改失败，未知错误，如重复出现请联系作者')
+      })
+  } else if (StoreConfigFunTypeEnum.SWITCH === storeConfigFunType) {
+    updateStoreConfig(storeType, directoryPath)
+    event.returnValue = R.okD(directoryPath)
+  }
+})
+
+const updateStoreConfig = (storeType, directoryPath): void => {
+  if (storeType === StoreTypeEnum.CONFIG) {
+    StoreService.systemSet(StoreService.configName, directoryPath)
+  } else if (storeType === StoreTypeEnum.HISTORY_RECORD) {
+    StoreService.systemSet(StoreService.historyRecordName, directoryPath)
+  }
+  StoreService.init()
+}
 
 export default createSetWindow

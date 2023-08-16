@@ -50,8 +50,7 @@ import {
   getTranslateServiceMapByUse,
   TranslateServiceBuilder
 } from '../../utils/translateServiceUtil'
-import TranslateServiceEnum from '../../../../common/enums/TranslateServiceEnum'
-import { cacheGet, cacheGetStr } from '../../utils/cacheUtil'
+import { cacheGet } from '../../utils/cacheUtil'
 import ElMessageExtend from '../../utils/messageExtend'
 import {
   getLanguageResultNameConversion,
@@ -179,7 +178,7 @@ const translateFun = (): void => {
     return
   }
   // 换行符替换为空格状态
-  if (cacheGetStr('wrapReplaceSpaceStatus') === YesNoEnum.Y) {
+  if (cacheGet('wrapReplaceSpaceStatus') === YesNoEnum.Y) {
     translateContentDealWith = translateContentDealWith.replaceAll('\n', ' ')
   }
   // 获取当前默认输入文字语言

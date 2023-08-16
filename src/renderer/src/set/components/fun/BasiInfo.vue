@@ -20,6 +20,37 @@
       <el-switch v-model="basiInfo.autoUpdater" @change="autoUpdaterEvent" />
       <span class="form-switch-span none-select"> 会在软件启动时检测新版本 </span>
     </el-form-item>
+    <el-form-item class="none-select" label="翻译窗口显示位置">
+      <el-select
+        v-model="basiInfo.translateShowPositionType"
+        @change="translateShowPositionTypeSelectChange"
+      >
+        <el-option label="上一次位置" :value="TranslateShowPositionEnum.LAST_TIME" />
+        <el-option label="跟随鼠标" :value="TranslateShowPositionEnum.FOLLOW_MOUSE" />
+        <el-option label="距顶部模式" :value="TranslateShowPositionEnum.FROM_TOP" />
+      </el-select>
+    </el-form-item>
+    <el-form-item
+      v-show="basiInfo.translateShowPositionType === TranslateShowPositionEnum.FROM_TOP"
+      class="none-select"
+      label="距顶部百分比"
+    >
+      <el-input-number
+        v-model="basiInfo.fromTopOfWindowPercentage"
+        :min="1"
+        :max="200"
+        @change="fromTopOfWindowPercentageChange"
+      />
+    </el-form-item>
+    <el-form-item class="none-select" label="划词默认前后延迟">
+      <el-input-number
+        v-model="basiInfo.translateChoiceDelay"
+        :min="100"
+        :max="1000"
+        @change="translateChoiceDelayChange"
+      />
+      <span class="form-switch-span none-select"> 划词触发后等待延迟（数字越小速度越快） </span>
+    </el-form-item>
   </el-form>
 </template>
 <script setup lang="ts">
@@ -27,8 +58,9 @@
 import { ref } from 'vue'
 import { YesNoEnum } from '../../../../../common/enums/YesNoEnum'
 import { ThemeTypeEnum } from '../../../enums/ThemeTypeEnum'
+import TranslateShowPositionEnum from '../../../../../common/enums/TranslateShowPositionEnum'
 import { initTheme } from '../../../utils/themeUtil'
-import { cacheGetStr, cacheSetStr } from '../../../utils/cacheUtil'
+import { cacheGet, cacheSet } from '../../../utils/cacheUtil'
 
 // 初始化主题
 const useThemeMode = initTheme()
@@ -43,10 +75,13 @@ const toggleTheme = (themeType) => {
 }
 
 const basiInfo = ref({
-  theme: cacheGetStr('useTheme'),
+  theme: localStorage['useTheme'],
   language: 'zh',
-  autoLaunch: cacheGetStr('autoLaunch') === YesNoEnum.Y,
-  autoUpdater: cacheGetStr('autoUpdater') === YesNoEnum.Y
+  autoLaunch: cacheGet('autoLaunch') === YesNoEnum.Y,
+  autoUpdater: cacheGet('autoUpdater') === YesNoEnum.Y,
+  translateShowPositionType: cacheGet('translateShowPositionType'),
+  fromTopOfWindowPercentage: cacheGet('fromTopOfWindowPercentage'),
+  translateChoiceDelay: cacheGet('translateChoiceDelay')
 })
 
 /**
@@ -55,7 +90,7 @@ const basiInfo = ref({
  * @param autoLaunch 开机自启状态
  */
 const autoLaunchEvent = (autoLaunch): void => {
-  cacheSetStr('autoLaunch', autoLaunch ? YesNoEnum.Y : YesNoEnum.N)
+  cacheSet('autoLaunch', autoLaunch ? YesNoEnum.Y : YesNoEnum.N)
   basiInfo.value.autoLaunch = autoLaunch
   window.api.autoLaunchEvent(autoLaunch)
 }
@@ -66,11 +101,39 @@ const autoLaunchEvent = (autoLaunch): void => {
  * @param autoUpdater 自动更新状态
  */
 const autoUpdaterEvent = (autoUpdater): void => {
-  cacheSetStr('autoUpdater', autoUpdater ? YesNoEnum.Y : YesNoEnum.N)
+  cacheSet('autoUpdater', autoUpdater ? YesNoEnum.Y : YesNoEnum.N)
   basiInfo.value.autoUpdater = autoUpdater
   if (autoUpdater) {
     window.api.autoUpdaterSilenceStartCheckEvent()
   }
+}
+
+/**
+ * 翻译窗口显示位置类型 - 事件
+ *
+ * @param translateShowPositionType 翻译窗口显示位置类型
+ */
+const translateShowPositionTypeSelectChange = (translateShowPositionType): void => {
+  cacheSet('translateShowPositionType', translateShowPositionType)
+  basiInfo.value.translateShowPositionType = translateShowPositionType
+}
+/**
+ * 翻译距离窗口顶部位置 - 事件
+ *
+ * @param fromTopOfWindowPercentage 翻译距离窗口顶部位置
+ */
+const fromTopOfWindowPercentageChange = (fromTopOfWindowPercentage): void => {
+  cacheSet('fromTopOfWindowPercentage', fromTopOfWindowPercentage)
+  basiInfo.value.fromTopOfWindowPercentage = fromTopOfWindowPercentage
+}
+/**
+ * 划词默认前后延迟 - 事件
+ *
+ * @param translateChoiceDelay 划词默认前后延迟
+ */
+const translateChoiceDelayChange = (translateChoiceDelay): void => {
+  cacheSet('translateChoiceDelay', translateChoiceDelay)
+  basiInfo.value.translateChoiceDelay = translateChoiceDelay
 }
 </script>
 

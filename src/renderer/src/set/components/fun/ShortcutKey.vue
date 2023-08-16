@@ -77,22 +77,22 @@ import { ref } from 'vue'
 import { getNameByCode } from '@/utils/keyboard'
 import ElMessageExtend from '../../../utils/messageExtend'
 import { ShortcutKeyEnum } from '../../../../../common/enums/ShortcutKeyEnum'
-import { cacheGetStr, cacheSetStr } from '../../../utils/cacheUtil'
+import { cacheGet, cacheSet } from '../../../utils/cacheUtil'
 import { isNull } from '../../../../../common/utils/validate'
 
 const shortcutKeyInfo = ref({
-  inputShortcutKey: cacheGetStr('inputShortcutKey'),
-  screenshotShortcutKey: cacheGetStr('screenshotShortcutKey'),
-  choiceShortcutKey: cacheGetStr('choiceShortcutKey'),
-  screenshotOcrShortcutKey: cacheGetStr('screenshotOcrShortcutKey'),
-  screenshotSilenceOcrShortcutKey: cacheGetStr('screenshotSilenceOcrShortcutKey')
+  inputShortcutKey: cacheGet('inputShortcutKey'),
+  screenshotShortcutKey: cacheGet('screenshotShortcutKey'),
+  choiceShortcutKey: cacheGet('choiceShortcutKey'),
+  screenshotOcrShortcutKey: cacheGet('screenshotOcrShortcutKey'),
+  screenshotSilenceOcrShortcutKey: cacheGet('screenshotSilenceOcrShortcutKey')
 })
 
 const clearTranslateShortcutKey = (type): void => {
   const shortcutKeyElement = type + 'ShortcutKey'
-  const oldShortcutKey = cacheGetStr(shortcutKeyElement)
+  const oldShortcutKey = cacheGet(shortcutKeyElement)
   window.api.updateTranslateShortcutKeyEvent(type, oldShortcutKey, null, (res) => {
-    cacheSetStr(shortcutKeyElement, '')
+    cacheSet(shortcutKeyElement, '')
     if (res.code === -1) {
       ElMessageExtend.error(res.msg)
       return
@@ -126,8 +126,8 @@ const translateShortcutKeySetEvent = (event, type): void => {
       return
     }
     shortcutKeyInfo.value[shortcutKeyElement] = shortcutKey
-    if (cacheGetStr(shortcutKeyElement) !== shortcutKey) {
-      cacheSetStr(shortcutKeyElement, shortcutKey)
+    if (cacheGet(shortcutKeyElement) !== shortcutKey) {
+      cacheSet(shortcutKeyElement, shortcutKey)
       ElMessageExtend.success('设置成功')
     }
   })

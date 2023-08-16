@@ -1,32 +1,12 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
-
-/**
- * 获取系统类型
- */
-const getSystemTypeEvent = (): string => {
-  return ipcRenderer.sendSync('get-system-type-event')
-}
-
-/**
- * 跳转页面
- */
-const jumpToPage = (url) => {
-  ipcRenderer.send('jump-to-page-event', url)
-}
+import common from './common'
 
 /**
  * 关闭设置窗口事件
  */
 const closeUpdateWinEvent = (): void => {
   ipcRenderer.invoke('close-update-win-event')
-}
-
-/**
- * 退出应用事件
- */
-const closeAppEvent = (): void => {
-  ipcRenderer.invoke('close-app-event')
 }
 
 /**
@@ -62,12 +42,10 @@ const autoUpdaterStartInstall = (): void => {
 }
 
 const api = {
+  ...common,
   closeUpdateWinEvent,
-  closeAppEvent,
   autoUpdaterEvent,
   autoUpdaterStartCheck,
-  getSystemTypeEvent,
-  jumpToPage,
   autoUpdaterStartDownload,
   autoUpdaterStartInstall
 }
