@@ -80,14 +80,17 @@ class AutoUpdater {
           // 因为有的时候删除安装包失败的情况下 这里会重复触发 所以可能会出现为空的情况
           if (isNotNull(autoLaunchFront)) {
             const isEnabled = autoLaunchFront === YesNoEnum.Y
-            // 设置开启自启状态
-            WinEvent.updateAutoLaunch(isEnabled, () => {
-              return isEnabled
-            })
-            // 更新存储库的状态
-            StoreService.configSet('autoLaunch', isEnabled ? YesNoEnum.Y : YesNoEnum.N)
-            // 移除自动更新安装时临时存储的开机自启状态
-            StoreService.configDeleteByKey('autoLaunchFront')
+            // 延迟检测 防止注册表还没有完全添加完毕状态下就获取了
+            setTimeout(() => {
+              // 设置开启自启状态
+              WinEvent.updateAutoLaunch(isEnabled, () => {
+                return isEnabled
+              })
+              // 更新存储库的状态
+              StoreService.configSet('autoLaunch', isEnabled ? YesNoEnum.Y : YesNoEnum.N)
+              // 移除自动更新安装时临时存储的开机自启状态
+              StoreService.configDeleteByKey('autoLaunchFront')
+            }, 5000)
           }
         }, 1000)
         fs.unlink(AutoUpdater.newVersionPath, (e) => {

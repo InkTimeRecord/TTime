@@ -188,10 +188,13 @@ class StoreService {
       log.info('[初始加载翻译快捷键事件] - 结束')
 
       log.info('开机自启初始化事件')
-      WinEvent.updateAutoLaunch(null, (isEnabled) => {
-        StoreService.configSet('autoLaunch', isEnabled ? YesNoEnum.Y : YesNoEnum.N)
-        return isEnabled
-      })
+      setTimeout(() => {
+        // 延迟检测 防止注册表还没有完全添加完毕状态下就获取了
+        WinEvent.updateAutoLaunch(null, (isEnabled) => {
+          StoreService.configSet('autoLaunch', isEnabled ? YesNoEnum.Y : YesNoEnum.N)
+          return isEnabled
+        })
+      }, 5000)
     })
   }
 
