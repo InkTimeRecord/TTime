@@ -20,18 +20,21 @@ class TranSmartChannel implements ITranslateInterface {
         const autoTranslation = res['auto_translation']
         if (isNull(autoTranslation)) {
           const errMessage = this.getMsgByErrorCode(res['message'])
-          GlobalWin.mainWinSend(TranslateChannelFactory.callbackName(info.type), R.okT(errMessage))
+          GlobalWin.mainWinSend(
+            TranslateChannelFactory.callbackName(info.type),
+            R.okIT(info, errMessage)
+          )
           return
         }
         GlobalWin.mainWinSend(
           TranslateChannelFactory.callbackName(info.type),
-          R.okT(autoTranslation)
+          R.okIT(info, autoTranslation)
         )
       })
       .catch((err) => {
         GlobalWin.mainWinSend(
           TranslateChannelFactory.callbackName(info.type),
-          R.okT(commonError('腾讯交互翻译(内置)', err))
+          R.okIT(info, commonError('腾讯交互翻译(内置)', err))
         )
       })
   }

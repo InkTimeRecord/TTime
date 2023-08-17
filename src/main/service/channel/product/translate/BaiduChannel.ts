@@ -28,10 +28,10 @@ class BaiduChannel implements ITranslateInterface {
             data.push(transResult['dst'])
           })
         }
-        GlobalWin.mainWinSend(TranslateChannelFactory.callbackName(info.type), R.okT(data))
+        GlobalWin.mainWinSend(TranslateChannelFactory.callbackName(info.type), R.okIT(info, data))
       })
       .catch((error) => {
-        GlobalWin.mainWinSend(TranslateChannelFactory.callbackName(info.type), R.okT(error))
+        GlobalWin.mainWinSend(TranslateChannelFactory.callbackName(info.type), R.okIT(info, error))
       })
   }
 

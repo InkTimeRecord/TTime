@@ -19,14 +19,17 @@ class DeepLChannel extends TranslateAgent implements ITranslateAgentInterface {
     if (res.code === R.ERROR) {
       GlobalWin.mainWinSend(
         TranslateChannelFactory.callbackName(info.type),
-        R.okT(DeepLChannel.commonErrorExpand(data))
+        R.okIT(info, DeepLChannel.commonErrorExpand(data))
       )
       return
     }
     log.info('[DeepL翻译事件] - 响应报文 : ', data)
     GlobalWin.mainWinSend(
       TranslateChannelFactory.callbackName(info.type),
-      R.okT(data['translations'].map((translation) => translation.text))
+      R.okIT(
+        info,
+        data['translations'].map((translation) => translation.text)
+      )
     )
   }
 

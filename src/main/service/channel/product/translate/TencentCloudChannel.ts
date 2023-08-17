@@ -20,7 +20,7 @@ class TencentCloudChannel implements ITranslateInterface {
           TranslateChannelFactory.callbackName(info.type),
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
-          R.okT(data.TargetText.split('\\n'))
+          R.okIT(info, data.TargetText.split('\\n'))
         )
       },
       (err) => {
@@ -32,7 +32,7 @@ class TencentCloudChannel implements ITranslateInterface {
         } else {
           msg = '未知错误 , 如重复出现 , 请联系开发者'
         }
-        GlobalWin.mainWinSend(TranslateChannelFactory.callbackName(info.type), R.okT(msg))
+        GlobalWin.mainWinSend(TranslateChannelFactory.callbackName(info.type), R.okIT(info, msg))
       }
     )
   }

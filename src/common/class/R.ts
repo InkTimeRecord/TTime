@@ -58,6 +58,20 @@ class R {
     return new R(R.SUCCESS, '', new TranslateVo(data))
   }
 
+  static okIT(info, data: string[] | string): R {
+    const type = Object.prototype.toString.call(data)
+    if (type !== '[object Array]') {
+      if (type === '[object Object]') {
+        data = JSON.stringify(data)
+      }
+      // @ts-ignore 类型强转
+      data = [data]
+    }
+    const translateVo = new TranslateVo(data)
+    translateVo.requestId = info.requestId
+    return new R(R.SUCCESS, '', translateVo)
+  }
+
   static okD(data: object): R {
     return new R(R.SUCCESS, '', data)
   }

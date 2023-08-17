@@ -20,13 +20,13 @@ class NiuTransChannel implements ITranslateInterface {
         log.info('[小牛翻译事件] - 响应报文 : ', res)
         const errorCode = res['error_code']
         if (isNotNull(errorCode)) {
-          GlobalWin.mainWinSend(key, R.okT(this.getMsgByErrorCode(res)))
+          GlobalWin.mainWinSend(key, R.okIT(info, this.getMsgByErrorCode(res)))
           return
         }
-        GlobalWin.mainWinSend(key, R.okT(res['tgt_text']?.split('\\n')))
+        GlobalWin.mainWinSend(key, R.okIT(info, res['tgt_text']?.split('\\n')))
       })
       .catch((error) => {
-        GlobalWin.mainWinSend(key, R.okT(error))
+        GlobalWin.mainWinSend(key, R.okIT(info, error))
       })
   }
 

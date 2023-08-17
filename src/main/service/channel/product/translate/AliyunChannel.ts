@@ -26,7 +26,7 @@ class AliyunChannel implements ITranslateInterface {
         } else {
           data = this.getMsgByErrorCode(code, body.message)
         }
-        GlobalWin.mainWinSend(TranslateChannelFactory.callbackName(info.type), R.okT(data))
+        GlobalWin.mainWinSend(TranslateChannelFactory.callbackName(info.type), R.okIT(info, data))
       },
       (err) => {
         log.error('[阿里云翻译事件] - 异常响应报文 : ', err)
@@ -39,7 +39,7 @@ class AliyunChannel implements ITranslateInterface {
         } else {
           msg = '未知错误 , 如重复出现 , 请联系开发者'
         }
-        GlobalWin.mainWinSend(TranslateChannelFactory.callbackName(info.type), R.okT(msg))
+        GlobalWin.mainWinSend(TranslateChannelFactory.callbackName(info.type), R.okIT(info, msg))
       }
     )
   }

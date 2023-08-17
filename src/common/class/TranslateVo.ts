@@ -3,6 +3,11 @@
  */
 class TranslateVo {
   /**
+   * 请求ID
+   */
+  requestId: string
+
+  /**
    * 翻译结果列表
    */
   translateList: string[] | string

@@ -19,7 +19,7 @@ class DeepLBuiltInChannel extends TranslateAgent implements ITranslateAgentInter
     if (res.code === R.ERROR) {
       GlobalWin.mainWinSend(
         TranslateChannelFactory.callbackName(info.type),
-        R.okT(this.getMsgByErrorMsg(data))
+        R.okIT(info, this.getMsgByErrorMsg(data))
       )
       return
     }
@@ -35,6 +35,7 @@ class DeepLBuiltInChannel extends TranslateAgent implements ITranslateAgentInter
       textInfo?.alternatives?.map((alternative) => alternative.text),
       []
     )
+    vo.requestId = info.requestId
     GlobalWin.mainWinSend(TranslateChannelFactory.callbackName(info.type), R.okD(vo))
   }
 

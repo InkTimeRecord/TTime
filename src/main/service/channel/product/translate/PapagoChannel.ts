@@ -21,13 +21,13 @@ class PapagoChannel implements ITranslateInterface {
         const data = res['message']['result']['translatedText']
         GlobalWin.mainWinSend(
           TranslateChannelFactory.callbackName(info.type),
-          R.okT(data.split('\\n'))
+          R.okIT(info, data.split('\\n'))
         )
       })
       .catch((err) => {
         GlobalWin.mainWinSend(
           TranslateChannelFactory.callbackName(info.type),
-          R.okT(this.commonErrorExpand('Papago翻译事件', err))
+          R.okIT(info, this.commonErrorExpand('Papago翻译事件', err))
         )
       })
   }

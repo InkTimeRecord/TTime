@@ -21,10 +21,10 @@ class TTimeChannel implements ITranslateInterface {
         } else {
           data = res['data']['translateList']
         }
-        GlobalWin.mainWinSend(TranslateChannelFactory.callbackName(info.type), R.okT(data))
+        GlobalWin.mainWinSend(TranslateChannelFactory.callbackName(info.type), R.okIT(info, data))
       })
       .catch((error) => {
-        GlobalWin.mainWinSend(TranslateChannelFactory.callbackName(info.type), R.okT(error))
+        GlobalWin.mainWinSend(TranslateChannelFactory.callbackName(info.type), R.okIT(info, error))
       })
   }
 

@@ -50,14 +50,17 @@ import {
   getTranslateServiceMapByUse,
   TranslateServiceBuilder
 } from '../../utils/translateServiceUtil'
-import { cacheGet } from '../../utils/cacheUtil'
+import { cacheGet, cacheGetByType, cacheSetByType } from '../../utils/cacheUtil'
 import ElMessageExtend from '../../utils/messageExtend'
 import {
-  getLanguageResultNameConversion,
-  getLanguageNameConversion
+  getLanguageNameConversion,
+  getLanguageResultNameConversion
 } from '../../utils/languageUtil'
 import { YesNoEnum } from '../../../../common/enums/YesNoEnum'
 import { findLanguageByLanguageName } from './channel/language/ChannelLanguage'
+import TranslateRecordVo from '../../../../common/class/TranslateRecordVo'
+import TranslateServiceRecordVo from '../../../../common/class/TranslateServiceRecordVo'
+import { StoreTypeEnum } from '../../../../common/enums/StoreTypeEnum'
 
 // 加载loading
 const loadingImageSrc = ref(loadingImage)
@@ -206,6 +209,13 @@ const translateFun = (): void => {
   window.api.ttimeApiTranslateUse()
   // 获取当前正在使用的翻译源
   const translateServiceMapData = getTranslateServiceMapByUse()
+  // 构建翻译记录信息
+  const translateRecordVo = TranslateRecordVo.build({
+    translateContentDealWith,
+    inputLanguage,
+    resultLanguage
+  })
+  const requestMap = new Map()
   // 遍历当前正在使用的翻译源
   for (const translateService of translateServiceMapData.values()) {
     // 翻译源类型
@@ -239,6 +249,8 @@ const translateFun = (): void => {
     )
     info = {
       ...info,
+      requestId: translateRecordVo.requestId,
+      id: translateService.id,
       appId: translateService.appId,
       appKey: translateService.appKey
     }
@@ -248,9 +260,28 @@ const translateFun = (): void => {
         info[key] = translateService[key]
       })
     }
-    // 此处触发之后会异步回调到 *ApiTranslateCallbackEvent 方法中去执行
-    window.api.apiUniteTranslate(type, info)
+    requestMap.set(type, info)
   }
+
+  // 构建翻译记录信息
+  const translateServiceRecordList = []
+  requestMap.forEach((value, key) => {
+    const serviceRecordVo = new TranslateServiceRecordVo()
+    serviceRecordVo.translateServiceType = key
+    serviceRecordVo.translateServiceId = value.id
+    translateServiceRecordList.push(serviceRecordVo)
+  })
+  translateRecordVo.translateServiceRecordList = translateServiceRecordList
+  let translateRecordList = cacheGetByType(StoreTypeEnum.HISTORY_RECORD, 'translateRecordList')
+  translateRecordList = isNull(translateRecordList) ? [] : translateRecordList
+  translateRecordList.push(translateRecordVo)
+  cacheSetByType(StoreTypeEnum.HISTORY_RECORD, 'translateRecordList', translateRecordList)
+
+  // 触发翻译
+  requestMap.forEach((value, key) => {
+    // 此处触发之后会异步回调到 *ApiTranslateCallbackEvent 方法中去执行
+    window.api.apiUniteTranslate(key, value)
+  })
 }
 
 const isContentNull = (content) => {

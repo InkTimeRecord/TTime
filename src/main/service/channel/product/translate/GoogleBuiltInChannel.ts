@@ -18,7 +18,7 @@ class GoogleBuiltInChannel extends TranslateAgent implements ITranslateAgentInte
     const data = dataObj['response']
     const info = dataObj['request']
     if (res.code === R.ERROR) {
-      GlobalWin.mainWinSend(TranslateChannelFactory.callbackName(info.type), R.okT(data))
+      GlobalWin.mainWinSend(TranslateChannelFactory.callbackName(info.type), R.okIT(info, data))
       return
     }
     log.info('[Google翻译(内置)事件] - 响应报文 : ', JSON.stringify(data))
@@ -36,6 +36,7 @@ class GoogleBuiltInChannel extends TranslateAgent implements ITranslateAgentInte
     })
     const vo = new TranslateVo([text])
     vo.dictBuild('', '', '', '', explains, [])
+    vo.requestId = info.requestId
     GlobalWin.mainWinSend(TranslateChannelFactory.callbackName(info.type), R.okD(vo))
   }
 

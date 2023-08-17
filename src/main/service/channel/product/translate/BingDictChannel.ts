@@ -93,7 +93,7 @@ class BingDictChannel extends TranslateAgent implements ITranslateAgentInterface
       })
       .catch((err) => {
         log.info('[BingDict翻译事件] - 异常 : ', err)
-        GlobalWin.mainWinSend(TranslateChannelFactory.callbackName(info.type), R.okT(err))
+        GlobalWin.mainWinSend(TranslateChannelFactory.callbackName(info.type), R.okIT(info, err))
       })
   }
 
@@ -129,7 +129,7 @@ class BingDictChannel extends TranslateAgent implements ITranslateAgentInterface
     const info = dataObj['request']
     log.info('[BingDict翻译事件] - 响应报文 : ', JSON.stringify(data))
     if (res.code === R.ERROR) {
-      GlobalWin.mainWinSend(TranslateChannelFactory.callbackName(info.type), R.okT(data))
+      GlobalWin.mainWinSend(TranslateChannelFactory.callbackName(info.type), R.okIT(info, data))
       return
     }
     const vo = new TranslateVo([data['text']])
@@ -141,6 +141,7 @@ class BingDictChannel extends TranslateAgent implements ITranslateAgentInterface
       data.explains,
       data.wfs
     )
+    vo.requestId = info.requestId
     GlobalWin.mainWinSend(TranslateChannelFactory.callbackName(info.type), R.okD(vo))
   }
 

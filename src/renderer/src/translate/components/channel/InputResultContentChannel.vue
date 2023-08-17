@@ -7,9 +7,9 @@
             class="content-translate-logo none-select"
             :src="translateServiceThis.serviceInfo.logo"
           />
-          <span class="content-translate-name none-select">{{
-            translateServiceThis.serviceName
-          }}</span>
+          <span class="content-translate-name none-select">
+            {{ translateServiceThis.serviceName }}
+          </span>
           <img v-show="isResultLoading" class="content-translate-loading" :src="loadingImageSrc" />
         </div>
         <div class="function-tools-category content-tools-category">
@@ -99,6 +99,8 @@ import translate from '../../../utils/translate'
 import TranslateServiceEnum from '../../../../../common/enums/TranslateServiceEnum'
 import { isNull } from '../../../../../common/utils/validate'
 import { OpenAIStatusEnum } from '../../../../../common/enums/OpenAIStatusEnum'
+import { cacheGetByType } from '../../../utils/cacheUtil'
+import { StoreTypeEnum } from '../../../../../common/enums/StoreTypeEnum'
 
 // 翻译内容框内容
 const props = defineProps<{
@@ -208,6 +210,14 @@ window.api[getTranslateServiceBackEventName(props.translateService)]((res) => {
   translatedResultContent.value = translatedResultContentTemp
   isResultLoading.value = false
   showResult.value = true
+
+  const translateRecordList = cacheGetByType(StoreTypeEnum.HISTORY_RECORD, 'translateRecordList')
+  for (let i = 0; i < translateRecordList.length; i++) {
+    const translateRecord = [i]
+    if (translateRecord.requestId === data['requestId']) {
+      console.log('translateRecord =', translateRecord)
+    }
+  }
 
   let explainListDeal = []
   if (!isNull(data?.explains)) {

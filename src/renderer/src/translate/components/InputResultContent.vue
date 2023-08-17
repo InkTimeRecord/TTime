@@ -1,5 +1,5 @@
 <template>
-  <div v-for="translateService in translateServiceMap.values()">
+  <div v-for="(translateService, key) in translateServiceMap.values()" :key="key">
     <input-result-content-channel
       :key="translateService.id"
       :ref="setChannelRef"

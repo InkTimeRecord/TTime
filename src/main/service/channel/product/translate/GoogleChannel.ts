@@ -19,14 +19,15 @@ class GoogleChannel extends TranslateAgent implements ITranslateAgentInterface {
     if (res.code === R.ERROR) {
       GlobalWin.mainWinSend(
         TranslateChannelFactory.callbackName(info.type),
-        R.okT(GoogleChannel.commonErrorExpand(data))
+        R.okIT(info, GoogleChannel.commonErrorExpand(data))
       )
       return
     }
     log.info('[Google翻译事件] - 响应报文 : ', JSON.stringify(data))
     GlobalWin.mainWinSend(
       TranslateChannelFactory.callbackName(info.type),
-      R.okT(
+      R.okIT(
+        info,
         data.data['translations'].map((translation) =>
           translation.translatedText.replaceAll('&#39;', "'")
         )

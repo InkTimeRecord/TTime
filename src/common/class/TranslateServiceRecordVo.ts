@@ -1,0 +1,28 @@
+/**
+ * 翻译结果
+ */
+import TranslateVo from './TranslateVo'
+
+class TranslateServiceRecordVo {
+  /**
+   * 翻译服务类型
+   */
+  translateServiceType: string
+
+  /**
+   * 翻译服务Id
+   */
+  translateServiceId: string
+
+  /**
+   * 翻译结果内容
+   */
+  translatedResultContent: string
+
+  /**
+   * 翻译词典结果内容
+   */
+  translateVo: TranslateVo
+}
+
+export default TranslateServiceRecordVo

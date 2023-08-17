@@ -23,17 +23,17 @@ class CaiYunChannel implements ITranslateInterface {
         if (isNull(text)) {
           GlobalWin.mainWinSend(
             TranslateChannelFactory.callbackName(info.type),
-            R.okT('翻译出现错误')
+            R.okIT(info, '翻译出现错误')
           )
           return
         }
-        GlobalWin.mainWinSend(TranslateChannelFactory.callbackName(info.type), R.okT(text))
+        GlobalWin.mainWinSend(TranslateChannelFactory.callbackName(info.type), R.okIT(info, text))
       })
       .catch((err) => {
         const errInfo = commonError('彩云翻译事件', err)
         GlobalWin.mainWinSend(
           TranslateChannelFactory.callbackName(info.type),
-          R.okT(this.getMsgByErrorCode(errInfo?.['message']))
+          R.okIT(info, this.getMsgByErrorCode(errInfo?.['message']))
         )
       })
   }

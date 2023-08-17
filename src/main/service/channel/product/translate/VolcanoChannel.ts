@@ -24,18 +24,18 @@ class VolcanoChannel implements ITranslateInterface {
         if (isNotNull(errorInfo)) {
           GlobalWin.mainWinSend(
             TranslateChannelFactory.callbackName(info.type),
-            R.okT(this.getMsgByErrorCode(errorInfo))
+            R.okIT(info, this.getMsgByErrorCode(errorInfo))
           )
           return
         }
         const translationList = res['TranslationList'][0]['Translation']
         GlobalWin.mainWinSend(
           TranslateChannelFactory.callbackName(info.type),
-          R.okT(translationList)
+          R.okIT(info, translationList)
         )
       })
       .catch((error) => {
-        GlobalWin.mainWinSend(TranslateChannelFactory.callbackName(info.type), R.okT(error))
+        GlobalWin.mainWinSend(TranslateChannelFactory.callbackName(info.type), R.okIT(info, error))
       })
   }
 

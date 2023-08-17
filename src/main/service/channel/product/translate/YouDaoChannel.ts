@@ -32,16 +32,17 @@ class YouDaoChannel implements ITranslateInterface {
               basic['wfs']
             )
           }
+          vo.requestId = info.requestId
           GlobalWin.mainWinSend(TranslateChannelFactory.callbackName(info.type), R.okD(vo))
         } else {
           GlobalWin.mainWinSend(
             TranslateChannelFactory.callbackName(info.type),
-            R.okT(this.getMsgByErrorCode(errorCode))
+            R.okIT(info, this.getMsgByErrorCode(errorCode))
           )
         }
       })
       .catch((error) => {
-        GlobalWin.mainWinSend(TranslateChannelFactory.callbackName(info.type), R.okT(error))
+        GlobalWin.mainWinSend(TranslateChannelFactory.callbackName(info.type), R.okIT(info, error))
       })
   }
 
