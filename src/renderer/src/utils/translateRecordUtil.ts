@@ -1,5 +1,6 @@
 import { cacheGetByType, cacheSetByType } from './cacheUtil'
 import { StoreTypeEnum } from '../../../common/enums/StoreTypeEnum'
+import TranslateRecordVo from '../../../common/class/TranslateRecordVo'
 
 /**
  * 更新翻译记录
@@ -26,4 +27,13 @@ export const updateTranslateRecord = (translateVo): void => {
     }
   }
   cacheSetByType(StoreTypeEnum.HISTORY_RECORD, 'translateRecordList', translateRecordList)
+}
+
+/**
+ * 获取翻译记录
+ *
+ * @return 翻译记录
+ */
+export const getTranslateRecordList = (): Array<TranslateRecordVo> => {
+  return cacheGetByType(StoreTypeEnum.HISTORY_RECORD, 'translateRecordList')
 }

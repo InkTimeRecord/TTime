@@ -19,9 +19,9 @@
             <el-menu-item index="shortcutKey">
               <span class="none-select">全局快捷键设置</span>
             </el-menu-item>
-            <!--            <el-menu-item index="translateHistory">-->
-            <!--              <span class="none-select">翻译记录</span>-->
-            <!--            </el-menu-item>-->
+            <el-menu-item index="translateHistory">
+              <span class="none-select">翻译记录</span>
+            </el-menu-item>
             <el-menu-item index="translateServiceConfig">
               <span class="none-select">翻译源设置</span>
             </el-menu-item>
@@ -44,7 +44,7 @@
             <basi-info v-show="menuIndex === 'basiInfo'" />
             <advanced-info v-show="menuIndex === 'advancedInfo'" />
             <shortcut-key v-show="menuIndex === 'shortcutKey'" />
-            <!--            <translate-history v-show="menuIndex === 'translateHistory'" />-->
+            <translate-history v-show="menuIndex === 'translateHistory'" />
             <translate-service-config v-show="menuIndex === 'translateServiceConfig'" />
             <network-set v-show="menuIndex === 'networkSet'" />
             <config-file v-show="menuIndex === 'configFile'" />
