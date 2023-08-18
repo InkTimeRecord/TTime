@@ -28,6 +28,7 @@ class DeepLBuiltInChannel extends TranslateAgent implements ITranslateAgentInter
     const text = textInfo.text
     const vo = new TranslateVo([text])
     vo.dictBuild(
+      info,
       '',
       '',
       '',
@@ -35,7 +36,6 @@ class DeepLBuiltInChannel extends TranslateAgent implements ITranslateAgentInter
       textInfo?.alternatives?.map((alternative) => alternative.text),
       []
     )
-    vo.requestId = info.requestId
     GlobalWin.mainWinSend(TranslateChannelFactory.callbackName(info.type), R.okD(vo))
   }
 

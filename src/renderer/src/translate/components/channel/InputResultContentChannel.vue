@@ -99,8 +99,9 @@ import translate from '../../../utils/translate'
 import TranslateServiceEnum from '../../../../../common/enums/TranslateServiceEnum'
 import { isNull } from '../../../../../common/utils/validate'
 import { OpenAIStatusEnum } from '../../../../../common/enums/OpenAIStatusEnum'
-import { cacheGetByType } from '../../../utils/cacheUtil'
+import { cacheGetByType, cacheSetByType } from '../../../utils/cacheUtil'
 import { StoreTypeEnum } from '../../../../../common/enums/StoreTypeEnum'
+import { updateTranslateRecord } from '../../../utils/translateRecordUtil'
 
 // 翻译内容框内容
 const props = defineProps<{
@@ -179,6 +180,16 @@ const textWriteShearPlate = (text): void => {
  * 翻译回调 - 异步处理
  */
 window.api[getTranslateServiceBackEventName(props.translateService)]((res) => {
+  const data = res.data
+  const translateList = data['translateList']
+  let translatedResultContentTemp = ''
+  translateList.forEach((data) => {
+    translatedResultContentTemp += data + '\n'
+  })
+  translatedResultContentTemp = translatedResultContentTemp.slice(
+    0,
+    translatedResultContentTemp.length - 1
+  )
   if (
     TranslateServiceEnum.OPEN_AI === props.translateService['type'] ||
     TranslateServiceEnum.AZURE_OPEN_AI === props.translateService['type']
@@ -190,34 +201,22 @@ window.api[getTranslateServiceBackEventName(props.translateService)]((res) => {
     if (res.code === OpenAIStatusEnum.END) {
       showResult.value = true
       isResultLoading.value = false
-      translatedResultContent.value += res.data
+      translatedResultContent.value += translatedResultContentTemp
+      data.translateList = [translatedResultContent.value]
+      // 更新翻译记录
+      updateTranslateRecord(data)
       return
     }
     showResult.value = true
-    translatedResultContent.value += res.data
+    translatedResultContent.value += translatedResultContentTemp
     return
   }
-  const data = res.data
-  const translateList = data['translateList']
-  let translatedResultContentTemp = ''
-  translateList.forEach((data) => {
-    translatedResultContentTemp += data + '\n'
-  })
-  translatedResultContentTemp = translatedResultContentTemp.slice(
-    0,
-    translatedResultContentTemp.length - 1
-  )
-  translatedResultContent.value = translatedResultContentTemp
-  isResultLoading.value = false
   showResult.value = true
+  isResultLoading.value = false
+  translatedResultContent.value = translatedResultContentTemp
 
-  const translateRecordList = cacheGetByType(StoreTypeEnum.HISTORY_RECORD, 'translateRecordList')
-  for (let i = 0; i < translateRecordList.length; i++) {
-    const translateRecord = [i]
-    if (translateRecord.requestId === data['requestId']) {
-      console.log('translateRecord =', translateRecord)
-    }
-  }
+  // 更新翻译记录
+  updateTranslateRecord(data)
 
   let explainListDeal = []
   if (!isNull(data?.explains)) {

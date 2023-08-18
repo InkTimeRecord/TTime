@@ -134,6 +134,7 @@ class BingDictChannel extends TranslateAgent implements ITranslateAgentInterface
     }
     const vo = new TranslateVo([data['text']])
     vo.dictBuild(
+      info,
       data.usPhonetic,
       data.ukPhonetic,
       data.usSpeech,
@@ -141,7 +142,6 @@ class BingDictChannel extends TranslateAgent implements ITranslateAgentInterface
       data.explains,
       data.wfs
     )
-    vo.requestId = info.requestId
     GlobalWin.mainWinSend(TranslateChannelFactory.callbackName(info.type), R.okD(vo))
   }
 

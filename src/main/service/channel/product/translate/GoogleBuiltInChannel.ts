@@ -35,8 +35,7 @@ class GoogleBuiltInChannel extends TranslateAgent implements ITranslateAgentInte
       text += textArray[0]
     })
     const vo = new TranslateVo([text])
-    vo.dictBuild('', '', '', '', explains, [])
-    vo.requestId = info.requestId
+    vo.dictBuild(info, '', '', '', '', explains, [])
     GlobalWin.mainWinSend(TranslateChannelFactory.callbackName(info.type), R.okD(vo))
   }
 

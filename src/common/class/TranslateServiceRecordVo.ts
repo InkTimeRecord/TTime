@@ -17,11 +17,6 @@ class TranslateServiceRecordVo {
   /**
    * 翻译结果内容
    */
-  translatedResultContent: string
-
-  /**
-   * 翻译词典结果内容
-   */
   translateVo: TranslateVo
 }
 

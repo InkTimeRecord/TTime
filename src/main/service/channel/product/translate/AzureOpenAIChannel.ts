@@ -75,7 +75,10 @@ class AzureOpenAIChannel extends TranslateAgent implements ITranslateAgentInterf
    * @param msg 消息
    */
   static callbackEvent(info, status, msg): void {
-    GlobalWin.mainWinSend(TranslateChannelFactory.callbackName(info.type), R.okCT(status, msg))
+    GlobalWin.mainWinSend(
+      TranslateChannelFactory.callbackName(info.type),
+      R.okCIT(status, info, msg)
+    )
   }
 
   /**

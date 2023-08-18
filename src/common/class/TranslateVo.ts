@@ -8,6 +8,11 @@ class TranslateVo {
   requestId: string
 
   /**
+   * 翻译服务ID
+   */
+  translateServiceId: string
+
+  /**
    * 翻译结果列表
    */
   translateList: string[] | string
@@ -46,7 +51,9 @@ class TranslateVo {
     this.translateList = translateList
   }
 
-  dictBuild(usPhonetic, ukPhonetic, usSpeech, ukSpeech, explains, wfs): void {
+  dictBuild(info, usPhonetic, ukPhonetic, usSpeech, ukSpeech, explains, wfs): void {
+    this.requestId = info.requestId
+    this.translateServiceId = info.id
     this.usPhonetic = usPhonetic
     this.ukPhonetic = ukPhonetic
     this.usSpeech = usSpeech

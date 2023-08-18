@@ -58,7 +58,7 @@ class R {
     return new R(R.SUCCESS, '', new TranslateVo(data))
   }
 
-  static okIT(info, data: string[] | string): R {
+  static okCIT(code, info, data: string[] | string): R {
     const type = Object.prototype.toString.call(data)
     if (type !== '[object Array]') {
       if (type === '[object Object]') {
@@ -66,10 +66,17 @@ class R {
       }
       // @ts-ignore 类型强转
       data = [data]
+    } else if (typeof data === 'string') {
+      data = [data]
     }
     const translateVo = new TranslateVo(data)
     translateVo.requestId = info.requestId
-    return new R(R.SUCCESS, '', translateVo)
+    translateVo.translateServiceId = info.id
+    return new R(code, '', translateVo)
+  }
+
+  static okIT(info, data: string[] | string): R {
+    return R.okCIT(R.SUCCESS, info, data)
   }
 
   static okD(data: object): R {
