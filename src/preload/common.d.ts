@@ -11,5 +11,6 @@ declare global {
     cacheGet
     cacheSet
     cacheDelete
+    textWriteShearPlateEvent
   }
 }

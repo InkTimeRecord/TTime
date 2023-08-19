@@ -48,13 +48,6 @@ const updateText = (callback): void => {
 }
 
 /**
- * 文本写入剪切板事件
- */
-const textWriteShearPlateEvent = (text): void => {
-  ipcRenderer.invoke('text-write-shear-plate-event', text)
-}
-
-/**
  * 图片写入剪切板事件
  */
 const base64ImgWriteShearPlateEvent = (base64Img): void => {
@@ -76,7 +69,6 @@ const api = {
   updateImg,
   updateText,
   winSizeUpdate,
-  textWriteShearPlateEvent,
   base64ImgWriteShearPlateEvent,
   updateTranslatedContentEvent
 }

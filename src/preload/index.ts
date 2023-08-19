@@ -146,13 +146,6 @@ const winShowByInputEvent = (callback): void => {
 }
 
 /**
- * 文本写入剪切板事件
- */
-const textWriteShearPlateEvent = (text): void => {
-  ipcRenderer.invoke('text-write-shear-plate-event', text)
-}
-
-/**
  * 始终在最前面
  */
 const alwaysOnTopEvent = (status): void => {
@@ -263,7 +256,6 @@ const api = {
   updateTranslateContentEvent,
   clearAllTranslateContentEvent,
   pageHeightChangeEvent,
-  textWriteShearPlateEvent,
   alwaysOnTopEvent,
   updateMessageEvent,
   windowHeightChangeMaxEvent,

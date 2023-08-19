@@ -3,14 +3,10 @@
     <div class="content-input-block">
       <div class="function-tools-block content-header-block">
         <div class="content-tools-category">
-          <img
-            class="content-translate-logo none-select"
-            :src="translateServiceThis.serviceInfo.logo"
-          />
+          <img class="content-translate-logo none-select" :src="serviceInfo.logo" />
           <span class="content-translate-name none-select">
-            {{ translateServiceThis.serviceName }}
+            {{ serviceInfo.name }}
           </span>
-          <img v-show="isResultLoading" class="content-translate-loading" :src="loadingImageSrc" />
         </div>
         <div class="function-tools-category content-tools-category">
           <a class="function-tools content-tools" @click="showResultFun">
@@ -94,41 +90,33 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import loadingImage from '../../../assets/loading.gif'
-import translate from '../../../utils/translate'
-import TranslateServiceEnum from '../../../../../common/enums/TranslateServiceEnum'
-import { isNull } from '../../../../../common/utils/validate'
-import { OpenAIStatusEnum } from '../../../../../common/enums/OpenAIStatusEnum'
-import { updateTranslateRecord } from '../../../utils/translateRecordUtil'
+import translate from '../../../../utils/translate'
+import { isNull } from '../../../../../../common/utils/validate'
+import TranslateServiceRecordVo from '../../../../../../common/class/TranslateServiceRecordVo'
+import { TranslateServiceBuilder } from '../../../../utils/translateServiceUtil'
 
 // 翻译内容框内容
 const props = defineProps<{
-  translateService: object
+  translateServiceRecordVo: TranslateServiceRecordVo
 }>()
 
-/**
- * 获取翻译服务回调方法名称
- *
- * @param translateService 翻译服务信息
- */
-const getTranslateServiceBackEventName = (translateService): string => {
-  return translateService.type.toLowerCase() + 'ApiTranslateCallbackEvent'
-}
+const translateServiceRecordVoThis = ref(props.translateServiceRecordVo)
+
+const serviceInfo = ref(
+  TranslateServiceBuilder.getInfoByService(translateServiceRecordVoThis.value.translateServiceType)
+)
 
 /**
- * 监听 props.translateService 数据变化
+ * 监听 props.translateServiceRecordVo 数据变化
  *
- * 此处不监听的情况下 translateServiceThis 不会更新
+ * 此处不监听的情况下 translateServiceRecordVoThis 不会更新
  */
 watch(
-  () => props.translateService,
-  (newTranslateService) => {
-    translateServiceThis.value = newTranslateService
+  () => props.translateServiceRecordVo,
+  (newTranslateServiceRecordVo) => {
+    translateServiceRecordVoThis.value = newTranslateServiceRecordVo
   }
 )
-// 加载loading
-const loadingImageSrc = ref(loadingImage)
-const translateServiceThis = ref(props.translateService)
 
 // 翻译结果
 const translatedResultContent = ref('')
@@ -174,131 +162,81 @@ const textWriteShearPlate = (text): void => {
   translate.textWriteShearPlate(text)
 }
 
-/**
- * 翻译回调 - 异步处理
- */
-window.api[getTranslateServiceBackEventName(props.translateService)]((res) => {
-  const data = res.data
-  const translateList = data['translateList']
-  let translatedResultContentTemp = ''
-  translateList.forEach((data) => {
-    translatedResultContentTemp += data + '\n'
-  })
-  translatedResultContentTemp = translatedResultContentTemp.slice(
-    0,
-    translatedResultContentTemp.length - 1
-  )
-  if (
-    TranslateServiceEnum.OPEN_AI === props.translateService['type'] ||
-    TranslateServiceEnum.AZURE_OPEN_AI === props.translateService['type']
-  ) {
-    if (res.code === OpenAIStatusEnum.START) {
-      translatedResultContent.value = ''
-      return
-    }
-    if (res.code === OpenAIStatusEnum.END) {
-      showResult.value = true
-      isResultLoading.value = false
-      translatedResultContent.value += translatedResultContentTemp
-      data.translateList = [translatedResultContent.value]
-      // 更新翻译记录
-      updateTranslateRecord(data)
-      return
-    }
-    showResult.value = true
-    translatedResultContent.value += translatedResultContentTemp
-    return
-  }
-  showResult.value = true
-  isResultLoading.value = false
-  translatedResultContent.value = translatedResultContentTemp
+const data = translateServiceRecordVoThis.value.translateVo
+const translateList = data['translateList']
+let translatedResultContentTemp = ''
+translateList.forEach((data) => {
+  translatedResultContentTemp += data + '\n'
+})
+translatedResultContentTemp = translatedResultContentTemp.slice(
+  0,
+  translatedResultContentTemp.length - 1
+)
+showResult.value = true
+isResultLoading.value = false
+translatedResultContent.value = translatedResultContentTemp
 
-  // 更新翻译记录
-  updateTranslateRecord(data)
-
-  let explainListDeal = []
-  if (!isNull(data?.explains)) {
-    explainListDeal = data.explains.map((explain) => {
-      const regex = /^(\w+\.)\s*(.*)$/
-      const matches = explain.match(regex)
-      if (matches) {
-        return {
-          type: matches[1] + ' ',
-          content: matches[2]
-        }
-      }
-      // 处理没有词性的情况
+let explainListDeal = []
+if (!isNull(data?.explains)) {
+  explainListDeal = data.explains.map((explain) => {
+    const regex = /^(\w+\.)\s*(.*)$/
+    const matches = explain.match(regex)
+    if (matches) {
       return {
-        content: explain
+        type: matches[1] + ' ',
+        content: matches[2]
       }
-    })
-  }
-
-  const isUs = !isNull(data?.['usPhonetic'])
-  const isUk = !isNull(data?.['ukPhonetic'])
-  const isExplainList = explainListDeal?.length > 0
-  const isWfs = !isNull(data?.['wfs']) && data['wfs']?.length > 0
-  dictTranslatedResultExpand.value = {
-    isUs,
-    isUk,
-    isExplainList,
-    isWfs,
-    usPhonetic: data['usPhonetic'],
-    ukPhonetic: data['ukPhonetic'],
-    usSpeech: data['usSpeech'],
-    ukSpeech: data['ukSpeech'],
-    wfsList: data['wfs'],
-    explainList: explainListDeal
-  }
-})
-
-/**
- * 设置翻译内容
- *
- * @param value 翻译内容
- */
-const setTranslatedResultContent = (value): void => {
-  translatedResultContent.value = value
+    }
+    // 处理没有词性的情况
+    return {
+      content: explain
+    }
+  })
 }
 
-/**
- * 设置显示翻译结果状态
- *
- * @param value 显示翻译结果
- */
-const setShowResult = (value): void => {
-  showResult.value = value
+const isUs = !isNull(data?.['usPhonetic'])
+const isUk = !isNull(data?.['ukPhonetic'])
+const isExplainList = explainListDeal?.length > 0
+const isWfs = !isNull(data?.['wfs']) && data['wfs']?.length > 0
+dictTranslatedResultExpand.value = {
+  isUs,
+  isUk,
+  isExplainList,
+  isWfs,
+  usPhonetic: data['usPhonetic'],
+  ukPhonetic: data['ukPhonetic'],
+  usSpeech: data['usSpeech'],
+  ukSpeech: data['ukSpeech'],
+  wfsList: data['wfs'],
+  explainList: explainListDeal
 }
-
-/**
- * 设置显示翻译加载中状态
- *
- * @param value 加载中状态
- */
-const setIsResultLoading = (value): void => {
-  isResultLoading.value = value
-}
-
-/**
- * 清空翻译结果内容事件
- */
-const clearTranslatedResultContentEvent = (): void => {
-  isResultLoading.value = false
-  showResult.value = false
-  setTranslatedResultContent('')
-}
-
-defineExpose({
-  setTranslatedResultContent,
-  clearTranslatedResultContentEvent,
-  setShowResult,
-  setIsResultLoading
-})
 </script>
 
 <style lang="scss" scoped>
-@import '../../../css/translate.scss';
-@import '../../../css/translate-input.scss';
+@import '../../../../css/translate.scss';
+
+.content {
+  padding-bottom: 1px;
+
+  .content-input-block {
+    margin: 0 12px 12px 12px;
+    border-radius: 7px;
+    background: var(--ttime-translate-input-color-background);
+
+    .content-input {
+      border: 0;
+      outline: none;
+      resize: none;
+      width: 98%;
+      font-size: 14px;
+      padding: 10px 0px 1px 10px;
+    }
+
+    .content-input-zero-padding-top {
+      padding-top: 0;
+    }
+  }
+}
 
 .content-header-block {
   padding: 5px 5px 5px 10px;

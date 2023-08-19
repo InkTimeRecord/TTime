@@ -11,9 +11,9 @@
             >
               <a class="translate-service-block none-select translate-service-expansion-block">
                 <div class="left">
-                  <span class="translate-service-name none-select">{{
-                    element.translateContent
-                  }}</span>
+                  <span class="translate-service-name none-select">
+                    {{ element.translateContent }}
+                  </span>
                 </div>
               </a>
             </li>
@@ -21,13 +21,78 @@
         </el-scrollbar>
       </ul>
     </div>
+    <div class="translate-service-set-block">
+      <div class="block-layer">
+        <div class="content-block">
+          <div class="content">
+            <div class="content-input-block">
+              <el-input
+                ref="translateContentInputRef"
+                v-model="translateRecordThis.translateContent"
+                readonly
+                class="content-input"
+                spellcheck="false"
+                type="textarea"
+                :autosize="{ minRows: 2, maxRows: 10 }"
+                placeholder="请输入单词或文字"
+              >
+              </el-input>
+              <div class="function-tools-block">
+                <a class="function-tools" @click="playSpeech(translateRecordThis.translateContent)">
+                  <svg-icon icon-class="play" class="function-tools-icon" />
+                </a>
+                <a
+                  class="function-tools"
+                  @click="textWriteShearPlate(translateRecordThis.translateContent)"
+                >
+                  <svg-icon icon-class="copy" class="function-tools-icon" />
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="language-select-block">
+          <div class="language-select">
+            <a class="language-block language-block-left none-select">
+              <div>
+                {{ translateRecordThis.languageType }}
+              </div>
+            </a>
+
+            <div class="function-tools-block language-exchange-block language-block">
+              <a class="function-tools language-icon">
+                <svg-icon icon-class="substitution" class="function-tools-icon" />
+              </a>
+            </div>
+
+            <a class="language-block language-block-right none-select">
+              <div>
+                {{ translateRecordThis.languageResultType }}
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <div v-for="(value, key) in translateServiceRecordList" :key="key">
+          <history-result-content-channel
+            :key="value.translateServiceId"
+            :translate-service-record-vo="value"
+          />
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 <script setup lang="ts">
 import { ref } from 'vue'
 import { getTranslateRecordList } from '../../../utils/translateRecordUtil'
+import translate from '../../../utils/translate'
+import HistoryResultContentChannel from './translateHistory/HistoryResultContentChannel.vue'
 
-const translateRecordList = ref(getTranslateRecordList())
+const translateRecordList = ref(getTranslateRecordList().slice().reverse())
+const translateServiceRecordList = ref(translateRecordList.value.translateServiceRecordList)
+
 console.log(translateRecordList.value)
 // 当前选择的翻译服务
 const translateRecordThis = ref()
@@ -45,7 +110,31 @@ selectOneTranslateRecordThis()
  * @param translateRecord 翻译记录
  */
 const selectTranslateRecord = (translateRecord): void => {
+  translateServiceRecordList.value = []
   translateRecordThis.value = translateRecord
+  setTimeout(() => {
+    // 加入延迟 否则显示的还是旧内容
+    translateServiceRecordList.value = translateRecord.translateServiceRecordList
+  }, 1)
+}
+
+// 翻译输入框ref
+const translateContentInputRef = ref()
+
+/**
+ * 播放语音
+ *
+ * @param text 播放的文字
+ */
+const playSpeech = (text): void => {
+  translate.playSpeech(text)
+}
+
+/**
+ * 文字写入到剪切板
+ */
+const textWriteShearPlate = (text): void => {
+  translate.textWriteShearPlate(text)
 }
 </script>
 
@@ -82,8 +171,8 @@ const selectTranslateRecord = (translateRecord): void => {
       padding: 0;
 
       .translate-service-block {
-        width: 210px;
-        height: 60px;
+        width: 186px;
+        height: 39px;
         margin: 7px 10px;
         border-radius: 8px;
         display: flex;
@@ -168,6 +257,72 @@ const selectTranslateRecord = (translateRecord): void => {
         }
       }
     }
+  }
+}
+
+@import '../../../css/translate.scss';
+
+.content {
+  margin-top: 10px;
+
+  .content-input-block {
+    margin: 0 12px 12px 12px;
+    border-radius: 7px;
+    background: var(--ttime-translate-input-color-background);
+
+    .content-input {
+      border: 0;
+      outline: none;
+      resize: none;
+      width: 98%;
+      font-size: 14px;
+      padding: 10px 0px 1px 10px;
+    }
+
+    .content-input-zero-padding-top {
+      padding-top: 0;
+    }
+  }
+}
+
+.language-select-block {
+  margin: 0 12px 12px 12px;
+  border-radius: 7px;
+  background: var(--ttime-translate-input-color-background);
+  text-align: center;
+
+  .language-select {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+  }
+
+  .language-block {
+    display: inline-block;
+    font-size: 13px;
+    color: var(--ttime-text-color);
+  }
+
+  .language-select-icon {
+    margin-left: 10px;
+  }
+
+  .language-block-left {
+    display: flex;
+    align-items: center;
+    width: 170px;
+    justify-content: center;
+  }
+
+  .language-block-right {
+    display: flex;
+    align-items: center;
+    width: 170px;
+    justify-content: center;
+  }
+
+  .language-exchange-block {
+    padding: 5px 15px;
   }
 }
 </style>

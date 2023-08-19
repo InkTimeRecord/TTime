@@ -10,7 +10,6 @@ declare global {
     updateImg
     updateText
     winSizeUpdate
-    textWriteShearPlateEvent
     base64ImgWriteShearPlateEvent
     updateTranslatedContentEvent
   }

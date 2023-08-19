@@ -8,7 +8,6 @@ declare global {
     clearAllTranslateContentEvent
     pageHeightChangeEvent
     openSetPageEvent
-    textWriteShearPlateEvent
     alwaysOnTopEvent
     windowHeightChangeMaxEvent
     logInfoEvent

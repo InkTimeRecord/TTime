@@ -103,6 +103,13 @@ const closeAppEvent = (): void => {
   ipcRenderer.invoke('close-app-event')
 }
 
+/**
+ * 文本写入剪切板事件
+ */
+const textWriteShearPlateEvent = (text): void => {
+  ipcRenderer.invoke('text-write-shear-plate-event', text)
+}
+
 export default {
   logInfoEvent,
   logErrorEvent,
@@ -115,5 +122,6 @@ export default {
   cacheDelete,
   jumpToPage,
   getVersionEvent,
-  closeAppEvent
+  closeAppEvent,
+  textWriteShearPlateEvent
 }
