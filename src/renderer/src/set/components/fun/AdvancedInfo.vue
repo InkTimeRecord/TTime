@@ -17,6 +17,15 @@
         </el-radio-group>
       </div>
     </el-form-item>
+    <el-form-item class="none-select" label="翻译记录">
+      <el-checkbox
+        v-model="advancedSettingInfo.translateHistoryStatus"
+        @change="translateHistoryStatusEvent"
+      />
+      <span class="form-switch-span none-select">
+        只存储30条，超过会自动删除最早的记录（因为记录过多会导致卡顿）
+      </span>
+    </el-form-item>
     <el-form-item class="none-select" label="文本处理">
       <el-checkbox
         v-model="advancedSettingInfo.wrapReplaceSpaceStatus"
@@ -109,7 +118,8 @@ const advancedSettingInfo = ref({
   hoverBallStatus: cacheGet('hoverBallStatus') === YesNoEnum.Y,
   hoverBallEnhanceStatus: cacheGet('hoverBallEnhanceStatus') === YesNoEnum.Y,
   ocrWriteClipboardStatus: cacheGet('ocrWriteClipboardStatus') === YesNoEnum.Y,
-  ocrWrapReplaceSpaceStatus: cacheGet('ocrWrapReplaceSpaceStatus') === YesNoEnum.Y
+  ocrWrapReplaceSpaceStatus: cacheGet('ocrWrapReplaceSpaceStatus') === YesNoEnum.Y,
+  translateHistoryStatus: cacheGet('translateHistoryStatus') === YesNoEnum.Y
 })
 
 /**
@@ -196,6 +206,11 @@ const hoverBallStatusEvent = (val): void => {
 const hoverBallEnhanceStatusEvent = (val): void => {
   cacheSet('hoverBallEnhanceStatus', val ? YesNoEnum.Y : YesNoEnum.N)
   advancedSettingInfo.value.hoverBallEnhanceStatus = val
+}
+
+const translateHistoryStatusEvent = (val): void => {
+  cacheSet('translateHistoryStatus', val ? YesNoEnum.Y : YesNoEnum.N)
+  advancedSettingInfo.value.translateHistoryStatus = val
 }
 </script>
 

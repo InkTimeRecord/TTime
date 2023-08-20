@@ -1,84 +1,122 @@
 <template>
-  <div class="translate-service-layer">
-    <div class="translate-service-div-block">
-      <ul class="translate-service-list-block">
-        <el-scrollbar>
-          <div v-for="(element, key) in translateRecordList" :key="key">
-            <li
-              class="translate-service-block cursor-pointer none-select"
-              :class="{ active: translateRecordThis.requestId === element.requestId }"
-              @click="selectTranslateRecord(element)"
-            >
-              <a class="translate-service-block none-select translate-service-expansion-block">
-                <div class="left">
-                  <span class="translate-service-name none-select">
-                    {{ element.translateContent }}
-                  </span>
-                </div>
-              </a>
-            </li>
-          </div>
-        </el-scrollbar>
-      </ul>
+  <div>
+    <div v-if="translateRecordList.length === 0" class="no-init-layer">
+      <el-result class="none-select" title="当前还没有翻译记录">
+        <template #icon>
+          <el-icon style="width: 70px">
+            <Promotion />
+          </el-icon>
+        </template>
+      </el-result>
     </div>
-    <div class="translate-service-set-block">
-      <div class="block-layer">
-        <div class="content-block">
-          <div class="content">
-            <div class="content-input-block">
-              <el-input
-                ref="translateContentInputRef"
-                v-model="translateRecordThis.translateContent"
-                readonly
-                class="content-input"
-                spellcheck="false"
-                type="textarea"
-                :autosize="{ minRows: 2, maxRows: 10 }"
-                placeholder="请输入单词或文字"
-              >
-              </el-input>
-              <div class="function-tools-block">
-                <a class="function-tools" @click="playSpeech(translateRecordThis.translateContent)">
-                  <svg-icon icon-class="play" class="function-tools-icon" />
-                </a>
-                <a
-                  class="function-tools"
-                  @click="textWriteShearPlate(translateRecordThis.translateContent)"
+    <div v-else class="translate-history">
+      <span class="prompt-span form-switch-span none-select">
+        记录总数：{{ translateRecordSize }}
+      </span>
+      <div class="translate-service-layer">
+        <div class="translate-service-div-block">
+          <ul class="translate-service-list-block">
+            <el-scrollbar>
+              <div v-for="(element, key) in translateRecordList" :key="key">
+                <li
+                  class="translate-service-block cursor-pointer none-select"
+                  :class="{ active: translateRecordThis.requestId === element.requestId }"
+                  @click="selectTranslateRecord(element)"
                 >
-                  <svg-icon icon-class="copy" class="function-tools-icon" />
+                  <a class="translate-service-block none-select translate-service-expansion-block">
+                    <div class="left">
+                      <span class="translate-service-name none-select">
+                        {{ element.translateContent }}
+                      </span>
+                    </div>
+                  </a>
+                </li>
+              </div>
+            </el-scrollbar>
+          </ul>
+          <div class="translate-service-edit">
+            <div class="translate-service-edit-button">
+              <el-button :icon="Refresh" size="small" @click="translateRecordListRefresh" />
+            </div>
+            <div class="translate-service-edit-button">
+              <el-popconfirm
+                width="220"
+                icon-color="#53b21e"
+                title="确认删除此记录吗?"
+                confirm-button-text="确定"
+                cancel-button-text="取消"
+                @confirm="deleteTranslateHistory"
+              >
+                <template #reference>
+                  <el-button :icon="Minus" size="small" />
+                </template>
+              </el-popconfirm>
+            </div>
+          </div>
+        </div>
+        <div class="translate-service-set-block">
+          <div class="block-layer">
+            <div class="content-block">
+              <div class="content">
+                <div class="content-input-block">
+                  <el-input
+                    ref="translateContentInputRef"
+                    v-model="translateRecordThis.translateContent"
+                    readonly
+                    class="content-input"
+                    spellcheck="false"
+                    type="textarea"
+                    :autosize="{ minRows: 2, maxRows: 10 }"
+                    placeholder="请输入单词或文字"
+                  >
+                  </el-input>
+                  <div class="function-tools-block">
+                    <a
+                      class="function-tools"
+                      @click="playSpeech(translateRecordThis.translateContent)"
+                    >
+                      <svg-icon icon-class="play" class="function-tools-icon" />
+                    </a>
+                    <a
+                      class="function-tools"
+                      @click="textWriteShearPlate(translateRecordThis.translateContent)"
+                    >
+                      <svg-icon icon-class="copy" class="function-tools-icon" />
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="language-select-block">
+              <div class="language-select">
+                <a class="language-block language-block-left none-select">
+                  <div>
+                    {{ translateRecordThis.languageType }}
+                  </div>
+                </a>
+
+                <div class="function-tools-block language-exchange-block language-block">
+                  <a class="function-tools language-icon">
+                    <svg-icon icon-class="substitution" class="function-tools-icon" />
+                  </a>
+                </div>
+
+                <a class="language-block language-block-right none-select">
+                  <div>
+                    {{ translateRecordThis.languageResultType }}
+                  </div>
                 </a>
               </div>
             </div>
-          </div>
-        </div>
 
-        <div class="language-select-block">
-          <div class="language-select">
-            <a class="language-block language-block-left none-select">
-              <div>
-                {{ translateRecordThis.languageType }}
-              </div>
-            </a>
-
-            <div class="function-tools-block language-exchange-block language-block">
-              <a class="function-tools language-icon">
-                <svg-icon icon-class="substitution" class="function-tools-icon" />
-              </a>
+            <div v-for="(value, key) in translateServiceRecordList" :key="key">
+              <history-result-content-channel
+                :key="value.translateServiceId"
+                :translate-service-record-vo="value"
+              />
             </div>
-
-            <a class="language-block language-block-right none-select">
-              <div>
-                {{ translateRecordThis.languageResultType }}
-              </div>
-            </a>
           </div>
-        </div>
-
-        <div v-for="(value, key) in translateServiceRecordList" :key="key">
-          <history-result-content-channel
-            :key="value.translateServiceId"
-            :translate-service-record-vo="value"
-          />
         </div>
       </div>
     </div>
@@ -86,23 +124,34 @@
 </template>
 <script setup lang="ts">
 import { ref } from 'vue'
-import { getTranslateRecordList } from '../../../utils/translateRecordUtil'
+import {
+  getTranslateRecordList,
+  getTranslateRecordSize,
+  updateTranslateRecordList
+} from '../../../utils/translateRecordUtil'
 import translate from '../../../utils/translate'
-import HistoryResultContentChannel from './translateHistory/HistoryResultContentChannel.vue'
+import HistoryResultContentChannel from './history/HistoryResultContentChannel.vue'
+import { Refresh, Minus } from '@element-plus/icons-vue'
 
-const translateRecordList = ref(getTranslateRecordList().slice().reverse())
-const translateServiceRecordList = ref(translateRecordList.value.translateServiceRecordList)
-
-console.log(translateRecordList.value)
-// 当前选择的翻译服务
+// 翻译记录列表
+const translateRecordList = ref()
+// 翻译记录数
+const translateRecordSize = ref()
+// 当前选择的翻译记录
 const translateRecordThis = ref()
-/**
- * 设置当前选中项默认为第一个翻译服务
- */
-const selectOneTranslateRecordThis = (): void => {
-  translateRecordThis.value = translateRecordList.value[0]
+// 当前选择的翻译记录 - 翻译结果列表
+const translateServiceRecordList = ref()
+
+const init = (): void => {
+  translateRecordList.value = getTranslateRecordList().slice().reverse()
+  translateRecordSize.value = getTranslateRecordSize()
 }
-selectOneTranslateRecordThis()
+init()
+
+// 设置窗口获取焦点事件
+window.api.setWinFocusEvent(() => {
+  init()
+})
 
 /**
  * 选择翻译记录
@@ -118,8 +167,40 @@ const selectTranslateRecord = (translateRecord): void => {
   }, 1)
 }
 
+/**
+ * 设置当前选中项默认为第一个翻译服务
+ */
+const selectOneTranslateRecordThis = (): void => {
+  const translateRecord = translateRecordList.value[0]
+  translateRecordThis.value = translateRecord
+  selectTranslateRecord(translateRecord)
+}
+selectOneTranslateRecordThis()
+
 // 翻译输入框ref
 const translateContentInputRef = ref()
+
+/**
+ * 刷新翻译记录
+ */
+const translateRecordListRefresh = (): void => {
+  init()
+  selectOneTranslateRecordThis()
+}
+
+/**
+ * 删除翻译记录
+ */
+const deleteTranslateHistory = (): void => {
+  // 使用filter方法来创建一个新的数组，其中不包含id为2的对象
+  translateRecordList.value = translateRecordList.value.filter((translateRecord) => {
+    return translateRecord.requestId !== translateRecordThis.value.requestId
+  })
+  // 更新翻译记录
+  updateTranslateRecordList(translateRecordList.value.slice().reverse())
+  init()
+  selectOneTranslateRecordThis()
+}
 
 /**
  * 播放语音
@@ -141,120 +222,115 @@ const textWriteShearPlate = (text): void => {
 <style lang="scss" scoped>
 @import '../../../css/set';
 
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.no-init-layer {
+  margin-top: 130px;
 }
 
-.translate-service-layer {
+.translate-history {
   display: flex;
-  max-height: 500px;
-  min-height: 500px;
+  flex-direction: column;
 
-  .translate-service-div-block {
-    .translate-service-edit {
-      display: flex;
-      align-items: center;
-      margin-top: -6px;
+  .prompt-span {
+    padding-bottom: 10px;
+  }
 
-      .translate-service-edit-button {
-        margin-right: 10px;
-      }
-    }
+  .translate-service-layer {
+    display: flex;
+    max-height: 500px;
+    min-height: 500px;
 
-    .translate-service-list-block {
-      height: 460px;
-      background: var(--ttime-translate-service-color-background);
-      margin-top: 10px;
-      border-radius: 8px;
-      padding: 0;
-
-      .translate-service-block {
-        width: 186px;
-        height: 39px;
-        margin: 7px 10px;
-        border-radius: 8px;
+    .translate-service-div-block {
+      .translate-service-edit {
         display: flex;
         align-items: center;
-        justify-content: space-around;
+        margin-top: -6px;
 
-        .translate-service-expansion-block {
-          display: flex;
-          justify-content: space-between;
+        .translate-service-edit-button {
+          margin-right: 10px;
         }
+      }
 
-        &:hover.translate-service-block:not(.active) {
-          background: var(--ttime-translate-service-block-hover-background);
-        }
+      .translate-service-list-block {
+        height: 460px;
+        background: var(--ttime-translate-service-color-background);
+        margin-top: 0;
+        border-radius: 8px;
+        padding: 0;
 
-        &.active {
-          background: var(--ttime-translate-service-block-active-background);
-        }
-
-        .left {
+        .translate-service-block {
+          width: 186px;
+          height: 39px;
+          margin: 7px 10px;
+          border-radius: 8px;
           display: flex;
           align-items: center;
           justify-content: space-around;
 
-          .translate-service-logo {
-            width: 32px;
-            border-radius: 8px;
+          .translate-service-expansion-block {
+            display: flex;
+            justify-content: space-between;
           }
 
-          .translate-service-name {
-            max-width: 110px;
-            font-size: 13px;
-            padding-left: 5px;
-            overflow: hidden;
-            -webkit-line-clamp: 1;
-            display: -webkit-box;
-            -webkit-box-orient: vertical;
+          &:hover.translate-service-block:not(.active) {
+            background: var(--ttime-translate-service-block-hover-background);
           }
-        }
 
-        .right {
+          &.active {
+            background: var(--ttime-translate-service-block-active-background);
+          }
+
+          .left {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+
+            .translate-service-logo {
+              width: 32px;
+              border-radius: 8px;
+            }
+
+            .translate-service-name {
+              max-width: 161px;
+              font-size: 13px;
+              padding-left: 5px;
+              overflow: hidden;
+              -webkit-line-clamp: 1;
+              display: -webkit-box;
+              -webkit-box-orient: vertical;
+            }
+          }
         }
       }
     }
-  }
 
-  .translate-service-set-block {
-    width: 360px;
-    height: 460px;
-    margin-left: 10px;
-    background: var(--ttime-translate-service-color-background);
-    margin-top: 10px;
-    border-radius: 8px;
+    .translate-service-set-block {
+      width: 360px;
+      height: 460px;
+      margin-left: 10px;
+      background: var(--ttime-translate-service-color-background);
+      border-radius: 8px;
 
-    .translate-service-set {
-      padding: 30px 20px 20px 20px;
-
-      .translate-service-set-fun {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-
-        .translate-service-use-text {
-          font-size: 14px;
-          padding-right: 10px;
-        }
+      .block-layer {
+        overflow: auto;
+        margin-top: 10px;
+        max-height: 440px;
+        overflow-x: hidden;
       }
 
-      .translate-service-bing-msg-block {
-        display: flex;
-        flex-direction: column;
-        font-size: 12px;
-        color: var(--ttime-tips-text-color);
+      .block-layer::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
 
-        .translate-service-bing-msg-title {
-          margin-top: 7px;
-          font-weight: 600;
-        }
+      .block-layer::-webkit-scrollbar-thumb {
+        border-radius: 3px;
+        -moz-border-radius: 3px;
+        -webkit-border-radius: 3px;
+        background-color: #c3c3c3;
+      }
 
-        .translate-service-bing-msg {
-          margin: 7px 0 0 10px;
-        }
+      .block-layer::-webkit-scrollbar-track {
+        background-color: transparent;
       }
     }
   }
@@ -262,25 +338,26 @@ const textWriteShearPlate = (text): void => {
 
 @import '../../../css/translate.scss';
 
-.content {
+.content-block {
   margin-top: 10px;
+  .content {
+    .content-input-block {
+      margin: 0 12px 12px 12px;
+      border-radius: 7px;
+      background: var(--ttime-translate-input-color-background);
 
-  .content-input-block {
-    margin: 0 12px 12px 12px;
-    border-radius: 7px;
-    background: var(--ttime-translate-input-color-background);
+      .content-input {
+        border: 0;
+        outline: none;
+        resize: none;
+        width: 98%;
+        font-size: 14px;
+        padding: 10px 0px 1px 10px;
+      }
 
-    .content-input {
-      border: 0;
-      outline: none;
-      resize: none;
-      width: 98%;
-      font-size: 14px;
-      padding: 10px 0px 1px 10px;
-    }
-
-    .content-input-zero-padding-top {
-      padding-top: 0;
+      .content-input-zero-padding-top {
+        padding-top: 0;
+      }
     }
   }
 }

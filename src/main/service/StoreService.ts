@@ -154,7 +154,10 @@ class StoreService {
     if (!StoreService.configHas('translateChoiceDelay')) {
       StoreService.configSet('translateChoiceDelay', 600)
     }
-
+    // 初始化翻译记录状态
+    if (!StoreService.configHas('translateHistoryStatus')) {
+      StoreService.configSet('translateHistoryStatus', YesNoEnum.Y)
+    }
     app.whenReady().then(() => {
       const translateShortcutKeyList = [
         { type: ShortcutKeyEnum.INPUT, shortcutKey: StoreService.configGet('inputShortcutKey') },

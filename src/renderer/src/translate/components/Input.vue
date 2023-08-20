@@ -61,6 +61,7 @@ import { findLanguageByLanguageName } from './channel/language/ChannelLanguage'
 import TranslateRecordVo from '../../../../common/class/TranslateRecordVo'
 import TranslateServiceRecordVo from '../../../../common/class/TranslateServiceRecordVo'
 import { StoreTypeEnum } from '../../../../common/enums/StoreTypeEnum'
+import { updateTranslateRecordList } from '../../utils/translateRecordUtil'
 
 // 加载loading
 const loadingImageSrc = ref(loadingImage)
@@ -262,21 +263,24 @@ const translateFun = (): void => {
     }
     requestMap.set(type, info)
   }
-
-  // 构建翻译记录信息
-  const translateServiceRecordList = []
-  requestMap.forEach((value, key) => {
-    const serviceRecordVo = new TranslateServiceRecordVo()
-    serviceRecordVo.translateServiceType = key
-    serviceRecordVo.translateServiceId = value.id
-    translateServiceRecordList.push(serviceRecordVo)
-  })
-  translateRecordVo.translateServiceRecordList = translateServiceRecordList
-  let translateRecordList = cacheGetByType(StoreTypeEnum.HISTORY_RECORD, 'translateRecordList')
-  translateRecordList = isNull(translateRecordList) ? [] : translateRecordList
-  translateRecordList.push(translateRecordVo)
-  cacheSetByType(StoreTypeEnum.HISTORY_RECORD, 'translateRecordList', translateRecordList)
-
+  // 翻译记录状态
+  const translateHistoryStatus = cacheGet('translateHistoryStatus') === YesNoEnum.Y
+  if (translateHistoryStatus) {
+    // 构建翻译记录信息
+    const translateServiceRecordList = []
+    requestMap.forEach((value, key) => {
+      const serviceRecordVo = new TranslateServiceRecordVo()
+      serviceRecordVo.translateServiceType = key
+      serviceRecordVo.translateServiceId = value.id
+      translateServiceRecordList.push(serviceRecordVo)
+    })
+    translateRecordVo.translateServiceRecordList = translateServiceRecordList
+    let translateRecordList = cacheGetByType(StoreTypeEnum.HISTORY_RECORD, 'translateRecordList')
+    translateRecordList = isNull(translateRecordList) ? [] : translateRecordList
+    translateRecordList.push(translateRecordVo)
+    // 更新翻译记录
+    updateTranslateRecordList(translateRecordList)
+  }
   // 触发翻译
   requestMap.forEach((value, key) => {
     // 此处触发之后会异步回调到 *ApiTranslateCallbackEvent 方法中去执行

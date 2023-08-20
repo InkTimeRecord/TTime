@@ -20,6 +20,8 @@ declare global {
     updateTranslateServiceEvent
     apiTranslateResultMsgCallbackEvent
     updateCacheEvent
+    ttimeApiAppStart
+    ttimeApiTranslateUse
   }
 
   interface Window {

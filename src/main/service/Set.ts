@@ -90,6 +90,11 @@ function createSetWindow(): void {
     setWin = nullWin
     GlobalWin.setSetWin(null)
   })
+
+  // 设置窗口获取焦点事件
+  setWin.on('focus', () => {
+    GlobalWin.setWin.webContents.send('set-win-focus-event')
+  })
 }
 
 /**

@@ -1,6 +1,7 @@
 import { cacheGetByType, cacheSetByType } from './cacheUtil'
 import { StoreTypeEnum } from '../../../common/enums/StoreTypeEnum'
 import TranslateRecordVo from '../../../common/class/TranslateRecordVo'
+import { isNull } from '../../../common/utils/validate'
 
 /**
  * 更新翻译记录
@@ -35,5 +36,28 @@ export const updateTranslateRecord = (translateVo): void => {
  * @return 翻译记录
  */
 export const getTranslateRecordList = (): Array<TranslateRecordVo> => {
-  return cacheGetByType(StoreTypeEnum.HISTORY_RECORD, 'translateRecordList')
+  const res = cacheGetByType(StoreTypeEnum.HISTORY_RECORD, 'translateRecordList')
+  return isNull(res) ? [] : res
+}
+
+/**
+ * 获取翻译记录数量
+ */
+export const getTranslateRecordSize = (): number => {
+  return cacheGetByType(StoreTypeEnum.HISTORY_RECORD, 'translateRecordSize')
+}
+
+/**
+ * 更新翻译记录
+ *
+ * @return 翻译记录列表
+ */
+export const updateTranslateRecordList = (translateRecordList): void => {
+  const translateRecordSize = translateRecordList.length
+  // 如果数组的长度超过了30，移除第一个元素
+  if (translateRecordSize >= 30) {
+    translateRecordList.shift()
+  }
+  cacheSetByType(StoreTypeEnum.HISTORY_RECORD, 'translateRecordSize', translateRecordSize)
+  cacheSetByType(StoreTypeEnum.HISTORY_RECORD, 'translateRecordList', translateRecordList)
 }

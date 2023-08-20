@@ -131,6 +131,17 @@ const updateConfigInfoPath = (storeConfigFunType, storeType, directoryPath): R =
   )
 }
 
+/**
+ * 设置窗口获取焦点事件
+ *
+ * @param callback 回调方法 用于主进程内部触发时推送到Vue页面执行
+ */
+const setWinFocusEvent = (callback): void => {
+  ipcRenderer.on('set-win-focus-event', (_event) => {
+    callback()
+  })
+}
+
 const api = {
   ...common,
   updateTranslateShortcutKeyEvent,
@@ -147,7 +158,8 @@ const api = {
   alwaysOnTopAllowEscStatusNotify,
   openDirectoryDialog,
   openDirectoryDialogCallback,
-  updateConfigInfoPath
+  updateConfigInfoPath,
+  setWinFocusEvent
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

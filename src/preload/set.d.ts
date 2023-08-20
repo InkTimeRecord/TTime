@@ -23,6 +23,7 @@ declare global {
     openDirectoryDialog
     openDirectoryDialogCallback
     updateConfigInfoPath
+    setWinFocusEvent
   }
 
   interface Window {

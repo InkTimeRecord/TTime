@@ -1,5 +1,5 @@
 <template>
-  <div class="content">
+  <div class="content content-history">
     <div class="content-input-block">
       <div class="function-tools-block content-header-block">
         <div class="content-tools-category">
@@ -161,63 +161,76 @@ const playSpeech = (text): void => {
 const textWriteShearPlate = (text): void => {
   translate.textWriteShearPlate(text)
 }
+const init = (): void => {
+  if (isNull(translateServiceRecordVoThis.value)) {
+    return
+  }
+  const data = translateServiceRecordVoThis.value.translateVo
+  if (isNull(data)) {
+    return
+  }
+  const translateList: string | string[] = data['translateList']
+  if (isNull(translateList)) {
+    return
+  }
+  console.log('translateList instanceof Array = ', translateList instanceof Array)
+  let translatedResultContentTemp = ''
+  if (translateList instanceof Array) {
+    translateList.forEach((data) => {
+      translatedResultContentTemp += data + '\n'
+    })
+  } else {
+    translatedResultContentTemp = translateList
+  }
+  translatedResultContentTemp = translatedResultContentTemp.slice(
+    0,
+    translatedResultContentTemp.length - 1
+  )
+  showResult.value = true
+  isResultLoading.value = false
+  translatedResultContent.value = translatedResultContentTemp
 
-const data = translateServiceRecordVoThis.value.translateVo
-const translateList = data['translateList']
-let translatedResultContentTemp = ''
-translateList.forEach((data) => {
-  translatedResultContentTemp += data + '\n'
-})
-translatedResultContentTemp = translatedResultContentTemp.slice(
-  0,
-  translatedResultContentTemp.length - 1
-)
-showResult.value = true
-isResultLoading.value = false
-translatedResultContent.value = translatedResultContentTemp
-
-let explainListDeal = []
-if (!isNull(data?.explains)) {
-  explainListDeal = data.explains.map((explain) => {
-    const regex = /^(\w+\.)\s*(.*)$/
-    const matches = explain.match(regex)
-    if (matches) {
-      return {
-        type: matches[1] + ' ',
-        content: matches[2]
+  let explainListDeal = []
+  if (!isNull(data?.explains)) {
+    explainListDeal = data.explains.map((explain) => {
+      const regex = /^(\w+\.)\s*(.*)$/
+      const matches = explain.match(regex)
+      if (matches) {
+        return {
+          type: matches[1] + ' ',
+          content: matches[2]
+        }
       }
-    }
-    // 处理没有词性的情况
-    return {
-      content: explain
-    }
-  })
-}
+      // 处理没有词性的情况
+      return {
+        content: explain
+      }
+    })
+  }
 
-const isUs = !isNull(data?.['usPhonetic'])
-const isUk = !isNull(data?.['ukPhonetic'])
-const isExplainList = explainListDeal?.length > 0
-const isWfs = !isNull(data?.['wfs']) && data['wfs']?.length > 0
-dictTranslatedResultExpand.value = {
-  isUs,
-  isUk,
-  isExplainList,
-  isWfs,
-  usPhonetic: data['usPhonetic'],
-  ukPhonetic: data['ukPhonetic'],
-  usSpeech: data['usSpeech'],
-  ukSpeech: data['ukSpeech'],
-  wfsList: data['wfs'],
-  explainList: explainListDeal
+  const isUs = !isNull(data?.['usPhonetic'])
+  const isUk = !isNull(data?.['ukPhonetic'])
+  const isExplainList = explainListDeal?.length > 0
+  const isWfs = !isNull(data?.['wfs']) && data['wfs']?.length > 0
+  dictTranslatedResultExpand.value = {
+    isUs,
+    isUk,
+    isExplainList,
+    isWfs,
+    usPhonetic: data['usPhonetic'],
+    ukPhonetic: data['ukPhonetic'],
+    usSpeech: data['usSpeech'],
+    ukSpeech: data['ukSpeech'],
+    wfsList: data['wfs'],
+    explainList: explainListDeal
+  }
 }
+init()
 </script>
 
 <style lang="scss" scoped>
 @import '../../../../css/translate.scss';
-
 .content {
-  padding-bottom: 1px;
-
   .content-input-block {
     margin: 0 12px 12px 12px;
     border-radius: 7px;
@@ -229,7 +242,7 @@ dictTranslatedResultExpand.value = {
       resize: none;
       width: 98%;
       font-size: 14px;
-      padding: 10px 0px 1px 10px;
+      padding: 10px 0 1px 10px;
     }
 
     .content-input-zero-padding-top {
