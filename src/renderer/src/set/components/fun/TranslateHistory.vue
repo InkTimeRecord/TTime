@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="translateRecordList.length === 0" class="no-init-layer">
+    <div v-if="translateRecordSize === 0" class="no-init-layer">
       <el-result class="none-select" title="当前还没有翻译记录">
         <template #icon>
           <el-icon style="width: 70px">
@@ -60,7 +60,6 @@
               <div class="content">
                 <div class="content-input-block">
                   <el-input
-                    ref="translateContentInputRef"
                     v-model="translateRecordThis.translateContent"
                     readonly
                     class="content-input"
@@ -132,25 +131,36 @@ import {
 import translate from '../../../utils/translate'
 import HistoryResultContentChannel from './history/HistoryResultContentChannel.vue'
 import { Refresh, Minus } from '@element-plus/icons-vue'
+import { isNull } from '../../../../../common/utils/validate'
+import TranslateRecordVo from '../../../../../common/class/TranslateRecordVo'
 
 // 翻译记录列表
 const translateRecordList = ref()
 // 翻译记录数
 const translateRecordSize = ref()
 // 当前选择的翻译记录
-const translateRecordThis = ref()
+const translateRecordThis = ref(new TranslateRecordVo())
 // 当前选择的翻译记录 - 翻译结果列表
 const translateServiceRecordList = ref()
 
+// 初始加载数据
 const init = (): void => {
   translateRecordList.value = getTranslateRecordList().slice().reverse()
   translateRecordSize.value = getTranslateRecordSize()
 }
+
+// 初始加载数据
 init()
 
 // 设置窗口获取焦点事件
 window.api.setWinFocusEvent(() => {
+  const isNotRecord = translateRecordSize.value === 0
   init()
+  // 如果一开始获取到的记录是0条 数据加载完毕后大于0条的情况下需要触发选择第一条数据
+  if (isNotRecord && translateRecordSize.value > 0) {
+    // 设置第一条数据为当前选中项
+    selectOneTranslateRecordThis()
+  }
 })
 
 /**
@@ -160,31 +170,30 @@ window.api.setWinFocusEvent(() => {
  */
 const selectTranslateRecord = (translateRecord): void => {
   translateServiceRecordList.value = []
-  translateRecordThis.value = translateRecord
+  translateRecordThis.value = isNull(translateRecord) ? new TranslateRecordVo() : translateRecord
   setTimeout(() => {
     // 加入延迟 否则显示的还是旧内容
-    translateServiceRecordList.value = translateRecord.translateServiceRecordList
+    translateServiceRecordList.value = translateRecord?.translateServiceRecordList
   }, 1)
 }
 
 /**
- * 设置当前选中项默认为第一个翻译服务
+ * 设置第一条数据为当前选中项
  */
 const selectOneTranslateRecordThis = (): void => {
   const translateRecord = translateRecordList.value[0]
-  translateRecordThis.value = translateRecord
   selectTranslateRecord(translateRecord)
 }
+// 设置第一条数据为当前选中项
 selectOneTranslateRecordThis()
-
-// 翻译输入框ref
-const translateContentInputRef = ref()
 
 /**
  * 刷新翻译记录
  */
 const translateRecordListRefresh = (): void => {
+  // 初始加载数据
   init()
+  // 设置第一条数据为当前选中项
   selectOneTranslateRecordThis()
 }
 
@@ -198,7 +207,9 @@ const deleteTranslateHistory = (): void => {
   })
   // 更新翻译记录
   updateTranslateRecordList(translateRecordList.value.slice().reverse())
+  // 初始加载数据
   init()
+  // 设置第一条数据为当前选中项
   selectOneTranslateRecordThis()
 }
 

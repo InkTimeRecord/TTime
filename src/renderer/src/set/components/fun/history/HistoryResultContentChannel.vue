@@ -173,7 +173,6 @@ const init = (): void => {
   if (isNull(translateList)) {
     return
   }
-  console.log('translateList instanceof Array = ', translateList instanceof Array)
   let translatedResultContentTemp = ''
   if (translateList instanceof Array) {
     translateList.forEach((data) => {
