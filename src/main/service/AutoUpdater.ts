@@ -2,7 +2,7 @@ import { app, BrowserWindow, ipcMain } from 'electron'
 import log from '../utils/log'
 import { AutoUpdaterEnum } from '../enums/AutoUpdaterEnum'
 import { UpdateStatusEnum } from '../enums/UpdateStatusEnum'
-import { isNotNull } from '../../common/utils/validate'
+import { isNotNull, isNull } from '../../common/utils/validate'
 import path from 'path'
 import { is } from '@electron-toolkit/utils'
 import TTimeRequest from './channel/interfaces/TTimeRequest'
@@ -421,13 +421,23 @@ class AutoUpdater {
         elevatePath = path.join(__dirname, elevatePath)
         log.info('[新版本安装] 开始提权安装')
         AutoUpdater.spawnExpandFun(elevatePath, [exePath].concat(args))
-          .then(() => {
+          .then(async () => {
             log.info('[新版本安装] 调起安装命令成功')
             // 此处的逻辑是因为由于在手动安装时是默认勾选开机自启的
             // 而当自动更新时，直接跳过了勾选开启自启的那个选项，导致开启自启功能被关闭了
             // 所以在自动更新安装时会先获取当前开启自启的状态
             // 然后在安装完毕后启动时读取之前存储的状态再次进行设置开启自启状态
-            const autoLaunch = StoreService.configGet('autoLaunch')
+            let autoLaunch = StoreService.configGet('autoLaunch')
+            if (isNull(autoLaunch)) {
+              // 如果首次从 localStorage 存储环境切换到 store 方式存储时
+              // 静默更新状态下会获取不到自动开机状态
+              // 所以当 autoLaunch 为空的情况下则再从 localStorage 读取初始状态
+              await GlobalWin.mainWin.webContents
+                .executeJavaScript('localStorage.autoLaunch')
+                .then((valExtend) => {
+                  autoLaunch = valExtend
+                })
+            }
             StoreService.configSet(
               'autoLaunchFront',
               autoLaunch === YesNoEnum.Y ? YesNoEnum.Y : YesNoEnum.N
