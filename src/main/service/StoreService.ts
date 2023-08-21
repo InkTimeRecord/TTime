@@ -132,10 +132,6 @@ class StoreService {
     if (!StoreService.configHas('wrapReplaceSpaceStatus')) {
       StoreService.configSet('wrapReplaceSpaceStatus', YesNoEnum.N)
     }
-    // 初始化换行符替换为空格状态
-    if (!StoreService.configHas('hoverBallStatus')) {
-      StoreService.configSet('wrapReplaceSpaceStatus', YesNoEnum.N)
-    }
     // 初始化鼠标悬浮球取词状态
     if (!StoreService.configHas('hoverBallStatus')) {
       StoreService.configSet('hoverBallStatus', YesNoEnum.N)
