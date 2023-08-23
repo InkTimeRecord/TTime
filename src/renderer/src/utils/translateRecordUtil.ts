@@ -44,7 +44,8 @@ export const getTranslateRecordList = (): Array<TranslateRecordVo> => {
  * 获取翻译记录数量
  */
 export const getTranslateRecordSize = (): number => {
-  return cacheGetByType(StoreTypeEnum.HISTORY_RECORD, 'translateRecordSize')
+  const size = cacheGetByType(StoreTypeEnum.HISTORY_RECORD, 'translateRecordSize')
+  return isNull(size) ? 0 : size
 }
 
 /**

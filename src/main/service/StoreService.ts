@@ -9,6 +9,7 @@ import { isNull } from '../../common/utils/validate'
 import { GlobalShortcutEvent } from './GlobalShortcutEvent'
 import { WinEvent } from './Win'
 import log from '../utils/log'
+import GlobalWin from './GlobalWin'
 
 /**
  * app.getPath('userData')
@@ -154,7 +155,7 @@ class StoreService {
     if (!StoreService.configHas('translateHistoryStatus')) {
       StoreService.configSet('translateHistoryStatus', YesNoEnum.Y)
     }
-    app.whenReady().then(() => {
+    app.whenReady().then(async () => {
       const translateShortcutKeyList = [
         { type: ShortcutKeyEnum.INPUT, shortcutKey: StoreService.configGet('inputShortcutKey') },
         {
@@ -186,13 +187,26 @@ class StoreService {
       })
       log.info('[初始加载翻译快捷键事件] - 结束')
 
-      log.info('开机自启初始化事件')
-      setTimeout(() => {
-        // 延迟检测 防止注册表还没有完全添加完毕状态下就获取了
-        WinEvent.updateAutoLaunch(null, (isEnabled) => {
-          StoreService.configSet('autoLaunch', isEnabled ? YesNoEnum.Y : YesNoEnum.N)
-          return isEnabled
-        })
+      setTimeout(async () => {
+        let autoLaunchFront = StoreService.configGet('autoLaunchFront')
+        if (isNull(autoLaunchFront)) {
+          // 如果首次从 localStorage 存储环境切换到 store 方式存储时
+          // 静默更新状态下会获取不到自动开机状态
+          // 所以当 autoLaunchFront 为空的情况下则再从 localStorage 读取初始状态
+          await GlobalWin.mainWin.webContents
+            .executeJavaScript('localStorage.autoLaunchFront')
+            .then((valExtend) => {
+              autoLaunchFront = valExtend
+            })
+        }
+        if (isNull(autoLaunchFront)) {
+          log.info('开机自启初始化事件')
+          // 延迟检测 防止注册表还没有完全添加完毕状态下就获取了
+          WinEvent.updateAutoLaunch(null, (isEnabled) => {
+            StoreService.configSet('autoLaunch', isEnabled ? YesNoEnum.Y : YesNoEnum.N)
+            return isEnabled
+          })
+        }
       }, 5000)
     })
   }

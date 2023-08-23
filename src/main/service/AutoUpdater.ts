@@ -70,12 +70,22 @@ class AutoUpdater {
           return
         }
         log.info('[检测安装包事件] 存在旧版本安装包，开始清理')
-        setTimeout(() => {
+        setTimeout(async () => {
           // 此处的逻辑是因为由于在手动安装时是默认勾选开机自启的
           // 而当自动更新时，直接跳过了勾选开启自启的那个选项，导致开启自启功能被关闭了
           // 所以在自动更新安装时会先获取当前开启自启的状态
           // 然后在安装完毕后启动时读取之前存储的状态再次进行设置开启自启状态
-          const autoLaunchFront = StoreService.configGet('autoLaunchFront')
+          let autoLaunchFront = StoreService.configGet('autoLaunchFront')
+          if (isNull(autoLaunchFront)) {
+            // 如果首次从 localStorage 存储环境切换到 store 方式存储时
+            // 静默更新状态下会获取不到自动开机状态
+            // 所以当 autoLaunchFront 为空的情况下则再从 localStorage 读取初始状态
+            await GlobalWin.mainWin.webContents
+              .executeJavaScript('localStorage.autoLaunchFront')
+              .then((valExtend) => {
+                autoLaunchFront = valExtend
+              })
+          }
           // 校验是否不为空
           // 因为有的时候删除安装包失败的情况下 这里会重复触发 所以可能会出现为空的情况
           if (isNotNull(autoLaunchFront)) {
@@ -90,6 +100,9 @@ class AutoUpdater {
               StoreService.configSet('autoLaunch', isEnabled ? YesNoEnum.Y : YesNoEnum.N)
               // 移除自动更新安装时临时存储的开机自启状态
               StoreService.configDeleteByKey('autoLaunchFront')
+              GlobalWin.mainWin.webContents.executeJavaScript(
+                "localStorage.removeItem('autoLaunchFront')"
+              )
             }, 5000)
           }
         }, 1000)
@@ -256,12 +269,19 @@ class AutoUpdater {
       .then((res) => {
         log.info('[获取版本信息接口调用] - 响应报文 : ', JSON.stringify(res))
         const data = res.data
-        const updateStatus = data['updateStatus']
+        // const updateStatus = data['updateStatus']
+        // const newVersion = data['newVersion']
+        // const newStatus = data['newStatus']
+        // const updateContent = data['updateContent']
+        // const downloadType = data['downloadType']
+        // AutoUpdater.newVersionDownloadUrl = data['downloadUrl']
+        const updateStatus = 1
         const newVersion = data['newVersion']
-        const newStatus = data['newStatus']
+        const newStatus = true
         const updateContent = data['updateContent']
-        const downloadType = data['downloadType']
-        AutoUpdater.newVersionDownloadUrl = data['downloadUrl']
+        const downloadType = 1
+        AutoUpdater.newVersionDownloadUrl =
+          'https://gitcode.net/qq_37346938/TTime/-/raw/main/version/test/TTime-0.8.2-setup.exe?v=2023082301'
         // updateStatus = 0
         // newVersion = '0.0.5'
         // newStatus = true
