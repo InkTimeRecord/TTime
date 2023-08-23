@@ -10,6 +10,9 @@
         </a>
       </div>
       <div class="function-tools-category">
+        <a v-if="translateHistoryStatus" class="function-tools" @click="toSetTranslateHistoryPage">
+          <svg-icon icon-class="translate-history" class="function-tools-icon" />
+        </a>
         <a class="function-tools" @click="toSetPage">
           <svg-icon icon-class="set-up" class="function-tools-icon" />
         </a>
@@ -19,8 +22,8 @@
 </template>
 <script setup lang="ts">
 import { YesNoEnum } from '../../../../common/enums/YesNoEnum'
-import { ref } from 'vue'
-import { cacheGet, cacheSet } from '../../utils/cacheUtil'
+import { nextTick, ref } from 'vue'
+import { cacheDelete, cacheGet, cacheSet } from '../../utils/cacheUtil'
 
 // 首次打开时设置默认图钉状态
 if (undefined === cacheGet('thumbtackStatus')) {
@@ -29,7 +32,14 @@ if (undefined === cacheGet('thumbtackStatus')) {
 
 // 窗口固定状态
 const thumbtackStatus = ref(cacheGet('thumbtackStatus'))
-
+// 翻译历史记录状态
+const translateHistoryStatus = ref(cacheGet('translateHistoryStatus') === YesNoEnum.Y)
+// 窗口显示事件 当窗口显示时触发
+window.api.winShowEvent(() => {
+  nextTick(() => {
+    translateHistoryStatus.value = cacheGet('translateHistoryStatus') === YesNoEnum.Y
+  })
+})
 // 根据固定状态设置窗口是否置于最前面
 window.api.alwaysOnTopEvent(thumbtackStatus.value === YesNoEnum.Y)
 
@@ -54,6 +64,15 @@ const thumbtackFun = (): void => {
  * 跳转设置页面
  */
 const toSetPage = (): void => {
+  cacheDelete('setPageMenuIndex')
+  window.api.openSetPageEvent()
+}
+
+/**
+ * 跳转设置页面
+ */
+const toSetTranslateHistoryPage = (): void => {
+  cacheSet('setPageMenuIndex', 'translateHistory')
   window.api.openSetPageEvent()
 }
 </script>

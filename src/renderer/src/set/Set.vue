@@ -5,11 +5,7 @@
     <el-container style="height: 554px">
       <el-aside width="200px">
         <el-scrollbar>
-          <el-menu
-            :default-openeds="['basiInfo', 'shortcutKey']"
-            default-active="basiInfo"
-            @select="menuSelect"
-          >
+          <el-menu :default-active="menuIndex" @select="menuSelect">
             <el-menu-item index="basiInfo">
               <span class="none-select">偏好设置</span>
             </el-menu-item>
@@ -68,11 +64,20 @@ import ConfigFile from './components/fun/ConfigFile.vue'
 import About from './components/fun/About.vue'
 
 import { ref } from 'vue'
+import { cacheDelete, cacheGet } from '../utils/cacheUtil'
+import { isNull } from '../../../common/utils/validate'
+
+// 设置页面菜单索引
+let setPageMenuIndex = cacheGet('setPageMenuIndex')
+// 读取后缓存数据
+cacheDelete('setPageMenuIndex')
+// 如果菜单索引为空则默认展示偏好设置
+setPageMenuIndex = isNull(setPageMenuIndex) ? 'basiInfo' : setPageMenuIndex
 
 /**
  * 当前选择的菜单索引
  */
-const menuIndex = ref('basiInfo')
+const menuIndex = ref(setPageMenuIndex)
 
 /**
  * 菜单选择事件

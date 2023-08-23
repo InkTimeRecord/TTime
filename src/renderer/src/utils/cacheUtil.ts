@@ -22,6 +22,15 @@ export const cacheSet = (key, val): void => {
 }
 
 /**
+ * 删除
+ *
+ * @param key key
+ */
+export const cacheDelete = (key): void => {
+  cacheDeleteByType(StoreTypeEnum.CONFIG, key)
+}
+
+/**
  * 设置
  *
  * @param storeType 存储类型
@@ -45,6 +54,16 @@ export const cacheSetByType = (storeType, key, val): void => {
     val = JSON.parse(JSON.stringify(val))
   }
   window.api['cacheSet'](storeType, key, val)
+}
+
+/**
+ * 删除
+ *
+ * @param storeType 存储类型
+ * @param key key
+ */
+export const cacheDeleteByType = (storeType, key): void => {
+  window.api['cacheDelete'](storeType, key)
 }
 
 /**
