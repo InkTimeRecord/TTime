@@ -269,23 +269,18 @@ class AutoUpdater {
       .then((res) => {
         log.info('[获取版本信息接口调用] - 响应报文 : ', JSON.stringify(res))
         const data = res.data
-        // const updateStatus = data['updateStatus']
-        // const newVersion = data['newVersion']
-        // const newStatus = data['newStatus']
-        // const updateContent = data['updateContent']
-        // const downloadType = data['downloadType']
-        // AutoUpdater.newVersionDownloadUrl = data['downloadUrl']
-        const updateStatus = 1
+        const updateStatus = data['updateStatus']
         const newVersion = data['newVersion']
-        const newStatus = true
+        const newStatus = data['newStatus']
         const updateContent = data['updateContent']
-        const downloadType = 1
-        AutoUpdater.newVersionDownloadUrl =
-          'https://gitcode.net/qq_37346938/TTime/-/raw/main/version/test/TTime-0.8.2-setup.exe?v=2023082301'
-        // updateStatus = 0
-        // newVersion = '0.0.5'
-        // newStatus = true
-        // updateContent = '测试更新内容'
+        const downloadType = data['downloadType']
+        AutoUpdater.newVersionDownloadUrl = data['downloadUrl']
+        // const updateStatus = 1
+        // const newVersion = data['newVersion']
+        // const newStatus = true
+        // const updateContent = data['updateContent']
+        // const downloadType = 1
+        // AutoUpdater.newVersionDownloadUrl = ''
         if (!newStatus || updateStatus === UpdateStatusEnum.UNWANTED) {
           log.info('版本检测结束 , 当前版本 : ', thisVersion, ' , 无需更新')
           AutoUpdater.autoUpdaterSendEventByMsg(
