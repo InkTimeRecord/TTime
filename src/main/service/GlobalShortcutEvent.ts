@@ -187,7 +187,7 @@ class GlobalShortcutEvent {
   /**
    * 划词翻译快捷键
    */
-  static translateChoice = async () => {
+  static translateChoice = (): void => {
     if (GlobalShortcutEvent.isChoice) {
       return
     }
@@ -204,7 +204,7 @@ class GlobalShortcutEvent {
     uIOhook.keyToggle(UiohookKey.Tab, 'up')
     uIOhook.keyToggle(UiohookKey.Escape, 'up')
     GlobalShortcutEvent.isChoice = true
-    const printSelectedText = (selectedText) => {
+    const printSelectedText = (selectedText): void => {
       GlobalShortcutEvent.isChoice = false
       selectedText = GlobalShortcutEvent.splitSingleCamelCase(selectedText)
       selectedText = GlobalShortcutEvent.splitSingleUnderScore(selectedText)
@@ -247,7 +247,7 @@ class GlobalShortcutEvent {
     const translateChoiceDelay = Math.floor(StoreService.configGet('translateChoiceDelay') / 2)
     GlobalWin.mainWinSend('clear-all-translated-content')
     const currentClipboardContent = clipboard.readText()
-    log.info('[划词翻译] - 读取剪切板原文本 : ', currentClipboardContent)
+    log.info('[划词翻译] - 读取剪贴板原文本 : ', currentClipboardContent)
     clipboard.clear()
     await new Promise((resolve) => setTimeout(resolve, translateChoiceDelay))
     log.info('[划词翻译] - 执行复制操作')

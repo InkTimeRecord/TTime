@@ -197,7 +197,7 @@ class GlobalWin {
   static mainWinUpdateTranslatedContent(text): string {
     // 先对文字做一次空处理 防止代码执行时出错
     // 不为空的情况下默认去掉文本内容前后的换行符
-    text = text === undefined || text === null ? '' : text.replace(/^\n+|\n+$/g, '')
+    text = isNull(text) ? '' : text.replace(/^[ \t]*[\r\n]+|[ \t]*[\r\n]+$/g, '')
     GlobalWin.mainWinSend('update-translated-content', text)
     return text
   }
@@ -218,7 +218,7 @@ class GlobalWin {
       if (YesNoEnum.Y === ocrWrapReplaceSpaceStatus) {
         text = text.replaceAll('\n', ' ')
       }
-      // OCR结果写入剪切板
+      // OCR结果写入剪贴板
       const ocrWriteClipboardStatus = StoreService.configGet('ocrWriteClipboardStatus')
       if (YesNoEnum.Y === ocrWriteClipboardStatus) {
         clipboard.writeText(text)

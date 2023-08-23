@@ -139,7 +139,7 @@ class StoreService {
       // 悬浮球增强模式
       StoreService.configSet('hoverBallEnhanceStatus', YesNoEnum.N)
     }
-    // 初始化OCR结果写入剪切板状态
+    // 初始化OCR结果写入剪贴板状态
     if (!StoreService.configHas('ocrWriteClipboardStatus')) {
       StoreService.configSet('ocrWriteClipboardStatus', YesNoEnum.N)
     }
@@ -155,6 +155,12 @@ class StoreService {
     if (!StoreService.configHas('translateHistoryStatus')) {
       StoreService.configSet('translateHistoryStatus', YesNoEnum.Y)
     }
+    // 初始化剪贴板监听模式状态
+    if (!StoreService.configHas('clipboardListenerShowStatus')) {
+      StoreService.configSet('clipboardListenerShowStatus', YesNoEnum.N)
+      StoreService.configSet('clipboardListenerStatus', YesNoEnum.N)
+    }
+
     app.whenReady().then(async () => {
       const translateShortcutKeyList = [
         { type: ShortcutKeyEnum.INPUT, shortcutKey: StoreService.configGet('inputShortcutKey') },

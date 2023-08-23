@@ -168,7 +168,7 @@ const playSpeech = (text): void => {
 }
 
 /**
- * 文字写入到剪切板
+ * 文字写入到剪贴板
  */
 const textWriteShearPlate = (text): void => {
   translate.textWriteShearPlate(text)

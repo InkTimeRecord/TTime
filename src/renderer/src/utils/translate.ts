@@ -4,7 +4,7 @@ import { cacheGet } from './cacheUtil'
 import { PlaySpeechServiceEnum } from '../../../common/enums/PlaySpeechServiceEnum'
 
 /**
- * 文字写入到剪切板
+ * 文字写入到剪贴板
  */
 const textWriteShearPlate = (text): void => {
   if (isNull(text)) {

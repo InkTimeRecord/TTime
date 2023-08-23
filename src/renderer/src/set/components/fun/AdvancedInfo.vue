@@ -43,12 +43,12 @@
       />
       <span class="form-switch-span none-select"> 将OCR结果的 [ 换行符 ] 替换为 [ 空格 ] </span>
     </el-form-item>
-    <el-form-item class="none-select" label="OCR结果写入剪切板">
+    <el-form-item class="none-select" label="OCR结果写入剪贴板">
       <el-checkbox
         v-model="advancedSettingInfo.ocrWriteClipboardStatus"
         @change="ocrWriteClipboardStatusEvent"
       />
-      <span class="form-switch-span none-select"> 将OCR识别后的文字自动写入剪切板 </span>
+      <span class="form-switch-span none-select"> 将OCR识别后的文字自动写入剪贴板 </span>
     </el-form-item>
 
     <span class="group-title-span none-select"> 功能设置 </span>
@@ -72,6 +72,26 @@
         />
         <span class="form-switch-span none-select">
           开启后，鼠标拖动非文本内容或双击非文本区域时不会出现悬浮球
+        </span>
+      </div>
+    </el-form-item>
+    <el-form-item class="none-select" label="剪贴板监听配置">
+      <el-checkbox
+        v-model="advancedSettingInfo.clipboardListenerShowStatus"
+        label="剪贴板监听显示状态"
+        @change="clipboardListenerShowStatusEvent"
+      />
+      <span class="form-switch-span none-select"> 开启后，翻译窗口左上角会显示监听开关图标 </span>
+    </el-form-item>
+    <el-form-item class="none-select">
+      <div class="comment-wrap-block">
+        <el-checkbox
+          v-model="advancedSettingInfo.clipboardListenerStatus"
+          label="剪贴板监听模式"
+          @change="clipboardListenerStatusEvent"
+        />
+        <span class="form-switch-span none-select">
+          开启后，当监听到复制文本时将会自动读取剪贴板内容并翻译
         </span>
       </div>
     </el-form-item>
@@ -119,7 +139,9 @@ const advancedSettingInfo = ref({
   hoverBallEnhanceStatus: cacheGet('hoverBallEnhanceStatus') === YesNoEnum.Y,
   ocrWriteClipboardStatus: cacheGet('ocrWriteClipboardStatus') === YesNoEnum.Y,
   ocrWrapReplaceSpaceStatus: cacheGet('ocrWrapReplaceSpaceStatus') === YesNoEnum.Y,
-  translateHistoryStatus: cacheGet('translateHistoryStatus') === YesNoEnum.Y
+  translateHistoryStatus: cacheGet('translateHistoryStatus') === YesNoEnum.Y,
+  clipboardListenerShowStatus: cacheGet('clipboardListenerShowStatus') === YesNoEnum.Y,
+  clipboardListenerStatus: cacheGet('clipboardListenerStatus') === YesNoEnum.Y
 })
 
 /**
@@ -155,9 +177,9 @@ const ocrWrapReplaceSpaceStatusEvent = (val): void => {
 }
 
 /**
- * OCR结果写入剪切板
+ * OCR结果写入剪贴板
  *
- * @param val OCR结果写入剪切板状态
+ * @param val OCR结果写入剪贴板状态
  */
 const ocrWriteClipboardStatusEvent = (val): void => {
   cacheSet('ocrWriteClipboardStatus', val ? YesNoEnum.Y : YesNoEnum.N)
@@ -208,9 +230,35 @@ const hoverBallEnhanceStatusEvent = (val): void => {
   advancedSettingInfo.value.hoverBallEnhanceStatus = val
 }
 
+/**
+ * 翻译记录状态事件
+ *
+ * @param val 状态
+ */
 const translateHistoryStatusEvent = (val): void => {
   cacheSet('translateHistoryStatus', val ? YesNoEnum.Y : YesNoEnum.N)
   advancedSettingInfo.value.translateHistoryStatus = val
+}
+
+/**
+ * 剪贴板监听显示状态事件
+ *
+ * @param val 状态
+ */
+const clipboardListenerShowStatusEvent = (val): void => {
+  cacheSet('clipboardListenerShowStatus', val ? YesNoEnum.Y : YesNoEnum.N)
+  advancedSettingInfo.value.clipboardListenerShowStatus = val
+  clipboardListenerStatusEvent(val)
+}
+
+/**
+ * 剪贴板监听状态事件
+ *
+ * @param val 状态
+ */
+const clipboardListenerStatusEvent = (val): void => {
+  cacheSet('clipboardListenerStatus', val ? YesNoEnum.Y : YesNoEnum.N)
+  advancedSettingInfo.value.clipboardListenerStatus = val
 }
 </script>
 

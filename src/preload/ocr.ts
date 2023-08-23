@@ -48,7 +48,7 @@ const updateText = (callback): void => {
 }
 
 /**
- * 图片写入剪切板事件
+ * 图片写入剪贴板事件
  */
 const base64ImgWriteShearPlateEvent = (base64Img): void => {
   ipcRenderer.invoke('base64-img-write-shear-plate-event', base64Img)

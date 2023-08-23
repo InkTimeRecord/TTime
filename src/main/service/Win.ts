@@ -16,17 +16,17 @@ class WinEvent {
       this.updateWinSize(GlobalWin.mainWin, mainWinInfo.width, height)
     })
     /**
-     * 文字写入剪切板
+     * 文字写入剪贴板
      */
     ipcMain.handle('text-write-shear-plate-event', (_event, text) => {
-      // 写入剪切板
+      // 写入剪贴板
       clipboard.writeText(text)
     })
     /**
-     * 图片写入剪切板
+     * 图片写入剪贴板
      */
     ipcMain.handle('base64-img-write-shear-plate-event', (_event, base64Img) => {
-      // 写入剪切板
+      // 写入剪贴板
       clipboard.writeImage(nativeImage.createFromDataURL(base64Img))
     })
     /**

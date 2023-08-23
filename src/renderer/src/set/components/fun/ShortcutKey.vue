@@ -67,7 +67,7 @@
         @clear="clearTranslateShortcutKey(ShortcutKeyEnum.SCREENSHOT_SILENCE_OCR)"
       />
       <span class="form-switch-span none-select">
-        按下此快捷键将会根据你截图区域进行文字识别，识别的内容自动写入剪切板不会打开OCR窗口
+        按下此快捷键将会根据你截图区域进行文字识别，识别的内容自动写入剪贴板不会打开OCR窗口
       </span>
     </el-form-item>
   </el-form>

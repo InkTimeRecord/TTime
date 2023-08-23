@@ -51,7 +51,7 @@ const loadingImageSrc = ref(loadingImage)
 const isScreenshotEnd = ref(false)
 
 /**
- * 文本写入剪切板
+ * 文本写入剪贴板
  */
 const textWriteShearPlate = (): void => {
   if (isNull(ocrContent.value)) {

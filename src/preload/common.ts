@@ -104,7 +104,7 @@ const closeAppEvent = (): void => {
 }
 
 /**
- * 文本写入剪切板事件
+ * 文本写入剪贴板事件
  */
 const textWriteShearPlateEvent = (text): void => {
   ipcRenderer.invoke('text-write-shear-plate-event', text)

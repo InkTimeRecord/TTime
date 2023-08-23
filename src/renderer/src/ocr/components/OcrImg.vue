@@ -25,7 +25,7 @@ const emit = defineEmits(['is-result-loading-event'])
 const imgData = ref('')
 
 /**
- * 图片写入到剪切板
+ * 图片写入到剪贴板
  */
 const imgWriteShearPlate = (): void => {
   if (isNull(imgData.value)) {
