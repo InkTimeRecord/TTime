@@ -22,6 +22,7 @@ declare global {
     updateCacheEvent
     ttimeApiAppStart
     ttimeApiTranslateUse
+    winFontSizeNotify
   }
 
   interface Window {

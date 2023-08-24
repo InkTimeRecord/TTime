@@ -229,6 +229,17 @@ const updateTranslateServiceEvent = (callback): void => {
 }
 
 /**
+ * 窗口字体大小更新通知
+ *
+ * @param callback 回调方法 用于主进程内部触发时推送到Vue页面执行
+ */
+const winFontSizeNotify = (callback): void => {
+  ipcRenderer.on('win-font-size-notify', (_event) => {
+    callback()
+  })
+}
+
+/**
  * 代理模式 - api翻译
  *
  * @param callback 回调
@@ -268,7 +279,8 @@ const api = {
   ttimeApiTranslateUse,
   apiTranslateResultMsgCallbackEvent,
   agentApiTranslate,
-  agentApiTranslateCallback
+  agentApiTranslateCallback,
+  winFontSizeNotify
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

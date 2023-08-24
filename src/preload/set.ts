@@ -142,6 +142,13 @@ const setWinFocusEvent = (callback): void => {
   })
 }
 
+/**
+ * 窗口字体大小更新通知
+ */
+const winFontSizeNotify = (): void => {
+  ipcRenderer.invoke('win-font-size-notify')
+}
+
 const api = {
   ...common,
   updateTranslateShortcutKeyEvent,
@@ -159,7 +166,8 @@ const api = {
   openDirectoryDialog,
   openDirectoryDialogCallback,
   updateConfigInfoPath,
-  setWinFocusEvent
+  setWinFocusEvent,
+  winFontSizeNotify
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

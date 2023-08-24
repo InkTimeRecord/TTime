@@ -329,6 +329,12 @@ defineExpose({
   setTranslateContent,
   clearTranslatedContentEvent
 })
+
+window.api.winFontSizeNotify(() => {
+  document.documentElement.style.setProperty('--input-text-size', cacheGet('winFontSize') + 'px')
+})
+
+document.documentElement.style.setProperty('--input-text-size', cacheGet('winFontSize') + 'px')
 </script>
 
 <style lang="scss" scoped>

@@ -160,7 +160,10 @@ class StoreService {
       StoreService.configSet('clipboardListenerShowStatus', YesNoEnum.N)
       StoreService.configSet('clipboardListenerStatus', YesNoEnum.N)
     }
-
+    // 初始化默认文字大小
+    if (!StoreService.configHas('winFontSize')) {
+      StoreService.configSet('winFontSize', 14)
+    }
     app.whenReady().then(async () => {
       const translateShortcutKeyList = [
         { type: ShortcutKeyEnum.INPUT, shortcutKey: StoreService.configGet('inputShortcutKey') },

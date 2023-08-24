@@ -1,5 +1,7 @@
 @import 'global';
 
+$input-text-size: var(--input-text-size);
+
 :deep(.el-textarea__inner) {
   background-color: var(--ttime-translate-input-color-background);
   box-shadow: 0 0 0 0;
@@ -7,6 +9,7 @@
   resize: none;
   padding: 5px;
   width: 98%;
+  font-size: $input-text-size
 }
 
 :deep(.el-textarea__inner:focus) {

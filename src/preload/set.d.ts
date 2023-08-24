@@ -24,6 +24,7 @@ declare global {
     openDirectoryDialogCallback
     updateConfigInfoPath
     setWinFocusEvent
+    winFontSizeNotify
   }
 
   interface Window {

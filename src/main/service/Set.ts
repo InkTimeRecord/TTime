@@ -144,6 +144,13 @@ ipcMain.handle('always-onTop-allow-esc-status-notify', (_event, _args) => {
 })
 
 /**
+ * 窗口字体大小更新通知
+ */
+ipcMain.handle('win-font-size-notify', (_event, _args) => {
+  GlobalWin.mainWinSend('win-font-size-notify')
+})
+
+/**
  * 更新配置信息路径
  */
 ipcMain.on('update-config-info-path', (event, storeConfigFunType, storeType, directoryPath) => {

@@ -51,6 +51,14 @@
       />
       <span class="form-switch-span none-select"> 划词触发后等待延迟（数字越小速度越快） </span>
     </el-form-item>
+    <el-form-item class="none-select" label="翻译窗口字体大小">
+      <el-input-number
+        v-model="basiInfo.winFontSize"
+        :min="10"
+        :max="30"
+        @change="winFontSizeChange"
+      />
+    </el-form-item>
   </el-form>
 </template>
 <script setup lang="ts">
@@ -70,7 +78,7 @@ const useThemeMode = initTheme()
  *
  * @param themeType 主题类型
  */
-const toggleTheme = (themeType) => {
+const toggleTheme = (themeType): void => {
   useThemeMode.value = themeType
 }
 
@@ -81,7 +89,8 @@ const basiInfo = ref({
   autoUpdater: cacheGet('autoUpdater') === YesNoEnum.Y,
   translateShowPositionType: cacheGet('translateShowPositionType'),
   fromTopOfWindowPercentage: cacheGet('fromTopOfWindowPercentage'),
-  translateChoiceDelay: cacheGet('translateChoiceDelay')
+  translateChoiceDelay: cacheGet('translateChoiceDelay'),
+  winFontSize: cacheGet('winFontSize')
 })
 
 /**
@@ -134,6 +143,16 @@ const fromTopOfWindowPercentageChange = (fromTopOfWindowPercentage): void => {
 const translateChoiceDelayChange = (translateChoiceDelay): void => {
   cacheSet('translateChoiceDelay', translateChoiceDelay)
   basiInfo.value.translateChoiceDelay = translateChoiceDelay
+}
+/**
+ * 窗口字体大小 - 事件
+ *
+ * @param winFontSize 窗口字体大小
+ */
+const winFontSizeChange = (winFontSize): void => {
+  cacheSet('winFontSize', winFontSize)
+  basiInfo.value.winFontSize = winFontSize
+  window.api.winFontSizeNotify()
 }
 </script>
 
