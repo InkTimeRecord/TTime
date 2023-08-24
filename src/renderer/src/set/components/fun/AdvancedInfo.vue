@@ -33,6 +33,15 @@
       />
       <span class="form-switch-span none-select"> 将翻译结果的 [ 换行符 ] 替换为 [ 空格 ] </span>
     </el-form-item>
+    <el-form-item class="none-select" label="显示翻译不清空内容">
+      <el-checkbox
+        v-model="advancedSettingInfo.showTranslateNotEmptyStatus"
+        @change="showTranslateNotEmptyStatusEvent"
+      />
+      <span class="form-switch-span none-select">
+        当快捷键触发显示翻译窗口时不会清空上一次翻译内容
+      </span>
+    </el-form-item>
 
     <span class="group-title-span none-select"> OCR设置 </span>
     <el-divider />
@@ -141,7 +150,8 @@ const advancedSettingInfo = ref({
   ocrWrapReplaceSpaceStatus: cacheGet('ocrWrapReplaceSpaceStatus') === YesNoEnum.Y,
   translateHistoryStatus: cacheGet('translateHistoryStatus') === YesNoEnum.Y,
   clipboardListenerShowStatus: cacheGet('clipboardListenerShowStatus') === YesNoEnum.Y,
-  clipboardListenerStatus: cacheGet('clipboardListenerStatus') === YesNoEnum.Y
+  clipboardListenerStatus: cacheGet('clipboardListenerStatus') === YesNoEnum.Y,
+  showTranslateNotEmptyStatus: cacheGet('showTranslateNotEmptyStatus') === YesNoEnum.Y
 })
 
 /**
@@ -164,6 +174,16 @@ const alwaysOnTopAllowEscStatusEvent = (val): void => {
 const wrapReplaceSpaceStatusEvent = (val): void => {
   cacheSet('wrapReplaceSpaceStatus', val ? YesNoEnum.Y : YesNoEnum.N)
   advancedSettingInfo.value.wrapReplaceSpaceStatus = val
+}
+
+/**
+ * 显示翻译窗口不清空状态事件
+ *
+ * @param val 显示翻译窗口不清空状态
+ */
+const showTranslateNotEmptyStatusEvent = (val): void => {
+  cacheSet('showTranslateNotEmptyStatus', val ? YesNoEnum.Y : YesNoEnum.N)
+  advancedSettingInfo.value.showTranslateNotEmptyStatus = val
 }
 
 /**

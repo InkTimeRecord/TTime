@@ -164,6 +164,11 @@ class StoreService {
     if (!StoreService.configHas('winFontSize')) {
       StoreService.configSet('winFontSize', 14)
     }
+    // 初始化显示翻译不清空状态
+    if (!StoreService.configHas('showTranslateNotEmptyStatus')) {
+      StoreService.configSet('showTranslateNotEmptyStatus', YesNoEnum.N)
+      StoreService.configSet('showTranslateNotEmptyStatus', YesNoEnum.N)
+    }
     app.whenReady().then(async () => {
       const translateShortcutKeyList = [
         { type: ShortcutKeyEnum.INPUT, shortcutKey: StoreService.configGet('inputShortcutKey') },
