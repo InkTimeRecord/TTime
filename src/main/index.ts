@@ -18,6 +18,7 @@ import './service/ClipboardListenerService'
 import { isNull } from '../common/utils/validate'
 import { injectWinAgent } from './utils/RequestUtil'
 import StoreService from './service/StoreService'
+import { YesNoEnum } from '../common/enums/YesNoEnum'
 
 // 解决使用 win.hide() 后再使用 win.show() 会引起窗口闪烁问题
 app.commandLine.appendSwitch('wm-window-animations-disabled')
@@ -138,7 +139,9 @@ function createWindow(): void {
     }
     // 隐藏窗口
     GlobalWin.mainWinHide()
-    mainWin.webContents.send('clear-all-translated-content')
+    if (StoreService.configGet('showTranslateNotEmptyStatus') === YesNoEnum.N) {
+      mainWin.webContents.send('clear-all-translated-content')
+    }
     mainWin.webContents.send('win-show-input-event')
   })
 }

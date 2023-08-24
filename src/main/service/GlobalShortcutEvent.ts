@@ -9,6 +9,7 @@ import GlobalWin from './GlobalWin'
 import { uIOhook, UiohookKey } from 'uiohook-napi'
 import OcrTypeEnum from '../enums/OcrTypeEnum'
 import StoreService from './StoreService'
+import { YesNoEnum } from '../../common/enums/YesNoEnum'
 
 uIOhook.start()
 
@@ -140,7 +141,9 @@ class GlobalShortcutEvent {
    */
   static translateInput(): void {
     GlobalWin.mainWinShow()
-    GlobalWin.mainWinSend('clear-all-translated-content')
+    if (StoreService.configGet('showTranslateNotEmptyStatus') === YesNoEnum.N) {
+      GlobalWin.mainWinSend('clear-all-translated-content')
+    }
     GlobalWin.mainWinSend('win-show-input-event')
   }
 

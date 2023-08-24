@@ -38,9 +38,7 @@
         v-model="advancedSettingInfo.showTranslateNotEmptyStatus"
         @change="showTranslateNotEmptyStatusEvent"
       />
-      <span class="form-switch-span none-select">
-        当快捷键触发显示翻译窗口时不会清空上一次翻译内容
-      </span>
+      <span class="form-switch-span none-select"> 当触发显示翻译窗口时不会清空上一次翻译内容 </span>
     </el-form-item>
 
     <span class="group-title-span none-select"> OCR设置 </span>

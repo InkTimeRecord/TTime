@@ -167,7 +167,6 @@ class StoreService {
     // 初始化显示翻译不清空状态
     if (!StoreService.configHas('showTranslateNotEmptyStatus')) {
       StoreService.configSet('showTranslateNotEmptyStatus', YesNoEnum.N)
-      StoreService.configSet('showTranslateNotEmptyStatus', YesNoEnum.N)
     }
     app.whenReady().then(async () => {
       const translateShortcutKeyList = [
