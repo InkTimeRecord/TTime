@@ -19,7 +19,9 @@ uIOhook.on('keydown', (e: UiohookKeyboardEvent) => {
     !GlobalShortcutEvent.isChoice
   ) {
     setTimeout(() => {
-      const text = clipboard.readText()
+      let text = clipboard.readText()
+      text = GlobalShortcutEvent.splitSingleCamelCase(text)
+      text = GlobalShortcutEvent.splitSingleUnderScore(text)
       // 推送给Vue页面进行更新翻译输入内容
       GlobalWin.mainWinUpdateTranslatedContent(text)
       GlobalWin.mainWinShow()
