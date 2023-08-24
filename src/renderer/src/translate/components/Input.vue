@@ -183,7 +183,7 @@ const translateFun = (): void => {
   }
   // 换行符替换为空格状态
   if (cacheGet('wrapReplaceSpaceStatus') === YesNoEnum.Y) {
-    translateContentDealWith = translateContentDealWith.replaceAll('\n', ' ')
+    translateContentDealWith = translateContentDealWith.replaceAll('\n', ' ').replaceAll('\r', ' ')
   }
   // 获取当前默认输入文字语言
   let inputLanguage = cacheGet('inputLanguage')

@@ -37,14 +37,14 @@
       <el-container>
         <el-main class="main">
           <el-scrollbar>
-            <basi-info v-show="menuIndex === 'basiInfo'" />
-            <advanced-info v-show="menuIndex === 'advancedInfo'" />
-            <shortcut-key v-show="menuIndex === 'shortcutKey'" />
-            <translate-history v-show="menuIndex === 'translateHistory'" />
-            <translate-service-config v-show="menuIndex === 'translateServiceConfig'" />
-            <network-set v-show="menuIndex === 'networkSet'" />
-            <config-file v-show="menuIndex === 'configFile'" />
-            <about v-show="menuIndex === 'about'" />
+            <basi-info v-if="menuIndex === 'basiInfo'" />
+            <advanced-info v-else-if="menuIndex === 'advancedInfo'" />
+            <shortcut-key v-else-if="menuIndex === 'shortcutKey'" />
+            <translate-history v-else-if="menuIndex === 'translateHistory'" />
+            <translate-service-config v-else-if="menuIndex === 'translateServiceConfig'" />
+            <network-set v-else-if="menuIndex === 'networkSet'" />
+            <config-file v-else-if="menuIndex === 'configFile'" />
+            <about v-else-if="menuIndex === 'about'" />
           </el-scrollbar>
         </el-main>
       </el-container>

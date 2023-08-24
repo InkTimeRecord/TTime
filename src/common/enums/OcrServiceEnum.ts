@@ -36,6 +36,11 @@ class OcrServiceEnum {
    * 腾讯云
    */
   static TENCENT_CLOUD = 'TencentCloud'
+
+  /**
+   * 腾讯云图片翻译
+   */
+  static TENCENT_CLOUD_IMAGE = 'TencentCloudImage'
 }
 
 export default OcrServiceEnum
