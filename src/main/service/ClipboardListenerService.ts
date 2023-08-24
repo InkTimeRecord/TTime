@@ -3,6 +3,7 @@ import { uIOhook, UiohookKeyboardEvent } from 'uiohook-napi'
 import GlobalWin from './GlobalWin'
 import { YesNoEnum } from '../../common/enums/YesNoEnum'
 import StoreService from './StoreService'
+import { GlobalShortcutEvent } from './GlobalShortcutEvent'
 
 uIOhook.start()
 
@@ -14,7 +15,8 @@ uIOhook.on('keydown', (e: UiohookKeyboardEvent) => {
   if (
     e.ctrlKey &&
     e.keycode === 46 &&
-    StoreService.configGet('clipboardListenerStatus') === YesNoEnum.Y
+    StoreService.configGet('clipboardListenerStatus') === YesNoEnum.Y &&
+    !GlobalShortcutEvent.isChoice
   ) {
     setTimeout(() => {
       const text = clipboard.readText()

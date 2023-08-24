@@ -13,11 +13,11 @@
         </el-tooltip>
         <el-tooltip v-if="clipboardListenerShowStatus" placement="bottom-start">
           <template #content>开启/关闭剪贴板监听模式</template>
-          <a class="function-tools">
+          <a class="function-tools" @click="clipboardListenerStatusFun">
             <svg-icon
               :icon-class="
                 clipboardListenerStatus === YesNoEnum.Y
-                  ? 'clipboard-listener'
+                  ? 'clipboard-listener-select'
                   : 'clipboard-listener'
               "
               class="function-tools-icon"
@@ -86,6 +86,15 @@ const thumbtackFun = (): void => {
   )
   thumbtackStatus.value = cacheGet('thumbtackStatus')
   window.api.alwaysOnTopEvent(cacheGet('thumbtackStatus') === YesNoEnum.Y)
+}
+
+/**
+ * 剪贴板监听状态
+ */
+const clipboardListenerStatusFun = (): void => {
+  clipboardListenerStatus.value =
+    clipboardListenerStatus.value === YesNoEnum.N ? YesNoEnum.Y : YesNoEnum.N
+  cacheSet('clipboardListenerStatus', clipboardListenerStatus.value)
 }
 
 /**
