@@ -4,6 +4,7 @@ import GlobalWin from './GlobalWin'
 import { YesNoEnum } from '../../common/enums/YesNoEnum'
 import StoreService from './StoreService'
 import { GlobalShortcutEvent } from './GlobalShortcutEvent'
+import { SystemTypeEnum } from '../enums/SystemTypeEnum'
 
 uIOhook.start()
 
@@ -11,9 +12,10 @@ uIOhook.start()
  * 剪贴板监听事件
  */
 uIOhook.on('keydown', (e: UiohookKeyboardEvent) => {
-  // log.info('text e = ', e)
+  // console.log('text e = ', e)
+  const status = SystemTypeEnum.isMac() ? e.metaKey : e.ctrlKey
   if (
-    e.ctrlKey &&
+    status &&
     e.keycode === 46 &&
     StoreService.configGet('clipboardListenerStatus') === YesNoEnum.Y &&
     !GlobalShortcutEvent.isChoice
