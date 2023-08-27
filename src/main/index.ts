@@ -170,7 +170,10 @@ app.whenReady().then(() => {
    *
    * @param newBounds 新位置的坐标、宽高信息
    */
-  mainWin.on('will-resize', (_event, newBounds) => {
+  mainWin.on('will-resize', (event, newBounds) => {
+    // 禁止手动调整的事件 否则高度也会被改变
+    event.preventDefault()
+    // 下面自己实现调整的方法
     const width = newBounds.width
     StoreService.configSet('mainWinWidth', width)
     // 更新窗口大小
