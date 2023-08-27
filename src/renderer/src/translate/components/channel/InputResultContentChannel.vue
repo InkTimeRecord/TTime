@@ -24,12 +24,14 @@
       <el-collapse-transition>
         <div v-show="showResult">
           <el-input
+            v-if="showResult"
+            ref="translatedResultContentRef"
             v-model="translatedResultContent"
             class="content-input content-input-zero-padding-top"
             :readonly="true"
             spellcheck="false"
             type="textarea"
-            :autosize="{ minRows: 1, maxRows: 10 }"
+            autosize
           />
 
           <div class="phonetic-layer">
@@ -93,7 +95,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { nextTick, ref, watch } from 'vue'
 import loadingImage from '../../../assets/loading.gif'
 import translate from '../../../utils/translate'
 import TranslateServiceEnum from '../../../../../common/enums/TranslateServiceEnum'
@@ -137,6 +139,8 @@ const dictTranslatedResultExpand = ref({})
 const isResultLoading = ref(false)
 // 显示翻译结果
 const showResult = ref(false)
+// 翻译结果内容容器
+const translatedResultContentRef = ref('')
 
 /**
  * 显示翻译结果
@@ -197,21 +201,21 @@ window.api[getTranslateServiceBackEventName(props.translateService)]((res) => {
       return
     }
     if (res.code === OpenAIStatusEnum.END) {
+      translatedResultContent.value += translatedResultContentTemp
       showResult.value = true
       isResultLoading.value = false
-      translatedResultContent.value += translatedResultContentTemp
       data.translateList = [translatedResultContent.value]
       // 更新翻译记录
       updateTranslateRecord(data)
       return
     }
-    showResult.value = true
     translatedResultContent.value += translatedResultContentTemp
+    showResult.value = true
     return
   }
+  translatedResultContent.value = translatedResultContentTemp
   showResult.value = true
   isResultLoading.value = false
-  translatedResultContent.value = translatedResultContentTemp
 
   // 更新翻译记录
   updateTranslateRecord(data)
@@ -259,6 +263,7 @@ window.api[getTranslateServiceBackEventName(props.translateService)]((res) => {
  */
 const setTranslatedResultContent = (value): void => {
   translatedResultContent.value = value
+  adjustTextareaHeight()
 }
 
 /**
@@ -287,6 +292,39 @@ const clearTranslatedResultContentEvent = (): void => {
   showResult.value = false
   setTranslatedResultContent('')
 }
+
+/**
+ * 重新计算翻译结果容器高度
+ */
+const adjustTextareaHeight = (): void => {
+  if (isNull(translatedResultContentRef.value) || translatedResultContent.value.length < 100) {
+    return
+  }
+  // 获取el-textarea的DOM元素
+  const textarea = translatedResultContentRef.value.ref
+  // 设置el-textarea的高度为自适应高度
+  textarea.style.height = 'auto'
+  // 立即重新计算高度
+  textarea.style.height = textarea.scrollHeight + 'px'
+}
+
+/**
+ * 翻译结果监听
+ */
+watch(translatedResultContent, () => {
+  nextTick(() => {
+    setTimeout(() => {
+      adjustTextareaHeight()
+    }, 100)
+  })
+})
+
+/**
+ * 窗口大小更新
+ */
+window.api.winSizeUpdate(() => {
+  adjustTextareaHeight()
+})
 
 defineExpose({
   setTranslatedResultContent,

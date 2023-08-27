@@ -168,6 +168,10 @@ class StoreService {
     if (!StoreService.configHas('showTranslateNotEmptyStatus')) {
       StoreService.configSet('showTranslateNotEmptyStatus', YesNoEnum.N)
     }
+    // 初始化窗口大小
+    if (!StoreService.configHas('mainWinWidth')) {
+      StoreService.configSet('mainWinWidth', 450)
+    }
     app.whenReady().then(async () => {
       const translateShortcutKeyList = [
         { type: ShortcutKeyEnum.INPUT, shortcutKey: StoreService.configGet('inputShortcutKey') },

@@ -7,13 +7,16 @@ import log from '../utils/log'
 import { EnvEnum } from '../enums/EnvEnum'
 import GlobalWin from './GlobalWin'
 class WinEvent {
+  static mainWinInfo
+
   constructor(mainWinInfo) {
+    WinEvent.mainWinInfo = mainWinInfo
     /**
      * 监听页面高度更新窗口大小
      */
     ipcMain.handle('window-height-change-event', (_event, height) => {
       // 更新窗口大小
-      this.updateWinSize(GlobalWin.mainWin, mainWinInfo.width, height)
+      WinEvent.updateWinSize(GlobalWin.mainWin, GlobalWin.mainWin.getSize()[0], height)
     })
     /**
      * 文字写入剪贴板
@@ -166,9 +169,9 @@ class WinEvent {
    * @param width     宽度
    * @param height    高度
    */
-  updateWinSize(win, width, height): void {
-    win.setMaximumSize(width, height)
-    win.setMinimumSize(width, height)
+  static updateWinSize(win, width, height): void {
+    // win.setMaximumSize(width, height)
+    win.setMinimumSize(450, height)
     win.setSize(width, height)
   }
 }

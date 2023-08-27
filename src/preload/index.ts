@@ -259,6 +259,15 @@ const agentApiTranslateCallback = (res): void => {
   ipcRenderer.invoke('agent-api-translate-callback', res)
 }
 
+/**
+ * 窗口大小更新
+ */
+const winSizeUpdate = (callback): void => {
+  ipcRenderer.on('win-size-update', (_event, newBounds) => {
+    callback(newBounds)
+  })
+}
+
 // Custom APIs for renderer
 const api = {
   ...common,
@@ -280,7 +289,8 @@ const api = {
   apiTranslateResultMsgCallbackEvent,
   agentApiTranslate,
   agentApiTranslateCallback,
-  winFontSizeNotify
+  winFontSizeNotify,
+  winSizeUpdate
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

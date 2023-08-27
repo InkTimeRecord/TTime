@@ -9,7 +9,7 @@ $input-text-size: var(--input-text-size);
   resize: none;
   padding: 5px;
   width: 98%;
-  font-size: $input-text-size
+  font-size: $input-text-size;
 }
 
 :deep(.el-textarea__inner:focus) {

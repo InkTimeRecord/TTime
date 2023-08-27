@@ -23,6 +23,7 @@ declare global {
     ttimeApiAppStart
     ttimeApiTranslateUse
     winFontSizeNotify
+    winSizeUpdate
   }
 
   interface Window {

@@ -288,11 +288,20 @@ const translateFun = (): void => {
   })
 }
 
-const isContentNull = (content) => {
+const isContentNull = (content): boolean => {
   return isNull(content.replaceAll('\n', '').replaceAll('\r', '').replaceAll(' ', ''))
 }
 
-const buildTranslateRequestInfo = (translateContentDealWith, languageType, languageResultType) => {
+const buildTranslateRequestInfo = (
+  translateContentDealWith,
+  languageType,
+  languageResultType
+): {
+  channel
+  translateContent
+  languageType
+  languageResultType
+} => {
   return {
     channel: 0,
     translateContent: translateContentDealWith,
