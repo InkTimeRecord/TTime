@@ -34,6 +34,7 @@
     "electron-store": "^8.1.0",
     "form-data": "^4.0.0",
     "fs-extra": "^11.1.1",
+    "md5": "^2.3.0",
     "md5-node": "^1.0.1",
     "node-screenshots": "^0.1.1",
     "onnxruntime-node": "^1.13.1",

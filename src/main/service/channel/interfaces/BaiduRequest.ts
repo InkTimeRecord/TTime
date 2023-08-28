@@ -80,37 +80,29 @@ const apiOcrGetToken = (info): Promise<AxiosPromise> => {
  * @param info OCR信息
  */
 const apiOcrTranslate = async (info): Promise<AxiosPromise> => {
-  const image = info.img.replace('data:image/png;base64,', '')
+  console.log(info);
+  const image = info.img
   const cuid = 'APICUID'
   const mac = 'mac'
-
-  const file = fs.readFileSync(
-    'D:\\software\\java\\code\\InkTimeRecord\\git\\time-translate\\ocr\\ocrCheck.png'
-  )
-
   const formData = new FormData()
-
   const salt = new Date().getTime()
   const buffer = Buffer.from(image, 'base64')
-  console.log('buffer =', file)
+  console.log('buffer =', buffer)
   // const imageFile = fs.readFileSync(buffer)
-  const sign = md5(info.appId + md5(file) + salt + cuid + mac + info.appKey)
-  formData.append('image', file)
-  formData.append('from', info.languageType)
-  formData.append('to', 'en')
-  formData.append('appid', info.appId)
-  formData.append('salt', salt)
-  formData.append('cuid', cuid)
-  formData.append('mac', mac)
-  formData.append('version', '3')
-  formData.append('paste', '0')
-  formData.append('sign', sign)
+  const sign = md5(info.appId + md5(buffer) + salt + cuid + mac + info.appKey)
+  formData.append('image', buffer,{
+    contentType: 'multipart/form-data',
+    header:{
+      mime: 'image/png',
+      fileName:'check.png',
+    }
+  })
   console.log('formData =', formData)
   console.log('formData.getHeaders() =', formData.getHeaders())
 
   return request({
     baseURL: 'https://fanyi-api.baidu.com/',
-    url: 'api/trans/sdk/picture',
+    url: 'api/trans/sdk/picture?from='+info.languageType+'&to=en&appid='+info.appId+'&salt='+salt+'&cuid='+cuid+'&mac='+mac+'&version=3&paste=0&sign='+sign,
     method: HttpMethodType.POST,
     headers: formData.getHeaders(),
     data: formData

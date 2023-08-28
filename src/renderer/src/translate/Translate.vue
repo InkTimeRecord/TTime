@@ -32,6 +32,9 @@ import { cacheGet, oldCacheGet } from '../utils/cacheUtil'
 import '../channel/ChannelRequest'
 import TranslateServiceEnum from '../../../common/enums/TranslateServiceEnum'
 import OcrServiceEnum from '../../../common/enums/OcrServiceEnum'
+import { AxiosPromise } from 'axios'
+import md5 from 'md5'
+import request from '../utils/requestNotHandle'
 
 initTheme()
 
@@ -118,6 +121,61 @@ window.api.showMsgEvent((type, msg) => {
     ElMessageExtend.errorInOptions(msg, { duration: 5 * 1000 })
   }
 })
+
+
+/**
+ * OCR图片翻译
+ *
+ * @param info OCR信息
+ */
+const apiOcrTranslate = async (info): Promise<AxiosPromise> => {
+  console.log(info);
+  const image = info.img
+  const cuid = 'APICUID'
+  const mac = 'mac'
+  const salt = new Date().getTime()
+  // const buffer = ArrayBuffer.from(image, 'base64')
+  // console.log('buffer =', buffer)
+  // const imageFile = fs.readFileSync(buffer)
+  // formData.append('image', buffer,{
+  //   contentType: 'multipart/form-data',
+  //   header:{
+  //     mime: 'image/png',
+  //     fileName:'check.png',
+  //   }
+  // })
+  // console.log('formData =', formData)
+  // console.log('formData.getHeaders() =', formData.getHeaders())
+
+  fetch(image)
+    .then(response => response.arrayBuffer())
+    .then(buffer => {
+      // 使用ArrayBuffer或TypedArray处理二进制数据
+      console.log('buffer =', buffer)
+      const sign = md5(info.appId + md5(buffer) + salt + cuid + mac + info.appKey)
+      return request({
+        baseURL: 'https://fanyi-api.baidu.com/',
+        url: 'api/trans/sdk/picture?from='+info.languageType+'&to=en&appid='+info.appId+'&salt='+salt+'&cuid='+cuid+'&mac='+mac+'&version=3&paste=0&sign='+sign,
+        method: 'post',
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        },
+        data: {
+          image: buffer
+        }
+      })
+    })
+    .catch(error => {
+      console.error('Fetch error:', error);
+    });
+
+
+
+}
+
+apiOcrTranslate(
+)
+
 </script>
 
 <style lang="scss" scoped>
