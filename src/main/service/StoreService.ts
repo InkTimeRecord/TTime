@@ -94,6 +94,9 @@ class StoreService {
     if (!StoreService.configHas('choiceShortcutKey')) {
       StoreService.configSet('choiceShortcutKey', 'Alt + E')
     }
+    if (!StoreService.configHas('showOcrShortcutKey')) {
+      StoreService.configSet('showOcrShortcutKey', 'Alt + Shift + Q')
+    }
     if (!StoreService.configHas('screenshotOcrShortcutKey')) {
       StoreService.configSet('screenshotOcrShortcutKey', 'Alt + Shift + W')
     }
@@ -184,6 +187,10 @@ class StoreService {
           shortcutKey: StoreService.configGet('screenshotShortcutKey')
         },
         { type: ShortcutKeyEnum.CHOICE, shortcutKey: StoreService.configGet('choiceShortcutKey') },
+        {
+          type: ShortcutKeyEnum.SHOW_OCR,
+          shortcutKey: StoreService.configGet('showOcrShortcutKey')
+        },
         {
           type: ShortcutKeyEnum.SCREENSHOT_OCR,
           shortcutKey: StoreService.configGet('screenshotOcrShortcutKey')

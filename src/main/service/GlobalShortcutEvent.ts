@@ -126,6 +126,8 @@ class GlobalShortcutEvent {
       res = GlobalShortcutEvent.translateScreenshotRegister(shortcutKey)
     } else if (ShortcutKeyEnum.CHOICE === type) {
       res = GlobalShortcutEvent.translateChoiceRegister(shortcutKey)
+    } else if (ShortcutKeyEnum.SHOW_OCR === type) {
+      res = GlobalShortcutEvent.ocrShowRegister(shortcutKey)
     } else if (ShortcutKeyEnum.SCREENSHOT_OCR === type) {
       res = GlobalShortcutEvent.ocrScreenshotRegister(shortcutKey)
     } else if (ShortcutKeyEnum.SCREENSHOT_SILENCE_OCR === type) {
@@ -158,6 +160,13 @@ class GlobalShortcutEvent {
     GlobalWin.ocrWinHide()
     ScreenshotsMain.ocrType = OcrTypeEnum.OCR_TRANSLATE
     new ScreenshotsMain().createScreenshotsWin()
+  }
+
+  /**
+   * OCR显示快捷键
+   */
+  static ocrShow(): void {
+    GlobalWin.ocrWinShow()
   }
 
   /**
@@ -289,6 +298,12 @@ class GlobalShortcutEvent {
     )
   }
 
+  /**
+   * OCR窗口显示快捷键 - 注册
+   */
+  static ocrShowRegister(shortcutKey: string): R {
+    return GlobalShortcutEvent.register(shortcutKey, () => GlobalShortcutEvent.ocrShow())
+  }
   /**
    * OCR截图快捷键 - 注册
    */

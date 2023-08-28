@@ -43,6 +43,19 @@
 
     <el-divider />
 
+    <el-form-item class="none-select" label="显示OCR窗口">
+      <el-input
+        v-model="shortcutKeyInfo.showOcrShortcutKey"
+        class="input-shortcut-key"
+        placeholder="请设置快捷键"
+        clearable
+        :formatter="() => shortcutKeyInfo.showOcrShortcutKey"
+        @keydown="translateShortcutKeySetEvent($event, ShortcutKeyEnum.SHOW_OCR)"
+        @clear="clearTranslateShortcutKey(ShortcutKeyEnum.SHOW_OCR)"
+      />
+      <span class="form-switch-span none-select"> 按下此快捷键调出OCR窗口 </span>
+    </el-form-item>
+
     <el-form-item class="none-select" label="截图OCR">
       <el-input
         v-model="shortcutKeyInfo.screenshotOcrShortcutKey"
@@ -84,6 +97,7 @@ const shortcutKeyInfo = ref({
   inputShortcutKey: cacheGet('inputShortcutKey'),
   screenshotShortcutKey: cacheGet('screenshotShortcutKey'),
   choiceShortcutKey: cacheGet('choiceShortcutKey'),
+  showOcrShortcutKey: cacheGet('showOcrShortcutKey'),
   screenshotOcrShortcutKey: cacheGet('screenshotOcrShortcutKey'),
   screenshotSilenceOcrShortcutKey: cacheGet('screenshotSilenceOcrShortcutKey')
 })
