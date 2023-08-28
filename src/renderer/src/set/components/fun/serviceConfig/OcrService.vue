@@ -133,6 +133,17 @@
             </el-select>
           </el-form-item>
 
+          <el-form-item v-if="ocrServiceThis.type === OcrServiceEnum.BAIDU_IMAGE" label="识别语言">
+            <el-select v-model="ocrServiceThis.languageType" size="small">
+              <el-option
+                v-for="model in BaiduImageOcrLanguageList"
+                :key="model.value"
+                :label="model.label"
+                :value="model.value"
+              />
+            </el-select>
+          </el-form-item>
+
           <el-form-item
             v-if="!OcrServiceBuilder.getServiceConfigInfo(ocrServiceThis.type).isOneAppKey"
             label="AppId"
@@ -204,6 +215,7 @@ import { isNotNull, isNull } from '../../../../../../common/utils/validate'
 import { OcrSpaceModelEnum } from '../../../../../../common/enums/OcrSpaceModelEnum'
 import { TencentCloudOcrLanguageEnum } from '../../../../../../common/enums/TencentCloudOcrLanguageEnum'
 import { TencentCloudImageOcrLanguageEnum } from '../../../../../../common/enums/TencentCloudImageOcrLanguageEnum'
+import { BaiduImageOcrLanguageEnum } from '../../../../../../common/enums/BaiduImageOcrLanguageEnum'
 
 // Ocr服务验证状态
 const checkIngStatus = ref(false)
@@ -233,6 +245,7 @@ const VolcanoOcrModelList = VolcanoOcrModelEnum.MODEL_LIST
 const OcrSpaceModelList = OcrSpaceModelEnum.MODEL_LIST
 const TencentCloudOcrLanguageList = TencentCloudOcrLanguageEnum.OCR_LANGUAGE_LIST
 const TencentCloudImageOcrLanguageList = TencentCloudImageOcrLanguageEnum.OCR_LANGUAGE_LIST
+const BaiduImageOcrLanguageList = BaiduImageOcrLanguageEnum.OCR_LANGUAGE_LIST
 
 /**
  * 设置当前选中项默认为第一个Ocr服务

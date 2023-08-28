@@ -18,6 +18,11 @@ class OcrServiceEnum {
   static BAIDU = 'Baidu'
 
   /**
+   * 百度图片翻译
+   */
+  static BAIDU_IMAGE = 'BaiduImage'
+
+  /**
    * 火山OCR
    */
   static VOLCANO = 'Volcano'
