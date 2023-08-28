@@ -95,7 +95,8 @@ class StoreService {
       StoreService.configSet('choiceShortcutKey', 'Alt + E')
     }
     if (!StoreService.configHas('showOcrShortcutKey')) {
-      StoreService.configSet('showOcrShortcutKey', 'Alt + Shift + Q')
+      // 显示OCR窗口快捷键默认为空 非核心功能 用户使用需自行在设置中配置
+      StoreService.configSet('showOcrShortcutKey', '')
     }
     if (!StoreService.configHas('screenshotOcrShortcutKey')) {
       StoreService.configSet('screenshotOcrShortcutKey', 'Alt + Shift + W')
