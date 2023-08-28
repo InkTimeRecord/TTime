@@ -50,6 +50,13 @@
       />
       <span class="form-switch-span none-select"> 将OCR结果的 [ 换行符 ] 替换为 [ 空格 ] </span>
     </el-form-item>
+    <el-form-item class="none-select">
+      <el-checkbox
+        v-model="advancedSettingInfo.ocrWrapReplaceStatus"
+        @change="ocrWrapReplaceStatusEvent"
+      />
+      <span class="form-switch-span none-select"> 将OCR结果的 [ 换行符 ] 替换为 [ 空白 ] </span>
+    </el-form-item>
     <el-form-item class="none-select" label="OCR结果写入剪贴板">
       <el-checkbox
         v-model="advancedSettingInfo.ocrWriteClipboardStatus"
@@ -146,6 +153,7 @@ const advancedSettingInfo = ref({
   hoverBallEnhanceStatus: cacheGet('hoverBallEnhanceStatus') === YesNoEnum.Y,
   ocrWriteClipboardStatus: cacheGet('ocrWriteClipboardStatus') === YesNoEnum.Y,
   ocrWrapReplaceSpaceStatus: cacheGet('ocrWrapReplaceSpaceStatus') === YesNoEnum.Y,
+  ocrWrapReplaceStatus: cacheGet('ocrWrapReplaceStatus') === YesNoEnum.Y,
   translateHistoryStatus: cacheGet('translateHistoryStatus') === YesNoEnum.Y,
   clipboardListenerShowStatus: cacheGet('clipboardListenerShowStatus') === YesNoEnum.Y,
   clipboardListenerStatus: cacheGet('clipboardListenerStatus') === YesNoEnum.Y,
@@ -192,6 +200,16 @@ const showTranslateNotEmptyStatusEvent = (val): void => {
 const ocrWrapReplaceSpaceStatusEvent = (val): void => {
   cacheSet('ocrWrapReplaceSpaceStatus', val ? YesNoEnum.Y : YesNoEnum.N)
   advancedSettingInfo.value.ocrWrapReplaceSpaceStatus = val
+}
+
+/**
+ * OCR结果换行符替换事件
+ *
+ * @param val 换行符替换状态
+ */
+const ocrWrapReplaceStatusEvent = (val): void => {
+  cacheSet('ocrWrapReplaceStatus', val ? YesNoEnum.Y : YesNoEnum.N)
+  advancedSettingInfo.value.ocrWrapReplaceStatus = val
 }
 
 /**

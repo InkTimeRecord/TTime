@@ -217,6 +217,11 @@ class GlobalWin {
       if (YesNoEnum.Y === ocrWrapReplaceSpaceStatus) {
         text = text.replaceAll('\n', ' ')
       }
+      // 换行符替换为空白状态
+      const ocrWrapReplaceStatus = StoreService.configGet('ocrWrapReplaceStatus')
+      if (YesNoEnum.Y === ocrWrapReplaceStatus) {
+        text = text.replaceAll('\n', '')
+      }
       // OCR结果写入剪贴板
       const ocrWriteClipboardStatus = StoreService.configGet('ocrWriteClipboardStatus')
       if (YesNoEnum.Y === ocrWriteClipboardStatus) {

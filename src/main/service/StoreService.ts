@@ -147,6 +147,10 @@ class StoreService {
     if (!StoreService.configHas('ocrWrapReplaceSpaceStatus')) {
       StoreService.configSet('ocrWrapReplaceSpaceStatus', YesNoEnum.N)
     }
+    // 初始化OCR结果换行符替换状态
+    if (!StoreService.configHas('ocrWrapReplaceStatus')) {
+      StoreService.configSet('ocrWrapReplaceStatus', YesNoEnum.N)
+    }
     // 初始化默认划词延迟
     if (!StoreService.configHas('translateChoiceDelay')) {
       StoreService.configSet('translateChoiceDelay', 600)
