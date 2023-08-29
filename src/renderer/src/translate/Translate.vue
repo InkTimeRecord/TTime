@@ -122,6 +122,24 @@ window.api.showMsgEvent((type, msg) => {
   }
 })
 
+/**
+ * Base64字符串转File文件
+ * @param {String} base64 Base64字符串(字符串不包含Data URI scheme)
+ * @param {String} filename 文件名称
+ * @param {String} type 文件类型(例如：image/png)
+ */
+function base64toFile(base64, filename, type) {
+  // 将base64转为Unicode规则编码
+  const bstr = atob(base64)
+  let n = bstr.length
+  const u8arr = new Uint8Array(n)
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n) // 转换编码后才可以使用charCodeAt 找到Unicode编码
+  }
+  return new File([u8arr], filename, {
+    type: 'multipart/form-data'
+  })
+}
 
 /**
  * OCR图片翻译
@@ -129,53 +147,46 @@ window.api.showMsgEvent((type, msg) => {
  * @param info OCR信息
  */
 const apiOcrTranslate = async (info): Promise<AxiosPromise> => {
-  console.log(info);
+  console.log(info)
   const image = info.img
   const cuid = 'APICUID'
   const mac = 'mac'
   const salt = new Date().getTime()
-  // const buffer = ArrayBuffer.from(image, 'base64')
-  // console.log('buffer =', buffer)
-  // const imageFile = fs.readFileSync(buffer)
-  // formData.append('image', buffer,{
-  //   contentType: 'multipart/form-data',
-  //   header:{
-  //     mime: 'image/png',
-  //     fileName:'check.png',
-  //   }
-  // })
-  // console.log('formData =', formData)
-  // console.log('formData.getHeaders() =', formData.getHeaders())
-
-  fetch(image)
-    .then(response => response.arrayBuffer())
-    .then(buffer => {
-      // 使用ArrayBuffer或TypedArray处理二进制数据
-      console.log('buffer =', buffer)
-      const sign = md5(info.appId + md5(buffer) + salt + cuid + mac + info.appKey)
-      return request({
-        baseURL: 'https://fanyi-api.baidu.com/',
-        url: 'api/trans/sdk/picture?from='+info.languageType+'&to=en&appid='+info.appId+'&salt='+salt+'&cuid='+cuid+'&mac='+mac+'&version=3&paste=0&sign='+sign,
-        method: 'post',
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        },
-        data: {
-          image: buffer
-        }
-      })
-    })
-    .catch(error => {
-      console.error('Fetch error:', error);
-    });
-
-
-
+  // 解码Base64字符串为一个二进制数组
+  const binaryString = atob(image)
+  // 创建一个Uint8Array并将二进制数据复制到其中
+  const buffer = new Uint8Array(binaryString.length)
+  for (let i = 0; i < binaryString.length; i++) {
+    buffer[i] = binaryString.charCodeAt(i)
+  }
+  console.log('buffer =', buffer)
+  const sign = md5(info.appId + md5(buffer) + salt + cuid + mac + info.appKey)
+  return request({
+    baseURL: 'https://fanyi-api.baidu.com/',
+    url:
+      'api/trans/sdk/picture?from=' +
+      info.languageType +
+      '&to=en&appid=' +
+      info.appId +
+      '&salt=' +
+      salt +
+      '&cuid=' +
+      cuid +
+      '&mac=' +
+      mac +
+      '&version=3&paste=0&sign=' +
+      sign,
+    method: 'post',
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    },
+    data: {
+      image: buffer
+    }
+  })
 }
 
-apiOcrTranslate(
-)
-
+apiOcrTranslate()
 </script>
 
 <style lang="scss" scoped>

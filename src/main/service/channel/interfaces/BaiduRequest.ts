@@ -80,31 +80,44 @@ const apiOcrGetToken = (info): Promise<AxiosPromise> => {
  * @param info OCR信息
  */
 const apiOcrTranslate = async (info): Promise<AxiosPromise> => {
-  console.log(info);
-  const image = info.img
+  const image = info.img.replace('data:image/png;base64,', '')
   const cuid = 'APICUID'
   const mac = 'mac'
-  const formData = new FormData()
   const salt = new Date().getTime()
-  const buffer = Buffer.from(image, 'base64')
+  // 解码Base64字符串为一个二进制数组
+  const binaryString = Buffer.from(image, 'base64')
+  // 创建一个Uint8Array并将二进制数据复制到其中
+  const buffer = new Uint8Array(binaryString)
   console.log('buffer =', buffer)
-  // const imageFile = fs.readFileSync(buffer)
-  const sign = md5(info.appId + md5(buffer) + salt + cuid + mac + info.appKey)
-  formData.append('image', buffer,{
-    contentType: 'multipart/form-data',
-    header:{
-      mime: 'image/png',
-      fileName:'check.png',
-    }
-  })
-  console.log('formData =', formData)
-  console.log('formData.getHeaders() =', formData.getHeaders())
 
+  const localFile = fs.createReadStream(
+    'D:\\software\\java\\code\\InkTimeRecord\\git\\time-translate\\ocr\\ocrCheck.png'
+  )
+  console.log('localFile =', localFile)
+
+  const formData = new FormData()
+  formData.append('image', localFile)
+  const sign = md5(info.appId + md5(localFile) + salt + cuid + mac + info.appKey)
   return request({
     baseURL: 'https://fanyi-api.baidu.com/',
-    url: 'api/trans/sdk/picture?from='+info.languageType+'&to=en&appid='+info.appId+'&salt='+salt+'&cuid='+cuid+'&mac='+mac+'&version=3&paste=0&sign='+sign,
+    url:
+      'api/trans/sdk/picture?from=' +
+      info.languageType +
+      '&to=en&appid=' +
+      info.appId +
+      '&salt=' +
+      salt +
+      '&cuid=' +
+      cuid +
+      '&mac=' +
+      mac +
+      '&version=3&paste=0&sign=' +
+      sign,
     method: HttpMethodType.POST,
-    headers: formData.getHeaders(),
+    headers: {
+      // 'Content-Type': 'multipart/form-data'
+      ...formData.getHeaders()
+    },
     data: formData
   })
 }

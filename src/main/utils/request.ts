@@ -27,6 +27,7 @@ service.interceptors.request.use(
         config.headers['User-Agent'] = result
       })
     await injectAgent(config)
+    console.log('config = ', config)
     return config
   },
   (error) => {
