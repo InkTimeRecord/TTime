@@ -119,6 +119,15 @@
         开启后，当翻译 / OCR窗口置顶时，按ESC键依旧可隐藏窗口
       </span>
     </el-form-item>
+    <el-form-item class="none-select" label="输入自动翻译">
+      <el-checkbox
+        v-model="advancedSettingInfo.inputTranslationAutoStatus"
+        @change="inputTranslationAutoStatusEvent"
+      />
+      <span class="form-switch-span none-select">
+        开启后，当在翻译窗口输入后将会自动进行翻译，无需再按回车
+      </span>
+    </el-form-item>
   </el-form>
 </template>
 <script setup lang="ts">
@@ -157,7 +166,8 @@ const advancedSettingInfo = ref({
   translateHistoryStatus: cacheGet('translateHistoryStatus') === YesNoEnum.Y,
   clipboardListenerShowStatus: cacheGet('clipboardListenerShowStatus') === YesNoEnum.Y,
   clipboardListenerStatus: cacheGet('clipboardListenerStatus') === YesNoEnum.Y,
-  showTranslateNotEmptyStatus: cacheGet('showTranslateNotEmptyStatus') === YesNoEnum.Y
+  showTranslateNotEmptyStatus: cacheGet('showTranslateNotEmptyStatus') === YesNoEnum.Y,
+  inputTranslationAutoStatus: cacheGet('inputTranslationAutoStatus') === YesNoEnum.Y
 })
 
 /**
@@ -295,6 +305,16 @@ const clipboardListenerShowStatusEvent = (val): void => {
 const clipboardListenerStatusEvent = (val): void => {
   cacheSet('clipboardListenerStatus', val ? YesNoEnum.Y : YesNoEnum.N)
   advancedSettingInfo.value.clipboardListenerStatus = val
+}
+
+/**
+ * 输入自动翻译状态事件
+ *
+ * @param val 状态
+ */
+const inputTranslationAutoStatusEvent = (val): void => {
+  cacheSet('inputTranslationAutoStatus', val ? YesNoEnum.Y : YesNoEnum.N)
+  advancedSettingInfo.value.inputTranslationAutoStatus = val
 }
 </script>
 

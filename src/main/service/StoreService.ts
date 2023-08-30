@@ -180,6 +180,10 @@ class StoreService {
     if (!StoreService.configHas('mainWinWidth')) {
       StoreService.configSet('mainWinWidth', 450)
     }
+    // 初始化输入自动翻译模式
+    if (!StoreService.configHas('inputTranslationAutoStatus')) {
+      StoreService.configSet('inputTranslationAutoStatus', YesNoEnum.N)
+    }
     app.whenReady().then(async () => {
       const translateShortcutKeyList = [
         { type: ShortcutKeyEnum.INPUT, shortcutKey: StoreService.configGet('inputShortcutKey') },

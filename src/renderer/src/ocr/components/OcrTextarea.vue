@@ -37,7 +37,7 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, ref, watch } from 'vue'
+import { ref } from 'vue'
 
 import loadingImage from '../../assets/loading.gif'
 import { isNull } from '../../../../common/utils/validate'

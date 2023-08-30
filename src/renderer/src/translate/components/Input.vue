@@ -15,6 +15,7 @@
           type="textarea"
           :autosize="{ minRows: 2, maxRows: 10 }"
           placeholder="请输入单词或文字"
+          @input="translateContentInputEvent"
           @keydown="translateChange"
           @focus="translateContentFocus"
         >
@@ -72,6 +73,8 @@ const translateContent = ref('')
 // 翻译输入框ref
 const translateContentInputRef = ref()
 const emit = defineEmits(['show-result-event', 'is-result-loading-event'])
+// 翻译内容输入状态
+let translateContentInputStatus
 
 watch(translateContent, () => {
   // 页面高度改变监听
@@ -142,7 +145,8 @@ const translateChange = async (event): Promise<void> => {
   }
 
   // 文本粘贴快捷键
-  const isCtrlV = event.ctrlKey && event.keyCode === 86
+  const isCtrlV =
+    event.ctrlKey && event.keyCode === 86 && cacheGet('inputTranslationAutoStatus') === YesNoEnum.N
 
   // keyCode 13 = 回车
   if (event.keyCode !== 13 && !isCtrlV) {
@@ -288,8 +292,34 @@ const translateFun = (): void => {
   })
 }
 
+/**
+ * 是否内容为空
+ *
+ * @param content 内容
+ */
 const isContentNull = (content): boolean => {
   return isNull(content.replaceAll('\n', '').replaceAll('\r', '').replaceAll(' ', ''))
+}
+
+// 翻译内容输入事件 - 任务
+let translateContentInputTimeout
+
+/**
+ * 翻译内容输入事件
+ */
+const translateContentInputEvent = (): void => {
+  if (cacheGet('inputTranslationAutoStatus') === YesNoEnum.Y) {
+    clearTimeout(translateContentInputTimeout)
+    // 防抖时间为500毫秒
+    translateContentInputTimeout = setTimeout(() => {
+      if (isContentNull(translateContent.value)) {
+        return
+      }
+      translateContentInputStatus = true
+      translateFun()
+      translateContentInputStatus = false
+    }, 500)
+  }
 }
 
 const buildTranslateRequestInfo = (
