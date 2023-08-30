@@ -73,8 +73,6 @@ const translateContent = ref('')
 // 翻译输入框ref
 const translateContentInputRef = ref()
 const emit = defineEmits(['show-result-event', 'is-result-loading-event'])
-// 翻译内容输入状态
-let translateContentInputStatus
 
 watch(translateContent, () => {
   // 页面高度改变监听
@@ -137,8 +135,9 @@ const textWriteShearPlate = (text): void => {
  * 翻译触发
  */
 const translateChange = async (event): Promise<void> => {
+  console.log('event =' , event);
   // 按下 ctrl/command + 回车 = 换行
-  if (event.keyCode === 13 && event.ctrlKey) {
+  if (event.keyCode === 13 && (event.ctrlKey || event.metaKey)) {
     // 换行
     translateContent.value += '\n'
     return
@@ -146,7 +145,7 @@ const translateChange = async (event): Promise<void> => {
 
   // 文本粘贴快捷键
   const isCtrlV =
-    event.ctrlKey && event.keyCode === 86 && cacheGet('inputTranslationAutoStatus') === YesNoEnum.N
+    (event.ctrlKey || event.metaKey) && event.keyCode === 86 && cacheGet('inputTranslationAutoStatus') === YesNoEnum.N
 
   // keyCode 13 = 回车
   if (event.keyCode !== 13 && !isCtrlV) {
@@ -315,9 +314,7 @@ const translateContentInputEvent = (): void => {
       if (isContentNull(translateContent.value)) {
         return
       }
-      translateContentInputStatus = true
       translateFun()
-      translateContentInputStatus = false
     }, 500)
   }
 }
