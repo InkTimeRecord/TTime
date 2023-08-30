@@ -17,7 +17,7 @@
 
 ## brief introduction
 
-The main functions are `input translation`, `screenshot translation`, `selected translation`、`Hover Ball Translation`、`Screenshot OCR`、`Screenshot Silence OCR`
+The main functions are `input translation`, `screenshot translation`, `selected translation`、`Hover Ball Translation`、`Screenshot OCR`、`Screenshot Silence OCR`、`Clipboard listening translation`
 
 ## Interface
 <div align='center'>
@@ -71,10 +71,12 @@ The main functions are `input translation`, `screenshot translation`, `selected 
   - [x] TTime
   - [x] TTime Online OCR
   - [x] Baidu OCR
+  - [x] Baidu Image Translation OCR
   - [x] Volcano OCR
   - [x] Ocr Space
   - [x] Iflytek OCR
   - [x] Tencent OCR
+  - [x] Tencent Image Translation OCR
 
 ## Development Guide
 
@@ -133,7 +135,7 @@ src/renderer/src/assets/translate/NiuTransLogo.png
 Add translation/OCR source information file
 
 ```
-src/common/channel/translate/NiuTransInfo.ts
+src/common/channel/translate/info/NiuTransInfo.ts
 ```
 
 ### 4.Add translation/OCR source implementation

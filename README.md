@@ -17,7 +17,7 @@
 
 ## 简介
 
-主要功能：`输入翻译`、`截图翻译`、`划词翻译`、`悬浮球翻译`、`截图OCR`、`静默截图OCR`
+主要功能：`输入翻译`、`截图翻译`、`划词翻译`、`悬浮球翻译`、`截图OCR`、`静默截图OCR`、`剪贴板监听翻译`
 
 ## 界面
 <div align='center'>
@@ -72,10 +72,12 @@
   - [x] TTime
   - [x] TTime在线
   - [x] 百度OCR
+  - [x] 百度图片翻译OCR
   - [x] 火山OCR
   - [x] Ocr Space
   - [x] 讯飞OCR
   - [x] 腾讯云OCR
+  - [x] 腾讯云图片翻译OCR
 
 ## 开发指南
 
@@ -134,7 +136,7 @@ src/renderer/src/assets/translate/NiuTransLogo.png
 新增翻译/OCR源信息文件
 
 ```
-src/common/channel/translate/NiuTransInfo.ts
+src/common/channel/translate/info/NiuTransInfo.ts
 ```
 
 ### 4.新增翻译/OCR源实现
