@@ -260,6 +260,26 @@ const agentApiTranslateCallback = (res): void => {
 }
 
 /**
+ * 代理模式 - api OCR
+ *
+ * @param callback 回调
+ */
+const agentApiOcr = (callback): void => {
+  ipcRenderer.on('agent-api-ocr', (_event, info) => {
+    callback(info)
+  })
+}
+
+/**
+ * 代理OCR - 调用OCR回调
+ *
+ * @param res 信息
+ */
+const agentApiOcrCallback = (res): void => {
+  ipcRenderer.invoke('agent-api-ocr-callback', res)
+}
+
+/**
  * 窗口大小更新
  */
 const winSizeUpdate = (callback): void => {
@@ -289,6 +309,8 @@ const api = {
   apiTranslateResultMsgCallbackEvent,
   agentApiTranslate,
   agentApiTranslateCallback,
+  agentApiOcr,
+  agentApiOcrCallback,
   winFontSizeNotify,
   winSizeUpdate
 }

@@ -2,71 +2,67 @@ import log from '../../../../utils/log'
 import R from '../../../../../common/class/R'
 import GlobalWin from '../../../GlobalWin'
 import IOcrInterface from './IOcrInterface'
-import BaiduRequest from '../../interfaces/BaiduRequest'
 import { YesNoEnum } from '../../../../../common/enums/YesNoEnum'
 import OcrServiceEnum from '../../../../../common/enums/OcrServiceEnum'
-import { isNotNull, isNull } from '../../../../../common/utils/validate'
+import OcrAgent from './OcrAgent'
 
-class BaiduImageOcrChannel implements IOcrInterface {
+class BaiduImageOcrChannel extends OcrAgent implements IOcrInterface {
   /**
    * OCR
    *
-   * @param info OCR信息
+   * @param res OCR信息
    */
-  async apiOcr(info): Promise<void> {
-    BaiduRequest.apiOcrTranslate(info).then(
-      (res) => {
-        log.info('[百度图片翻译OCR事件] - 响应报文 : ', res)
-        const errorCode = res['error_code']
-        let text
-        if (isNotNull(errorCode)) {
-          text = this.getMsgByErrorCode(errorCode)
-          GlobalWin.ocrUpdateContent(YesNoEnum.N, text)
-          return
-        }
-        // text = res?.ImageRecord?.Value?.map((detection) => detection.SourceText).join('\n')
-        // GlobalWin.ocrUpdateContent(YesNoEnum.Y, text)
-      },
-      (err) => {
-        log.error('[百度图片翻译OCR事件] - 异常响应报文 : ', err)
-        GlobalWin.ocrUpdateContent(YesNoEnum.N, err)
-      }
-    )
+  apiOcrCallback(res: R): void {
+    const dataObj = res.data
+    const data = dataObj['response']
+    if (res.code === R.ERROR) {
+      GlobalWin.ocrUpdateContent(YesNoEnum.N, data)
+      return
+    }
+    log.info('[百度图片翻译OCR事件] - 响应报文 : ', data)
+    const errorCode = data['error_code']
+    let text
+    if (errorCode !== '0') {
+      text = this.getMsgByErrorCode(errorCode)
+      GlobalWin.ocrUpdateContent(YesNoEnum.N, text)
+      return
+    }
+    text = data?.data['sumSrc']
+    GlobalWin.ocrUpdateContent(YesNoEnum.Y, text)
   }
 
   /**
-   * 翻译校验
+   * OCR校验
    *
-   * @param info 翻译信息
+   * @param res OCR信息
    */
-  async apiOcrCheck(info): Promise<void> {
-    BaiduRequest.apiOcrTranslate(info).then(
-      (res) => {
-        log.info('[百度图片翻译OCR校验密钥事件] - 响应报文 : ', res)
-        const errorCode = res['error_code']
-        if (isNull(errorCode)) {
-          GlobalWin.setWin.webContents.send(
-            'api-check-ocr-callback-event',
-            OcrServiceEnum.BAIDU_IMAGE,
-            R.okD(info.responseData)
-          )
-          return
-        }
-        const msg = this.getMsgByErrorCode(errorCode)
-        GlobalWin.setWin.webContents.send(
-          'api-check-ocr-callback-event',
-          OcrServiceEnum.BAIDU_IMAGE,
-          R.errorMD(msg, info.responseData)
-        )
-      },
-      (err) => {
-        log.error('[百度图片翻译OCR校验密钥事件] - 异常响应报文 : ', err)
-        GlobalWin.setWin.webContents.send(
-          'api-check-ocr-callback-event',
-          OcrServiceEnum.BAIDU_IMAGE,
-          R.errorD(info.responseData)
-        )
-      }
+  apiOcrCheckCallback(res: R): void {
+    const dataObj = res.data
+    const data = dataObj['response']
+    const info = dataObj['request']
+    log.info('[百度图片翻译OCR校验密钥事件] - 响应报文 : ', data)
+    if (res.code === R.ERROR) {
+      GlobalWin.setWin.webContents.send(
+        'api-check-ocr-callback-event',
+        OcrServiceEnum.BAIDU_IMAGE,
+        R.errorMD(data, info.responseData)
+      )
+      return
+    }
+    const errorCode = data['error_code']
+    if (errorCode !== '0') {
+      const msg = this.getMsgByErrorCode(errorCode)
+      GlobalWin.setWin.webContents.send(
+        'api-check-ocr-callback-event',
+        OcrServiceEnum.BAIDU_IMAGE,
+        R.errorMD(msg, info.responseData)
+      )
+      return
+    }
+    GlobalWin.setWin.webContents.send(
+      'api-check-ocr-callback-event',
+      OcrServiceEnum.BAIDU_IMAGE,
+      R.okD(info.responseData)
     )
   }
 

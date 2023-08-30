@@ -6,16 +6,15 @@ import { paramsFilter } from '../../../utils/logExtend'
 
 // 获取所有OCR源模块
 const channelModules = import.meta.glob('../product/ocr/*.ts')
-const channels = {}
 // 构建翻译源
 Object.keys(channelModules).map(async (modulePath) => {
   // 过滤非OCR通道
-  if (modulePath.endsWith('/IOcrInterface.ts')) {
+  if (modulePath.endsWith('/IOcrInterface.ts') || modulePath.endsWith('/IOcrAgentInterface.ts')) {
     return
   }
   const module = (await channelModules[modulePath]()) as { default: new () => never }
   const Channel = module.default
-  channels[Channel.name] = new Channel()
+  OcrChannelFactory.channels[Channel.name] = new Channel()
 })
 
 // 获取所有翻译源配置信息 此处是异步加载 所以直接写在这里了 没有构建在方法 / 类中
@@ -34,6 +33,10 @@ Object.keys(channelConfigModules).map(async (modulePath) => {
  */
 class OcrChannelFactory {
   /**
+   * OCR源
+   */
+  static channels = {}
+  /**
    * 渠道配置信息
    */
   static channelConfigs = {}
@@ -49,7 +52,8 @@ class OcrChannelFactory {
       `[${OcrChannelFactory.channelConfigs[type].name}事件] - 请求报文 : `,
       paramsFilter(info)
     )
-    channels[type + 'OcrChannel'].apiOcr(info)
+    info.type = type
+    OcrChannelFactory.channels[type + 'OcrChannel'].apiOcr(info)
   }
 
   /**
@@ -77,12 +81,13 @@ class OcrChannelFactory {
         responseData[key] = info[key]
       })
     }
+    info.type = type
     info = {
       ...info,
       ...this.buildOcrCheckRequestInfo(),
       responseData
     }
-    channels[type + 'OcrChannel'].apiOcrCheck(info)
+    OcrChannelFactory.channels[type + 'OcrChannel'].apiOcrCheck(info)
   }
 
   /**

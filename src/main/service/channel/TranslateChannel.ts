@@ -68,6 +68,15 @@ ipcMain.handle('api-unite-ocr-check', (_event, channel, info) => {
 })
 
 /**
+ * 代理OCR - 调用OCR结果回调
+ */
+ipcMain.handle('agent-api-ocr-callback', (_event, res) => {
+  const info = res.data.request
+  const channel = OcrChannelFactory.channels[info.type + 'OcrChannel']
+  info.isOcrCheckType ? channel.apiOcrCheckCallback(res) : channel.apiOcrCallback(res)
+})
+
+/**
  * Ocr结果消息回调
  * 如果校验无法翻译时，但也不能触发翻译事件时候，此处模拟翻译结果消息回调
  * 目前主要用于手动设置了翻译语言后的校验逻辑

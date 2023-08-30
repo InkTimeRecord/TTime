@@ -3,6 +3,7 @@ import { BingChannelRequest } from './BingChannelRequest'
 import { GoogleChannelRequest } from './GoogleChannelRequest'
 import { DeepLChannelRequest } from './DeepLChannelRequest'
 import { AzureOpenAIChannelRequest } from './AzureOpenAIChannelRequest'
+import { BaiduChannelRequest } from './BaiduChannelRequest'
 
 class ChannelRequest {
   /**
@@ -84,6 +85,15 @@ class ChannelRequest {
   static bingdictTranslate = (info): void => {
     BingChannelRequest.apiTranslateByBingDict(info)
   }
+
+  /**
+   * 百度图片翻译
+   *
+   * @param info 信息
+   */
+  static baiduimageOcr = (info): void => {
+    BaiduChannelRequest.apiOcrImg(info)
+  }
 }
 
 /**
@@ -94,4 +104,14 @@ class ChannelRequest {
  */
 window.api['agentApiTranslate']((info) => {
   ChannelRequest[info.type.toLowerCase() + 'Translate'](info)
+})
+
+/**
+ * 代理模式 - api翻译
+ *
+ * @param type 翻译源类型
+ * @param info 翻译源类型
+ */
+window.api['agentApiOcr']((info) => {
+  ChannelRequest[info.type.toLowerCase() + 'Ocr'](info)
 })

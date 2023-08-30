@@ -19,6 +19,9 @@ declare global {
     showMsgEvent
     updateTranslateServiceEvent
     apiTranslateResultMsgCallbackEvent
+    agentApiTranslateCallback
+    agentApiOcr
+    agentApiOcrCallback
     updateCacheEvent
     ttimeApiAppStart
     ttimeApiTranslateUse

@@ -2,8 +2,6 @@ import HttpMethodType from '../../../enums/HttpMethodTypeClassEnum'
 import { AxiosPromise } from 'axios'
 import request from '../../../utils/request'
 import md5 from 'md5-node'
-import fs from 'fs'
-import FormData from 'form-data'
 
 /**
  * 翻译
@@ -74,57 +72,8 @@ const apiOcrGetToken = (info): Promise<AxiosPromise> => {
   })
 }
 
-/**
- * OCR图片翻译
- *
- * @param info OCR信息
- */
-const apiOcrTranslate = async (info): Promise<AxiosPromise> => {
-  const image = info.img.replace('data:image/png;base64,', '')
-  const cuid = 'APICUID'
-  const mac = 'mac'
-  const salt = new Date().getTime()
-  // 解码Base64字符串为一个二进制数组
-  const binaryString = Buffer.from(image, 'base64')
-  // 创建一个Uint8Array并将二进制数据复制到其中
-  const buffer = new Uint8Array(binaryString)
-  console.log('buffer =', buffer)
-
-  const localFile = fs.createReadStream(
-    'D:\\software\\java\\code\\InkTimeRecord\\git\\time-translate\\ocr\\ocrCheck.png'
-  )
-  console.log('localFile =', localFile)
-
-  const formData = new FormData()
-  formData.append('image', localFile)
-  const sign = md5(info.appId + md5(localFile) + salt + cuid + mac + info.appKey)
-  return request({
-    baseURL: 'https://fanyi-api.baidu.com/',
-    url:
-      'api/trans/sdk/picture?from=' +
-      info.languageType +
-      '&to=en&appid=' +
-      info.appId +
-      '&salt=' +
-      salt +
-      '&cuid=' +
-      cuid +
-      '&mac=' +
-      mac +
-      '&version=3&paste=0&sign=' +
-      sign,
-    method: HttpMethodType.POST,
-    headers: {
-      // 'Content-Type': 'multipart/form-data'
-      ...formData.getHeaders()
-    },
-    data: formData
-  })
-}
-
 export default {
   apiTranslate,
   apiOcr,
-  apiOcrGetToken,
-  apiOcrTranslate
+  apiOcrGetToken
 }
