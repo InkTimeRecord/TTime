@@ -135,7 +135,7 @@ const textWriteShearPlate = (text): void => {
  * 翻译触发
  */
 const translateChange = async (event): Promise<void> => {
-  console.log('event =' , event);
+  // console.log('event =', event)
   // 按下 ctrl/command + 回车 = 换行
   if (event.keyCode === 13 && (event.ctrlKey || event.metaKey)) {
     // 换行
@@ -143,12 +143,22 @@ const translateChange = async (event): Promise<void> => {
     return
   }
 
+  const inputTranslationAutoStatus = cacheGet('inputTranslationAutoStatus')
+
   // 文本粘贴快捷键
   const isCtrlV =
-    (event.ctrlKey || event.metaKey) && event.keyCode === 86 && cacheGet('inputTranslationAutoStatus') === YesNoEnum.N
+    (event.ctrlKey || event.metaKey) &&
+    event.keyCode === 86 &&
+    inputTranslationAutoStatus === YesNoEnum.N
 
   // keyCode 13 = 回车
   if (event.keyCode !== 13 && !isCtrlV) {
+    return
+  }
+
+  // 如果开启了输入自动翻译模式 则回车翻译功能关闭
+  if (event.keyCode === 13 && inputTranslationAutoStatus === YesNoEnum.Y) {
+    event.preventDefault()
     return
   }
 
