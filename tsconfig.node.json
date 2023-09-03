@@ -11,6 +11,7 @@
     "src/main/service/channel/product/*",
     "src/main/service/channel/product/translate/*",
     "src/main/service/channel/product/ocr/*",
+    "src/main/service/auth/*",
     "src/main/enums/*",
     "src/main/utils/*",
     "src/main/class/*",

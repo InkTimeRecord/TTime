@@ -61,6 +61,15 @@ const getVersionInfo = () => {
   })
 }
 
+/**
+ * 获取用户信息
+ */
+export function getInfo() {
+  return request({
+    url: "auth/ttime/getUserInfo"
+  });
+}
+
 export default {
   apiTranslate,
   translateUse,

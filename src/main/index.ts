@@ -19,6 +19,7 @@ import { isNull } from '../common/utils/validate'
 import { injectWinAgent } from './utils/RequestUtil'
 import StoreService from './service/StoreService'
 import { YesNoEnum } from '../common/enums/YesNoEnum'
+import { parseCustomProtocolUrl } from '../common/utils/urlUtil'
 
 // 解决使用 win.hide() 后再使用 win.show() 会引起窗口闪烁问题
 app.commandLine.appendSwitch('wm-window-animations-disabled')
@@ -57,6 +58,21 @@ if (gotTheLock) {
   // 这里直接执行退出当前重复实例即可
   app.quit()
 }
+
+app.setAsDefaultProtocolClient('ttimeappprotocol', process.execPath, [__dirname]);
+
+app.on('open-url', (event, url) => {
+  event.preventDefault(); // 阻止默认行为，以防链接被打开
+  log.info('触发了应用 = ' , url)
+  let parseCustomProtocol = parseCustomProtocolUrl(url)
+  log.info('触发了应用 parseCustomProtocol = ' , parseCustomProtocol)
+  if(parseCustomProtocol.path === 'login') {
+    let token = parseCustomProtocol.queryParams.token
+    if(token) {
+    }
+  }
+});
+
 
 function createWindow(): void {
   mainWin = new BrowserWindow({
