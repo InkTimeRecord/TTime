@@ -34,7 +34,7 @@ const apiOcr = (info): Promise<AxiosPromise> => {
 /**
  * 翻译使用
  */
-const translateUse = () => {
+const translateUse = (): Promise<AxiosPromise> => {
   return request({
     url: 'translate/use/',
     method: HttpMethodType.POST
@@ -44,7 +44,7 @@ const translateUse = () => {
 /**
  * 应用启动
  */
-const appStart = () => {
+const appStart = (): Promise<AxiosPromise> => {
   return request({
     url: 'translate/appStart/1612994709565333505',
     method: HttpMethodType.POST
@@ -54,7 +54,7 @@ const appStart = () => {
 /**
  * 获取版本信息
  */
-const getVersionInfo = () => {
+const getVersionInfo = (): Promise<AxiosPromise> => {
   return request({
     url: 'translate/appStart/1612994709565333505',
     method: HttpMethodType.GET
@@ -64,10 +64,13 @@ const getVersionInfo = () => {
 /**
  * 获取用户信息
  */
-export function getInfo() {
+const getUserInfo = (token): Promise<AxiosPromise> => {
   return request({
-    url: "auth/ttime/getUserInfo"
-  });
+    url: 'auth/ttime/getUserInfo',
+    headers: {
+      token: token
+    }
+  })
 }
 
 export default {
@@ -75,5 +78,6 @@ export default {
   translateUse,
   appStart,
   getVersionInfo,
-  apiOcr
+  apiOcr,
+  getUserInfo
 }

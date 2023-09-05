@@ -20,6 +20,7 @@ import { injectWinAgent } from './utils/RequestUtil'
 import StoreService from './service/StoreService'
 import { YesNoEnum } from '../common/enums/YesNoEnum'
 import { parseCustomProtocolUrl } from '../common/utils/urlUtil'
+import TTimeAuth from './service/auth/TTimeAuth'
 
 // 解决使用 win.hide() 后再使用 win.show() 会引起窗口闪烁问题
 app.commandLine.appendSwitch('wm-window-animations-disabled')
@@ -58,21 +59,38 @@ if (gotTheLock) {
   // 这里直接执行退出当前重复实例即可
   app.quit()
 }
-
-app.setAsDefaultProtocolClient('ttimeappprotocol', process.execPath, [__dirname]);
+// 首先导入http模块
+import http from 'http'
+// 创建http服务对象
+const server = http.createServer()
+// 绑定事件监听
+server.on('request', (req, res) => {
+  const parseCustomProtocol = parseCustomProtocolUrl(req.url)
+  if (isNull(parseCustomProtocol)) {
+    return
+  }
+  console.log('req.url = ', parseCustomProtocol)
+  // 此函数内容只是小小调用一下res参数让程序更加易懂的跑起来
+  // 编写响应头(不写浏览器不识别)
+  res.writeHead(200, { 'Content-Type': 'text/html;charset=UTF8' })
+  // 发送响应数据
+  res.end('登录成功')
+})
+// 绑定端口号
+server.listen(11223)
 
 app.on('open-url', (event, url) => {
-  event.preventDefault(); // 阻止默认行为，以防链接被打开
-  log.info('触发了应用 = ' , url)
-  let parseCustomProtocol = parseCustomProtocolUrl(url)
-  log.info('触发了应用 parseCustomProtocol = ' , parseCustomProtocol)
-  if(parseCustomProtocol.path === 'login') {
-    let token = parseCustomProtocol.queryParams.token
-    if(token) {
+  event.preventDefault() // 阻止默认行为，以防链接被打开
+  log.info('触发了应用 = ', url)
+  const parseCustomProtocol = parseCustomProtocolUrl(url)
+  log.info('触发了应用 parseCustomProtocol = ', parseCustomProtocol)
+  if (parseCustomProtocol.path === 'login') {
+    const token = parseCustomProtocol.queryParams.token
+    if (token) {
+      TTimeAuth.login(token)
     }
   }
-});
-
+})
 
 function createWindow(): void {
   mainWin = new BrowserWindow({
