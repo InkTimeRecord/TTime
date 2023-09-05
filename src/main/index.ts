@@ -70,6 +70,12 @@ server.on('request', (req, res) => {
     return
   }
   console.log('req.url = ', parseCustomProtocol)
+  if (parseCustomProtocol.path === 'login') {
+    const token = parseCustomProtocol.queryParams.token
+    if (token) {
+      TTimeAuth.login(token)
+    }
+  }
   // 此函数内容只是小小调用一下res参数让程序更加易懂的跑起来
   // 编写响应头(不写浏览器不识别)
   res.writeHead(200, { 'Content-Type': 'text/html;charset=UTF8' })
@@ -78,19 +84,6 @@ server.on('request', (req, res) => {
 })
 // 绑定端口号
 server.listen(11223)
-
-app.on('open-url', (event, url) => {
-  event.preventDefault() // 阻止默认行为，以防链接被打开
-  log.info('触发了应用 = ', url)
-  const parseCustomProtocol = parseCustomProtocolUrl(url)
-  log.info('触发了应用 parseCustomProtocol = ', parseCustomProtocol)
-  if (parseCustomProtocol.path === 'login') {
-    const token = parseCustomProtocol.queryParams.token
-    if (token) {
-      TTimeAuth.login(token)
-    }
-  }
-})
 
 function createWindow(): void {
   mainWin = new BrowserWindow({
