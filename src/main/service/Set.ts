@@ -68,6 +68,13 @@ function createSetWindow(): void {
   setWin.setFullScreenable(false)
   GlobalWin.setSetWin(setWin)
 
+  /**
+   * 窗口显示时触发事件
+   */
+  setWin.on('show', () => {
+    setWin.webContents.send('win-show-event')
+  })
+
   if (isMac) {
     // Mac环境下才在窗口加载完毕后显示 此处为了兼容显示窗口红绿灯
     // 部分Win系统中加入配置可能存在不兼容问题 导致窗口显示时会出现黑阴影

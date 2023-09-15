@@ -8,7 +8,6 @@ declare global {
     autoUpdaterEvent
     autoUpdaterStartCheck
     getSystemTypeEvent
-    jumpToPage
     autoUpdaterStartDownload
     autoUpdaterStartInstall
   }

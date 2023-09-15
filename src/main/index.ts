@@ -83,7 +83,7 @@ server.on('request', (req, res) => {
   res.end('登录成功')
 })
 // 绑定端口号
-server.listen(11223)
+server.listen(StoreService.configGet('servicePort'))
 
 function createWindow(): void {
   mainWin = new BrowserWindow({

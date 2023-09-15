@@ -10,6 +10,7 @@ import { GlobalShortcutEvent } from './GlobalShortcutEvent'
 import { WinEvent } from './Win'
 import log from '../utils/log'
 import GlobalWin from './GlobalWin'
+import { LoginStatusEnum } from '../../common/enums/LoginStatusEnum'
 
 /**
  * app.getPath('userData')
@@ -183,6 +184,14 @@ class StoreService {
     // 初始化输入自动翻译模式
     if (!StoreService.configHas('inputTranslationAutoStatus')) {
       StoreService.configSet('inputTranslationAutoStatus', YesNoEnum.N)
+    }
+    // 初始化登录状态
+    if (!StoreService.configHas('loginStatus')) {
+      StoreService.configSet('loginStatus', LoginStatusEnum.N)
+    }
+    // 初始化服务端口
+    if (!StoreService.configHas('servicePort')) {
+      StoreService.configSet('servicePort', 11223)
     }
     app.whenReady().then(async () => {
       const translateShortcutKeyList = [

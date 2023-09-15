@@ -5,7 +5,6 @@ declare global {
   interface api {
     updateTranslateShortcutKeyEvent
     getSystemTypeEvent
-    jumpToPage
     closeSetWinEvent
     autoLaunchEvent
     autoUpdaterEvent
@@ -25,6 +24,7 @@ declare global {
     updateConfigInfoPath
     setWinFocusEvent
     winFontSizeNotify
+    winShowEvent
   }
 
   interface Window {

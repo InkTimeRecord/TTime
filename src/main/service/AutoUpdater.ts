@@ -268,6 +268,8 @@ class AutoUpdater {
     TTimeRequest.getVersionInfo()
       .then((res) => {
         log.info('[获取版本信息接口调用] - 响应报文 : ', JSON.stringify(res))
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         const data = res.data
         const updateStatus = data['updateStatus']
         const newVersion = data['newVersion']

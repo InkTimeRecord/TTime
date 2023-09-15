@@ -6,6 +6,7 @@ declare global {
     logErrorEvent
     getSystemTypeEvent
     openSetPageEvent
+    jumpToPage
     showMsgEvent
     cacheHas
     cacheGet

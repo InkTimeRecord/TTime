@@ -72,17 +72,22 @@ import { ref } from 'vue'
 import { cacheDelete, cacheGet } from '../utils/cacheUtil'
 import { isNull } from '../../../common/utils/validate'
 
-// 设置页面菜单索引
-let setPageMenuIndex = cacheGet('setPageMenuIndex')
-// 读取后缓存数据
-cacheDelete('setPageMenuIndex')
-// 如果菜单索引为空则默认展示偏好设置
-setPageMenuIndex = isNull(setPageMenuIndex) ? 'basiInfo' : setPageMenuIndex
+/**
+ * 设置页面菜单索引
+ */
+const getPageMenuIndex = (): string => {
+  // 设置页面菜单索引
+  const setPageMenuIndex = cacheGet('setPageMenuIndex')
+  // 读取后缓存数据
+  cacheDelete('setPageMenuIndex')
+  // 如果菜单索引为空则默认展示偏好设置
+  return isNull(setPageMenuIndex) ? 'myInfo' : setPageMenuIndex
+}
 
 /**
  * 当前选择的菜单索引
  */
-const menuIndex = ref(setPageMenuIndex)
+const menuIndex = ref(getPageMenuIndex())
 
 /**
  * 菜单选择事件
@@ -92,6 +97,12 @@ const menuIndex = ref(setPageMenuIndex)
 const menuSelect = (index): void => {
   menuIndex.value = index
 }
+
+// 窗口显示事件 当窗口显示时触发
+window.api.winShowEvent(() => {
+  // 设置页面菜单索引
+  menuSelect(getPageMenuIndex())
+})
 </script>
 
 <style lang="scss" scoped>
@@ -110,6 +121,7 @@ const menuSelect = (index): void => {
     margin-right: 10px;
   }
 }
+
 // 设置宽度不完全百分百 否则内容会和滚动条重叠
 :deep(.el-scrollbar__wrap) {
   width: 98%;

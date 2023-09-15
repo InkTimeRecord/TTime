@@ -149,6 +149,17 @@ const winFontSizeNotify = (): void => {
   ipcRenderer.invoke('win-font-size-notify')
 }
 
+/**
+ * 窗口显示事件
+ *
+ * @param callback 回调方法 用于主进程内部触发时推送到Vue页面执行
+ */
+const winShowEvent = (callback): void => {
+  ipcRenderer.on('win-show-event', () => {
+    callback()
+  })
+}
+
 const api = {
   ...common,
   updateTranslateShortcutKeyEvent,
@@ -167,7 +178,8 @@ const api = {
   openDirectoryDialogCallback,
   updateConfigInfoPath,
   setWinFocusEvent,
-  winFontSizeNotify
+  winFontSizeNotify,
+  winShowEvent
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to
