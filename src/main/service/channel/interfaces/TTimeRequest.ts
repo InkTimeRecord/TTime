@@ -73,11 +73,21 @@ const getUserInfo = (token): Promise<AxiosPromise> => {
   })
 }
 
+/**
+ * 退出登录
+ */
+const logout = (): Promise<void> => {
+  return request({
+    url: 'auth/ttime/logout',
+  })
+}
+
 export default {
   apiTranslate,
   translateUse,
   appStart,
   getVersionInfo,
   apiOcr,
-  getUserInfo
+  getUserInfo,
+  logout
 }

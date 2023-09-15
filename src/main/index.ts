@@ -21,6 +21,8 @@ import StoreService from './service/StoreService'
 import { YesNoEnum } from '../common/enums/YesNoEnum'
 import { parseCustomProtocolUrl } from '../common/utils/urlUtil'
 import TTimeAuth from './service/auth/TTimeAuth'
+// 首先导入http模块
+import http from 'http'
 
 // 解决使用 win.hide() 后再使用 win.show() 会引起窗口闪烁问题
 app.commandLine.appendSwitch('wm-window-animations-disabled')
@@ -59,8 +61,6 @@ if (gotTheLock) {
   // 这里直接执行退出当前重复实例即可
   app.quit()
 }
-// 首先导入http模块
-import http from 'http'
 // 创建http服务对象
 const server = http.createServer()
 // 绑定事件监听
@@ -307,4 +307,11 @@ ipcMain.on('open-directory-dialog', (event, storeConfigFunType, storeType) => {
         result.filePaths[0]
       )
     })
+})
+
+/**
+ * 退出登录
+ */
+ipcMain.handle('logout-event', () => {
+  TTimeAuth.logout()
 })

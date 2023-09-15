@@ -1,64 +1,69 @@
 <template>
-  <div class="my-layer">
-    <div class="my-block">
-      <template v-if="loginStatus === LoginStatusEnum.N">
-        <a class="my-info" @click="toLogin">
-          <span class="my-name none-select"> 未登录 </span>
-          <div class="my-sub-block">
-            <span class="none-select">开通会员享受更多权益</span>
-            <span class="none-select">登录 ></span>
+  <div class='my-layer'>
+    <div class='my-block'>
+      <template v-if='loginStatus === LoginStatusEnum.N'>
+        <a class='my-info' @click='toLogin'>
+          <span class='my-name none-select'> 未登录 </span>
+          <div class='my-sub-block'>
+            <span class='none-select'>开通会员享受更多权益</span>
+            <span class='none-select'>登录 ></span>
           </div>
         </a>
       </template>
-      <template v-else-if="loginStatus === LoginStatusEnum.ING">
-        <a class="my-info" @click="againLogin">
-          <span class="my-name none-select"> 登录中... </span>
-          <div class="my-sub-block">
-            <span class="none-select">开通会员享受更多权益</span>
-            <span class="none-select">重新登录 ></span>
+      <template v-else-if='loginStatus === LoginStatusEnum.ING'>
+        <a class='my-info' @click='againLogin'>
+          <span class='my-name none-select'> 登录中... </span>
+          <div class='my-sub-block'>
+            <span class='none-select'>开通会员享受更多权益</span>
+            <span class='none-select'>重新登录 ></span>
           </div>
         </a>
       </template>
-      <div v-else-if="loginStatus === LoginStatusEnum.Y" class="my-info">
-        <span class="my-name none-select">
-          hi，152***1234
-          <!--         <el-tag type='light' class='mx-1' effect='dark'>普通会员</el-tag>-->
-        </span>
-        <div class="my-sub-block">
-          <span class="none-select">开通会员享受更多权益</span>
-          <span class="none-select">退出登录 ></span>
+      <div v-else-if='loginStatus === LoginStatusEnum.Y' class='my-info'>
+        <div class='my-user-title-block'>
+          <span class='my-name none-select'>
+            hi，{{ userInfo.phoneNumber }}
+          </span>
+          <el-tag v-if='userInfo.memberType === 0' class='my-user-vip' type='info' effect='dark'>免费版</el-tag>
+          <el-tag v-else-if='userInfo.memberType === 1' class='my-user-vip' type='light' effect='dark'>会员版</el-tag>
+        </div>
+        <div class='my-sub-block'>
+          <span class='none-select'>开通会员享受更多权益</span>
+          <span class='none-select' @click='logout'>退出登录 ></span>
         </div>
       </div>
     </div>
-    <div class="member-introduction-block">
-      <div class="member-introduction-group">
+    <div class='member-introduction-block'>
+      <div class='member-introduction-group'>
         <div>
-          <el-tag class="member-title-ordinary" type="info" effect="dark" size="large"
-            >免费版
+          <el-tag class='member-title-ordinary' type='info' effect='dark' size='large'>
+            免费版
           </el-tag>
-          <span class="my-sub-block none-select">免费享受基础功能</span>
-          <div class="member-introduction-list">
-            <template v-for="(info, key) in memberOrdinaryList" :key="key">
-              <div class="member-introduction-icon-layer">
-                <div class="member-introduction-icon-block">
-                  <svg-icon :icon-class="info.icon" class="member-introduction-icon" />
+          <span class='my-sub-block none-select'>免费享受基础功能</span>
+          <div class='member-introduction-list'>
+            <template v-for='(info, key) in memberOrdinaryList' :key='key'>
+              <div class='member-introduction-icon-layer'>
+                <div class='member-introduction-icon-block'>
+                  <svg-icon :icon-class='info.icon' class='member-introduction-icon' />
                 </div>
-                <span class="member-introduction-icon-name">{{ info.name }}</span>
+                <span class='member-introduction-icon-name'>{{ info.name }}</span>
               </div>
             </template>
           </div>
         </div>
         <div>
-          <el-tag class="member-title-vip" type="success" effect="dark" size="large">会员版</el-tag>
-          <span class="my-sub-block none-select">会员版享受设备同步等更多权益</span>
+          <el-tag class='member-title-vip' type='success' effect='dark' size='large'>
+            会员版
+          </el-tag>
+          <span class='my-sub-block none-select'>会员版享受设备同步等更多权益</span>
 
-          <div class="member-introduction-list">
-            <template v-for="(info, key) in memberVipList" :key="key">
-              <div class="member-introduction-icon-layer">
-                <div class="member-introduction-icon-block">
-                  <svg-icon :icon-class="info.icon" class="member-introduction-icon" />
+          <div class='member-introduction-list'>
+            <template v-for='(info, key) in memberVipList' :key='key'>
+              <div class='member-introduction-icon-layer'>
+                <div class='member-introduction-icon-block'>
+                  <svg-icon :icon-class='info.icon' class='member-introduction-icon' />
                 </div>
-                <span class="member-introduction-icon-name">{{ info.name }}</span>
+                <span class='member-introduction-icon-name'>{{ info.name }}</span>
               </div>
             </template>
           </div>
@@ -67,18 +72,18 @@
     </div>
   </div>
 </template>
-<script setup lang="ts">
+<script setup lang='ts'>
 import { ref } from 'vue'
 import { cacheGet, cacheSet } from '../../../utils/cacheUtil'
 import { LoginStatusEnum } from '../../../../../common/enums/LoginStatusEnum'
 
 const memberOrdinaryList = ref([
-  { icon: 'thumbtack', name: '设备同步' },
-  { icon: 'thumbtack', name: '设备同步' },
-  { icon: 'thumbtack', name: '设备同步' },
-  { icon: 'thumbtack', name: '设备同步' },
-  { icon: 'thumbtack', name: '设备同步' },
-  { icon: 'thumbtack', name: '设备同步' }
+  { icon: 'thumbtack', name: '内置翻译源' },
+  { icon: 'thumbtack', name: '内置文字识别' },
+  { icon: 'thumbtack', name: '本地翻译记录' },
+  { icon: 'thumbtack', name: '高级功能配置' },
+  { icon: 'thumbtack', name: '悬浮球翻译' },
+  { icon: 'thumbtack', name: '更多特权' }
 ])
 
 const memberVipList = ref([
@@ -95,9 +100,14 @@ const memberVipList = ref([
  */
 const updateLoginStatus = (): void => {
   loginStatus.value = cacheGet('loginStatus')
+  if (loginStatus.value === LoginStatusEnum.Y) {
+    userInfo.value = cacheGet('userInfo')
+    console.log('userInfo = ', userInfo.value)
+  }
 }
 
 const loginStatus = ref()
+const userInfo = ref()
 
 // 更新登录状态
 updateLoginStatus()
@@ -108,21 +118,41 @@ window.api.winShowEvent(() => {
   updateLoginStatus()
 })
 
+// 刷新用户信息事件
+window.api.refreshUserInfoEvent(() => {
+  // 更新登录状态
+  updateLoginStatus()
+})
+
+/**
+ * 重新登录
+ */
 const againLogin = (): void => {
   cacheSet('loginStatus', LoginStatusEnum.N)
   // 更新登录状态
   updateLoginStatus()
+  // 跳转登录
   toLogin()
 }
 
+/**
+ * 跳转登录
+ */
 const toLogin = (): void => {
   window.api.jumpToPage(
-    'https://ink.timerecord.cn/userEntryTTime/login?redirect=http://127.0.0.1:11223/login'
+    'https://ink.timerecord.cn/userEntryTTime/login?redirect=http://127.0.0.1:' + cacheGet('servicePort') + '/login'
   )
+}
+
+/**
+ * 退出登录
+ */
+const logout = (): void => {
+  window.api.logoutEvent()
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang='scss' scoped>
 @import '../../../css/set.scss';
 
 .my-layer {
@@ -145,10 +175,20 @@ const toLogin = (): void => {
       cursor: pointer;
     }
 
-    .my-name {
-      font-size: 20px;
-      font-weight: 700;
-      color: var(--el-text-color-regular);
+    .my-user-title-block {
+      display: flex;
+      align-items: center;
+
+      .my-user-vip {
+        margin-left: 20px;
+      }
+
+      .my-name {
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--el-text-color-regular);
+      }
+
     }
 
     .my-sub-block {
