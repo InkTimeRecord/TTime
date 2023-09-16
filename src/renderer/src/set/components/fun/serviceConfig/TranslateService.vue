@@ -41,25 +41,43 @@
       </ul>
       <div class="translate-service-edit">
         <div class="translate-service-edit-button">
-          <el-dropdown trigger="click" max-height="490px">
-            <el-button :icon="Plus" size="small" />
-            <template #dropdown>
-              <el-dropdown-menu>
-                <el-dropdown-item
-                  v-for="(translateServiceSelectMenu, key) in translateServiceSelectMenuList"
-                  :key="key"
-                  :divided="translateServiceSelectMenu.dividedStatus"
-                  @click="addTranslateService(translateServiceSelectMenu.type)"
-                >
-                  {{ translateServiceSelectMenu.name }}
-                </el-dropdown-item>
-              </el-dropdown-menu>
-            </template>
-          </el-dropdown>
+          <el-tooltip placement="bottom-start">
+            <template #content>添加翻译源</template>
+            <el-dropdown trigger="click" max-height="490px">
+              <el-button :icon="Plus" size="small" />
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item
+                    v-for="(translateServiceSelectMenu, key) in translateServiceSelectMenuList"
+                    :key="key"
+                    :divided="translateServiceSelectMenu.dividedStatus"
+                    @click="addTranslateService(translateServiceSelectMenu.type)"
+                  >
+                    {{ translateServiceSelectMenu.name }}
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
+          </el-tooltip>
         </div>
-        <div class="translate-service-edit-button">
-          <el-button :icon="Minus" size="small" @click="deleteTranslateService" />
-        </div>
+        <el-tooltip placement="bottom-start">
+          <template #content>删除翻译源</template>
+          <div class="translate-service-edit-button">
+            <el-button :icon="Minus" size="small" @click="deleteTranslateService" />
+          </div>
+        </el-tooltip>
+        <el-tooltip placement="bottom-start">
+          <template #content>拉取最新服务</template>
+          <div class="translate-service-edit-button">
+            <el-button :icon="Refresh" size="small" />
+          </div>
+        </el-tooltip>
+        <el-tooltip placement="bottom-start">
+          <template #content>查看备份历史</template>
+          <div class="translate-service-edit-button">
+            <el-button :icon="Clock" size="small" @click="translateServiceInfoRecordShowFun" />
+          </div>
+        </el-tooltip>
       </div>
     </div>
     <div class="translate-service-set-block">
@@ -179,10 +197,26 @@
       </div>
     </div>
   </div>
+
+  <el-dialog v-model="translateServiceInfoRecordShow" title="备份记录">
+    <el-table :data="tableData()" style="width: 100%">
+      <el-table-column prop="date" label="日期" width="180" />
+      <el-table-column prop="name" label="名称" />
+    </el-table>
+    <el-pagination
+      v-model:page-size="state.limit"
+      v-model:current-page="state.page"
+      background
+      layout="prev, pager, next , total"
+      :total="state.total"
+      @current-change="handleCurrentChange"
+      @size-change="handleSizeChange"
+    />
+  </el-dialog>
 </template>
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Minus, Plus } from '@element-plus/icons-vue'
+import { Clock, Minus, Plus, Refresh } from '@element-plus/icons-vue'
 
 import {
   buildTranslateService,
@@ -197,8 +231,52 @@ import { REnum } from '../../../../enums/REnum'
 import { OpenAIModelEnum } from '../../../../../../common/enums/OpenAIModelEnum'
 import draggable from 'vuedraggable'
 
+//表格的全数据（这里是自定义的列表，要看分页效果自行往此数组内加数据）
+const allTableData = ref([
+  {
+    date: '2016-05-03',
+    name: 'Tom'
+  },
+  {
+    date: '2016-05-02',
+    name: 'Tom'
+  },
+  {
+    date: '2016-05-04',
+    name: 'Tom'
+  },
+  {
+    date: '2016-05-01',
+    name: 'Tom'
+  }
+])
+//表格用到的参数
+const state = ref({
+  page: 1,
+  limit: 3,
+  total: allTableData.value.length
+})
+
+const tableData = () => {
+  return allTableData.value.filter(
+    (item, index) =>
+      index < state.value.page * state.value.limit &&
+      index >= state.value.limit * (state.value.page - 1)
+  )
+}
+//改变页码
+const handleCurrentChange = (e) => {
+  state.value.page = e
+}
+//改变页数限制
+const handleSizeChange = (e) => {
+  state.value.limit = e
+}
+
 // 翻译服务验证状态
 const checkIngStatus = ref(false)
+
+const translateServiceInfoRecordShow = ref(false)
 
 // 可添加的翻译源列表 先把 values 格式转换为数组
 const translateServiceSelectMenuListTemp = Array.from(
@@ -475,6 +553,15 @@ const serviceNameInput = (): void => {
   saveTranslateService(translateServiceThis.value)
   // 更新翻译源通知
   window.api.updateTranslateServiceEvent()
+}
+
+const translateServiceInfoRecordShowFun = (): void => {
+  translateServiceInfoRecordShow.value = true
+  const el = document.querySelector('.el-overlay')
+  if (el) {
+    // 此处动态调整下遮罩 否则大小会超过窗口
+    el['style'].cssText = 'width: 97.8%;margin-left: 10px;border-radius: 8px;'
+  }
 }
 </script>
 
