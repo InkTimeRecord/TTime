@@ -15,8 +15,8 @@
       </el-tooltip>
     </div>
 
-    <translate-service v-if="menuIndex === 0" />
-    <ocr-service v-else-if="menuIndex === 1" />
+    <translate-service v-if="menuIndex === ServiceTypeEnum.TRANSLATE" />
+    <ocr-service v-else-if="menuIndex === ServiceTypeEnum.OCR" />
   </div>
 </template>
 <script setup lang="ts">
@@ -24,8 +24,9 @@ import { ref } from 'vue'
 
 import TranslateService from './serviceConfig/TranslateService.vue'
 import OcrService from './serviceConfig/OcrService.vue'
+import { ServiceTypeEnum } from '../../../../../common/enums/ServiceTypeEnum'
 
-const menuIndex = ref(0)
+const menuIndex = ref(ServiceTypeEnum.TRANSLATE)
 
 const toPageTranslateServiceApply = (): void => {
   window.api.jumpToPage('https://ttime.timerecord.cn/pages/482152/')

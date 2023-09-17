@@ -258,7 +258,7 @@ const hoverBallStatusEvent = (val): void => {
     const el = document.querySelector('.el-overlay')
     if (el) {
       // 此处动态调整下遮罩 否则大小会超过窗口
-      el['style'].cssText = 'width: 97.8%;margin-left: 10px;border-radius: 8px;'
+      el['style'].cssText = 'width: 97.7%;margin-left: 10px;border-radius: 8px;'
     }
   }
   hoverBallEnhanceStatusEvent(val)

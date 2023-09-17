@@ -100,6 +100,10 @@ const menuSelect = (index): void => {
 
 // 窗口显示事件 当窗口显示时触发
 window.api.winShowEvent(() => {
+  const setPageMenuIndex = cacheGet('setPageMenuIndex')
+  if(isNull(setPageMenuIndex)) {
+    return
+  }
   // 设置页面菜单索引
   menuSelect(getPageMenuIndex())
 })

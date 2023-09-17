@@ -54,7 +54,7 @@
     >
       <div class="member-introduction-group">
         <div>
-          <el-tag class="member-title-ordinary" type="info" effect="dark" size="large">
+          <el-tag class="none-select member-title-ordinary" type="info" effect="dark" size="large">
             免费版
           </el-tag>
           <span class="my-sub-block none-select">免费享受基础功能</span>
@@ -64,16 +64,16 @@
                 <div class="member-introduction-icon-block">
                   <svg-icon :icon-class="info.icon" class="member-introduction-icon" />
                 </div>
-                <span class="member-introduction-icon-name">{{ info.name }}</span>
+                <span class="none-select member-introduction-icon-name">{{ info.name }}</span>
               </div>
             </template>
           </div>
         </div>
         <div>
-          <el-tag class="member-title-vip" type="success" effect="dark" size="large">
+          <el-tag class="none-select member-title-vip" type="success" effect="dark" size="large">
             会员版
           </el-tag>
-          <span class="my-sub-block none-select">会员版享受设备同步等更多权益</span>
+          <span class="my-sub-block none-select">会员版享受云同步等更多权益</span>
 
           <div class="member-introduction-list">
             <template v-for="(info, key) in memberVipList" :key="key">
@@ -81,14 +81,14 @@
                 <div class="member-introduction-icon-block">
                   <svg-icon :icon-class="info.icon" class="member-introduction-icon" />
                 </div>
-                <span class="member-introduction-icon-name">{{ info.name }}</span>
+                <span class="none-select member-introduction-icon-name">{{ info.name }}</span>
               </div>
             </template>
           </div>
         </div>
       </div>
     </div>
-    <div v-else-if="userInfo.memberType === 1" class="member-vip-block">
+    <div v-else-if="userInfo.memberType === MemberTypeEnum.VIP" class="member-vip-block">
       <span class="none-select vip-title">会员版</span>
       <span class="none-select vip-sub-block">已享受会员版特权</span>
       <div class="member-introduction-list">
@@ -108,23 +108,24 @@
 import { ref } from 'vue'
 import { cacheGet, cacheSet } from '../../../utils/cacheUtil'
 import { LoginStatusEnum } from '../../../../../common/enums/LoginStatusEnum'
+import { MemberTypeEnum } from '../../../../../common/enums/MemberTypeEnum'
 
 const memberOrdinaryList = ref([
-  { icon: 'thumbtack', name: '内置翻译源' },
-  { icon: 'thumbtack', name: '内置文字识别' },
-  { icon: 'thumbtack', name: '本地翻译记录' },
-  { icon: 'thumbtack', name: '高级功能配置' },
-  { icon: 'thumbtack', name: '悬浮球翻译' },
-  { icon: 'thumbtack', name: '更多特权' }
+  { icon: 'built-in-translate-service', name: '内置翻译源' },
+  { icon: 'built-in-ocr', name: '内置OCR' },
+  { icon: 'local-translate-record', name: '本地翻译记录' },
+  { icon: 'advanced-fun-config', name: '高级功能配置' },
+  { icon: 'ball-translate', name: '悬浮球翻译' },
+  { icon: 'more-privileges', name: '更多特权' }
 ])
 
 const memberVipList = ref([
-  { icon: 'thumbtack', name: '设备同步' },
-  { icon: 'thumbtack', name: '设备同步' },
-  { icon: 'thumbtack', name: '设备同步' },
-  { icon: 'thumbtack', name: '设备同步' },
-  { icon: 'thumbtack', name: '设备同步' },
-  { icon: 'thumbtack', name: '设备同步' }
+  { icon: 'translate-service-cloud', name: '翻译源云同步' },
+  { icon: 'translate-cloud-record', name: '翻译云记录' },
+  { icon: 'ocr-cloud-record', name: 'OCR云记录' },
+  { icon: 'ai-translate', name: 'AI翻译' },
+  { icon: 'config-sync', name: '配置同步' },
+  { icon: 'more-privileges', name: '更多特权' }
 ])
 
 /**
@@ -309,6 +310,7 @@ const formatDate = (date): string => {
           display: flex;
           align-items: center;
           flex-direction: column;
+          width: 100px;
 
           .member-introduction-icon-block {
             display: flex;
@@ -320,8 +322,8 @@ const formatDate = (date): string => {
             background: var(--ttime-member-introduction-icon-block-color);
 
             .member-introduction-icon {
-              width: 16px;
-              height: 16px;
+              width: 20px;
+              height: 20px;
             }
           }
 
@@ -368,7 +370,7 @@ const formatDate = (date): string => {
         display: flex;
         align-items: center;
         flex-direction: column;
-        margin: 20px;
+        margin: 16px;
 
         .member-introduction-icon-block {
           display: flex;
@@ -377,7 +379,7 @@ const formatDate = (date): string => {
           width: 52px;
           height: 52px;
           border-radius: 32px;
-          background: var(--ttime-member-introduction-icon-block-color);
+          background: var(--ttime-translate-service-color-background);
 
           .member-introduction-icon {
             width: 20px;

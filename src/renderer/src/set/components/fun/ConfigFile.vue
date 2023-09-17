@@ -83,7 +83,6 @@ const openFileSelection = (storeConfigFunType, openFileSelectType): void => {
 }
 window.api.openDirectoryDialogCallback((storeConfigFunType, storeType, directoryPath) => {
   const res = window.api.updateConfigInfoPath(storeConfigFunType, storeType, directoryPath)
-  console.log(res)
   if (res.code === R.ERROR) {
     ElMessageExtend.warning(res.msg)
     return

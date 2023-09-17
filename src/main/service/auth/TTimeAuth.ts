@@ -20,14 +20,16 @@ class TTimeAuth {
     TTimeRequest.getUserInfo(token)
       .then((res) => {
         log.info('用户信息 = ', res)
+        if(res['status'] !== 200) {
+          this.logout()
+          return
+        }
         StoreService.configSet('setPageMenuIndex', 'myInfo')
+        StoreService.configSet('token', token)
         StoreService.configSet('loginStatus', LoginStatusEnum.Y)
         StoreService.configSet('userInfo', res['data'])
         // 强制显示设置窗口
         GlobalWin.forceShowSetWin()
-      })
-      .catch((error) => {
-        log.info('获取用户信息异常 = ', error)
       })
   }
 
@@ -37,6 +39,7 @@ class TTimeAuth {
       .then((_res) => {
         StoreService.configSet('loginStatus', LoginStatusEnum.N)
         StoreService.configDeleteByKey('userInfo')
+        StoreService.configDeleteByKey('token')
         log.info('[ 退出登录 ] - 成功 ')
         // 强制显示设置窗口
         GlobalWin.forceShowSetWin()
