@@ -2,6 +2,8 @@ import TranslateServiceEnum from '../../../common/enums/TranslateServiceEnum'
 import { cacheGet, cacheSet } from './cacheUtil'
 import { isNull } from '../../../common/utils/validate'
 import ServiceConfig from '../../../common/class/ServiceConfig'
+import { saveServiceInfo } from '../api/user'
+import { ServiceTypeEnum } from '../../../common/enums/ServiceTypeEnum'
 
 /**
  * 保存翻译服务Map
@@ -22,7 +24,8 @@ export const setTranslateServiceMap = (translateServiceMap): void => {
       delete translateService.serviceInfo
     })
   }
-  cacheSet('translateServiceMap', Array.from(translateServiceMap.entries()))
+  let translateServiceMapS = Array.from(translateServiceMap.entries())
+  cacheSet('translateServiceMap', translateServiceMapS)
   // 上面移除完毕保存后重新设置渠道信息
   translateServiceMap.forEach((translateService) => {
     translateService['serviceInfo'] = TranslateServiceBuilder.getInfoByService(
@@ -32,6 +35,13 @@ export const setTranslateServiceMap = (translateServiceMap): void => {
       ? translateService['serviceInfo']?.name
       : translateService['serviceName']
   })
+  // if (isMemberVip.value) {
+  //   saveServiceInfo({
+  //     key: translateServiceKey.value,
+  //     serviceType: ServiceTypeEnum.TRANSLATE,
+  //     info: JSON.stringify()
+  //   })
+  // }
 }
 
 /**

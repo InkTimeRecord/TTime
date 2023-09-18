@@ -1,10 +1,11 @@
 import request from '../utils/request'
 import HttpMethodType from '../enums/HttpMethodTypeClassEnum'
+import { AxiosResponse } from 'axios'
 
 /**
  * 保存最新服务配置
  */
-export function saveServiceInfo(data: any) {
+export function saveServiceInfo(data: any): Promise<AxiosResponse> {
   return request({
     url: 'translate/translateServiceInfo/saveServiceInfo',
     method: HttpMethodType.POST,
@@ -15,7 +16,7 @@ export function saveServiceInfo(data: any) {
 /**
  * 获取最新服务配置
  */
-export function findNewByInfo(data: any) {
+export function findNewByInfo(data: any): Promise<AxiosResponse> {
   return request({
     url: 'translate/translateServiceInfo/findNewByInfo',
     method: HttpMethodType.GET,
@@ -26,7 +27,7 @@ export function findNewByInfo(data: any) {
 /**
  * 指定ID对应的记录重新构建最新版本
  */
-export function updateByVersion(data: any) {
+export function updateByVersion(data: any): Promise<AxiosResponse> {
   return request({
     url: 'translate/translateServiceInfo/updateByVersion',
     method: HttpMethodType.PUT,
@@ -37,7 +38,7 @@ export function updateByVersion(data: any) {
 /**
  * 分页查询历史记录列表
  */
-export function findHistoryList(data: any) {
+export function findHistoryList(data: any): Promise<AxiosResponse> {
   return request({
     url: 'translate/translateServiceInfo/findHistoryList',
     method: HttpMethodType.GET,
@@ -48,7 +49,7 @@ export function findHistoryList(data: any) {
 /**
  * 更新密钥
  */
-export function updateKey(data: any) {
+export function updateKey(data: any): Promise<AxiosResponse> {
   return request({
     url: 'translate/translateServiceInfo/updateKey',
     method: HttpMethodType.PUT,
