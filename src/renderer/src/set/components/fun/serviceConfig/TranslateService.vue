@@ -283,7 +283,8 @@ import { findHistoryList, findNewByInfo, updateByVersion, updateKey } from '../.
 import { ServiceTypeEnum } from '../../../../../../common/enums/ServiceTypeEnum'
 import { LoginStatusEnum } from '../../../../../../common/enums/LoginStatusEnum'
 import { MemberTypeEnum } from '../../../../../../common/enums/MemberTypeEnum'
-import { saveServiceInfoHandel } from '../../../../utils/memberUtil'
+import { loadNewServiceInfo, saveServiceInfoHandle } from '../../../../utils/memberUtil'
+import { NewStatusEnum } from '../../../../../../common/enums/NewStatusEnum'
 
 /**
  * 更新登录状态
@@ -450,7 +451,7 @@ const addTranslateService = (type: string): void => {
   // 更新翻译源通知
   window.api.updateTranslateServiceEvent()
   // 保存服务信息事件
-  saveServiceInfoHandel()
+  saveServiceInfoHandle()
 }
 
 /**
@@ -470,7 +471,7 @@ const deleteTranslateService = (): void => {
   // 更新翻译源通知
   window.api.updateTranslateServiceEvent()
   // 保存服务信息事件
-  saveServiceInfoHandel()
+  saveServiceInfoHandle()
 }
 
 /**
@@ -558,7 +559,7 @@ window.api.apiCheckTranslateCallbackEvent((type, res) => {
   // 更新翻译源通知
   window.api.updateTranslateServiceEvent()
   // 保存服务信息事件
-  saveServiceInfoHandel()
+  saveServiceInfoHandle()
 })
 
 /**
@@ -578,7 +579,7 @@ const translateServiceUseStatusChange = (translateService): void => {
   // 更新翻译源通知
   window.api.updateTranslateServiceEvent()
   // 保存服务信息事件
-  saveServiceInfoHandel()
+  saveServiceInfoHandle()
 }
 
 /**
@@ -633,7 +634,7 @@ const translateServiceSortDragChange = (event): void => {
   // 更新翻译源通知
   window.api.updateTranslateServiceEvent()
   // 保存服务信息事件
-  saveServiceInfoHandel()
+  saveServiceInfoHandle()
 }
 
 /**
@@ -655,7 +656,7 @@ const serviceNameInput = (): void => {
   // 更新翻译源通知
   window.api.updateTranslateServiceEvent()
   // 保存服务信息事件
-  saveServiceInfoHandel()
+  saveServiceInfoHandle()
 }
 
 /**
@@ -690,6 +691,10 @@ const translateServiceKeySave = (): void => {
     cacheSet('translateServiceKey', translateServiceKey.value)
     ElMessageExtend.success('保存成功')
     translateServiceKeyShow.value = false
+    // 获取当前本地的进行一次保存 但是不用做最新的版本
+    saveServiceInfoHandle(NewStatusEnum.N)
+    // 加载服务端最新版本
+    loadNewServiceInfo()
   })
 }
 

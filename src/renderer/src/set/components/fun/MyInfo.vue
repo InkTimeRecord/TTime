@@ -113,7 +113,7 @@ import { isNull } from '../../../../../common/utils/validate'
 import { findNewByInfo } from '../../../api/user'
 import { ServiceTypeEnum } from '../../../../../common/enums/ServiceTypeEnum'
 import { setTranslateServiceMap } from '../../../utils/translateServiceUtil'
-import { isMemberVip } from '../../../utils/memberUtil'
+import { isMemberVip, loadNewServiceInfo } from '../../../utils/memberUtil'
 
 const memberOrdinaryList = ref([
   { icon: 'built-in-translate-service', name: '内置翻译源' },
@@ -211,23 +211,6 @@ const formatDate = (date): string => {
   const month = (date.getMonth() + 1 + '').padStart(2, '0')
   const day = (date.getDate() + '').padStart(2, '0')
   return `${year}-${month}-${day}`
-}
-
-const loadNewServiceInfo = (): void => {
-  const key = cacheGet('translateServiceKey')
-  if (!isMemberVip() || isNull(key)) {
-    return
-  }
-  findNewByInfo({
-    serviceType: ServiceTypeEnum.TRANSLATE,
-    key: key
-  }).then((data: any) => {
-    if(isNull(data.info)) {
-      return
-    }
-    setTranslateServiceMap(new Map(JSON.parse(data.info)))
-  })
-  return
 }
 
 window.api.setWinFocusEvent(() => {
