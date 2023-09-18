@@ -243,7 +243,7 @@
             @confirm='translateServiceInfoUpdateByVersion(scope.row.id)'
           >
             <template #reference>
-              <el-button v-if='!scope.row.isNew' plain> 复制此备份</el-button>
+              <el-button size='small' v-if='!scope.row.isNew' plain> 复制此备份</el-button>
             </template>
           </el-popconfirm>
         </template>
@@ -279,10 +279,11 @@ import { REnum } from '../../../../enums/REnum'
 import { OpenAIModelEnum } from '../../../../../../common/enums/OpenAIModelEnum'
 import { cacheGet, cacheSet } from '../../../../utils/cacheUtil'
 import { dialogSetWinHandleStyle } from '../../../../utils/dialogUtil'
-import { findHistoryList, findNewByInfo, saveServiceInfo, updateByVersion, updateKey } from '../../../../api/user'
+import { findHistoryList, findNewByInfo, updateByVersion, updateKey } from '../../../../api/user'
 import { ServiceTypeEnum } from '../../../../../../common/enums/ServiceTypeEnum'
 import { LoginStatusEnum } from '../../../../../../common/enums/LoginStatusEnum'
 import { MemberTypeEnum } from '../../../../../../common/enums/MemberTypeEnum'
+import { saveServiceInfoHandel } from '../../../../utils/memberUtil'
 
 /**
  * 更新登录状态
@@ -448,6 +449,8 @@ const addTranslateService = (type: string): void => {
   }
   // 更新翻译源通知
   window.api.updateTranslateServiceEvent()
+  // 保存服务信息事件
+  saveServiceInfoHandel()
 }
 
 /**
@@ -466,6 +469,8 @@ const deleteTranslateService = (): void => {
   selectOneTranslateServiceThis()
   // 更新翻译源通知
   window.api.updateTranslateServiceEvent()
+  // 保存服务信息事件
+  saveServiceInfoHandel()
 }
 
 /**
@@ -552,6 +557,8 @@ window.api.apiCheckTranslateCallbackEvent((type, res) => {
   }
   // 更新翻译源通知
   window.api.updateTranslateServiceEvent()
+  // 保存服务信息事件
+  saveServiceInfoHandel()
 })
 
 /**
@@ -570,6 +577,8 @@ const translateServiceUseStatusChange = (translateService): void => {
   saveTranslateService(translateService)
   // 更新翻译源通知
   window.api.updateTranslateServiceEvent()
+  // 保存服务信息事件
+  saveServiceInfoHandel()
 }
 
 /**
@@ -623,6 +632,8 @@ const translateServiceSortDragChange = (event): void => {
   updateThisTranslateServiceMap(swappedMap)
   // 更新翻译源通知
   window.api.updateTranslateServiceEvent()
+  // 保存服务信息事件
+  saveServiceInfoHandel()
 }
 
 /**
@@ -643,6 +654,8 @@ const serviceNameInput = (): void => {
   saveTranslateService(translateServiceThis.value)
   // 更新翻译源通知
   window.api.updateTranslateServiceEvent()
+  // 保存服务信息事件
+  saveServiceInfoHandel()
 }
 
 /**

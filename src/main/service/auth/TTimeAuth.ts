@@ -8,9 +8,8 @@ import { LoginStatusEnum } from '../../../common/enums/LoginStatusEnum'
  * 授权
  */
 class TTimeAuth {
-  static token
 
-  static login(token): void {
+  static login(token: string): void {
     // 设置显示我的页面
     StoreService.configSet('setPageMenuIndex', 'myInfo')
     StoreService.configSet('loginStatus', LoginStatusEnum.ING)

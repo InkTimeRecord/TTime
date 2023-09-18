@@ -2,15 +2,13 @@ import TranslateServiceEnum from '../../../common/enums/TranslateServiceEnum'
 import { cacheGet, cacheSet } from './cacheUtil'
 import { isNull } from '../../../common/utils/validate'
 import ServiceConfig from '../../../common/class/ServiceConfig'
-import { saveServiceInfo } from '../api/user'
-import { ServiceTypeEnum } from '../../../common/enums/ServiceTypeEnum'
 
 /**
  * 保存翻译服务Map
  *
  * @param translateServiceMap 翻译服务Map
  */
-export const setTranslateServiceMap = (translateServiceMap): void => {
+export const setTranslateServiceMap = (translateServiceMap: Map<string, any>): void => {
   if (translateServiceMap.size > 0) {
     const translateServiceOne = translateServiceMap.entries().next().value[0]
     if (isNull(translateServiceOne['index'])) {
@@ -24,8 +22,8 @@ export const setTranslateServiceMap = (translateServiceMap): void => {
       delete translateService.serviceInfo
     })
   }
-  let translateServiceMapS = Array.from(translateServiceMap.entries())
-  cacheSet('translateServiceMap', translateServiceMapS)
+  let translateServiceMapFormat = Array.from(translateServiceMap.entries())
+  cacheSet('translateServiceMap', translateServiceMapFormat)
   // 上面移除完毕保存后重新设置渠道信息
   translateServiceMap.forEach((translateService) => {
     translateService['serviceInfo'] = TranslateServiceBuilder.getInfoByService(
@@ -35,20 +33,13 @@ export const setTranslateServiceMap = (translateServiceMap): void => {
       ? translateService['serviceInfo']?.name
       : translateService['serviceName']
   })
-  // if (isMemberVip.value) {
-  //   saveServiceInfo({
-  //     key: translateServiceKey.value,
-  //     serviceType: ServiceTypeEnum.TRANSLATE,
-  //     info: JSON.stringify()
-  //   })
-  // }
 }
 
 /**
  * 获取翻译服务list
  */
-export const getTranslateServiceMap = (): Map<unknown, unknown> => {
-  let map = new Map(cacheGet('translateServiceMap'))
+export const getTranslateServiceMap = (): Map<any, any> => {
+  let map: Map<any, any> = new Map(cacheGet('translateServiceMap'))
   if (map.size > 0) {
     // 因为之前的版本中的数据没有 index 所以这里默认获取第一条翻译源
     // 看是否有设置 index 如果没有默认赋值一遍
@@ -101,10 +92,7 @@ export const getTranslateServiceMapByUse = (): Map<unknown, unknown> => {
   return translateServiceMapData
 }
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-// eslint-disable-next-line @typescript-eslint/ban-types
-export const buildTranslateService = (type): {} => {
+export const buildTranslateService = (type: any): {} => {
   const info: {
     name: string
     // 是否需要秘钥
@@ -146,7 +134,7 @@ export class TranslateServiceBuilder {
   /**
    * 获取服务信息
    */
-  static getServiceList(): Map<string, { name; type; logo }> {
+  static getServiceList(): Map<string, { name: string; type: string; logo: string }> {
     if (TranslateServiceBuilder.translateServiceMap.size > 1) {
       return TranslateServiceBuilder.translateServiceMap
     }
@@ -181,7 +169,7 @@ export class TranslateServiceBuilder {
    *
    * @param serviceEnum 服务枚举
    */
-  static getInfoByService(serviceEnum): { name; type; logo } {
+  static getInfoByService(serviceEnum: any): { name: string; type: string; logo: string } {
     return TranslateServiceBuilder.translateServiceMap.get(serviceEnum)
   }
 
@@ -192,14 +180,14 @@ export class TranslateServiceBuilder {
    * @param type 服务类型
    * @param logo 服务logo
    */
-  static buildServiceInfo(name, type, logo): { name: string; type: string; logo: string } {
+  static buildServiceInfo(name: string, type: string, logo: string): { name: string; type: string; logo: string } {
     return { name, type, logo }
   }
 
   /**
    * 获取服务配置信息
    */
-  static getServiceConfigInfo(serviceEnum): {
+  static getServiceConfigInfo(serviceEnum: any): {
     name: string
     // 是否需要秘钥
     isKey: boolean
@@ -213,6 +201,7 @@ export class TranslateServiceBuilder {
     return TranslateServiceBuilder.translateServiceConfigInfoMap.get(serviceEnum)
   }
 }
+
 // 获取所有翻译源配置信息 此处是异步加载 所以直接写在这里了 没有构建在方法 / 类中
 const channelConfigModules = import.meta.glob('../../../common/channel/translate/info/*.ts')
 // 构建翻译语言

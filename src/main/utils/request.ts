@@ -1,7 +1,8 @@
 import axios from 'axios'
 import GlobalWin from '../service/GlobalWin'
 import { injectAgent } from './RequestUtil'
-import TTimeAuth from '../service/auth/TTimeAuth'
+import StoreService from '../service/StoreService'
+import { isNotNull, isNull } from '../../common/utils/validate'
 
 const BASE_API = 'https://timerecord.cn/apis/'
 
@@ -28,9 +29,10 @@ service.interceptors.request.use(
         config.headers['User-Agent'] = result
       })
     await injectAgent(config)
-    if (TTimeAuth.token) {
+    const token = StoreService.configGet('token')
+    if (isNull(config.headers['token']) && isNotNull(token)) {
       // 设置用户token
-      config.headers['token'] = TTimeAuth.token
+      config.headers['token'] = token
     }
     return config
   },
