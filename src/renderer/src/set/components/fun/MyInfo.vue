@@ -217,6 +217,8 @@ window.api.setWinFocusEvent(() => {
   loadNewServiceInfo()
 })
 
+loadNewServiceInfo()
+
 </script>
 
 <style lang="scss" scoped>

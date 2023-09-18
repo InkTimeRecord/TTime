@@ -72,6 +72,12 @@
             <el-button :icon='Key' size='small' @click='translateServiceKeyShowFun' />
           </div>
         </el-tooltip>
+        <el-tooltip placement='bottom-start'>
+          <template #content>刷新列表</template>
+          <div class='translate-service-edit-button'>
+            <el-button :icon='Refresh' size='small' @click='loadNewServiceInfo' />
+          </div>
+        </el-tooltip>
         <el-tooltip v-if='isMemberVip' placement='bottom-start'>
           <template #content>查看备份历史</template>
           <div class='translate-service-edit-button'>
@@ -264,7 +270,7 @@
 <script setup lang='ts'>
 import { ref } from 'vue'
 import draggable from 'vuedraggable'
-import { Clock, Key, Minus, Plus } from '@element-plus/icons-vue'
+import { Clock, Key, Minus, Plus, Refresh } from '@element-plus/icons-vue'
 
 import {
   buildTranslateService,
@@ -412,7 +418,7 @@ const translateServiceMap = ref(getTranslateServiceMap())
 const translateServiceList = ref([...translateServiceMap.value.values()])
 // 当前选择的翻译服务
 const translateServiceThis = ref()
-// 设置当前选择的翻译服务默认OpenAI翻译为第一个
+// 设置当前选中项默认为第一个翻译服务
 selectOneTranslateServiceThis()
 
 /**
@@ -727,6 +733,18 @@ const translateServiceInfoUpdateByVersion = (id: number): void => {
     ElMessageExtend.success('切换成功')
   })
 }
+
+/**
+ * 刷新服务信息事件
+ */
+window.api.refreshServiceInfoEvent(() => {
+  updateThisTranslateServiceMap(getTranslateServiceMap())
+  // 设置当前选中项默认为第一个翻译服务
+  selectOneTranslateServiceThis()
+  // 更新翻译源通知
+  window.api.updateTranslateServiceEvent()
+})
+
 </script>
 
 <style lang='scss' scoped>

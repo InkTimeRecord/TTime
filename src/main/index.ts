@@ -315,3 +315,10 @@ ipcMain.on('open-directory-dialog', (event, storeConfigFunType, storeType) => {
 ipcMain.handle('logout-event', () => {
   TTimeAuth.logout()
 })
+
+/**
+ * 刷新服务信息通知
+ */
+ipcMain.handle('refresh-service-info-notify', (_event) => {
+  GlobalWin.setWin.webContents.send('refresh-service-info-event')
+})

@@ -170,6 +170,23 @@ const refreshUserInfoEvent = (callback): void => {
     callback()
   })
 }
+/**
+ * 刷新服务信息
+ *
+ * @param callback 回调方法 用于主进程内部触发时推送到Vue页面执行
+ */
+const refreshServiceInfoEvent = (callback): void => {
+  ipcRenderer.on('refresh-service-info-event', () => {
+    callback()
+  })
+}
+
+/**
+ * 刷新服务信息通知
+ */
+const refreshServiceInfoNotify = (): void => {
+  ipcRenderer.invoke('refresh-service-info-notify')
+}
 
 const api = {
   ...common,
@@ -191,7 +208,9 @@ const api = {
   setWinFocusEvent,
   winFontSizeNotify,
   winShowEvent,
-  refreshUserInfoEvent
+  refreshUserInfoEvent,
+  refreshServiceInfoEvent,
+  refreshServiceInfoNotify
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

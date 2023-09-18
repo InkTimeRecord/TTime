@@ -42,6 +42,9 @@ export const loadNewServiceInfo = (): void => {
       return
     }
     setTranslateServiceMap(new Map(JSON.parse(data.info)))
+    window.api['refreshServiceInfoNotify']()
+    // 更新翻译源通知
+    window.api.updateTranslateServiceEvent()
   })
   return
 }
