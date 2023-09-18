@@ -731,6 +731,7 @@ const translateServiceInfoUpdateByVersion = (id: number): void => {
   }).then(() => {
     translateServiceInfoRecordShow.value = false
     ElMessageExtend.success('切换成功')
+    loadNewServiceInfo()
   })
 }
 
