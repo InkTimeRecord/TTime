@@ -225,7 +225,7 @@ import { OcrSpaceModelEnum } from '../../../../../../common/enums/OcrSpaceModelE
 import { TencentCloudOcrLanguageEnum } from '../../../../../../common/enums/TencentCloudOcrLanguageEnum'
 import { TencentCloudImageOcrLanguageEnum } from '../../../../../../common/enums/TencentCloudImageOcrLanguageEnum'
 import { BaiduImageOcrLanguageEnum } from '../../../../../../common/enums/BaiduImageOcrLanguageEnum'
-import { saveServiceInfoHandle } from '../../../../utils/memberUtil'
+import { loadNewServiceInfo, saveServiceInfoHandle } from '../../../../utils/memberUtil'
 import { ServiceTypeEnum } from '../../../../../../common/enums/ServiceTypeEnum'
 import VipInfoServiceButtons from './vip/VipInfoServiceButtons.vue'
 
@@ -514,6 +514,9 @@ window.api.refreshServiceInfoEvent(() => {
   // 设置当前选中项默认为第一个服务
   selectOneServiceThis()
 })
+
+loadNewServiceInfo()
+
 </script>
 
 <style lang='scss' scoped>

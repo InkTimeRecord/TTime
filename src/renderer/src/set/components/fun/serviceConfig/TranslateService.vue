@@ -205,7 +205,7 @@ import TranslateServiceEnum from '../../../../../../common/enums/TranslateServic
 import ElMessageExtend from '../../../../utils/messageExtend'
 import { REnum } from '../../../../enums/REnum'
 import { OpenAIModelEnum } from '../../../../../../common/enums/OpenAIModelEnum'
-import { saveServiceInfoHandle } from '../../../../utils/memberUtil'
+import { loadNewServiceInfo, saveServiceInfoHandle } from '../../../../utils/memberUtil'
 import VipInfoServiceButtons from './vip/VipInfoServiceButtons.vue'
 import { ServiceTypeEnum } from '../../../../../../common/enums/ServiceTypeEnum'
 
@@ -511,6 +511,8 @@ window.api.refreshServiceInfoEvent(() => {
   // 更新翻译源通知
   window.api.updateTranslateServiceNotify()
 })
+
+loadNewServiceInfo()
 
 </script>
 

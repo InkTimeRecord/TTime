@@ -209,10 +209,6 @@ const formatDate = (date): string => {
   return `${year}-${month}-${day}`
 }
 
-window.api.setWinFocusEvent(() => {
-  loadNewServiceInfo()
-})
-
 loadNewServiceInfo()
 
 </script>
