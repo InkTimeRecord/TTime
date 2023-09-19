@@ -9,7 +9,7 @@ declare global {
     autoLaunchEvent
     autoUpdaterEvent
     autoUpdaterSilenceStartCheckEvent
-    updateTranslateServiceEvent
+    updateTranslateServiceNotify
     apiUniteTranslateCheck
     apiCheckTranslateCallbackEvent
     apiUniteAgentCheck

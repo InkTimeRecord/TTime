@@ -18,6 +18,7 @@ declare global {
     apiUniteTranslate
     showMsgEvent
     updateTranslateServiceEvent
+    updateTranslateServiceNotify
     apiTranslateResultMsgCallbackEvent
     agentApiTranslateCallback
     agentApiOcr

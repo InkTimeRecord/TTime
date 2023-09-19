@@ -4,47 +4,88 @@ import { cacheGet } from './cacheUtil'
 import { findNewByInfo, saveServiceInfo } from '../api/user'
 import { ServiceTypeEnum } from '../../../common/enums/ServiceTypeEnum'
 import { getTranslateServiceMap, setTranslateServiceMap } from './translateServiceUtil'
-import { isNull } from '../../../common/utils/validate'
+import { isNotNull, isNull } from '../../../common/utils/validate'
 import { NewStatusEnum } from '../../../common/enums/NewStatusEnum'
+import { getOcrServiceMap, setOcrServiceMap } from './ocrServiceUtil'
 
 /**
  * 是否为会员
  */
 export const isMemberVip = (): boolean => {
-  return cacheGet('loginStatus') === LoginStatusEnum.Y && cacheGet('userInfo').memberType === MemberTypeEnum.VIP
+  return (
+    cacheGet('loginStatus') === LoginStatusEnum.Y &&
+    cacheGet('userInfo').memberType === MemberTypeEnum.VIP
+  )
+}
+
+/**
+ * 是否为会员 并且 已配置秘钥
+ */
+export const isMemberVipAndKey = (): boolean => {
+  return (
+    cacheGet('loginStatus') === LoginStatusEnum.Y &&
+    cacheGet('userInfo').memberType === MemberTypeEnum.VIP &&
+    isNotNull(cacheGet('translateServiceKey'))
+  )
 }
 
 /**
  * 保存服务信息事件
  */
-export const saveServiceInfoHandle = (isNew = NewStatusEnum.Y): void => {
-  if (isMemberVip()) {
-    saveServiceInfo({
-      key: cacheGet('translateServiceKey'),
-      serviceType: ServiceTypeEnum.TRANSLATE,
-      info: JSON.stringify(Array.from(getTranslateServiceMap())),
-      isNew: isNew
-    }).then(() => {
-    })
+export const saveServiceInfoHandle = (
+  serviceType: ServiceTypeEnum,
+  isNew = NewStatusEnum.Y
+): void => {
+  if (!isMemberVipAndKey()) {
+    return
   }
+  let serviceMap: Iterable<unknown> | ArrayLike<unknown>
+  if (serviceType === ServiceTypeEnum.TRANSLATE) {
+    serviceMap = getTranslateServiceMap()
+  } else if (serviceType === ServiceTypeEnum.OCR) {
+    serviceMap = getOcrServiceMap()
+  }
+  saveServiceInfo({
+    key: cacheGet('translateServiceKey'),
+    serviceType: serviceType,
+    info: JSON.stringify(Array.from(serviceMap)),
+    isNew: isNew
+  }).then(() => {
+  })
 }
 
 export const loadNewServiceInfo = (): void => {
-  const key = cacheGet('translateServiceKey')
-  if (!isMemberVip() || isNull(key)) {
+  if (!isMemberVipAndKey()) {
     return
   }
+  const key = cacheGet('translateServiceKey')
   findNewByInfo({
     serviceType: ServiceTypeEnum.TRANSLATE,
     key: key
   }).then((data: any) => {
-    if(isNull(data.info)) {
+    if (isNull(data?.info)) {
       return
     }
     setTranslateServiceMap(new Map(JSON.parse(data.info)))
-    window.api['refreshServiceInfoNotify']()
+    const refreshServiceInfoNotifyFun = window.api['refreshServiceInfoNotify']
+    if (isNotNull(refreshServiceInfoNotifyFun)) {
+      refreshServiceInfoNotifyFun()
+    }
     // 更新翻译源通知
-    window.api.updateTranslateServiceEvent()
+    window.api.updateTranslateServiceNotify()
+  })
+  findNewByInfo({
+    serviceType: ServiceTypeEnum.OCR,
+    key: key
+  }).then((data: any) => {
+    if (isNull(data?.info)) {
+      return
+    }
+    setOcrServiceMap(new Map(JSON.parse(data.info)))
+    const refreshServiceInfoNotifyFun = window.api['refreshServiceInfoNotify']
+    if (isNotNull(refreshServiceInfoNotifyFun)) {
+      refreshServiceInfoNotifyFun()
+    }
   })
   return
 }

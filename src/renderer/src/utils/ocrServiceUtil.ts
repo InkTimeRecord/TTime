@@ -32,7 +32,7 @@ export const setOcrServiceMap = (ocrServiceMap): void => {
 /**
  * 获取Ocr服务list
  */
-export const getOcrServiceMap = (): Map<unknown, unknown> => {
+export const getOcrServiceMap = (): Map<any, any> => {
   let map = new Map(cacheGet('ocrServiceMap'))
   if (map.size > 0) {
     // 因为之前的版本中的数据没有 index 所以这里默认获取第一条翻译源

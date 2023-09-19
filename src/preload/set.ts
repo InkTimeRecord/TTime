@@ -48,8 +48,8 @@ const autoUpdaterSilenceStartCheckEvent = (): void => {
 /**
  * 更新翻译源通知
  */
-const updateTranslateServiceEvent = (): void => {
-  ipcRenderer.invoke('update-translate-service-event')
+const updateTranslateServiceNotify = (): void => {
+  ipcRenderer.invoke('update-translate-service-notify')
 }
 
 /**
@@ -195,7 +195,7 @@ const api = {
   autoLaunchEvent,
   autoUpdaterEvent,
   autoUpdaterSilenceStartCheckEvent,
-  updateTranslateServiceEvent,
+  updateTranslateServiceNotify,
   apiUniteTranslateCheck,
   apiCheckTranslateCallbackEvent,
   apiUniteOcrCheck,
