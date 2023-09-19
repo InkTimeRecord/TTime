@@ -4,7 +4,7 @@ import { cacheGet } from './cacheUtil'
 import { findNewByInfo, saveServiceInfo } from '../api/user'
 import { ServiceTypeEnum } from '../../../common/enums/ServiceTypeEnum'
 import { getTranslateServiceMap, setTranslateServiceMap } from './translateServiceUtil'
-import { isNotNull, isNull } from '../../../common/utils/validate'
+import { isNotNull } from '../../../common/utils/validate'
 import { NewStatusEnum } from '../../../common/enums/NewStatusEnum'
 import { getOcrServiceMap, setOcrServiceMap } from './ocrServiceUtil'
 
@@ -60,32 +60,25 @@ export const loadNewServiceInfo = (): void => {
   }
   const key = cacheGet('translateServiceKey')
   findNewByInfo({
-    serviceType: ServiceTypeEnum.TRANSLATE,
     key: key
   }).then((data: any) => {
-    if (isNull(data?.info)) {
-      return
+    let translateInfo = data?.translateInfo
+    if (isNotNull(translateInfo)) {
+      setTranslateServiceMap(new Map(JSON.parse(translateInfo.info)))
+      const refreshServiceInfoNotifyFun = window.api['refreshServiceInfoNotify']
+      if (isNotNull(refreshServiceInfoNotifyFun)) {
+        refreshServiceInfoNotifyFun()
+      }
+      // 更新翻译源通知
+      window.api.updateTranslateServiceNotify()
     }
-    setTranslateServiceMap(new Map(JSON.parse(data.info)))
-    const refreshServiceInfoNotifyFun = window.api['refreshServiceInfoNotify']
-    if (isNotNull(refreshServiceInfoNotifyFun)) {
-      refreshServiceInfoNotifyFun()
-    }
-    // 更新翻译源通知
-    window.api.updateTranslateServiceNotify()
-  })
-  findNewByInfo({
-    serviceType: ServiceTypeEnum.OCR,
-    key: key
-  }).then((data: any) => {
-    if (isNull(data?.info)) {
-      return
-    }
-    setOcrServiceMap(new Map(JSON.parse(data.info)))
-    const refreshServiceInfoNotifyFun = window.api['refreshServiceInfoNotify']
-    if (isNotNull(refreshServiceInfoNotifyFun)) {
-      refreshServiceInfoNotifyFun()
+    let ocrInfo = data?.ocrInfo
+    if (isNotNull(ocrInfo)) {
+      setOcrServiceMap(new Map(JSON.parse(ocrInfo.info)))
+      const refreshServiceInfoNotifyFun = window.api['refreshServiceInfoNotify']
+      if (isNotNull(refreshServiceInfoNotifyFun)) {
+        refreshServiceInfoNotifyFun()
+      }
     }
   })
-  return
 }
