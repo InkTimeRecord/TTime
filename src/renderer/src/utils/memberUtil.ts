@@ -65,20 +65,16 @@ export const loadNewServiceInfo = (): void => {
     let translateInfo = data?.translateInfo
     if (isNotNull(translateInfo)) {
       setTranslateServiceMap(new Map(JSON.parse(translateInfo.info)))
-      const refreshServiceInfoNotifyFun = window.api['refreshServiceInfoNotify']
-      if (isNotNull(refreshServiceInfoNotifyFun)) {
-        refreshServiceInfoNotifyFun()
-      }
       // 更新翻译源通知
       window.api.updateTranslateServiceNotify()
     }
     let ocrInfo = data?.ocrInfo
     if (isNotNull(ocrInfo)) {
       setOcrServiceMap(new Map(JSON.parse(ocrInfo.info)))
-      const refreshServiceInfoNotifyFun = window.api['refreshServiceInfoNotify']
-      if (isNotNull(refreshServiceInfoNotifyFun)) {
-        refreshServiceInfoNotifyFun()
-      }
+    }
+    const refreshServiceInfoNotifyFun = window.api['refreshServiceInfoNotify']
+    if (isNotNull(refreshServiceInfoNotifyFun)) {
+      refreshServiceInfoNotifyFun()
     }
   })
 }
