@@ -285,6 +285,7 @@ const translateFun = (): void => {
       const serviceRecordVo = new TranslateServiceRecordVo()
       serviceRecordVo.translateServiceType = key
       serviceRecordVo.translateServiceId = value.id
+      serviceRecordVo.translateStatus = false
       translateServiceRecordList.push(serviceRecordVo)
     })
     translateRecordVo.translateServiceRecordList = translateServiceRecordList

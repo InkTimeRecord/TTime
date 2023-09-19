@@ -15,6 +15,11 @@ class TranslateServiceRecordVo {
   translateServiceId: string
 
   /**
+   * 翻译状态
+   */
+  translateStatus: boolean
+
+  /**
    * 翻译结果内容
    */
   translateVo: TranslateVo

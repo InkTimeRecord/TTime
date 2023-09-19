@@ -2,6 +2,8 @@ import { cacheGetByType, cacheSetByType } from './cacheUtil'
 import { StoreTypeEnum } from '../../../common/enums/StoreTypeEnum'
 import TranslateRecordVo from '../../../common/class/TranslateRecordVo'
 import { isNull } from '../../../common/utils/validate'
+import TranslateServiceRecordVo from '../../../common/class/TranslateServiceRecordVo'
+import { translateRecordSave, TranslateRecordSavePo } from '../api/translateRecord'
 
 /**
  * 更新翻译记录
@@ -9,11 +11,12 @@ import { isNull } from '../../../common/utils/validate'
  * @param translateVo 翻译结果
  */
 export const updateTranslateRecord = (translateVo): void => {
+  let requestId = translateVo['requestId']
   // 翻译记录
   const translateRecordList = cacheGetByType(StoreTypeEnum.HISTORY_RECORD, 'translateRecordList')
   for (let i = 0; i < translateRecordList.length; i++) {
     const translateRecord = translateRecordList[i]
-    if (translateRecord['requestId'] === translateVo['requestId']) {
+    if (translateRecord['requestId'] === requestId) {
       const translateServiceRecordList = translateRecord['translateServiceRecordList']
       for (let j = 0; j < translateServiceRecordList.length; j++) {
         const translateServiceRecord = translateServiceRecordList[j]
@@ -23,8 +26,13 @@ export const updateTranslateRecord = (translateVo): void => {
           delete newTranslateInfo.translateServiceId
           delete newTranslateInfo.requestId
           translateServiceRecord['translateVo'] = newTranslateInfo
+          translateServiceRecord.translateStatus = true
         }
       }
+      if(translateServiceRecordList.every((translateServiceRecord: TranslateServiceRecordVo) => translateServiceRecord.translateStatus)) {
+        translateRecordSave(TranslateRecordSavePo.build(translateRecord)).then(() => {})
+      }
+
     }
   }
   cacheSetByType(StoreTypeEnum.HISTORY_RECORD, 'translateRecordList', translateRecordList)
