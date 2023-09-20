@@ -16,8 +16,29 @@ export function translateRecordSave(data: any): Promise<AxiosResponse> {
   })
 }
 
+/**
+ * 分页查询
+ */
+export function findTranslateRecordPageList(data: any): Promise<AxiosResponse> {
+  return request({
+    url: 'translate/translateRecord/',
+    method: HttpMethodType.GET,
+    params: data
+  })
+}
+
+/**
+ * 查询翻译记录详细
+ */
+export function findTranslateRecordDetail(id: string): Promise<AxiosResponse> {
+  return request({
+    url: 'translate/translateRecordDetail/' + id,
+    method: HttpMethodType.GET
+  })
+}
+
 export class TranslateRecordSavePo {
-  clientRequestId: string
+  requestId: string
   translateContent: string
   languageType: string
   languageResultType: string
@@ -25,7 +46,7 @@ export class TranslateRecordSavePo {
 
   static build(translateRecord: TranslateRecordVo): TranslateRecordSavePo {
     let translateRecordSavePo = new TranslateRecordSavePo()
-    translateRecordSavePo.clientRequestId = translateRecord.requestId
+    translateRecordSavePo.requestId = translateRecord.requestId
     translateRecordSavePo.translateContent = translateRecord.translateContent
     translateRecordSavePo.languageType = translateRecord.languageType
     translateRecordSavePo.languageResultType = translateRecord.languageResultType
@@ -50,7 +71,9 @@ export class TranslateRecordDetail {
     let translateVo: TranslateVo = translateServiceRecord.translateVo
     translateRecordDetail.translateServiceType = translateServiceRecord.translateServiceType
     translateRecordDetail.translateServiceId = translateServiceRecord.translateServiceId
-    translateRecordDetail.translateResultContent = translateVo.translateList.join('\n')
+    if (typeof translateVo.translateList !== 'string') {
+      translateRecordDetail.translateResultContent = translateVo.translateList.join('\n')
+    }
     translateRecordDetail.usPhonetic = translateVo.usPhonetic
     translateRecordDetail.ukPhonetic = translateVo.ukPhonetic
     translateRecordDetail.usSpeech = translateVo.usSpeech
