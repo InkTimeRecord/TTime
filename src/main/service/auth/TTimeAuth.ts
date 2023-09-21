@@ -28,10 +28,6 @@ class TTimeAuth {
         StoreService.configSet('loginStatus', LoginStatusEnum.Y)
         // 强制显示设置窗口
         GlobalWin.forceShowSetWin()
-        setTimeout(() => {
-          // 加载云配置
-          StoreService.initCloudConfig()
-        }, 2000)
       })
   }
 

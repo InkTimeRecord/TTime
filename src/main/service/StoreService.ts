@@ -315,7 +315,7 @@ class StoreService {
         configKey: key,
         configValue: thisConfigObject?.[key] ?? null
       }))
-      if (isNotNull(newConfigList)) {
+      if (isNotNull(newConfigList) || newConfigList.length > 0) {
         log.info('[ 加载云端配置 ] - 更新配置信息开始')
         // 保存新配置数据
         TTimeRequest.batchSaveUserConfig({
