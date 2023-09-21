@@ -80,7 +80,14 @@ server.on('request', (req, res) => {
   // 编写响应头(不写浏览器不识别)
   res.writeHead(200, { 'Content-Type': 'text/html;charset=UTF8' })
   // 发送响应数据
-  res.end('登录成功')
+  res.end(
+    '<div style=" display: flex;align-items: center;justify-content: center;width: 100%;height: 100%;">' +
+    '<div style="display: flex;align-items: center;flex-direction: column;">' +
+    '<h1>登录成功</h1>' +
+    '<h2>您可以关闭此页面</h2>' +
+    '</div>' +
+    '</div>'
+  )
 })
 // 绑定端口号
 server.listen(StoreService.configGet('servicePort'))
