@@ -37,6 +37,16 @@ export function findTranslateRecordDetail(id: string): Promise<AxiosResponse> {
   })
 }
 
+/**
+ * 删除翻译记录
+ */
+export function deleteTranslateRecord(id: string): Promise<AxiosResponse> {
+  return request({
+    url: 'translate/translateRecord/' + id,
+    method: HttpMethodType.DELETE
+  })
+}
+
 export class TranslateRecordSavePo {
   requestId: string
   translateContent: string
@@ -45,7 +55,7 @@ export class TranslateRecordSavePo {
   recordDetailList: Array<TranslateRecordDetail>
 
   static build(translateRecord: TranslateRecordVo): TranslateRecordSavePo {
-    let translateRecordSavePo = new TranslateRecordSavePo()
+    const translateRecordSavePo = new TranslateRecordSavePo()
     translateRecordSavePo.requestId = translateRecord.requestId
     translateRecordSavePo.translateContent = translateRecord.translateContent
     translateRecordSavePo.languageType = translateRecord.languageType

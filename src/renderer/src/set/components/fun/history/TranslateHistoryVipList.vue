@@ -34,8 +34,10 @@
                 </a>
               </li>
             </div>
-            <p v-if='listLoading'>Loading...</p>
-            <p v-if='listNoMore'>No more</p>
+            <div class='translate-service-list-loading'>
+              <span v-if='listLoading' class='prompt-span form-switch-span none-select'>Loading...</span>
+              <span v-if='listNoMore' class='prompt-span form-switch-span none-select'>加载完毕</span>
+            </div>
           </ul>
           <div class='translate-service-edit'>
             <div class='translate-service-edit-button'>
@@ -71,13 +73,15 @@ import HistoryResultContent from './HistoryResultContent.vue'
 import { Minus, Refresh } from '@element-plus/icons-vue'
 import TranslateRecordVo from '../../../../../../common/class/TranslateRecordVo'
 import { isMemberVip } from '../../../../utils/memberUtil'
-import { findTranslateRecordDetail, findTranslateRecordPageList } from '../../../../api/translateRecord'
-import { isNull } from '../../../../../../common/utils/validate'
+import {
+  deleteTranslateRecord,
+  findTranslateRecordDetail,
+  findTranslateRecordPageList
+} from '../../../../api/translateRecord'
+import { isNotNull, isNull } from '../../../../../../common/utils/validate'
 
 // 翻译记录列表
 const translateRecordList = ref([])
-// 翻译记录数
-const translateRecordSize = ref()
 // 当前选择的翻译记录
 const translateRecordThis = ref(new TranslateRecordVo())
 
@@ -105,30 +109,18 @@ const init = (): void => {
   }).then((data: any) => {
     listLoading.value = false
     translateRecordList.value = translateRecordList.value.concat(data['rows'])
-    console.log('translateRecordList = ', translateRecordList.value)
     pageInfo.value.total = data['totalNumber']
     pageInfo.value.totalPageCount = data['totalPageCount']
-    // 设置第一条数据为当前选中项
-    selectOneTranslateRecordThis()
+    // 如果一开始获取到的记录是0条 数据加载完毕后大于0条的情况下需要触发选择第一条数据
+    if (isNull(translateRecordThis.value) || isNull(translateRecordThis.value?.requestId)) {
+      // 设置第一条数据为当前选中项
+      selectOneTranslateRecordThis()
+    }
   })
 }
 
 // 初始加载数据
 init()
-
-// 设置窗口获取焦点事件
-window.api.setWinFocusEvent(() => {
-  const isNotRecord = pageInfo.value.total === 0
-  if(pageInfo.value.pageIndex === 1) {
-    translateRecordList.value = []
-    init()
-  }
-  // 如果一开始获取到的记录是0条 数据加载完毕后大于0条的情况下需要触发选择第一条数据
-  if (isNotRecord && pageInfo.value.total > 0) {
-    // 设置第一条数据为当前选中项
-    selectOneTranslateRecordThis()
-  }
-})
 
 /**
  * 选择翻译记录
@@ -136,7 +128,7 @@ window.api.setWinFocusEvent(() => {
  * @param translateRecord 翻译记录
  */
 const selectTranslateRecord = (translateRecord): void => {
-  if(isNull(translateRecord)) {
+  if (isNull(translateRecord)) {
     return
   }
   findTranslateRecordDetail(translateRecord.id).then((translateServiceRecordList) => {
@@ -156,7 +148,7 @@ const selectTranslateRecord = (translateRecord): void => {
             explains: item.explains ? JSON.parse(item.explains) : [],
             wfs: item.wfs ? JSON.parse(item.wfs) : []
           }
-        };
+        }
       })
     }
   })
@@ -166,7 +158,7 @@ const selectTranslateRecord = (translateRecord): void => {
  * 设置第一条数据为当前选中项
  */
 const selectOneTranslateRecordThis = (): void => {
-  if(pageInfo.value.pageIndex != 1) {
+  if (pageInfo.value.pageIndex != 1) {
     return
   }
   const translateRecord = translateRecordList.value[0]
@@ -179,6 +171,7 @@ const selectOneTranslateRecordThis = (): void => {
 const translateRecordListRefresh = (): void => {
   pageInfo.value.pageIndex = 1
   translateRecordList.value = []
+  translateRecordThis.value = new TranslateRecordVo()
   listNoMore.value = false
   // 初始加载数据
   init()
@@ -194,6 +187,10 @@ const deleteTranslateHistory = (): void => {
   translateRecordList.value = translateRecordList.value.filter((translateRecord) => {
     return translateRecord.requestId !== translateRecordThis.value.requestId
   })
+  if (isNotNull(translateRecordThis.value.id)) {
+    deleteTranslateRecord(translateRecordThis.value.id).then(() => {
+    })
+  }
   // 更新翻译记录
   updateTranslateRecordList(translateRecordList.value.slice().reverse())
   // 初始加载数据
@@ -201,14 +198,13 @@ const deleteTranslateHistory = (): void => {
   // 设置第一条数据为当前选中项
   selectOneTranslateRecordThis()
 }
-const load = () => {
+const load = (): void => {
   if (pageInfo.value.totalPageCount <= pageInfo.value.pageIndex) {
     listNoMore.value = true
     return
   }
   pageInfo.value.pageIndex = pageInfo.value.pageIndex + 1
   init()
-  console.log('load')
 }
 
 </script>
@@ -246,6 +242,7 @@ const load = () => {
 
       .translate-service-list-block {
         height: 460px;
+        width: 206px;
         overflow: auto;
         background: var(--ttime-translate-service-color-background);
         margin-top: 0;
@@ -295,6 +292,12 @@ const load = () => {
             }
           }
         }
+
+        .translate-service-list-loading {
+          display: flex;
+          justify-content: space-around;
+        }
+
       }
     }
 
