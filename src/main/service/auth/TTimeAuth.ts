@@ -19,7 +19,7 @@ class TTimeAuth {
     TTimeRequest.getUserInfo(token)
       .then((res) => {
         log.info('用户信息 = ', res)
-        if(res['status'] !== 200) {
+        if (res['status'] !== 200) {
           this.logout()
           return
         }
@@ -29,8 +29,10 @@ class TTimeAuth {
         StoreService.configSet('userInfo', res['data'])
         // 强制显示设置窗口
         GlobalWin.forceShowSetWin()
-        // 加载云配置
-        StoreService.initCloudConfig()
+        setTimeout(() => {
+          // 加载云配置
+          StoreService.initCloudConfig()
+        }, 2000)
       })
   }
 

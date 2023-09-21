@@ -14,7 +14,7 @@ import { getOcrServiceMap, setOcrServiceMap } from './ocrServiceUtil'
 export const isMemberVip = (): boolean => {
   return (
     cacheGet('loginStatus') === LoginStatusEnum.Y &&
-    cacheGet('userInfo').memberType === MemberTypeEnum.VIP
+    cacheGet('userInfo')?.memberType === MemberTypeEnum.VIP
   )
 }
 
@@ -23,8 +23,7 @@ export const isMemberVip = (): boolean => {
  */
 export const isMemberVipAndKey = (): boolean => {
   return (
-    cacheGet('loginStatus') === LoginStatusEnum.Y &&
-    cacheGet('userInfo').memberType === MemberTypeEnum.VIP &&
+    isMemberVip() &&
     isNotNull(cacheGet('translateServiceKey'))
   )
 }
