@@ -60,7 +60,8 @@ class StoreService {
     'translateServiceKey',
     'token',
     'userInfo',
-    'mainWinWidth'
+    'mainWinWidth',
+    'setPageMenuIndex'
   ]
 
   /**

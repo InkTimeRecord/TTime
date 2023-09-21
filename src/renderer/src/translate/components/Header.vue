@@ -106,7 +106,7 @@ const toSetPage = (): void => {
 }
 
 /**
- * 跳转设置页面
+ * 跳转翻译记录页面
  */
 const toSetTranslateHistoryPage = (): void => {
   cacheSet('setPageMenuIndex', 'translateHistory')
