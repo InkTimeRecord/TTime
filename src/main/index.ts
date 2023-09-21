@@ -69,17 +69,14 @@ server.on('request', (req, res) => {
   if (isNull(parseCustomProtocol)) {
     return
   }
-  console.log('req.url = ', parseCustomProtocol)
+  log.info('request parseCustomProtocol = ', parseCustomProtocol)
   if (parseCustomProtocol.path === 'login') {
     const token = parseCustomProtocol.queryParams.token
     if (token) {
       TTimeAuth.login(token)
     }
   }
-  // 此函数内容只是小小调用一下res参数让程序更加易懂的跑起来
-  // 编写响应头(不写浏览器不识别)
   res.writeHead(200, { 'Content-Type': 'text/html;charset=UTF8' })
-  // 发送响应数据
   res.end(
     '<div style=" display: flex;align-items: center;justify-content: center;width: 100%;height: 100%;">' +
     '<div style="display: flex;align-items: center;flex-direction: column;">' +

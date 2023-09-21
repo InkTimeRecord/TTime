@@ -4,6 +4,7 @@ import TranslateRecordVo from '../../../common/class/TranslateRecordVo'
 import { isNull } from '../../../common/utils/validate'
 import TranslateServiceRecordVo from '../../../common/class/TranslateServiceRecordVo'
 import { translateRecordSave, TranslateRecordSavePo } from '../api/translateRecord'
+import { isMemberVip } from './memberUtil'
 
 /**
  * 更新翻译记录
@@ -29,10 +30,11 @@ export const updateTranslateRecord = (translateVo): void => {
           translateServiceRecord.translateStatus = true
         }
       }
-      if(translateServiceRecordList.every((translateServiceRecord: TranslateServiceRecordVo) => translateServiceRecord.translateStatus)) {
-        translateRecordSave(TranslateRecordSavePo.build(translateRecord)).then(() => {})
+      if(isMemberVip()) {
+        if(translateServiceRecordList.every((translateServiceRecord: TranslateServiceRecordVo) => translateServiceRecord.translateStatus)) {
+          translateRecordSave(TranslateRecordSavePo.build(translateRecord)).then(() => {})
+        }
       }
-
     }
   }
   cacheSetByType(StoreTypeEnum.HISTORY_RECORD, 'translateRecordList', translateRecordList)

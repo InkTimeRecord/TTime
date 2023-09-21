@@ -29,6 +29,8 @@ class TTimeAuth {
         StoreService.configSet('userInfo', res['data'])
         // 强制显示设置窗口
         GlobalWin.forceShowSetWin()
+        // 加载云配置
+        StoreService.initCloudConfig()
       })
   }
 
