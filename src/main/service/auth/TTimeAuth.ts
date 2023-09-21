@@ -18,15 +18,14 @@ class TTimeAuth {
     log.info('开始验证token信息 token = ', token)
     TTimeRequest.getUserInfo(token)
       .then((res) => {
-        log.info('用户信息 = ', res)
         if (res['status'] !== 200) {
           this.logout()
           return
         }
         StoreService.configSet('setPageMenuIndex', 'myInfo')
+        StoreService.configSet('userInfo', res['data'])
         StoreService.configSet('token', token)
         StoreService.configSet('loginStatus', LoginStatusEnum.Y)
-        StoreService.configSet('userInfo', res['data'])
         // 强制显示设置窗口
         GlobalWin.forceShowSetWin()
         setTimeout(() => {
