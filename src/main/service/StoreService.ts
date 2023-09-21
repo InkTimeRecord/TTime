@@ -5,12 +5,15 @@ import TranslateShowPositionEnum from '../../common/enums/TranslateShowPositionE
 import { YesNoEnum } from '../../common/enums/YesNoEnum'
 import { PlaySpeechServiceEnum } from '../../common/enums/PlaySpeechServiceEnum'
 import { ShortcutKeyEnum } from '../../common/enums/ShortcutKeyEnum'
-import { isNull } from '../../common/utils/validate'
+import { isNotNull, isNull } from '../../common/utils/validate'
 import { GlobalShortcutEvent } from './GlobalShortcutEvent'
 import { WinEvent } from './Win'
 import log from '../utils/log'
 import GlobalWin from './GlobalWin'
 import { LoginStatusEnum } from '../../common/enums/LoginStatusEnum'
+import TTimeRequest from './channel/interfaces/TTimeRequest'
+import MemberUtil from '../utils/memberUtil'
+import commonUtil from '../utils/commonUtil'
 
 /**
  * app.getPath('userData')
@@ -36,6 +39,30 @@ class StoreService {
    * 用户数据存放文件夹名称
    */
   static userDataConfigFolderName = 'userDataConfig'
+
+  /**
+   * 云配置不上传白名单 - 不应同步的配置
+   */
+  static cloudConfigKeyWhiteList: Array<string> = [
+    'inputShortcutKey',
+    'screenshotShortcutKey',
+    'choiceShortcutKey',
+    'showOcrShortcutKey',
+    'screenshotOcrShortcutKey',
+    'screenshotSilenceOcrShortcutKey',
+    'agentConfig',
+    'translateChoiceDelay',
+    'inputLanguage',
+    'resultLanguage',
+    'loginStatus',
+    'translateServiceMap',
+    'ocrServiceMap',
+    'translateServiceKey',
+    'token',
+    'userInfo',
+    'mainWinWidth'
+  ]
+
   /**
    * 配置路径
    */
@@ -253,6 +280,60 @@ class StoreService {
     })
   }
 
+  /**
+   * 加载云端配置
+   */
+  static initCloudConfig = (): void => {
+    if (MemberUtil.isNotMemberVip()) {
+      return
+    }
+    log.info('[ 加载云端配置 ] - 开始')
+    // 本地配置对象
+    const thisConfigObject = StoreService.configStore.store
+    // 获取本地配置对象对应键列表
+    const thisConfigKeyList = Object.keys(thisConfigObject).filter(
+      (key) => !StoreService.cloudConfigKeyWhiteList.includes(key)
+    )
+    // 拉取所有最新配置
+    TTimeRequest.getUserConfig().then((res: any): void => {
+      if (res['status'] !== 200) {
+        log.info('[ 加载云端配置 ] - 登录已失效')
+        TTimeRequest.logout().then()
+        return
+      }
+      // 云端配置 转换为对象格式
+      const cloudConfigObject = res.data.reduce((acc: any, cur: any) => {
+        acc[cur.configKey] = cur.configValue
+        return acc
+      }, {})
+      // 云端配置 key 列表
+      const cloudConfigKeyList = Object.keys(cloudConfigObject)
+      // 筛选本地存在 云端不存在的配置
+      const newConfigKeyList = thisConfigKeyList.filter((key) => !cloudConfigKeyList.includes(key))
+      // 构建本地存在云端不存在的数据
+      const newConfigList = newConfigKeyList.map((key) => ({
+        configKey: key,
+        configValue: thisConfigObject?.[key] ?? null
+      }))
+      if (isNotNull(newConfigList)) {
+        log.info('[ 加载云端配置 ] - 更新配置信息开始')
+        // 保存新配置数据
+        TTimeRequest.batchSaveUserConfig({
+          configList: newConfigList
+        }).then()
+        log.info('[ 加载云端配置 ] - 更新配置信息结束')
+      }
+      // 云端配置覆盖本地配置
+      cloudConfigKeyList.forEach((key) => {
+        const value = cloudConfigObject[key]
+        if (isNotNull(value)) {
+          StoreService.configSetNotCloud(key, commonUtil.convertToNumber(value))
+        }
+      })
+    })
+    log.info('[ 加载云端配置 ] - 结束')
+  }
+
   static systemHas = (key: string): boolean => {
     return StoreService.systemStore.has(key)
   }
@@ -277,8 +358,18 @@ class StoreService {
     return StoreService.configStore.get(key)
   }
 
-  static configSet = (key: string, val: any): void => {
+  static configSetNotCloud = (key: string, val: any): void => {
     StoreService.configStore.set(key, val)
+  }
+
+  static configSet = (key: string, val: any): void => {
+    StoreService.configSetNotCloud(key, val)
+    if (MemberUtil.isMemberVip() && !StoreService.cloudConfigKeyWhiteList.includes(key)) {
+      TTimeRequest.saveUserConfig({
+        configKey: key,
+        configValue: val
+      }).then()
+    }
   }
 
   static configDeleteByKey = (key: string): void => {

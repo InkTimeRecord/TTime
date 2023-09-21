@@ -62,13 +62,13 @@ export const loadNewServiceInfo = (): void => {
   findNewByInfo({
     key: key
   }).then((data: any) => {
-    let translateInfo = data?.translateInfo
+    const translateInfo = data?.translateInfo
     if (isNotNull(translateInfo)) {
       setTranslateServiceMap(new Map(JSON.parse(translateInfo.info)))
       // 更新翻译源通知
       window.api.updateTranslateServiceNotify()
     }
-    let ocrInfo = data?.ocrInfo
+    const ocrInfo = data?.ocrInfo
     if (isNotNull(ocrInfo)) {
       setOcrServiceMap(new Map(JSON.parse(ocrInfo.info)))
     }
