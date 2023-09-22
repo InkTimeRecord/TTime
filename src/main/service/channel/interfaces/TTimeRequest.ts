@@ -78,7 +78,8 @@ const getUserInfo = (token): Promise<AxiosPromise> => {
  */
 const logout = (): Promise<void> => {
   return request({
-    url: 'auth/ttime/logout'
+    url: 'auth/ttime/logout',
+    method: HttpMethodType.DELETE
   })
 }
 
