@@ -4,6 +4,7 @@ import { GoogleChannelRequest } from './GoogleChannelRequest'
 import { DeepLChannelRequest } from './DeepLChannelRequest'
 import { AzureOpenAIChannelRequest } from './AzureOpenAIChannelRequest'
 import { BaiduChannelRequest } from './BaiduChannelRequest'
+import { TTimeAIChannelRequest } from './TTimeAIChannelRequest'
 
 class ChannelRequest {
   /**
@@ -66,6 +67,15 @@ class ChannelRequest {
     } else {
       AzureOpenAIChannelRequest.openaiTranslate(info)
     }
+  }
+
+  /**
+   * TTimeAI - 翻译
+   *
+   * @param info            翻译信息
+   */
+  static ttimeaiTranslate = (info): void => {
+      TTimeAIChannelRequest.openaiTranslate(info)
   }
 
   /**

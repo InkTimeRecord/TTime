@@ -187,7 +187,8 @@ window.api[getTranslateServiceBackEventName(props.translateService)]((res) => {
   let translatedResultContentTemp = translateList.join('\n')
   if (
     TranslateServiceEnum.OPEN_AI === props.translateService['type'] ||
-    TranslateServiceEnum.AZURE_OPEN_AI === props.translateService['type']
+    TranslateServiceEnum.AZURE_OPEN_AI === props.translateService['type'] ||
+    TranslateServiceEnum.TTIME_AI === props.translateService['type']
   ) {
     if (res.code === OpenAIStatusEnum.START) {
       translatedResultContent.value = ''
