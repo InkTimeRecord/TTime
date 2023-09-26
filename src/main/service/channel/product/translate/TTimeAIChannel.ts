@@ -1,5 +1,4 @@
 import ITranslateAgentInterface from './ITranslateAgentInterface'
-import log from '../../../../utils/log'
 import R from '../../../../../common/class/R'
 import GlobalWin from '../../../GlobalWin'
 import { isNotNull, isNull } from '../../../../../common/utils/validate'

@@ -3,6 +3,7 @@ import AgentTranslateCallbackVo from '../../../common/class/AgentTranslateCallba
 import { OpenAIStatusEnum } from '../../../common/enums/OpenAIStatusEnum'
 import { EventStreamContentType, fetchEventSource } from '@fortaine/fetch-event-source'
 import { isNotNull } from '../../../common/utils/validate'
+import { cacheGet } from '../utils/cacheUtil'
 
 class TTimeAIChannelRequest {
 
@@ -21,7 +22,7 @@ class TTimeAIChannelRequest {
     )
     let text = ''
 
-    await fetchEventSource('https://timerecord.cn/apis/translate/ai/stream', {
+    await fetchEventSource('https://timerecord.cn/apis/translate/translateAi/stream', {
       method: 'POST',
       body: JSON.stringify({
         languageType: info.languageType,
@@ -29,7 +30,8 @@ class TTimeAIChannelRequest {
         translateContent: info.translateContent
       }),
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'token': cacheGet("token")
       },
       async onopen(response) {
         if (response.ok && response.headers.get('content-type') === EventStreamContentType) {
