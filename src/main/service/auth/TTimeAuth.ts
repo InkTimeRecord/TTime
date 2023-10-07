@@ -3,13 +3,20 @@ import log from '../../utils/log'
 import GlobalWin from '../GlobalWin'
 import StoreService from '../StoreService'
 import { LoginStatusEnum } from '../../../common/enums/LoginStatusEnum'
+import { isNull } from '../../../common/utils/validate'
 
 /**
  * 授权
  */
 class TTimeAuth {
 
-  static login(token: string): void {
+  static login(token = null): void {
+    if (isNull(token)) {
+      token = StoreService.configGet('token')
+      if (isNull(token)) {
+        return
+      }
+    }
     // 设置显示我的页面
     StoreService.configSet('setPageMenuIndex', 'myInfo')
     StoreService.configSet('loginStatus', LoginStatusEnum.ING)

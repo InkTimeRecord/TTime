@@ -171,7 +171,7 @@ const againLogin = (): void => {
  */
 const toLogin = (): void => {
   window.api.jumpToPage(
-    'https://ink.timerecord.cn/userEntryTTime/login?redirect=http://127.0.0.1:' +
+    'https://ink.timerecord.cn/userEntryTranslate/login?redirectCallback=http://127.0.0.1:' +
     cacheGet('servicePort') +
     '/login'
   )
@@ -181,11 +181,7 @@ const toLogin = (): void => {
  * 续费
  */
 const toRenew = (): void => {
-  window.api.jumpToPage(
-    'https://ink.timerecord.cn/userEntryTTime/login?redirect=http://127.0.0.1:' +
-    cacheGet('servicePort') +
-    '/login'
-  )
+  window.api.jumpToPage('https://ink.timerecord.cn/translateGoods?token=' + cacheGet('token'))
 }
 
 /**

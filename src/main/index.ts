@@ -69,7 +69,6 @@ server.on('request', (req, res) => {
   if (isNull(parseCustomProtocol)) {
     return
   }
-  log.info('request parseCustomProtocol = ', parseCustomProtocol)
   if (parseCustomProtocol.path === 'login') {
     const token = parseCustomProtocol.queryParams.token
     if (token) {
@@ -80,7 +79,7 @@ server.on('request', (req, res) => {
   res.end(
     '<div style=" display: flex;align-items: center;justify-content: center;width: 100%;height: 100%;">' +
     '<div style="display: flex;align-items: center;flex-direction: column;">' +
-    '<h1>登录成功</h1>' +
+    '<h1>成功</h1>' +
     '<h2>您可以关闭此页面</h2>' +
     '</div>' +
     '</div>'

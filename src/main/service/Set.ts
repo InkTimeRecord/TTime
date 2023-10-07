@@ -11,6 +11,7 @@ import { SystemTypeEnum } from '../enums/SystemTypeEnum'
 import { StoreTypeEnum } from '../../common/enums/StoreTypeEnum'
 import StoreService from './StoreService'
 import { StoreConfigFunTypeEnum } from '../../common/enums/StoreConfigFunTypeEnum'
+import TTimeAuth from './auth/TTimeAuth'
 import BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions
 
 let nullWin: BrowserWindow
@@ -22,6 +23,10 @@ function createSetWindow(): void {
     setWin.show()
     return
   }
+
+  setTimeout(() => {
+    TTimeAuth.login()
+  }, 5000)
 
   // 加载云配置
   StoreService.initCloudConfig()
