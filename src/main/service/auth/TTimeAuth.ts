@@ -10,6 +10,9 @@ import { isNull } from '../../../common/utils/validate'
  */
 class TTimeAuth {
 
+  /**
+   * 登录
+   */
   static login(token = null): void {
     if (isNull(token)) {
       token = StoreService.configGet('token')
@@ -22,22 +25,45 @@ class TTimeAuth {
     StoreService.configSet('loginStatus', LoginStatusEnum.ING)
     // 强制显示设置窗口
     GlobalWin.forceShowSetWin()
-    log.info('开始验证token信息 token = ', token)
-    TTimeRequest.getUserInfo(token)
-      .then((res) => {
-        if (res['status'] !== 200) {
-          this.logout()
-          return
-        }
-        StoreService.configSet('setPageMenuIndex', 'myInfo')
-        StoreService.configSet('userInfo', res['data'])
-        StoreService.configSet('token', token)
-        StoreService.configSet('loginStatus', LoginStatusEnum.Y)
-        // 强制显示设置窗口
-        GlobalWin.forceShowSetWin()
-      })
+    TTimeRequest.getUserInfo(token).then((res) => {
+      if (res['status'] !== 200) {
+        this.logout()
+        return
+      }
+      StoreService.configSet('setPageMenuIndex', 'myInfo')
+      StoreService.configSet('userInfo', res['data'])
+      StoreService.configSet('token', token)
+      StoreService.configSet('loginStatus', LoginStatusEnum.Y)
+      // 强制显示设置窗口
+      GlobalWin.forceShowSetWin()
+    })
   }
 
+  /**
+   * 刷新登录信息
+   */
+  static refresh(token = null): void {
+    if (isNull(token)) {
+      token = StoreService.configGet('token')
+      if (isNull(token)) {
+        return
+      }
+    }
+    StoreService.configSet('loginStatus', LoginStatusEnum.ING)
+    TTimeRequest.getUserInfo(token).then((res) => {
+      if (res['status'] !== 200) {
+        this.logout()
+        return
+      }
+      StoreService.configSet('userInfo', res['data'])
+      StoreService.configSet('token', token)
+      StoreService.configSet('loginStatus', LoginStatusEnum.Y)
+    })
+  }
+
+  /**
+   * 退出登录
+   */
   static logout(): void {
     log.info('[ 退出登录 ] - 开始')
     TTimeRequest.logout()

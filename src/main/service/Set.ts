@@ -24,9 +24,7 @@ function createSetWindow(): void {
     return
   }
 
-  setTimeout(() => {
-    TTimeAuth.login()
-  }, 5000)
+  TTimeAuth.refresh()
 
   // 加载云配置
   StoreService.initCloudConfig()

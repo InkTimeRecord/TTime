@@ -50,7 +50,6 @@ class TTimeAIChannelRequest {
       },
       onmessage(msg) {
         const resStr = msg.data
-        console.log('resStr : ', resStr)
         try {
           const res = JSON.parse(resStr)
           if (res.status !== 200) {

@@ -61,7 +61,7 @@
           <div class='member-introduction-list'>
             <template v-for='(info, key) in memberOrdinaryList' :key='key'>
               <div class='member-introduction-icon-layer'>
-                <div class='member-introduction-icon-block'>
+                <div class='none-select cursor-pointer member-introduction-icon-block' @click='toRenew'>
                   <svg-icon :icon-class='info.icon' class='member-introduction-icon' />
                 </div>
                 <span class='none-select member-introduction-icon-name'>{{ info.name }}</span>
@@ -78,7 +78,7 @@
           <div class='member-introduction-list'>
             <template v-for='(info, key) in memberVipList' :key='key'>
               <div class='member-introduction-icon-layer'>
-                <div class='member-introduction-icon-block'>
+                <div class='none-select cursor-pointer member-introduction-icon-block' @click='toRenew'>
                   <svg-icon :icon-class='info.icon' class='member-introduction-icon' />
                 </div>
                 <span class='none-select member-introduction-icon-name'>{{ info.name }}</span>
@@ -94,7 +94,7 @@
       <div class='member-introduction-list'>
         <template v-for='(info, key) in memberVipList' :key='key'>
           <div class='none-select member-introduction-icon-layer'>
-            <div class='none-select member-introduction-icon-block'>
+            <div class='none-select cursor-pointer member-introduction-icon-block' @click='toRenew'>
               <svg-icon :icon-class='info.icon' class='member-introduction-icon' />
             </div>
             <span class='none-select member-introduction-icon-name'>{{ info.name }}</span>
@@ -123,9 +123,9 @@ const memberOrdinaryList = ref([
 const memberVipList = ref([
   { icon: 'translate-service-cloud', name: '翻译源云同步' },
   { icon: 'translate-cloud-record', name: '翻译云记录' },
-  { icon: 'ocr-cloud-record', name: 'OCR云记录' },
   { icon: 'ai-translate', name: 'AI翻译' },
   { icon: 'config-sync', name: '配置同步' },
+  { icon: 'kefu', name: '专属反馈通道' },
   { icon: 'more-privileges', name: '更多特权' }
 ])
 
@@ -181,7 +181,12 @@ const toLogin = (): void => {
  * 续费
  */
 const toRenew = (): void => {
-  window.api.jumpToPage('https://ink.timerecord.cn/translateGoods?token=' + cacheGet('token'))
+  const token = cacheGet('token')
+  let tokenParameter = ''
+  if (token) {
+    tokenParameter = '?token=' + token
+  }
+  window.api.jumpToPage('https://ink.timerecord.cn/translateGoods' + tokenParameter)
 }
 
 /**
