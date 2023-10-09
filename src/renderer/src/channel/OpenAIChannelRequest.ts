@@ -8,6 +8,7 @@ import { commonError } from '../utils/RequestUtil'
 import { OpenAIStatusEnum } from '../../../common/enums/OpenAIStatusEnum'
 import { v4 as uuidv4 } from 'uuid'
 import { OpenAIModelEnum } from '../../../common/enums/OpenAIModelEnum'
+import { EventStreamContentType, fetchEventSource } from '@fortaine/fetch-event-source'
 
 export class QuoteProcessor {
   private quote: string
@@ -149,11 +150,11 @@ class OpenAIChannelRequest {
     let contentPrompt = `${quoteProcessor.quoteStart}${info.translateContent}${quoteProcessor.quoteEnd}`
     if (languageResultType === '文字润色') {
       rolePrompt =
-        "You are a professional text summarizer, you can only summarize the text, don't interpret it."
+        'You are a professional text summarizer, you can only summarize the text, don\'t interpret it.'
       commandPrompt = `Please polish this text in ${languageType}. Only polish the text between ${quoteProcessor.quoteStart} and ${quoteProcessor.quoteEnd}.`
     } else if (languageResultType === '总结') {
       rolePrompt =
-        "You are a professional text summarizer, you can only summarize the text, don't interpret it."
+        'You are a professional text summarizer, you can only summarize the text, don\'t interpret it.'
       commandPrompt = `Please summarize this text in the most concise language and must use ${languageType} language! Only summarize the text between ${quoteProcessor.quoteStart} and ${quoteProcessor.quoteEnd}.`
       contentPrompt = `${quoteProcessor.quoteStart}${info.translateContent}${quoteProcessor.quoteEnd}`
     } else if (languageResultType === '分析') {
@@ -194,7 +195,7 @@ class OpenAIChannelRequest {
    *
    * @param info            翻译信息
    */
-  static openaiTranslate = (info): void => {
+  static openaiTranslate = async (info): Promise<void> => {
     const isCheckRequest = false
     const { data, quoteProcessor } = OpenAIChannelRequest.buildOpenAIRequest(info, isCheckRequest)
     window.api['agentApiTranslateCallback'](
@@ -208,59 +209,73 @@ class OpenAIChannelRequest {
       info.requestUrl = OpenAIModelEnum.REQUEST_URL
     }
     let text = ''
-    fetch(info.requestUrl + '/v1/chat/completions', {
+    await fetchEventSource(info.requestUrl + '/v1/chat/completions', {
       method: 'POST',
       body: JSON.stringify(data),
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${info.appKey}`
-      }
-    })
-      .then(async (response) => {
-        const reader = response.body.pipeThrough(new TextDecoderStream()).getReader()
+      },
+      async onopen(response) {
+        if (
+          response.ok &&
+          response.headers.get('content-type').indexOf(EventStreamContentType) !== -1
+        ) {
+          return // everything's good
+        } else {
+          window.api.logInfoEvent('[OpenAI翻译事件] - error : 连接失败')
+          window.api['agentApiTranslateCallback'](
+            R.errorD(
+              new AgentTranslateCallbackVo(info, {
+                code: OpenAIStatusEnum.ERROR,
+                error: '连接失败'
+              })
+            )
+          )
+        }
+      },
+      onmessage(msg) {
+        // console.log('value = ', msg.data);
+        const value = msg.data
         try {
-          while (true) {
-            const { value, done } = await reader.read()
-            if (done) {
-              break
+          const dataArray = value.split('data: ')
+          dataArray.forEach((data) => {
+            data = data.trim().replace(/data:/g, '')
+            if (isNull(data) || data === '[DONE]') {
+              return
             }
-            const dataArray = value.split('data: ')
-            dataArray.forEach((data) => {
-              data = data.trim().replace(/data:/g, '')
-              if (isNull(data) || data === '[DONE]') {
-                return
-              }
-              data = JSON.parse(data)
-              if (isNotNull(data['error'])) {
-                window.api['agentApiTranslateCallback'](
-                  R.errorD(
-                    new AgentTranslateCallbackVo(info, {
-                      code: OpenAIStatusEnum.ERROR,
-                      error: data
-                    })
-                  )
-                )
-                return
-              }
-              let content = data['choices'][0]['delta']['content']
-              if (isNull(content)) {
-                return
-              }
-              content = quoteProcessor.processText(content)
-              text += content
+            data = JSON.parse(data)
+            if (isNotNull(data['error'])) {
               window.api['agentApiTranslateCallback'](
-                R.okD(
+                R.errorD(
                   new AgentTranslateCallbackVo(info, {
-                    code: OpenAIStatusEnum.ING,
-                    content: content
+                    code: OpenAIStatusEnum.ERROR,
+                    error: data
                   })
                 )
               )
-            })
-          }
-        } finally {
-          reader.releaseLock()
+              return
+            }
+            let content = data['choices'][0]['delta']['content']
+            if (isNull(content)) {
+              return
+            }
+            content = quoteProcessor.processText(content)
+            text += content
+            window.api['agentApiTranslateCallback'](
+              R.okD(
+                new AgentTranslateCallbackVo(info, {
+                  code: OpenAIStatusEnum.ING,
+                  content: content
+                })
+              )
+            )
+          })
+        } catch (e) {
+          window.api.logErrorEvent('[OpenAI翻译事件] - parse error : ', text, msg)
         }
+      },
+      onclose() {
         window.api['agentApiTranslateCallback'](
           R.okD(
             new AgentTranslateCallbackVo(info, {
@@ -269,18 +284,20 @@ class OpenAIChannelRequest {
           )
         )
         window.api.logInfoEvent('[OpenAI翻译事件] - 响应报文 : ', text)
-      })
-      .catch((error) => {
-        window.api.logInfoEvent('[OpenAI翻译事件] - error : ', error)
+      },
+      onerror(err) {
+        window.api.logInfoEvent('[OpenAI翻译事件] - error {}', err)
         window.api['agentApiTranslateCallback'](
           R.errorD(
             new AgentTranslateCallbackVo(info, {
               code: OpenAIStatusEnum.ERROR,
-              error: error
+              error: err
             })
           )
         )
-      })
+        throw err
+      }
+    })
   }
 
   /**

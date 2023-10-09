@@ -7,6 +7,7 @@ import TranslateServiceEnum from '../../../common/enums/TranslateServiceEnum'
 import { commonError } from '../utils/RequestUtil'
 import { OpenAIStatusEnum } from '../../../common/enums/OpenAIStatusEnum'
 import { v4 as uuidv4 } from 'uuid'
+import { EventStreamContentType, fetchEventSource } from '@fortaine/fetch-event-source'
 
 export class QuoteProcessor {
   private quote: string
@@ -148,11 +149,11 @@ class AzureOpenAIChannelRequest {
     let contentPrompt = `${quoteProcessor.quoteStart}${info.translateContent}${quoteProcessor.quoteEnd}`
     if (languageResultType === '文字润色') {
       rolePrompt =
-        "You are a professional text summarizer, you can only summarize the text, don't interpret it."
+        'You are a professional text summarizer, you can only summarize the text, don\'t interpret it.'
       commandPrompt = `Please polish this text in ${languageType}. Only polish the text between ${quoteProcessor.quoteStart} and ${quoteProcessor.quoteEnd}.`
     } else if (languageResultType === '总结') {
       rolePrompt =
-        "You are a professional text summarizer, you can only summarize the text, don't interpret it."
+        'You are a professional text summarizer, you can only summarize the text, don\'t interpret it.'
       commandPrompt = `Please summarize this text in the most concise language and must use ${languageType} language! Only summarize the text between ${quoteProcessor.quoteStart} and ${quoteProcessor.quoteEnd}.`
       contentPrompt = `${quoteProcessor.quoteStart}${info.translateContent}${quoteProcessor.quoteEnd}`
     } else if (languageResultType === '分析') {
@@ -193,7 +194,7 @@ class AzureOpenAIChannelRequest {
    *
    * @param info            翻译信息
    */
-  static openaiTranslate = (info): void => {
+  static openaiTranslate = async (info): Promise<void> => {
     const isCheckRequest = false
     const { data, quoteProcessor } = AzureOpenAIChannelRequest.buildOpenAIRequest(
       info,
@@ -207,36 +208,45 @@ class AzureOpenAIChannelRequest {
       )
     )
     let text = ''
-    fetch(
+    await fetchEventSource(
       info.endpoint +
-        '/openai/deployments/' +
-        info.deploymentName +
-        '/chat/completions?api-version=2023-05-15',
-      {
+      '/openai/deployments/' +
+      info.deploymentName +
+      '/chat/completions?api-version=2023-05-15', {
         method: 'POST',
         body: JSON.stringify(data),
         headers: {
           'Content-Type': 'application/json',
           'api-key': `${info.appKey}`
-        }
-      }
-    )
-      .then(async (response) => {
-        const reader = response.body.pipeThrough(new TextDecoderStream()).getReader()
-        try {
-          // eslint-disable-next-line no-constant-condition
-          while (true) {
-            const { value, done } = await reader.read()
-            if (done) {
-              break
-            }
+        },
+        async onopen(response) {
+          if (
+            response.ok &&
+            response.headers.get('content-type').indexOf(EventStreamContentType) !== -1
+          ) {
+            return // everything's good
+          } else {
+            window.api.logInfoEvent('[AzureOpenAI翻译事件] - error : 连接失败')
+            window.api['agentApiTranslateCallback'](
+              R.errorD(
+                new AgentTranslateCallbackVo(info, {
+                  code: OpenAIStatusEnum.ERROR,
+                  error: '连接失败'
+                })
+              )
+            )
+          }
+        },
+        onmessage(msg) {
+          // console.log('value = ', msg.data)
+          const value = msg.data
+          try {
             const dataArray = value.split('data: ')
             dataArray.forEach((data) => {
               data = data.trim().replace(/data:/g, '')
               if (isNull(data) || data === '[DONE]') {
                 return
               }
-              console.log('data = ', data)
               data = JSON.parse(data)
               if (isNotNull(data['error'])) {
                 window.api['agentApiTranslateCallback'](
@@ -264,29 +274,32 @@ class AzureOpenAIChannelRequest {
                 )
               )
             })
+          } catch (e) {
+            window.api.logErrorEvent('[AzureOpenAI翻译事件] - parse error : ', text, msg)
           }
-        } finally {
-          reader.releaseLock()
+        },
+        onclose() {
+          window.api['agentApiTranslateCallback'](
+            R.okD(
+              new AgentTranslateCallbackVo(info, {
+                code: OpenAIStatusEnum.END
+              })
+            )
+          )
+          window.api.logInfoEvent('[AzureOpenAI翻译事件] - 响应报文 : ', text)
+        },
+        onerror(err) {
+          window.api.logInfoEvent('[AzureOpenAI翻译事件] - error {}', err)
+          window.api['agentApiTranslateCallback'](
+            R.errorD(
+              new AgentTranslateCallbackVo(info, {
+                code: OpenAIStatusEnum.ERROR,
+                error: err
+              })
+            )
+          )
+          throw err
         }
-        window.api['agentApiTranslateCallback'](
-          R.okD(
-            new AgentTranslateCallbackVo(info, {
-              code: OpenAIStatusEnum.END
-            })
-          )
-        )
-        window.api.logInfoEvent('[AzureOpenAI翻译事件] - 响应报文 : ', text)
-      })
-      .catch((error) => {
-        window.api.logInfoEvent('[AzureOpenAI翻译事件] - error : ', error)
-        window.api['agentApiTranslateCallback'](
-          R.errorD(
-            new AgentTranslateCallbackVo(info, {
-              code: OpenAIStatusEnum.ERROR,
-              error: error
-            })
-          )
-        )
       })
   }
 

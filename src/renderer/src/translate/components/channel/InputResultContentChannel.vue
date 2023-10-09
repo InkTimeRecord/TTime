@@ -184,12 +184,8 @@ const textWriteShearPlate = (text): void => {
 window.api[getTranslateServiceBackEventName(props.translateService)]((res) => {
   const data = res.data
   const translateList = data['translateList']
-  let translatedResultContentTemp = translateList.join('\n')
-  if (
-    TranslateServiceEnum.OPEN_AI === props.translateService['type'] ||
-    TranslateServiceEnum.AZURE_OPEN_AI === props.translateService['type'] ||
-    TranslateServiceEnum.TTIME_AI === props.translateService['type']
-  ) {
+  const translatedResultContentTemp = translateList.join('\n')
+  if (isStreamTranslateService()) {
     if (res.code === OpenAIStatusEnum.START) {
       translatedResultContent.value = ''
       return
@@ -201,6 +197,8 @@ window.api[getTranslateServiceBackEventName(props.translateService)]((res) => {
       data.translateList = [translatedResultContent.value]
       // 更新翻译记录
       updateTranslateRecord(data)
+      // 在流式翻译结束后重新计算翻译结果容器高度
+      adjustTextareaHeight()
       return
     }
     translatedResultContent.value += translatedResultContentTemp
@@ -308,10 +306,23 @@ const adjustTextareaHeight = (): void => {
 watch(translatedResultContent, () => {
   nextTick(() => {
     setTimeout(() => {
-      adjustTextareaHeight()
+      if (!isStreamTranslateService()) {
+        adjustTextareaHeight()
+      }
     }, 100)
   })
 })
+
+/**
+ * 是否流式翻译服务
+ */
+const isStreamTranslateService = (): boolean => {
+  const type = props.translateService['type']
+  return TranslateServiceEnum.OPEN_AI === type ||
+    TranslateServiceEnum.AZURE_OPEN_AI === type ||
+    TranslateServiceEnum.TTIME_AI === type
+
+}
 
 /**
  * 窗口大小更新

@@ -65,7 +65,7 @@ class TTimeAIChannelRequest {
             return
           }
           const data = res.data
-          console.log('data : ', data)
+          // console.log('data : ', data)
           const content = data?.content
           if (isNotNull(content)) {
             text += content
@@ -79,7 +79,7 @@ class TTimeAIChannelRequest {
             )
           }
         } catch (e) {
-          console.error('[Request] parse error', text, msg)
+          window.api.logErrorEvent('[TTimeAI翻译事件] - parse error : ', text, msg)
         }
       },
       onclose() {
