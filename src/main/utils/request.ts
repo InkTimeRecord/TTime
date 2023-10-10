@@ -4,7 +4,7 @@ import { injectAgent } from './RequestUtil'
 import StoreService from '../service/StoreService'
 import { isNotNull, isNull } from '../../common/utils/validate'
 
-const BASE_API = 'https://timerecord.cn/apis/'
+const BASE_API = 'https://ink.timerecord.cn/apis/'
 
 // 创建 axios
 const service = axios.create({

@@ -173,6 +173,12 @@ class WinEvent {
     // win.setMaximumSize(width, height)
     win.setMinimumSize(450, height)
     win.setSize(width, height)
+    const newWidth = win.getSize()[0]
+    if (newWidth != width) {
+      if (newWidth > width) {
+        win.setSize(width - (newWidth - width), height)
+      }
+    }
   }
 }
 

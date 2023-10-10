@@ -5,11 +5,11 @@ import vue from '@vitejs/plugin-vue'
 // @ts-ignore 抑制错误校验问题
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 
-const BASE_API = 'https://timerecord.cn/apis/'
+const BASE_API = 'https://ink.timerecord.cn/apis/'
 
 export default defineConfig({
   main: {
-    plugins: [externalizeDepsPlugin()],
+    plugins: [externalizeDepsPlugin()]
   },
   preload: {
     plugins: [externalizeDepsPlugin()],

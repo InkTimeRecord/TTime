@@ -6,7 +6,6 @@ import { isNotNull } from '../../../common/utils/validate'
 import { cacheGet } from '../utils/cacheUtil'
 
 class TTimeAIChannelRequest {
-
   /**
    * OpenAI - 翻译
    *
@@ -22,7 +21,7 @@ class TTimeAIChannelRequest {
     )
     let text = ''
 
-    await fetchEventSource('https://timerecord.cn/apis/translate/translateAi/stream', {
+    await fetchEventSource('https://ink.timerecord.cn/apis/translate/translateAi/stream', {
       method: 'POST',
       body: JSON.stringify({
         languageType: info.languageType,
@@ -31,13 +30,16 @@ class TTimeAIChannelRequest {
       }),
       headers: {
         'Content-Type': 'application/json',
-        'token': cacheGet("token")
+        token: cacheGet('token')
       },
       async onopen(response) {
         if (response.ok && response.headers.get('content-type') === EventStreamContentType) {
           return // everything's good
         } else {
-          window.api.logInfoEvent('[TTimeAI翻译事件] - error 连接失败')
+          window.api.logInfoEvent('[TTimeAI翻译事件] - error 连接失败 :', {
+            status: response.status,
+            statusText: response.statusText
+          })
           window.api['agentApiTranslateCallback'](
             R.errorD(
               new AgentTranslateCallbackVo(info, {

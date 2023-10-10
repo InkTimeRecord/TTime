@@ -149,11 +149,11 @@ class AzureOpenAIChannelRequest {
     let contentPrompt = `${quoteProcessor.quoteStart}${info.translateContent}${quoteProcessor.quoteEnd}`
     if (languageResultType === '文字润色') {
       rolePrompt =
-        'You are a professional text summarizer, you can only summarize the text, don\'t interpret it.'
+        "You are a professional text summarizer, you can only summarize the text, don't interpret it."
       commandPrompt = `Please polish this text in ${languageType}. Only polish the text between ${quoteProcessor.quoteStart} and ${quoteProcessor.quoteEnd}.`
     } else if (languageResultType === '总结') {
       rolePrompt =
-        'You are a professional text summarizer, you can only summarize the text, don\'t interpret it.'
+        "You are a professional text summarizer, you can only summarize the text, don't interpret it."
       commandPrompt = `Please summarize this text in the most concise language and must use ${languageType} language! Only summarize the text between ${quoteProcessor.quoteStart} and ${quoteProcessor.quoteEnd}.`
       contentPrompt = `${quoteProcessor.quoteStart}${info.translateContent}${quoteProcessor.quoteEnd}`
     } else if (languageResultType === '分析') {
@@ -210,9 +210,10 @@ class AzureOpenAIChannelRequest {
     let text = ''
     await fetchEventSource(
       info.endpoint +
-      '/openai/deployments/' +
-      info.deploymentName +
-      '/chat/completions?api-version=2023-05-15', {
+        '/openai/deployments/' +
+        info.deploymentName +
+        '/chat/completions?api-version=2023-05-15',
+      {
         method: 'POST',
         body: JSON.stringify(data),
         headers: {
@@ -226,7 +227,10 @@ class AzureOpenAIChannelRequest {
           ) {
             return // everything's good
           } else {
-            window.api.logInfoEvent('[AzureOpenAI翻译事件] - error : 连接失败')
+            window.api.logInfoEvent('[AzureOpenAI翻译事件] - error 连接失败 :', {
+              status: response.status,
+              statusText: response.statusText
+            })
             window.api['agentApiTranslateCallback'](
               R.errorD(
                 new AgentTranslateCallbackVo(info, {
@@ -300,7 +304,8 @@ class AzureOpenAIChannelRequest {
           )
           throw err
         }
-      })
+      }
+    )
   }
 
   /**
