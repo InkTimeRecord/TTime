@@ -26,7 +26,7 @@
 <script setup lang='ts'>
 import { ref } from 'vue'
 import { ServiceTypeEnum } from '../../../../../../../common/enums/ServiceTypeEnum'
-import { isMemberVip, loadNewServiceInfo } from '../../../../../utils/memberUtil'
+import { loadNewServiceInfo, isMemberVip } from '../../../../../utils/memberUtil'
 import { Clock, Key, Refresh } from '@element-plus/icons-vue'
 import VipInfoService from './VipInfoService.vue'
 import { isNull } from '../../../../../../../common/utils/validate'

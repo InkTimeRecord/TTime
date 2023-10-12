@@ -53,6 +53,37 @@ export const saveServiceInfoHandle = (
   })
 }
 
+export const initNewServiceInfo = (): void => {
+  if (!isMemberVipAndKey()) {
+    return
+  }
+  const key = cacheGet('translateServiceKey')
+  findNewByInfo({
+    key: key
+  }).then((data: any) => {
+    const translateInfo = data?.translateInfo
+    if (isNotNull(translateInfo)) {
+      saveServiceInfoHandle(ServiceTypeEnum.TRANSLATE, NewStatusEnum.N)
+      setTranslateServiceMap(new Map(JSON.parse(translateInfo.info)))
+      // 更新翻译源通知
+      window.api.updateTranslateServiceNotify()
+    } else {
+      saveServiceInfoHandle(ServiceTypeEnum.TRANSLATE)
+    }
+    const ocrInfo = data?.ocrInfo
+    if (isNotNull(ocrInfo)) {
+      saveServiceInfoHandle(ServiceTypeEnum.OCR, NewStatusEnum.N)
+      setOcrServiceMap(new Map(JSON.parse(ocrInfo.info)))
+    } else {
+      saveServiceInfoHandle(ServiceTypeEnum.OCR)
+    }
+    const refreshServiceInfoNotifyFun = window.api['refreshServiceInfoNotify']
+    if (isNotNull(refreshServiceInfoNotifyFun)) {
+      refreshServiceInfoNotifyFun()
+    }
+  })
+}
+
 export const loadNewServiceInfo = (): void => {
   if (!isMemberVipAndKey()) {
     return
@@ -66,10 +97,14 @@ export const loadNewServiceInfo = (): void => {
       setTranslateServiceMap(new Map(JSON.parse(translateInfo.info)))
       // 更新翻译源通知
       window.api.updateTranslateServiceNotify()
+    } else {
+      saveServiceInfoHandle(ServiceTypeEnum.TRANSLATE)
     }
     const ocrInfo = data?.ocrInfo
     if (isNotNull(ocrInfo)) {
       setOcrServiceMap(new Map(JSON.parse(ocrInfo.info)))
+    } else {
+      saveServiceInfoHandle(ServiceTypeEnum.OCR)
     }
     const refreshServiceInfoNotifyFun = window.api['refreshServiceInfoNotify']
     if (isNotNull(refreshServiceInfoNotifyFun)) {

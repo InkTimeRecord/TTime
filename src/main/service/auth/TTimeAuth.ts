@@ -27,6 +27,7 @@ class TTimeAuth {
     GlobalWin.forceShowSetWin()
     TTimeRequest.getUserInfo(token).then((res) => {
       if (res['status'] !== 200) {
+        log.info('登录失败 - res : ', res)
         this.logout()
         return
       }
@@ -36,6 +37,10 @@ class TTimeAuth {
       StoreService.configSet('loginStatus', LoginStatusEnum.Y)
       // 强制显示设置窗口
       GlobalWin.forceShowSetWin()
+      // 加载云配置
+      StoreService.initCloudConfig()
+      // 登录成功事件
+      GlobalWin.setWin.webContents.send('login-success-event')
     })
   }
 
@@ -58,6 +63,8 @@ class TTimeAuth {
       StoreService.configSet('userInfo', res['data'])
       StoreService.configSet('token', token)
       StoreService.configSet('loginStatus', LoginStatusEnum.Y)
+      // 加载云配置
+      StoreService.initCloudConfig()
     })
   }
 

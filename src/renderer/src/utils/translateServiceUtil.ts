@@ -22,7 +22,7 @@ export const setTranslateServiceMap = (translateServiceMap: Map<string, any>): v
       delete translateService.serviceInfo
     })
   }
-  let translateServiceMapFormat = Array.from(translateServiceMap.entries())
+  const translateServiceMapFormat = Array.from(translateServiceMap.entries())
   cacheSet('translateServiceMap', translateServiceMapFormat)
   // 上面移除完毕保存后重新设置渠道信息
   translateServiceMap.forEach((translateService) => {

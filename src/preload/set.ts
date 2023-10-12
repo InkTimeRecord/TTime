@@ -188,6 +188,17 @@ const refreshServiceInfoNotify = (): void => {
   ipcRenderer.invoke('refresh-service-info-notify')
 }
 
+/**
+ * 登录成功回调
+ *
+ * @param callback 回调方法 用于主进程内部触发时推送到Vue页面执行
+ */
+const loginSuccessEvent = (callback): void => {
+  ipcRenderer.on('login-success-event', () => {
+    callback()
+  })
+}
+
 const api = {
   ...common,
   updateTranslateShortcutKeyEvent,
@@ -210,7 +221,8 @@ const api = {
   winShowEvent,
   refreshUserInfoEvent,
   refreshServiceInfoEvent,
-  refreshServiceInfoNotify
+  refreshServiceInfoNotify,
+  loginSuccessEvent
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

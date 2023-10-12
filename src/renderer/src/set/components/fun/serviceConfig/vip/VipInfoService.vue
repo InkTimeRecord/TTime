@@ -71,7 +71,12 @@ import { cacheGet, cacheSet } from '../../../../../utils/cacheUtil'
 import { dialogSetWinHandleStyle } from '../../../../../utils/dialogUtil'
 import { findHistoryList, findNewByInfo, updateByVersion, updateKey } from '../../../../../api/user'
 import { ServiceTypeEnum } from '../../../../../../../common/enums/ServiceTypeEnum'
-import { isMemberVip, loadNewServiceInfo, saveServiceInfoHandle } from '../../../../../utils/memberUtil'
+import {
+  initNewServiceInfo,
+  isMemberVip,
+  loadNewServiceInfo,
+  saveServiceInfoHandle
+} from '../../../../../utils/memberUtil'
 import { NewStatusEnum } from '../../../../../../../common/enums/NewStatusEnum'
 
 const props = defineProps({
@@ -154,11 +159,8 @@ const translateServiceKeySave = (): void => {
       cacheSet('translateServiceKey', translateServiceKey.value)
       ElMessageExtend.success('保存成功')
       translateServiceKeyShow.value = false
-      // 获取当前本地的进行一次保存 但是不用做最新的版本
-      saveServiceInfoHandle(ServiceTypeEnum.TRANSLATE, NewStatusEnum.N)
-      saveServiceInfoHandle(ServiceTypeEnum.OCR, NewStatusEnum.N)
-      // 加载服务端最新版本
-      loadNewServiceInfo()
+      // 初始化最新版本服务信息
+      initNewServiceInfo()
     })
     return
   }
@@ -167,6 +169,8 @@ const translateServiceKeySave = (): void => {
     newKey: translateServiceKey.value
   }).then(() => {
     cacheSet('translateServiceKey', translateServiceKey.value)
+    // 初始化最新版本服务信息
+    initNewServiceInfo()
     ElMessageExtend.success('保存成功')
     translateServiceKeyShow.value = false
   })

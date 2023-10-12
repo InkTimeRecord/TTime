@@ -26,9 +26,6 @@ function createSetWindow(): void {
 
   TTimeAuth.refresh()
 
-  // 加载云配置
-  StoreService.initCloudConfig()
-
   // 是否Mac系统
   const isMac = SystemTypeEnum.isMac()
 

@@ -115,7 +115,7 @@ import { ref } from 'vue'
 import { cacheGet, cacheSet } from '../../../utils/cacheUtil'
 import { LoginStatusEnum } from '../../../../../common/enums/LoginStatusEnum'
 import { MemberTypeEnum } from '../../../../../common/enums/MemberTypeEnum'
-import { loadNewServiceInfo } from '../../../utils/memberUtil'
+import { initNewServiceInfo, loadNewServiceInfo } from '../../../utils/memberUtil'
 
 const memberOrdinaryList = ref([
   { icon: 'built-in-translate-service', name: '内置翻译源' },
@@ -215,6 +215,13 @@ const formatDate = (date): string => {
   const day = (date.getDate() + '').padStart(2, '0')
   return `${year}-${month}-${day}`
 }
+
+/**
+ * 登录成功回调
+ */
+window.api.loginSuccessEvent(() => {
+  initNewServiceInfo()
+})
 
 loadNewServiceInfo()
 </script>
