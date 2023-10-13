@@ -21,7 +21,7 @@ if (!SystemTypeEnum.isMac()) {
     hoverBallWinHide()
   })
 
-  function createHoverBallWin(): void {
+  const createHoverBallWin = (): void => {
     const hoverBallWin = new BrowserWindow({
       width: 30,
       height: 30,

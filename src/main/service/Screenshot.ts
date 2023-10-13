@@ -12,6 +12,7 @@ import { WinEvent } from './Win'
 import OcrTypeEnum from '../enums/OcrTypeEnum'
 import { YesNoEnum } from '../../common/enums/YesNoEnum'
 import StoreService from './StoreService'
+import { SystemTypeEnum } from '../enums/SystemTypeEnum'
 
 let nullWin: BrowserWindow
 
@@ -227,7 +228,13 @@ class ScreenshotsSon {
     this.screenshotsWin.webContents
       .executeJavaScript('JSON.stringify({width:screen.width,height: screen.height})')
       .then((value) => {
-        this.screenshotsWin.show()
+        if (SystemTypeEnum.isMac()) {
+          this.screenshotsWin.show()
+        } else {
+          this.screenshotsWin.setAlwaysOnTop(true, 'pop-up-menu', 1)
+          this.screenshotsWin.setVisibleOnAllWorkspaces(true)
+          this.screenshotsWin.showInactive()
+        }
         const res = JSON.parse(value)
         const screenWidth = res.width
         const screenHeight = res.height
