@@ -221,6 +221,14 @@ class StoreService {
     if (!StoreService.configHas('servicePort')) {
       StoreService.configSet('servicePort', 11223)
     }
+    // 隐藏翻译输入框
+    if (!StoreService.configHas('hideTranslateInput')) {
+      StoreService.configSet('hideTranslateInput', YesNoEnum.N)
+    }
+    // 隐藏语言选择栏
+    if (!StoreService.configHas('hideTranslateLanguage')) {
+      StoreService.configSet('hideTranslateLanguage', YesNoEnum.N)
+    }
     app.whenReady().then(async () => {
       const translateShortcutKeyList = [
         { type: ShortcutKeyEnum.INPUT, shortcutKey: StoreService.configGet('inputShortcutKey') },

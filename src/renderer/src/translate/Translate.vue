@@ -1,21 +1,24 @@
 <template>
-  <div class="block">
+  <div class='block'>
     <Header />
-    <div class="block-layer">
+    <div class='block-layer'>
       <Input
-        ref="translateInput"
-        @show-result-event="(value) => translatedResultInput.setShowResult(value)"
-        @is-result-loading-event="(value) => translatedResultInput.setIsResultLoading(value)"
+        ref='translateInput'
+        @show-result-event='(value) => translatedResultInput.setShowResult(value)'
+        @is-result-loading-event='(value) => translatedResultInput.setIsResultLoading(value)'
+        v-show='!hideTranslateInput'
       />
 
-      <language-select />
+      <language-select
+        v-show='!hideTranslateLanguage'
+      />
 
-      <input-result-content ref="translatedResultInput" />
+      <input-result-content ref='translatedResultInput' />
     </div>
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang='ts'>
 import Header from './components/Header.vue'
 import Input from './components/Input.vue'
 import LanguageSelect from './components/LanguageSelect.vue'
@@ -33,12 +36,15 @@ import '../channel/ChannelRequest'
 import TranslateServiceEnum from '../../../common/enums/TranslateServiceEnum'
 import OcrServiceEnum from '../../../common/enums/OcrServiceEnum'
 import { loadNewServiceInfo } from '../utils/memberUtil'
+import { YesNoEnum } from '../../../common/enums/YesNoEnum'
 
 initTheme()
 
 // 翻译输入组件
 const translateInput = ref('')
 const translatedResultInput = ref('')
+const hideTranslateInput = ref(false)
+const hideTranslateLanguage = ref(false)
 
 // 应用启动
 window.api.ttimeApiAppStart()
@@ -60,6 +66,8 @@ window.api.winShowByInputEvent(() => {
     // 当输入翻译触发显示窗口时 并且用户没有进行任何操作时
     // 会导致窗口大小一直是最大的 所以这里获取页面高度更新窗口大小
     window.api.windowHeightChangeEvent()
+    hideTranslateInput.value = cacheGet('hideTranslateInput') === YesNoEnum.Y
+    hideTranslateLanguage.value = cacheGet('hideTranslateLanguage') === YesNoEnum.Y
   })
 })
 
@@ -123,7 +131,7 @@ window.api.showMsgEvent((type, msg) => {
 })
 </script>
 
-<style lang="scss" scoped>
+<style lang='scss' scoped>
 @import '../css/translate.scss';
 @import '../css/translate-input.scss';
 
