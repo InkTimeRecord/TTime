@@ -1,11 +1,11 @@
-import { app, BrowserWindow, dialog, ipcMain, shell } from 'electron'
+import StoreService from './service/StoreService'
+import { app, BrowserWindow } from 'electron'
 import * as path from 'path'
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 import { GlobalShortcutEvent } from './service/GlobalShortcutEvent'
 import { WinEvent } from './service/Win'
 import { TrayEvent } from './service/TrayEvent'
 import log from './utils/log'
-import createSetWindow from './service/Set'
 import AutoUpdater from './service/AutoUpdater'
 import { SystemTypeEnum } from './enums/SystemTypeEnum'
 import GlobalWin from './service/GlobalWin'
@@ -15,14 +15,10 @@ import './service/HoverBall'
 import './service/Ocr'
 import './service/OcrSilence'
 import './service/ClipboardListenerService'
-import { isNull } from '../common/utils/validate'
+import './service/webServer'
+import './service/handle'
 import { injectWinAgent } from './utils/RequestUtil'
-import StoreService from './service/StoreService'
 import { YesNoEnum } from '../common/enums/YesNoEnum'
-import { parseCustomProtocolUrl } from '../common/utils/urlUtil'
-import TTimeAuth from './service/auth/TTimeAuth'
-// 首先导入http模块
-import http from 'http'
 
 // 解决使用 win.hide() 后再使用 win.show() 会引起窗口闪烁问题
 app.commandLine.appendSwitch('wm-window-animations-disabled')
@@ -31,12 +27,6 @@ if (!SystemTypeEnum.isMac()) {
   // 禁用硬件加速
   app.disableHardwareAcceleration()
 }
-
-StoreService.init()
-StoreService.initConfig()
-
-// 当前软件版本
-const version = app.getVersion()
 
 const mainWinInfo = {
   width: StoreService.configGet('mainWinWidth'),
@@ -61,32 +51,6 @@ if (gotTheLock) {
   // 这里直接执行退出当前重复实例即可
   app.quit()
 }
-// 创建http服务对象
-const server = http.createServer()
-// 绑定事件监听
-server.on('request', (req, res) => {
-  const parseCustomProtocol = parseCustomProtocolUrl(req.url)
-  if (isNull(parseCustomProtocol)) {
-    return
-  }
-  if (parseCustomProtocol.path === 'login') {
-    const token = parseCustomProtocol.queryParams.token
-    if (token) {
-      TTimeAuth.login(token)
-    }
-  }
-  res.writeHead(200, { 'Content-Type': 'text/html;charset=UTF8' })
-  res.end(
-    '<div style=" display: flex;align-items: center;justify-content: center;width: 100%;height: 100%;">' +
-    '<div style="display: flex;align-items: center;flex-direction: column;">' +
-    '<h1>成功</h1>' +
-    '<h2>您可以关闭此页面</h2>' +
-    '</div>' +
-    '</div>'
-  )
-})
-// 绑定端口号
-server.listen(StoreService.configGet('servicePort'))
 
 function createWindow(): void {
   mainWin = new BrowserWindow({
@@ -228,100 +192,4 @@ process.on('uncaughtException', (err, _origin) => {
   // 收集日志
   log.error('全局异常捕获 err = ', err)
   // 显示异常提示信息或者重新加载应用
-})
-
-/**
- * 打开设置页面
- */
-ipcMain.handle('open-set-page-event', (_event) => {
-  createSetWindow()
-})
-
-/**
- * 获取系统类型事件
- */
-ipcMain.on('get-system-type-event', (event, _args) => {
-  event.returnValue = SystemTypeEnum.getSystemType()
-})
-
-/**
- * 跳转页面
- */
-ipcMain.on('jump-to-page-event', (_event, url) => {
-  if (isNull(url)) {
-    return
-  }
-  shell.openExternal(url)
-})
-
-/**
- * 日志 - info级别
- */
-ipcMain.handle('log-info-event', (_event, ...text) => {
-  log.info(...text)
-})
-
-/**
- * 日志 - error级别
- */
-ipcMain.handle('log-error-event', (_event, ...text) => {
-  log.error(...text)
-})
-
-/**
- * 退出应用
- */
-ipcMain.handle('close-app-event', (_event) => {
-  GlobalWin.closeApp()
-})
-
-/**
- * 获取版本事件
- */
-ipcMain.on('get-version-event', (event) => {
-  event.returnValue = version
-})
-
-/**
- * 代理更新事件
- */
-ipcMain.handle('agent-update-event', (_event, agentConfig) => {
-  injectWinAgent(agentConfig, mainWin.webContents.session)
-})
-
-/**
- * 打开目录对话框
- */
-ipcMain.on('open-directory-dialog', (event, storeConfigFunType, storeType) => {
-  dialog
-    .showOpenDialog({
-      properties: ['openDirectory'],
-      title: '请选择文件夹',
-      buttonLabel: '选择文件夹'
-    })
-    .then((result) => {
-      if (result.canceled) {
-        return
-      }
-      event.sender.send(
-        'open-directory-dialog-callback',
-        storeConfigFunType,
-        storeType,
-        result.filePaths[0]
-      )
-    })
-})
-
-/**
- * 退出登录
- */
-ipcMain.handle('logout-event', () => {
-  TTimeAuth.logout()
-})
-
-/**
- * 刷新服务信息通知
- */
-ipcMain.handle('refresh-service-info-notify', (_event) => {
-  GlobalWin.setWin.webContents.send('refresh-service-info-event')
 })

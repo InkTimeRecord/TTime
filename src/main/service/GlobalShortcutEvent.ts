@@ -118,7 +118,6 @@ class GlobalShortcutEvent {
    * 翻译窗口快捷键注册
    */
   static translateRegister(type: string, shortcutKey: string): R {
-    log.info('翻译窗口快捷键注册 , type : ', type, ' , shortcutKey : ', shortcutKey)
     let res
     if (ShortcutKeyEnum.INPUT === type) {
       res = GlobalShortcutEvent.translateInputRegister(shortcutKey)
@@ -133,6 +132,7 @@ class GlobalShortcutEvent {
     } else if (ShortcutKeyEnum.SCREENSHOT_SILENCE_OCR === type) {
       res = GlobalShortcutEvent.ocrSilenceScreenshotRegister(shortcutKey)
     } else {
+      log.error('translateRegister type : ', type, ' is null ')
       res = R.error('快捷键类型不存在')
     }
     return res
@@ -304,6 +304,7 @@ class GlobalShortcutEvent {
   static ocrShowRegister(shortcutKey: string): R {
     return GlobalShortcutEvent.register(shortcutKey, () => GlobalShortcutEvent.ocrShow())
   }
+
   /**
    * OCR截图快捷键 - 注册
    */
