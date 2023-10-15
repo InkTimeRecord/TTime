@@ -1,92 +1,118 @@
 <template>
-  <div class='content'>
-    <div class='content-input-block'>
-      <div class='function-tools-block content-header-block'>
-        <div class='content-tools-category'>
+  <div class="content">
+    <div class="content-input-block">
+      <div class="function-tools-block content-header-block">
+        <div class="content-tools-category">
           <img
-            class='content-translate-logo none-select'
-            :src='translateServiceThis.serviceInfo.logo'
+            class="content-translate-logo none-select"
+            :src="translateServiceThis.serviceInfo.logo"
           />
-          <span class='content-translate-name none-select'>
+          <span class="content-translate-name none-select">
             {{ translateServiceThis.serviceName }}
           </span>
-          <img v-show='isResultLoading' class='content-translate-loading' :src='loadingImageSrc' />
+          <img v-show="isResultLoading" class="content-translate-loading" :src="loadingImageSrc" />
         </div>
-        <div class='function-tools-category content-tools-category'>
-          <a class='function-tools content-tools' @click='showResultFun'>
+        <div class="function-tools-category content-tools-category">
+          <a class="function-tools content-tools" @click="showResultFun">
             <el-icon>
-              <ArrowDown v-if='showResult' />
+              <ArrowDown v-if="showResult" />
               <ArrowLeft v-else />
             </el-icon>
           </a>
         </div>
       </div>
       <el-collapse-transition>
-        <div v-show='showResult'>
+        <div v-show="showResult">
           <el-input
-            v-if='showResult'
-            ref='translatedResultContentRef'
-            v-model='translatedResultContent'
-            class='content-input content-input-zero-padding-top'
-            :readonly='true'
-            spellcheck='false'
-            type='textarea'
+            v-if="showResult"
+            ref="translatedResultContentRef"
+            v-model="translatedResultContent"
+            class="content-input content-input-zero-padding-top"
+            :readonly="true"
+            spellcheck="false"
+            type="textarea"
             autosize
           />
 
-          <div class='phonetic-layer'>
-            <div v-show='dictTranslatedResultExpand.isUs' class='phonetic-block'>
-              <span class='phonetic-type'>美 </span>
-              <span class='phonetic'>[{{ dictTranslatedResultExpand.usPhonetic }}]</span>
+          <div class="phonetic-layer">
+            <div v-show="dictTranslatedResultExpand.isUs" class="phonetic-block">
+              <span class="phonetic-type">美 </span>
+              <span class="phonetic">[{{ dictTranslatedResultExpand.usPhonetic }}]</span>
               <a
-                class='phonetic-function-play cursor-pointer'
-                @click='playSpeechByUrl(dictTranslatedResultExpand.usSpeech)'
+                class="phonetic-function-play cursor-pointer"
+                @click="playSpeechByUrl(dictTranslatedResultExpand.usSpeech)"
               >
-                <svg-icon icon-class='play' class='phonetic-function-tools-icon' />
+                <svg-icon icon-class="play" class="phonetic-function-tools-icon" />
               </a>
             </div>
-            <div v-show='dictTranslatedResultExpand.isUk' class='phonetic-block'>
-              <span class='phonetic-type'>英 </span>
-              <span class='phonetic'>[{{ dictTranslatedResultExpand.ukPhonetic }}]</span>
+            <div v-show="dictTranslatedResultExpand.isUk" class="phonetic-block">
+              <span class="phonetic-type">英 </span>
+              <span class="phonetic">[{{ dictTranslatedResultExpand.ukPhonetic }}]</span>
               <a
-                class='phonetic-function-play cursor-pointer'
-                @click='playSpeechByUrl(dictTranslatedResultExpand.ukSpeech)'
+                class="phonetic-function-play cursor-pointer"
+                @click="playSpeechByUrl(dictTranslatedResultExpand.ukSpeech)"
               >
-                <svg-icon icon-class='play' class='phonetic-function-tools-icon' />
+                <svg-icon icon-class="play" class="phonetic-function-tools-icon" />
               </a>
             </div>
           </div>
 
-          <div v-show='dictTranslatedResultExpand.isExplainList' class='explain-layer'>
-            <span class='explain-title'>其他释义</span>
+          <div v-show="dictTranslatedResultExpand.isExplainList" class="explain-layer">
+            <span class="explain-title">其他释义</span>
             <div
-              v-for='(explain, key) in dictTranslatedResultExpand.explainList'
-              :key='key'
-              class='explain-block'
+              v-for="(explain, key) in dictTranslatedResultExpand.explainList"
+              :key="key"
+              class="explain-block"
             >
-              <span class='explain-type'>{{ explain.type }}</span>
-              <span class='explain-content'>{{ explain.content }}</span>
+              <span class="explain-type">{{ explain.type }}</span>
+              <span class="explain-content">{{ explain.content }}</span>
             </div>
           </div>
 
-          <div v-show='dictTranslatedResultExpand.isWfs' class='explain-layer'>
+          <div v-show="dictTranslatedResultExpand.isWfs" class="explain-layer">
             <div
-              v-for='(wfs, key) in dictTranslatedResultExpand.wfsList'
-              :key='key'
-              class='explain-block'
+              v-for="(wfs, key) in dictTranslatedResultExpand.wfsList"
+              :key="key"
+              class="explain-block"
             >
-              <span class='explain-type'>{{ wfs.wf.name + ' ' }}</span>
-              <span class='explain-content'>{{ wfs.wf.value }}</span>
+              <span class="explain-type">{{ wfs.wf.name + ' ' }}</span>
+              <span class="explain-content">{{ wfs.wf.value }}</span>
             </div>
           </div>
 
-          <div class='function-tools-block'>
-            <a class='function-tools' @click='playSpeech(translatedResultContent)'>
-              <svg-icon icon-class='play' class='function-tools-icon' />
+          <div class="function-tools-block">
+            <a class="function-tools" @click="playSpeech(translatedResultContent)">
+              <svg-icon icon-class="play" class="function-tools-icon" />
             </a>
-            <a class='function-tools' @click='textWriteShearPlate(translatedResultContent)'>
-              <svg-icon icon-class='copy' class='function-tools-icon' />
+            <a class="function-tools" @click="textWriteShearPlate(translatedResultContent)">
+              <svg-icon icon-class="copy" class="function-tools-icon" />
             </a>
+            <el-tooltip
+              v-show="copySpecialResultShow && copyCamelCaseResultStatus"
+              placement="bottom-start"
+            >
+              <template #content>复制驼峰命名</template>
+              <a
+                v-show="copySpecialResultShow && copyCamelCaseResultStatus"
+                class="function-tools"
+                @click="copyCamelCase(translatedResultContent)"
+              >
+                <svg-icon icon-class="copy-camel-case" class="function-tools-icon" />
+              </a>
+            </el-tooltip>
+            <el-tooltip
+              v-show="copySpecialResultShow && copySnakeCaseResultStatus"
+              placement="bottom-start"
+            >
+              <template #content>复制蛇形命名</template>
+              <a
+                v-show="copySpecialResultShow && copySnakeCaseResultStatus"
+                class="function-tools"
+                @click="copySnakeCase(translatedResultContent)"
+              >
+                <svg-icon icon-class="copy-snake-case" class="function-tools-icon" />
+              </a>
+            </el-tooltip>
           </div>
         </div>
       </el-collapse-transition>
@@ -94,7 +120,7 @@
   </div>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 import { nextTick, ref, watch } from 'vue'
 import loadingImage from '../../../assets/loading.gif'
 import translate from '../../../utils/translate'
@@ -102,6 +128,9 @@ import TranslateServiceEnum from '../../../../../common/enums/TranslateServiceEn
 import { isNull } from '../../../../../common/utils/validate'
 import { OpenAIStatusEnum } from '../../../../../common/enums/OpenAIStatusEnum'
 import { updateTranslateRecord } from '../../../utils/translateRecordUtil'
+import { isEnglish } from '../../../utils/languageUtil'
+import { cacheGet } from '../../../utils/cacheUtil'
+import { YesNoEnum } from '../../../../../common/enums/YesNoEnum'
 
 // 翻译内容框内容
 const props = defineProps<{
@@ -141,6 +170,12 @@ const isResultLoading = ref(false)
 const showResult = ref(false)
 // 翻译结果内容容器
 const translatedResultContentRef = ref('')
+// 复制驼峰命名按钮显示
+const copyCamelCaseResultStatus = ref(cacheGet('copyCamelCaseResultStatus') === YesNoEnum.Y)
+// 复制下划线命名按钮显示
+const copySnakeCaseResultStatus = ref(cacheGet('copySnakeCaseResultStatus') === YesNoEnum.Y)
+// 复制特殊结果显示
+const copySpecialResultShow = ref(false)
 
 /**
  * 显示翻译结果
@@ -179,6 +214,20 @@ const textWriteShearPlate = (text): void => {
 }
 
 /**
+ * 文字写入到剪贴板 - 驼峰格式
+ */
+const copyCamelCase = (text): void => {
+  translate.copyCamelCase(text)
+}
+
+/**
+ * 文字写入到剪贴板 - 下划线格式
+ */
+const copySnakeCase = (text): void => {
+  translate.copySnakeCase(text)
+}
+
+/**
  * 翻译回调 - 异步处理
  */
 window.api[getTranslateServiceBackEventName(props.translateService)]((res) => {
@@ -194,6 +243,7 @@ window.api[getTranslateServiceBackEventName(props.translateService)]((res) => {
       translatedResultContent.value += translatedResultContentTemp
       showResult.value = true
       isResultLoading.value = false
+      copySpecialResultShow.value = isEnglish(translatedResultContentTemp)
       data.translateList = [translatedResultContent.value]
       // 更新翻译记录
       updateTranslateRecord(data)
@@ -209,6 +259,9 @@ window.api[getTranslateServiceBackEventName(props.translateService)]((res) => {
   showResult.value = true
   isResultLoading.value = false
 
+  copySpecialResultShow.value = isEnglish(translatedResultContentTemp)
+  copyCamelCaseResultStatus.value = cacheGet('copyCamelCaseResultStatus') === YesNoEnum.Y
+  copySnakeCaseResultStatus.value = cacheGet('copySnakeCaseResultStatus') === YesNoEnum.Y
   // 更新翻译记录
   updateTranslateRecord(data)
 
@@ -318,10 +371,11 @@ watch(translatedResultContent, () => {
  */
 const isStreamTranslateService = (): boolean => {
   const type = props.translateService['type']
-  return TranslateServiceEnum.OPEN_AI === type ||
+  return (
+    TranslateServiceEnum.OPEN_AI === type ||
     TranslateServiceEnum.AZURE_OPEN_AI === type ||
     TranslateServiceEnum.TTIME_AI === type
-
+  )
 }
 
 /**
@@ -339,7 +393,7 @@ defineExpose({
 })
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 @import '../../../css/translate.scss';
 @import '../../../css/translate-input.scss';
 

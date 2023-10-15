@@ -87,3 +87,10 @@ const countChineseCharacters = (str): number => {
   // 返回匹配项的数量
   return matches ? matches.length : 0
 }
+
+/**
+ * 是否为英文
+ */
+export const isEnglish = (str): boolean => {
+  return /[a-zA-Z]/.test(str)
+}

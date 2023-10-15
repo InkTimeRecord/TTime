@@ -229,6 +229,14 @@ class StoreService {
     if (!StoreService.configHas('hideTranslateLanguage')) {
       StoreService.configSet('hideTranslateLanguage', YesNoEnum.N)
     }
+    // 翻译结果显示复制驼峰格式按钮
+    if (!StoreService.configHas('copyCamelCaseResultStatus')) {
+      StoreService.configSet('copyCamelCaseResultStatus', LoginStatusEnum.N)
+    }
+    // 翻译结果显示复制下划线格式按钮
+    if (!StoreService.configHas('copySnakeCaseResultStatus')) {
+      StoreService.configSet('copySnakeCaseResultStatus', LoginStatusEnum.N)
+    }
     app.whenReady().then(async () => {
       const translateShortcutKeyList = [
         { type: ShortcutKeyEnum.INPUT, shortcutKey: StoreService.configGet('inputShortcutKey') },

@@ -128,6 +128,24 @@
         开启后，当在翻译窗口输入后将会自动进行翻译，无需再按回车
       </span>
     </el-form-item>
+    <el-form-item class="none-select" label="翻译结果功能">
+      <el-checkbox
+        v-model="advancedSettingInfo.copyCamelCaseResultStatus"
+        label="翻译结果为英文时显示复制驼峰按钮"
+        @change="copyCamelCaseResultStatusEvent"
+      />
+      <span class="form-switch-span none-select">
+        开启后，例如翻译结果为 [ Hello World ] 点击此按钮后会转换为 [ helloWorld ] 写入剪贴板
+      </span>
+      <el-checkbox
+        v-model="advancedSettingInfo.copySnakeCaseResultStatus"
+        label="翻译结果为英文时显示复制蛇形按钮"
+        @change="copySnakeCaseResultStatusEvent"
+      />
+      <span class="form-switch-span none-select">
+        开启后，例如翻译结果为 [ Hello World ] 点击此按钮后会转换为 [ hello_world ] 写入剪贴板
+      </span>
+    </el-form-item>
   </el-form>
 </template>
 <script setup lang="ts">
@@ -167,7 +185,9 @@ const advancedSettingInfo = ref({
   clipboardListenerShowStatus: cacheGet('clipboardListenerShowStatus') === YesNoEnum.Y,
   clipboardListenerStatus: cacheGet('clipboardListenerStatus') === YesNoEnum.Y,
   showTranslateNotEmptyStatus: cacheGet('showTranslateNotEmptyStatus') === YesNoEnum.Y,
-  inputTranslationAutoStatus: cacheGet('inputTranslationAutoStatus') === YesNoEnum.Y
+  inputTranslationAutoStatus: cacheGet('inputTranslationAutoStatus') === YesNoEnum.Y,
+  copyCamelCaseResultStatus: cacheGet('copyCamelCaseResultStatus') === YesNoEnum.Y,
+  copySnakeCaseResultStatus: cacheGet('copySnakeCaseResultStatus') === YesNoEnum.Y
 })
 
 /**
@@ -315,6 +335,22 @@ const clipboardListenerStatusEvent = (val): void => {
 const inputTranslationAutoStatusEvent = (val): void => {
   cacheSet('inputTranslationAutoStatus', val ? YesNoEnum.Y : YesNoEnum.N)
   advancedSettingInfo.value.inputTranslationAutoStatus = val
+}
+
+/**
+ * 复制驼峰命名状态
+ */
+const copyCamelCaseResultStatusEvent = (val): void => {
+  cacheSet('copyCamelCaseResultStatus', val ? YesNoEnum.Y : YesNoEnum.N)
+  advancedSettingInfo.value.copyCamelCaseResultStatus = val
+}
+
+/**
+ * 复制下划线命名状态
+ */
+const copySnakeCaseResultStatusEvent = (val): void => {
+  cacheSet('copySnakeCaseResultStatus', val ? YesNoEnum.Y : YesNoEnum.N)
+  advancedSettingInfo.value.copySnakeCaseResultStatus = val
 }
 </script>
 
