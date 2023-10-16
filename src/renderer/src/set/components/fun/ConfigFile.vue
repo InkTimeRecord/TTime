@@ -68,14 +68,10 @@
             disabled
           />
           <span class="form-switch-span none-select">
-            <el-button
-              @click="openFileSelection(StoreConfigFunType.MOVE, StoreType.PLUGINS)"
-            >
+            <el-button @click="openFileSelection(StoreConfigFunType.MOVE, StoreType.PLUGINS)">
               移动配置
             </el-button>
-            <el-button
-              @click="openFileSelection(StoreConfigFunType.SWITCH, StoreType.PLUGINS)"
-            >
+            <el-button @click="openFileSelection(StoreConfigFunType.SWITCH, StoreType.PLUGINS)">
               切换配置
             </el-button>
           </span>
@@ -117,7 +113,7 @@ window.api.openDirectoryDialogCallback((storeConfigFunType, storeType, directory
   } else if (storeType === StoreTypeEnum.HISTORY_RECORD) {
     historyRecordPath.value = directoryPath
   } else if (storeType === StoreTypeEnum.PLUGINS) {
-    pluginsRecordPath.value = directoryPath
+    userPluginsPath.value = directoryPath
   }
 })
 </script>

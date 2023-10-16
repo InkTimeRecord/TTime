@@ -173,8 +173,9 @@ ipcMain.on('update-config-info-path', (event, storeConfigFunType, storeType, dir
     oldFilePath = StoreService.historyRecordStore.path
     oldPath = StoreService.systemGet(StoreService.historyRecordPathKey)
   } else if (storeType === StoreTypeEnum.PLUGINS) {
-    oldFilePath = StoreService.userPluginsPathKey
-    oldPath = StoreService.systemGet(StoreService.userPluginsPathKey)
+    oldFilePath = StoreService.systemGet(StoreService.userPluginsPathKey)
+    oldPath = oldFilePath
+    directoryPath = path.join(directoryPath, StoreService.userPluginsName)
   }
   const fileName = oldFilePath.replaceAll(oldPath, '')
   const newFilePath = path.join(directoryPath, fileName)
@@ -191,7 +192,7 @@ ipcMain.on('update-config-info-path', (event, storeConfigFunType, storeType, dir
         event.returnValue = R.okD(directoryPath)
       })
       .catch((err) => {
-        log.error(err)
+        log.error('移动文件异常 : ', err)
         // 当修改翻译记录的路径时 如果新安装还未翻译过将会导致没有生成翻译记录文件
         // 这里校验一下 如果没有的话则进行迁移
         if (err.message.indexOf('no such file or directory') != -1) {
