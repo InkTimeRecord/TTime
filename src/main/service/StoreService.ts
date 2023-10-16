@@ -14,6 +14,7 @@ import { LoginStatusEnum } from '../../common/enums/LoginStatusEnum'
 import TTimeRequest from './channel/interfaces/TTimeRequest'
 import MemberUtil from '../utils/memberUtil'
 import commonUtil from '../utils/commonUtil'
+import * as fse from 'fs-extra'
 
 /**
  * app.getPath('userData')
@@ -30,11 +31,19 @@ class StoreService {
   /**
    * 用户数据存放文件夹名称
    */
-  static configName = 'configPath'
+  static configPathKey = 'configPath'
   /**
-   * 用户数据存放文件夹名称
+   * 用户翻译记录存放文件夹名称
    */
-  static historyRecordName = 'historyRecordPath'
+  static historyRecordPathKey = 'historyRecordPath'
+  /**
+   * 用户插件存放文件夹名称
+   */
+  static userPluginsPathKey = 'userPluginsPath'
+  /**
+   * 用户插件存放文件夹名称
+   */
+  static userPluginsName = 'userPlugins'
   /**
    * 用户数据存放文件夹名称
    */
@@ -71,6 +80,14 @@ class StoreService {
     StoreService.userDataPath,
     StoreService.userDataConfigFolderName
   )
+
+  /**
+   * 用户插件路径
+   */
+  static userPluginsPath = path.join(
+    StoreService.userDataConfigPath,
+    StoreService.userPluginsName
+  )
   // 日志存储路径
   static logsPath = path.join(StoreService.userDataPath, 'logs')
   // 系统存储
@@ -86,11 +103,17 @@ class StoreService {
       // 文件位置
       cwd: path.join(app.getPath('userData'))
     })
-    if (!StoreService.systemStore.has(StoreService.configName)) {
+    if (!StoreService.systemStore.has(StoreService.configPathKey)) {
       // 配置路径
-      StoreService.systemStore.set(StoreService.configName, StoreService.userDataConfigPath)
+      StoreService.systemStore.set(StoreService.configPathKey, StoreService.userDataConfigPath)
       // 历史记录路径
-      StoreService.systemStore.set(StoreService.historyRecordName, StoreService.userDataConfigPath)
+      StoreService.systemStore.set(StoreService.historyRecordPathKey, StoreService.userDataConfigPath)
+    }
+    if (!StoreService.systemStore.has(StoreService.userPluginsPathKey)) {
+      // 插件路径
+      StoreService.systemStore.set(StoreService.userPluginsPathKey, StoreService.userPluginsPath)
+      // 确保目录存在。如果目录结构不存在，则创建它
+      fse.ensureDirSync(StoreService.userPluginsPath)
     }
 
     // 配置相关
@@ -99,7 +122,7 @@ class StoreService {
       // 文件位置
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      cwd: StoreService.systemGet(StoreService.configName)
+      cwd: StoreService.systemGet(StoreService.configPathKey)
     })
 
     // 翻译记录
@@ -108,7 +131,7 @@ class StoreService {
       // 文件位置
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      cwd: StoreService.systemGet(StoreService.historyRecordName)
+      cwd: StoreService.systemGet(StoreService.historyRecordPathKey)
     })
   }
 

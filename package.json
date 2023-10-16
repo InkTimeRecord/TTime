@@ -1,6 +1,6 @@
 {
   "name": "time-translate",
-  "version": "0.9.0",
+  "version": "0.9.1-beta.1",
   "description": "一款简洁、高效、高颜值的输入、截图、划词翻译软件",
   "main": "./out/main/index.js",
   "author": "byliangcheng",
@@ -39,6 +39,7 @@
     "node-screenshots": "^0.1.1",
     "onnxruntime-node": "^1.13.1",
     "opencv.js": "^1.2.1",
+    "sqlite3": "^5.1.6",
     "tencentcloud-sdk-nodejs-ocr": "^4.0.632",
     "tencentcloud-sdk-nodejs-tmt": "^4.0.589",
     "tslib": "^2.5.0",

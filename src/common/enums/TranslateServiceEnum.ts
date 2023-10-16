@@ -101,6 +101,12 @@ class TranslateServiceEnum {
    * Papago翻译
    */
   static PAPAGO = 'Papago'
+
+  /**
+   * 简明英汉词典(内置)
+   */
+  static EC_DICT = 'EcDict'
+
 }
 
 export default TranslateServiceEnum

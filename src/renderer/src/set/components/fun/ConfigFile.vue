@@ -58,6 +58,28 @@
             </el-button>
           </span>
         </el-form-item>
+        <el-form-item class="none-select" label="插件路径">
+          <el-input
+            v-model="userPluginsPath"
+            class="path-input"
+            type="text"
+            placeholder="请选择翻译记录路径"
+            spellcheck="false"
+            disabled
+          />
+          <span class="form-switch-span none-select">
+            <el-button
+              @click="openFileSelection(StoreConfigFunType.MOVE, StoreType.PLUGINS)"
+            >
+              移动配置
+            </el-button>
+            <el-button
+              @click="openFileSelection(StoreConfigFunType.SWITCH, StoreType.PLUGINS)"
+            >
+              切换配置
+            </el-button>
+          </span>
+        </el-form-item>
       </el-form>
     </div>
   </div>
@@ -77,6 +99,8 @@ const StoreConfigFunType = ref(StoreConfigFunTypeEnum)
 const configPath = ref(cacheGetByType(StoreTypeEnum.SYSTEM, 'configPath'))
 // 历史记录路径
 const historyRecordPath = ref(cacheGetByType(StoreTypeEnum.SYSTEM, 'historyRecordPath'))
+// 插件路径
+const userPluginsPath = ref(cacheGetByType(StoreTypeEnum.SYSTEM, 'userPluginsPath'))
 
 const openFileSelection = (storeConfigFunType, openFileSelectType): void => {
   window.api.openDirectoryDialog(storeConfigFunType, openFileSelectType)
@@ -92,6 +116,8 @@ window.api.openDirectoryDialogCallback((storeConfigFunType, storeType, directory
     configPath.value = directoryPath
   } else if (storeType === StoreTypeEnum.HISTORY_RECORD) {
     historyRecordPath.value = directoryPath
+  } else if (storeType === StoreTypeEnum.PLUGINS) {
+    pluginsRecordPath.value = directoryPath
   }
 })
 </script>

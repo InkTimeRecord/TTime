@@ -16,6 +16,11 @@ class StoreTypeEnum {
    * 历史记录
    */
   static HISTORY_RECORD = 'historyRecord'
+
+  /**
+   * 插件
+   */
+  static PLUGINS = 'plugins'
 }
 
 export { StoreTypeEnum }

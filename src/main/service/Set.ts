@@ -168,10 +168,13 @@ ipcMain.on('update-config-info-path', (event, storeConfigFunType, storeType, dir
   let oldFilePath, oldPath
   if (storeType === StoreTypeEnum.CONFIG) {
     oldFilePath = StoreService.configStore.path
-    oldPath = StoreService.systemGet(StoreService.configName)
+    oldPath = StoreService.systemGet(StoreService.configPathKey)
   } else if (storeType === StoreTypeEnum.HISTORY_RECORD) {
     oldFilePath = StoreService.historyRecordStore.path
-    oldPath = StoreService.systemGet(StoreService.historyRecordName)
+    oldPath = StoreService.systemGet(StoreService.historyRecordPathKey)
+  } else if (storeType === StoreTypeEnum.PLUGINS) {
+    oldFilePath = StoreService.userPluginsPathKey
+    oldPath = StoreService.systemGet(StoreService.userPluginsPathKey)
   }
   const fileName = oldFilePath.replaceAll(oldPath, '')
   const newFilePath = path.join(directoryPath, fileName)
@@ -209,9 +212,11 @@ ipcMain.on('update-config-info-path', (event, storeConfigFunType, storeType, dir
 
 const updateStoreConfig = (storeType, directoryPath): void => {
   if (storeType === StoreTypeEnum.CONFIG) {
-    StoreService.systemSet(StoreService.configName, directoryPath)
+    StoreService.systemSet(StoreService.configPathKey, directoryPath)
   } else if (storeType === StoreTypeEnum.HISTORY_RECORD) {
-    StoreService.systemSet(StoreService.historyRecordName, directoryPath)
+    StoreService.systemSet(StoreService.historyRecordPathKey, directoryPath)
+  } else if (storeType === StoreTypeEnum.PLUGINS) {
+    StoreService.systemSet(StoreService.userPluginsPathKey, directoryPath)
   }
   StoreService.init()
 }

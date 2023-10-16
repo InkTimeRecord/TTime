@@ -18,6 +18,11 @@ class TranslateVo {
   translateList: string[] | string
 
   /**
+   * 音标
+   */
+  phonetic!: string
+
+  /**
    * 美式音标
    */
   usPhonetic!: string
@@ -58,6 +63,14 @@ class TranslateVo {
     this.ukPhonetic = ukPhonetic
     this.usSpeech = usSpeech
     this.ukSpeech = ukSpeech
+    this.explains = explains
+    this.wfs = wfs
+  }
+
+  dictLessBuild(info, phonetic, explains, wfs): void {
+    this.requestId = info.requestId
+    this.translateServiceId = info.id
+    this.phonetic = phonetic
     this.explains = explains
     this.wfs = wfs
   }

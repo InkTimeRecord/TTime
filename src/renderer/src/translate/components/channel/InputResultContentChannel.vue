@@ -35,6 +35,10 @@
           />
 
           <div class="phonetic-layer">
+            <div v-show="dictTranslatedResultExpand.isPhonetic" class="phonetic-block">
+              <span class="phonetic-type">音标 </span>
+              <span class="phonetic">[{{ dictTranslatedResultExpand.phonetic }}]</span>
+            </div>
             <div v-show="dictTranslatedResultExpand.isUs" class="phonetic-block">
               <span class="phonetic-type">美 </span>
               <span class="phonetic">[{{ dictTranslatedResultExpand.usPhonetic }}]</span>
@@ -283,6 +287,7 @@ window.api[getTranslateServiceBackEventName(props.translateService)]((res) => {
     })
   }
 
+  const isPhonetic = !isNull(data?.['phonetic'])
   const isUs = !isNull(data?.['usPhonetic'])
   const isUk = !isNull(data?.['ukPhonetic'])
   const isExplainList = explainListDeal?.length > 0
@@ -290,8 +295,10 @@ window.api[getTranslateServiceBackEventName(props.translateService)]((res) => {
   dictTranslatedResultExpand.value = {
     isUs,
     isUk,
+    isPhonetic,
     isExplainList,
     isWfs,
+    phonetic: data['phonetic'],
     usPhonetic: data['usPhonetic'],
     ukPhonetic: data['ukPhonetic'],
     usSpeech: data['usSpeech'],
