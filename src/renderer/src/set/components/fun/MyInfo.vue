@@ -223,6 +223,13 @@ window.api.loginSuccessEvent(() => {
   initNewServiceInfo()
 })
 
+/**
+ * 授权刷新成功回调
+ */
+window.api.authRefreshSuccessEvent(() => {
+  loadNewServiceInfo()
+})
+
 loadNewServiceInfo()
 </script>
 

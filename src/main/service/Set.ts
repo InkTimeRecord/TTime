@@ -24,8 +24,6 @@ function createSetWindow(): void {
     return
   }
 
-  TTimeAuth.refresh()
-
   // 是否Mac系统
   const isMac = SystemTypeEnum.isMac()
 
@@ -70,6 +68,8 @@ function createSetWindow(): void {
   // 禁用按下F11全屏事件
   setWin.setFullScreenable(false)
   GlobalWin.setSetWin(setWin)
+
+  TTimeAuth.refresh()
 
   /**
    * 窗口显示时触发事件

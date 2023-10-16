@@ -199,6 +199,18 @@ const loginSuccessEvent = (callback): void => {
   })
 }
 
+/**
+ * 授权刷新成功回调
+ *
+ * @param callback 回调方法 用于主进程内部触发时推送到Vue页面执行
+ */
+const authRefreshSuccessEvent = (callback): void => {
+  ipcRenderer.on('auth-refresh-success-event', () => {
+    callback()
+  })
+}
+
+
 const api = {
   ...common,
   updateTranslateShortcutKeyEvent,
@@ -222,7 +234,8 @@ const api = {
   refreshUserInfoEvent,
   refreshServiceInfoEvent,
   refreshServiceInfoNotify,
-  loginSuccessEvent
+  loginSuccessEvent,
+  authRefreshSuccessEvent
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

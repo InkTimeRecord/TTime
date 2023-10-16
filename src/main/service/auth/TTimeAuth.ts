@@ -65,6 +65,8 @@ class TTimeAuth {
       StoreService.configSet('loginStatus', LoginStatusEnum.Y)
       // 加载云配置
       StoreService.initCloudConfig()
+      // 授权刷新成功事件
+      GlobalWin?.setWin?.webContents?.send('auth-refresh-success-event')
     })
   }
 

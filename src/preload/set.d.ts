@@ -29,6 +29,7 @@ declare global {
     refreshServiceInfoEvent
     refreshServiceInfoNotify
     loginSuccessEvent
+    authRefreshSuccessEvent
   }
 
   interface Window {
