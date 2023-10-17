@@ -7,8 +7,8 @@ import { MemberTypeEnum } from '../../common/enums/MemberTypeEnum'
  */
 const isMemberVip = (): boolean => {
   return (
-    StoreService.configGet('loginStatus') === LoginStatusEnum.Y &&
-    StoreService.configGet('userInfo')?.memberType === MemberTypeEnum.VIP
+    StoreService?.configGet('loginStatus') === LoginStatusEnum.Y &&
+    StoreService?.configGet('userInfo')?.memberType === MemberTypeEnum.VIP
   )
 }
 

@@ -1,7 +1,7 @@
-import StoreService from './service/StoreService'
 import { app, BrowserWindow } from 'electron'
 import * as path from 'path'
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
+import StoreService from './service/StoreService'
 import { GlobalShortcutEvent } from './service/GlobalShortcutEvent'
 import { WinEvent } from './service/Win'
 import { TrayEvent } from './service/TrayEvent'
