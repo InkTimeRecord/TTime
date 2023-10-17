@@ -184,6 +184,15 @@
             <span class='translate-service-bing-msg'>Bing翻译 = Bing翻译</span>
             <span class='translate-service-bing-msg'>Bing字典 = Bing翻译 + Bing字典</span>
           </div>
+          <div
+            v-else-if='translateServiceThis.type === TranslateServiceEnum.EC_DICT'
+            class='translate-service-bing-msg-block'
+          >
+            <el-divider />
+            <span class='translate-service-bing-msg-title'>注意：在使用前需要先导入离线库</span>
+            <span class='translate-service-bing-msg'>导入教程请查看官网：</span>
+            <span class='translate-service-bing-msg'>翻译源申请 -> 简明英汉词典(离线)</span>
+          </div>
         </div>
       </div>
     </div>
