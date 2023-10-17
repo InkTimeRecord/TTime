@@ -11,6 +11,11 @@ class StoreConfigFunTypeEnum {
    * 切换
    */
   static SWITCH = 'switch'
+
+  /**
+   * 打开
+   */
+  static OPEN = 'open'
 }
 
 export { StoreConfigFunTypeEnum }

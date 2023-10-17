@@ -74,6 +74,9 @@
             <el-button @click="openFileSelection(StoreConfigFunType.SWITCH, StoreType.PLUGINS)">
               切换配置
             </el-button>
+            <el-button @click="openFileSelection(StoreConfigFunType.OPEN, StoreType.PLUGINS)">
+              打开插件文件夹
+            </el-button>
           </span>
         </el-form-item>
       </el-form>

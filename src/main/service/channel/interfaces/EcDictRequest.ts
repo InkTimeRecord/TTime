@@ -1,31 +1,43 @@
-import { isNull } from '../../../../common/utils/validate'
+import { isNotNull, isNull } from '../../../../common/utils/validate'
 import StoreService from '../../StoreService'
 import path from 'path'
 import * as fse from 'fs-extra'
 
 let sqlite3: any = null
-let db: any = null
-const ecDictDbInit = async (): Promise<void> => {
+let ecDictDB: any = null
+
+/**
+ * 词典库关闭连接
+ */
+export const ecDictDbClose = (): void => {
+  if (isNotNull(ecDictDB)) {
+    ecDictDB.close()
+    ecDictDB = null
+  }
+}
+
+/**
+ * 词典库初始化
+ */
+const ecDictDbInit = (): void => {
+  // 检测数据库是否初始化
+  if (isNotNull(ecDictDB)) {
+    return
+  }
+  // 数据文件路径
   const filePath = path.join(
     StoreService.systemGet(StoreService.userPluginsPathKey),
     'ecdict-ultimate',
     'ultimate.db'
   )
-  console.log('filePath = ', filePath)
-  if (isNull(db)) {
-    // 校验文件是否存在
-    await fse.pathExists(filePath, async (err, exists) => {
-      console.log(err) // => null
-      console.log(exists) // => false
-      if (!exists) {
-        return
-      }
-      sqlite3 = require('sqlite3').verbose()
-      db = new sqlite3.Database(filePath)
-      await setTimeout(() => {}, 10000)
-      console.log('开始 1 ')
-    })
+  // 检测数据文件是否存在
+  const exists = fse.pathExistsSync(filePath)
+  if (!exists) {
+    return
   }
+  // 初始化
+  sqlite3 = require('sqlite3').verbose()
+  ecDictDB = new sqlite3.Database(filePath)
 }
 
 /**
@@ -33,15 +45,13 @@ const ecDictDbInit = async (): Promise<void> => {
  *
  * @param info 翻译信息
  */
-const apiTranslate = async (info): Promise<object> => {
-  console.log('开始 0 ')
-  await ecDictDbInit()
-  console.log('开始 2 ')
+const apiTranslate = (info: any): Promise<object> => {
+  ecDictDbInit()
   return new Promise((resolve, reject) => {
-    if (isNull(db)) {
+    if (isNull(ecDictDB)) {
       resolve([])
     } else {
-      db.all(
+      ecDictDB.all(
         'SELECT * FROM stardict WHERE word = "' + info.translateContent.trim() + '"',
         (err: any, row: object | PromiseLike<object>) => {
           if (err) {

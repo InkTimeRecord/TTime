@@ -6,6 +6,9 @@ import log from '../utils/log'
 import GlobalWin from './GlobalWin'
 import { injectWinAgent } from '../utils/RequestUtil'
 import TTimeAuth from './auth/TTimeAuth'
+import { StoreConfigFunTypeEnum } from '../../common/enums/StoreConfigFunTypeEnum'
+import StoreService from './StoreService'
+import { StoreTypeEnum } from '../../common/enums/StoreTypeEnum'
 
 /**
  * 打开设置页面
@@ -73,6 +76,10 @@ ipcMain.handle('agent-update-event', (_event, agentConfig) => {
  * 打开目录对话框
  */
 ipcMain.on('open-directory-dialog', (event, storeConfigFunType, storeType) => {
+  if(StoreConfigFunTypeEnum.OPEN === storeConfigFunType && StoreTypeEnum.PLUGINS === storeType) {
+    shell.openPath(StoreService.systemGet(StoreService.userPluginsPathKey)).then()
+    return
+  }
   dialog
     .showOpenDialog({
       properties: ['openDirectory'],

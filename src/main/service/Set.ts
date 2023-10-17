@@ -13,6 +13,7 @@ import StoreService from './StoreService'
 import { StoreConfigFunTypeEnum } from '../../common/enums/StoreConfigFunTypeEnum'
 import TTimeAuth from './auth/TTimeAuth'
 import BrowserWindowConstructorOptions = Electron.BrowserWindowConstructorOptions
+import { ecDictDbClose } from './channel/interfaces/EcDictRequest'
 
 let nullWin: BrowserWindow
 
@@ -176,6 +177,7 @@ ipcMain.on('update-config-info-path', (event, storeConfigFunType, storeType, dir
     oldFilePath = StoreService.systemGet(StoreService.userPluginsPathKey)
     oldPath = oldFilePath
     directoryPath = path.join(directoryPath, StoreService.userPluginsName)
+    ecDictDbClose()
   }
   const fileName = oldFilePath.replaceAll(oldPath, '')
   const newFilePath = path.join(directoryPath, fileName)
