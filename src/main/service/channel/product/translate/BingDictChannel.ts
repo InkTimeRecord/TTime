@@ -6,6 +6,7 @@ import TranslateVo from '../../../../../common/class/TranslateVo'
 import BingDictRequest from '../../interfaces/BingDictRequest'
 import TranslateChannelFactory from '../../factory/TranslateChannelFactory'
 import TranslateAgent from './TranslateAgent'
+import { isNull } from '../../../../../common/utils/validate'
 
 class BingDictChannel extends TranslateAgent implements ITranslateAgentInterface {
   /**
@@ -54,7 +55,7 @@ class BingDictChannel extends TranslateAgent implements ITranslateAgentInterface
           )
         }
         // 匹配音标及语音
-        const phoneticAndSpeechRegex =
+        let phoneticAndSpeechRegex =
           /<div class="hd_prUS b_primtxt">(.*?)&#160;\[(.*?)\] <\/div><div class="hd_tf"><a class="bigaud" onmouseover="this.className='bigaud_f';javascript:BilingualDict.Click\(this,'(.*?)','akicon.png',false,'dictionaryvoiceid'\)" onmouseout="this.className='bigaud'" title="点击朗读" onClick="javascript:BilingualDict.Click\(this,'(.*?)','akicon.png',false,'dictionaryvoiceid'\)" href="javascript:void\(0\);" h="ID=Dictionary,(.*?)"><\/a><\/div><div class="hd_pr b_primtxt">(.*?)&#160;\[(.*?)\] <\/div><div class="hd_tf"><a class="bigaud" onmouseover="this.className='bigaud_f';javascript:BilingualDict.Click\(this,'(.*?)','akicon.png',false,'dictionaryvoiceid'\)" onmouseout="this.className='bigaud'" title="点击朗读" onClick="javascript:BilingualDict.Click\(this,'(.*?)','akicon.png',false,'dictionaryvoiceid'\)"/g
         let usPhonetic = ''
         let ukPhonetic = ''
@@ -66,6 +67,23 @@ class BingDictChannel extends TranslateAgent implements ITranslateAgentInterface
           usSpeech = await BingDictChannel.handleDictField(match[3])
           ukSpeech = await BingDictChannel.handleDictField(match[8])
         }
+
+        // 匹配失败重新匹配
+        if (isNull(usPhonetic) && isNull(ukPhonetic) && isNull(usSpeech) && isNull(ukSpeech)) {
+          phoneticAndSpeechRegex =
+            /<div class="hd_prUS b_primtxt">(.*?)&#160;\[(.*?)\] <\/div><div class="hd_tf"><a id="bigaud_us" data-mp3link="(.*?)" class="bigaud" title="点击朗读" href="javascript:void\(0\);" h="ID=Dictionary,(.*?)"><\/a><\/div><div class="hd_pr b_primtxt">(.*?)&#160;\[(.*?)\] <\/div><div class="hd_tf"><a id="bigaud_uk" class="bigaud" data-mp3link="(.*?)"/g
+          usPhonetic = ''
+          ukPhonetic = ''
+          usSpeech = ''
+          ukSpeech = ''
+          while ((match = phoneticAndSpeechRegex.exec(res)) !== null) {
+            usPhonetic = await BingDictChannel.handleDictField(match[2])
+            ukPhonetic = await BingDictChannel.handleDictField(match[6])
+            usSpeech = await BingDictChannel.handleDictField(match[3])
+            ukSpeech = await BingDictChannel.handleDictField(match[7])
+          }
+        }
+
         // 匹配语法类别
         const wfs: Array<{ wf: { name: string; value: string } }> = []
         const wfsRegex =
