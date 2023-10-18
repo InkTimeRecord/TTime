@@ -4,7 +4,7 @@
       <span class="prompt-span form-switch-span none-select"> 注：</span>
       <br />
       <span class="prompt-span form-switch-span none-select">
-        配置文件不能放在TTime安装路径内，否则当卸载TTime时会被一并删除
+        配置等信息不能放在TTime安装路径内，否则当卸载或更新TTime时会被一并删除
       </span>
       <br />
       <span class="prompt-span form-switch-span none-select">
