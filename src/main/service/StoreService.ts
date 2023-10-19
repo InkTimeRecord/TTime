@@ -461,6 +461,4 @@ ipcMain.handle('cache-delete', (_event, storeTypeEnum, key) => {
   StoreService[storeTypeEnum + 'DeleteByKey'](key)
 })
 
-StoreService.init()
-StoreService.initConfig()
 export default StoreService

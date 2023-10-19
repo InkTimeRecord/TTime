@@ -1,7 +1,6 @@
 import { app, BrowserWindow } from 'electron'
 import * as path from 'path'
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
-import StoreService from './service/StoreService'
 import { GlobalShortcutEvent } from './service/GlobalShortcutEvent'
 import { WinEvent } from './service/Win'
 import { TrayEvent } from './service/TrayEvent'
@@ -15,10 +14,10 @@ import './service/HoverBall'
 import './service/Ocr'
 import './service/OcrSilence'
 import './service/ClipboardListenerService'
-import './service/WebServer'
+import { initServer } from './service/WebServer'
 import './service/IpcMainHandle'
-import './service/channel/interfaces/EcDictRequest'
 import { injectWinAgent } from './utils/RequestUtil'
+import StoreService from './service/StoreService'
 import { YesNoEnum } from '../common/enums/YesNoEnum'
 
 // 解决使用 win.hide() 后再使用 win.show() 会引起窗口闪烁问题
@@ -28,6 +27,9 @@ if (!SystemTypeEnum.isMac()) {
   // 禁用硬件加速
   app.disableHardwareAcceleration()
 }
+
+StoreService.init()
+StoreService.initConfig()
 
 const mainWinInfo = {
   width: StoreService.configGet('mainWinWidth'),
@@ -52,6 +54,9 @@ if (gotTheLock) {
   // 这里直接执行退出当前重复实例即可
   app.quit()
 }
+
+// 初始化服务
+initServer()
 
 function createWindow(): void {
   mainWin = new BrowserWindow({
