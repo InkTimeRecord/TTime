@@ -24,12 +24,21 @@ class TTimeChannel implements ITranslateInterface {
         GlobalWin.mainWinSend(TranslateChannelFactory.callbackName(info.type), R.okIT(info, data))
       })
       .catch((error) => {
-        GlobalWin.mainWinSend(TranslateChannelFactory.callbackName(info.type), R.okIT(info, error))
+        log.error('[TTime翻译事件] - 异常报文 : ', error)
+        const errCode = error.code
+        const errMessage = error.message
+        log.error('[TTime翻译事件] - 异常报文 : ', {
+          errCode,
+          errMessage
+        })
+
+        GlobalWin.mainWinSend(TranslateChannelFactory.callbackName(info.type), R.okIT(info, '翻译请求失败'))
       })
   }
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function,@typescript-eslint/no-unused-vars
-  apiTranslateCheck(_info): void {}
+  apiTranslateCheck(_info): void {
+  }
 }
 
 export default TTimeChannel
