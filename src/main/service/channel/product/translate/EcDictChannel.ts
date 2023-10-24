@@ -19,10 +19,7 @@ class EcDictChannel implements ITranslateInterface {
       .then(async (res: any) => {
         log.info('[EcDict翻译事件] - 响应报文 : ', res)
         if (res.length <= 0) {
-          GlobalWin.mainWinSend(
-            TranslateChannelFactory.callbackName(info.type),
-            R.okT('未找到词')
-          )
+          GlobalWin.mainWinSend(TranslateChannelFactory.callbackName(info.type), R.okT('未找到词'))
           return
         }
         const data = res[0]
@@ -36,9 +33,7 @@ class EcDictChannel implements ITranslateInterface {
           data['translation'].split('\n'),
           this.conversionWfs(data['exchange'])
         )
-        log.info('conversionWfs :  ', this.conversionWfs(data['exchange']))
         GlobalWin.mainWinSend(TranslateChannelFactory.callbackName(info.type), R.okD(vo))
-
       })
       .catch((err) => {
         log.info('[EcDict翻译事件] - 异常 : ', err)
@@ -47,11 +42,10 @@ class EcDictChannel implements ITranslateInterface {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function,@typescript-eslint/no-unused-vars
-  apiTranslateCheck(_res): void {
-  }
+  apiTranslateCheck(_res): void {}
 
   conversionWfs(data): any {
-    if(isNull(data)) {
+    if (isNull(data)) {
       return null
     }
     const reference = {
@@ -78,7 +72,6 @@ class EcDictChannel implements ITranslateInterface {
     }
     return wfs
   }
-
 }
 
 export default EcDictChannel
