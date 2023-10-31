@@ -9,7 +9,6 @@
   <a href="https://ttime.timerecord.cn"><img src="https://img.shields.io/badge/Official website-ttime.timerecord.cn-brightgreen?logo=Safari"/></a>
   <a href="https://ttime.timerecord.cn"><img src="https://img.shields.io/badge/-Windows-blue?logo=windows&logoColor=white" /></a>
   <a href="https://ttime.timerecord.cn"><img src="https://img.shields.io/badge/-macOS-black?&logo=apple&logoColor=white" /></a>
-  <a href="JavaScript:;"><img src="https://img.shields.io/github/license/InkTimeRecord/TTime"/></a>
 
   (English | [中文](README.md))
 
@@ -55,6 +54,7 @@ The main functions are `input translation`, `screenshot translation`, `selected 
   - [x] Bing dict Translation (built-in)
   - [x] Tencent TranSmart Translation (built-in)
   - [x] NiuTrans (built-in)
+  - [x] ECDICT Translation-Offline (built-in)
   - [x] Tencent Translator
   - [x] Baidu Translation
   - [x] Alibaba Translation

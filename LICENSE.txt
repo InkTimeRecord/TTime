@@ -2,14 +2,15 @@
 
 The TTime Translation Software is licensed under the Apache License 2.0, with the following additional conditions:
 
-1. TTime translation software allows for commercial use. However, under the following conditions, you must contact the software manufacturer to obtain a commercial license:
+1. TTime translation software allows commercial use. But you must contact the software manufacturer to obtain a commercial license
 
-   a. Software Services: Unless authorized in writing by TTime Translation Software, you are not allowed to use the source code of TTime Translation Software to operate services similar to TTime Translation Software.
-   b. Trademarks and Copyright Information: When using TTime Translation Software, you must not remove or modify any trademarks or copyright information within the software.
+2. Unless authorized in writing by TTime Translation Software, you are not allowed to use the source code of TTime Translation Software to operate services similar to TTime Translation Software.
 
-For licensing inquiries, please contact byliangcheng@sina.com via email.
+3. When using TTime Translation Software, you must not remove or modify any trademarks or copyright information within the software.
 
-2. As a contributor, you should acknowledge that your contributed code:
+For licensing inquiries, please contact support@timerecord.cn via email.
+
+4. As a contributor, you should acknowledge that your contributed code:
 
    a. The software producer reserves the right to adjust the open-source agreement to be either more stringent or more permissive.
    b. Can be utilized for commercial purposes, including TTime Translation Software's cloud-based services.
