@@ -153,6 +153,19 @@
             />
           </el-form-item>
 
+          <el-form-item
+            v-if='translateServiceThis.type === TranslateServiceEnum.MTRAN_SERVER'
+            label='请求地址'
+          >
+            <el-input
+              v-model='translateServiceThis.requestUrl'
+              type='text'
+              placeholder='http://localhost:8989'
+              spellcheck='false'
+            />
+            <span class='form-switch-span'> 留空默认：http://localhost:8989 </span>
+          </el-form-item>
+
           <div class='translate-service-set-fun'>
             <div class='translate-service-use-text'>
               <el-tag v-if='checkIngStatus' type='info' effect='dark'> 验证中...</el-tag>

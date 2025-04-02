@@ -107,6 +107,11 @@ class TranslateServiceEnum {
    */
   static EC_DICT = 'EcDict'
 
+  /**
+   * MTranserver翻译服务
+   */
+  static MTRAN_SERVER = 'MTranServer'
+
 }
 
 export default TranslateServiceEnum
